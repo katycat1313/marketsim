@@ -1,19 +1,26 @@
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight, Target, BarChart3, Presentation } from "lucide-react";
+import { ArrowRight, Target, BarChart3, Presentation, Settings } from "lucide-react";
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-secondary/10">
       <div className="container mx-auto px-4 py-16">
-        <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent mb-4">
-            Dummy Market
-          </h1>
-          <p className="text-xl text-muted-foreground">
-            Master Marketing Without the Risk
-          </p>
+        <div className="flex justify-between items-center mb-16">
+          <div>
+            <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+              Dummy Market
+            </h1>
+            <p className="text-xl text-muted-foreground">
+              Master Marketing Without the Risk
+            </p>
+          </div>
+          <Link href="/api-settings">
+            <Button variant="outline" size="icon">
+              <Settings className="h-5 w-5" />
+            </Button>
+          </Link>
         </div>
 
         <div className="grid md:grid-cols-3 gap-8 mb-16">
