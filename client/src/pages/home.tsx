@@ -17,8 +17,9 @@ export default function Home() {
             </p>
           </div>
           <Link href="/api-settings">
-            <Button variant="outline" size="icon">
+            <Button variant="outline" className="flex items-center gap-2">
               <Settings className="h-5 w-5" />
+              AI Settings
             </Button>
           </Link>
         </div>
