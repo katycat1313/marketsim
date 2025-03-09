@@ -13,6 +13,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  FormDescription,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import {
@@ -72,7 +73,8 @@ export default function ApiSettings() {
             AI Provider Settings
           </CardTitle>
           <CardDescription>
-            Configure your preferred AI provider for market analysis and insights
+            Configure your preferred AI provider for market analysis and insights. 
+            Your API key will be securely stored and used to power AI-driven features.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -102,6 +104,9 @@ export default function ApiSettings() {
                         <SelectItem value="gemini">Google (Gemini)</SelectItem>
                       </SelectContent>
                     </Select>
+                    <FormDescription>
+                      Choose your preferred AI provider for marketing insights and recommendations
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -117,6 +122,9 @@ export default function ApiSettings() {
                       <FormControl>
                         <Input type="password" placeholder="Enter your Anthropic API key" {...field} />
                       </FormControl>
+                      <FormDescription>
+                        Get your API key from the <a href="https://console.anthropic.com/account/keys" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">Anthropic Console</a>
+                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -133,6 +141,9 @@ export default function ApiSettings() {
                       <FormControl>
                         <Input type="password" placeholder="Enter your OpenAI API key" {...field} />
                       </FormControl>
+                      <FormDescription>
+                        Get your API key from the <a href="https://platform.openai.com/api-keys" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">OpenAI Dashboard</a>
+                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -149,6 +160,9 @@ export default function ApiSettings() {
                       <FormControl>
                         <Input type="password" placeholder="Enter your Google API key" {...field} />
                       </FormControl>
+                      <FormDescription>
+                        Get your API key from the <a href="https://makersuite.google.com/app/apikeys" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">Google AI Studio</a>
+                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
