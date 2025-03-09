@@ -1,3 +1,4 @@
+import { supabase } from "@/lib/supabase";
 import { 
   type Persona, type Campaign, type SimulationData,
   type InsertPersona, type InsertCampaign, type InsertSimulationData 
@@ -19,64 +20,98 @@ export interface IStorage {
   getSimulationData(campaignId: number): Promise<SimulationData[]>;
 }
 
-export class MemStorage implements IStorage {
-  private personas: Map<number, Persona>;
-  private campaigns: Map<number, Campaign>;
-  private simulationData: Map<number, SimulationData>;
-  private currentIds: { [key: string]: number };
-
-  constructor() {
-    this.personas = new Map();
-    this.campaigns = new Map();
-    this.simulationData = new Map();
-    this.currentIds = { persona: 1, campaign: 1, simulation: 1 };
-  }
-
+export class SupabaseStorage implements IStorage {
   async createPersona(persona: InsertPersona): Promise<Persona> {
-    const id = this.currentIds.persona++;
-    const newPersona = { ...persona, id };
-    this.personas.set(id, newPersona);
-    return newPersona;
+    const { data, error } = await supabase
+      .from('personas')
+      .insert(persona)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
   }
 
   async getPersona(id: number): Promise<Persona | undefined> {
-    return this.personas.get(id);
+    const { data, error } = await supabase
+      .from('personas')
+      .select()
+      .eq('id', id)
+      .single();
+
+    if (error) return undefined;
+    return data;
   }
 
   async listPersonas(): Promise<Persona[]> {
-    return Array.from(this.personas.values());
+    const { data, error } = await supabase
+      .from('personas')
+      .select();
+
+    if (error) throw error;
+    return data || [];
   }
 
   async createCampaign(campaign: InsertCampaign): Promise<Campaign> {
-    const id = this.currentIds.campaign++;
-    const newCampaign = { 
-      ...campaign, 
-      id, 
-      createdAt: new Date() 
-    };
-    this.campaigns.set(id, newCampaign);
-    return newCampaign;
+    const { data, error } = await supabase
+      .from('campaigns')
+      .insert({
+        ...campaign,
+        status: 'active',
+        createdAt: new Date().toISOString()
+      })
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
   }
 
   async getCampaign(id: number): Promise<Campaign | undefined> {
-    return this.campaigns.get(id);
+    const { data, error } = await supabase
+      .from('campaigns')
+      .select()
+      .eq('id', id)
+      .single();
+
+    if (error) return undefined;
+    return data;
   }
 
   async listCampaigns(): Promise<Campaign[]> {
-    return Array.from(this.campaigns.values());
+    const { data, error } = await supabase
+      .from('campaigns')
+      .select();
+
+    if (error) throw error;
+    return data || [];
   }
 
   async addSimulationData(data: InsertSimulationData): Promise<SimulationData> {
-    const id = this.currentIds.simulation++;
-    const newData = { ...data, id };
-    this.simulationData.set(id, newData);
-    return newData;
+    const { data: simData, error } = await supabase
+      .from('simulation_data')
+      .insert({
+        ...data,
+        date: new Date().toISOString()
+      })
+      .select()
+      .single();
+
+    if (error) throw error;
+    return simData;
   }
 
   async getSimulationData(campaignId: number): Promise<SimulationData[]> {
-    return Array.from(this.simulationData.values())
-      .filter(data => data.campaignId === campaignId);
+    const { data, error } = await supabase
+      .from('simulation_data')
+      .select()
+      .eq('campaignId', campaignId)
+      .order('date', { ascending: true });
+
+    if (error) throw error;
+    return data || [];
   }
 }
 
-export const storage = new MemStorage();
+// Export a singleton instance
+export const storage = new SupabaseStorage();
