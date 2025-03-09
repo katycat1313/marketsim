@@ -29,10 +29,12 @@ export default function Home() {
                 Define your target audience with detailed demographics and interests.
               </p>
               <Link href="/persona-builder">
-                <Button className="w-full">
-                  Start Building 
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
+                <a className="w-full">
+                  <Button className="w-full">
+                    Start Building 
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </a>
               </Link>
             </CardContent>
           </Card>
@@ -49,10 +51,12 @@ export default function Home() {
                 Create and optimize Google Ads campaigns in a risk-free environment.
               </p>
               <Link href="/campaign-creator">
-                <Button className="w-full">
-                  Create Campaign
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
+                <a className="w-full">
+                  <Button className="w-full">
+                    Create Campaign
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </a>
               </Link>
             </CardContent>
           </Card>
@@ -69,10 +73,12 @@ export default function Home() {
                 Track performance metrics and learn from simulated data.
               </p>
               <Link href="/dashboard">
-                <Button className="w-full">
-                  View Dashboard
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
+                <a className="w-full">
+                  <Button className="w-full">
+                    View Dashboard
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </a>
               </Link>
             </CardContent>
           </Card>
