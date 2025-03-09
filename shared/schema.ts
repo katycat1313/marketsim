@@ -5,6 +5,7 @@ import { z } from "zod";
 // User API settings table - for LLM providers only
 export const userApiSettings = pgTable("user_api_settings", {
   id: serial("id").primaryKey(),
+  username: text("username").unique().notNull(),
   activeProvider: text("active_provider").notNull(), // 'anthropic', 'openai', or 'gemini'
   anthropicApiKey: text("anthropic_api_key"),
   openaiApiKey: text("openai_api_key"),

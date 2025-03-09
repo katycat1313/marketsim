@@ -42,6 +42,7 @@ export default function SettingsPage() {
       name: "",
       email: "",
       company: "",
+      username: "", // Added username to default values
       // Application preferences
       theme: "system",
       emailNotifications: true,
@@ -210,6 +211,22 @@ export default function SettingsPage() {
                   <CardContent className="space-y-6">
                     <FormField
                       control={form.control}
+                      name="username"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Username</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Choose a username" {...field} />
+                          </FormControl>
+                          <FormDescription>
+                            Your unique identifier on the platform
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
                       name="name"
                       render={({ field }) => (
                         <FormItem>
@@ -221,7 +238,6 @@ export default function SettingsPage() {
                         </FormItem>
                       )}
                     />
-
                     <FormField
                       control={form.control}
                       name="email"
@@ -235,7 +251,6 @@ export default function SettingsPage() {
                         </FormItem>
                       )}
                     />
-
                     <FormField
                       control={form.control}
                       name="company"

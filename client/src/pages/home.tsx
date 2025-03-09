@@ -19,7 +19,7 @@ export default function Home() {
           <Link href="/api-settings">
             <Button variant="outline" className="flex items-center gap-2">
               <Settings className="h-5 w-5" />
-              AI Settings
+              Settings
             </Button>
           </Link>
         </div>
