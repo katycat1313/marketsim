@@ -2,6 +2,22 @@ import { pgTable, text, serial, integer, json, timestamp, decimal } from "drizzl
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
+// User API settings table
+export const userApiSettings = pgTable("user_api_settings", {
+  id: serial("id").primaryKey(),
+  activeProvider: text("active_provider").notNull(), // 'anthropic', 'openai', or 'gemini'
+  anthropicApiKey: text("anthropic_api_key"),
+  openaiApiKey: text("openai_api_key"),
+  geminiApiKey: text("gemini_api_key"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Add new types for API settings
+export const insertApiSettingsSchema = createInsertSchema(userApiSettings);
+export type UserApiSettings = typeof userApiSettings.$inferSelect;
+export type InsertApiSettings = z.infer<typeof insertApiSettingsSchema>;
+
 export const personas = pgTable("personas", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
@@ -9,6 +25,12 @@ export const personas = pgTable("personas", {
   gender: text("gender").notNull(),
   location: text("location").notNull(),
   interests: text("interests").array().notNull(),
+  industry: text("industry").notNull(),
+  education: text("education").notNull(),
+  incomeRange: text("income_range").notNull(),
+  behaviors: text("behaviors").array().notNull(),
+  onlinePlatforms: text("online_platforms").array().notNull(),
+  buyingHabits: text("buying_habits").array().notNull(),
   description: text("description").notNull(),
 });
 
@@ -62,7 +84,11 @@ export const simulationData = pgTable("simulation_data", {
 });
 
 // Validation schemas
-export const insertPersonaSchema = createInsertSchema(personas);
+export const insertPersonaSchema = createInsertSchema(personas).extend({
+  behaviors: z.array(z.string()),
+  onlinePlatforms: z.array(z.string()),
+  buyingHabits: z.array(z.string()),
+});
 
 export const insertCampaignSchema = createInsertSchema(campaigns)
   .omit({ createdAt: true, status: true })
@@ -84,3 +110,33 @@ export type SimulationData = typeof simulationData.$inferSelect;
 export type InsertPersona = z.infer<typeof insertPersonaSchema>;
 export type InsertCampaign = z.infer<typeof insertCampaignSchema>;
 export type InsertSimulationData = z.infer<typeof insertSimulationDataSchema>;
+
+// Add to existing schema.ts file
+export const marketingResources = pgTable("marketing_resources", {
+  id: serial("id").primaryKey(),
+  category: text("category").notNull(), // 'best_practices', 'case_studies', 'strategy_guides', etc.
+  title: text("title").notNull(),
+  content: text("content").notNull(),
+  tags: text("tags").array().notNull(),
+  lastUpdated: timestamp("last_updated").defaultNow().notNull(),
+});
+
+export const marketingKnowledgeBase = pgTable("marketing_knowledge_base", {
+  id: serial("id").primaryKey(),
+  topic: text("topic").notNull(), // e.g., 'audience_targeting', 'ad_copy', 'budget_optimization'
+  context: text("context").notNull(), // The marketing context or scenario
+  recommendation: text("recommendation").notNull(), // Expert recommendation
+  source: text("source"), // Source of the knowledge if applicable
+  effectiveness: integer("effectiveness").notNull(), // Rating of how effective this advice has been
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// Add validation schemas
+export const insertMarketingResourceSchema = createInsertSchema(marketingResources);
+export const insertKnowledgeBaseSchema = createInsertSchema(marketingKnowledgeBase);
+
+// Add types
+export type MarketingResource = typeof marketingResources.$inferSelect;
+export type KnowledgeBase = typeof marketingKnowledgeBase.$inferSelect;
+export type InsertMarketingResource = z.infer<typeof insertMarketingResourceSchema>;
+export type InsertKnowledgeBase = z.infer<typeof insertKnowledgeBaseSchema>;

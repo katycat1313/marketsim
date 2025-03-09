@@ -7,6 +7,7 @@ import Home from "@/pages/home";
 import PersonaBuilder from "@/pages/persona-builder";
 import CampaignCreator from "@/pages/campaign-creator";
 import Dashboard from "@/pages/dashboard";
+import ApiSettings from "@/pages/api-settings";
 
 function Router() {
   return (
@@ -15,6 +16,7 @@ function Router() {
       <Route path="/persona-builder" component={PersonaBuilder} />
       <Route path="/campaign-creator" component={CampaignCreator} />
       <Route path="/dashboard" component={Dashboard} />
+      <Route path="/api-settings" component={ApiSettings} />
       <Route component={NotFound} />
     </Switch>
   );
