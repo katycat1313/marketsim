@@ -11,9 +11,15 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  BarChart,
+  Bar,
+  PieChart,
+  Pie,
+  Cell,
 } from "recharts";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { calculateSimulationFactors, generateSimulationData, getPerformanceInsights } from "@/lib/simulation";
 import { apiRequest } from "@/lib/queryClient";
 
@@ -55,6 +61,8 @@ interface SimulationData {
   date: string;
 }
 
+const COLORS = ['hsl(var(--primary))', 'hsl(var(--secondary))', 'hsl(var(--accent))'];
+
 export default function Dashboard() {
   const [, navigate] = useLocation();
 
@@ -68,20 +76,17 @@ export default function Dashboard() {
     queryFn: async () => {
       if (!campaigns.length) return [];
 
-      // For each campaign, get simulation data and generate new data point
       const allData = await Promise.all(
         campaigns.map(async (campaign) => {
           const factors = calculateSimulationFactors(campaign);
           const newData = generateSimulationData(campaign, factors);
           const insights = getPerformanceInsights(newData);
 
-          // Add new simulation data point
           await apiRequest("POST", "/api/simulation-data", {
             campaignId: campaign.id,
             ...newData,
           });
 
-          // Get all simulation data for campaign
           const response = await fetch(`/api/campaigns/${campaign.id}/simulation`);
           const data = await response.json();
           return { campaign, data, insights };
@@ -91,13 +96,19 @@ export default function Dashboard() {
       return allData;
     },
     enabled: campaigns.length > 0,
-    refetchInterval: 5000, // Refresh every 5 seconds
+    refetchInterval: 5000,
     initialData: [],
   });
 
   if (loadingCampaigns || simulationQueries.isLoading) {
     return <Skeleton className="h-screen w-full" />;
   }
+
+  const prepareConversionData = (data: SimulationData) => [
+    { name: 'Clicks', value: data.clicks },
+    { name: 'Conversions', value: data.conversions },
+    { name: 'Bounces', value: data.clicks - data.conversions },
+  ];
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -188,39 +199,92 @@ export default function Dashboard() {
                 </div>
               </div>
 
-              <div className="h-[300px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={data}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis
-                      dataKey="date"
-                      tickFormatter={(date) => new Date(date).toLocaleDateString()}
-                    />
-                    <YAxis />
-                    <Tooltip
-                      labelFormatter={(date) => new Date(date).toLocaleDateString()}
-                    />
-                    <Line
-                      type="monotone"
-                      dataKey="impressions"
-                      stroke="hsl(var(--primary))"
-                      name="Impressions"
-                    />
-                    <Line
-                      type="monotone"
-                      dataKey="clicks"
-                      stroke="hsl(var(--chart-2))"
-                      name="Clicks"
-                    />
-                    <Line
-                      type="monotone"
-                      dataKey="conversions"
-                      stroke="hsl(var(--chart-3))"
-                      name="Conversions"
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
+              <Tabs defaultValue="trends" className="space-y-4">
+                <TabsList>
+                  <TabsTrigger value="trends">Performance Trends</TabsTrigger>
+                  <TabsTrigger value="conversion">Conversion Funnel</TabsTrigger>
+                  <TabsTrigger value="costs">Cost Analysis</TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="trends">
+                  <div className="h-[300px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <LineChart data={data}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis
+                          dataKey="date"
+                          tickFormatter={(date) => new Date(date).toLocaleDateString()}
+                        />
+                        <YAxis />
+                        <Tooltip
+                          labelFormatter={(date) => new Date(date).toLocaleDateString()}
+                        />
+                        <Line
+                          type="monotone"
+                          dataKey="impressions"
+                          stroke="hsl(var(--primary))"
+                          name="Impressions"
+                        />
+                        <Line
+                          type="monotone"
+                          dataKey="clicks"
+                          stroke="hsl(var(--secondary))"
+                          name="Clicks"
+                        />
+                        <Line
+                          type="monotone"
+                          dataKey="conversions"
+                          stroke="hsl(var(--accent))"
+                          name="Conversions"
+                        />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="conversion">
+                  <div className="h-[300px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={prepareConversionData(data[data.length - 1])}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={60}
+                          outerRadius={80}
+                          fill="#8884d8"
+                          paddingAngle={5}
+                          dataKey="value"
+                        >
+                          {prepareConversionData(data[data.length - 1]).map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                          ))}
+                        </Pie>
+                        <Tooltip />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="costs">
+                  <div className="h-[300px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={data}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis
+                          dataKey="date"
+                          tickFormatter={(date) => new Date(date).toLocaleDateString()}
+                        />
+                        <YAxis />
+                        <Tooltip
+                          labelFormatter={(date) => new Date(date).toLocaleDateString()}
+                        />
+                        <Bar dataKey="cost" fill="hsl(var(--primary))" name="Cost" />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </TabsContent>
+              </Tabs>
             </CardContent>
           </Card>
         ))}
