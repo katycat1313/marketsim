@@ -1,8 +1,8 @@
 import { useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, AlertCircle } from "lucide-react";
 import {
   LineChart,
   Line,
@@ -13,13 +13,32 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { Skeleton } from "@/components/ui/skeleton";
-import { calculateSimulationFactors, generateSimulationData } from "@/lib/simulation";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { calculateSimulationFactors, generateSimulationData, getPerformanceInsights } from "@/lib/simulation";
 import { apiRequest } from "@/lib/queryClient";
 
 interface Campaign {
   id: number;
   name: string;
-  // Add other campaign properties as needed
+  type: string;
+  platform: string;
+  goal: string;
+  dailyBudget: string;
+  keywords: Array<{ text: string; matchType: string }>;
+  targeting: {
+    locations: string[];
+    languages: string[];
+    devices: string[];
+    demographics: {
+      ageRanges: string[];
+      genders: string[];
+      householdIncomes: string[];
+    };
+  };
+  adHeadlines: string[];
+  adDescriptions: string[];
+  finalUrl: string;
+  status: string;
 }
 
 interface SimulationData {
@@ -27,6 +46,12 @@ interface SimulationData {
   clicks: number;
   conversions: number;
   cost: number;
+  ctr: string;
+  cpc: string;
+  conversionRate: string;
+  cpa: string;
+  qualityScore: number;
+  averagePosition: string;
   date: string;
 }
 
@@ -38,7 +63,7 @@ export default function Dashboard() {
     initialData: [],
   });
 
-  const simulationQueries = useQuery<Array<{ campaign: Campaign; data: SimulationData[] }>>({
+  const simulationQueries = useQuery<Array<{ campaign: Campaign; data: SimulationData[]; insights: string[] }>>({
     queryKey: ["simulation-data"],
     queryFn: async () => {
       if (!campaigns.length) return [];
@@ -48,6 +73,7 @@ export default function Dashboard() {
         campaigns.map(async (campaign) => {
           const factors = calculateSimulationFactors(campaign);
           const newData = generateSimulationData(campaign, factors);
+          const insights = getPerformanceInsights(newData);
 
           // Add new simulation data point
           await apiRequest("POST", "/api/simulation-data", {
@@ -58,7 +84,7 @@ export default function Dashboard() {
           // Get all simulation data for campaign
           const response = await fetch(`/api/campaigns/${campaign.id}/simulation`);
           const data = await response.json();
-          return { campaign, data };
+          return { campaign, data, insights };
         })
       );
 
@@ -84,10 +110,23 @@ export default function Dashboard() {
       </Button>
 
       <div className="grid gap-6">
-        {simulationQueries.data.map(({ campaign, data }) => (
+        {simulationQueries.data.map(({ campaign, data, insights }) => (
           <Card key={campaign.id}>
             <CardHeader>
-              <CardTitle>{campaign.name}</CardTitle>
+              <div className="flex justify-between items-center">
+                <div>
+                  <CardTitle>{campaign.name}</CardTitle>
+                  <CardDescription>
+                    {campaign.platform} • {campaign.type} • {campaign.goal}
+                  </CardDescription>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-muted-foreground">Quality Score:</span>
+                  <span className="font-semibold">
+                    {data[data.length - 1]?.qualityScore}/10
+                  </span>
+                </div>
+              </div>
             </CardHeader>
             <CardContent>
               <div className="grid md:grid-cols-4 gap-4 mb-6">
@@ -104,36 +143,49 @@ export default function Dashboard() {
 
                 <Card>
                   <CardHeader className="py-4">
-                    <CardTitle className="text-sm">Clicks</CardTitle>
+                    <CardTitle className="text-sm">CTR</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <p className="text-2xl font-bold">
-                      {data[data.length - 1]?.clicks.toLocaleString()}
+                      {data[data.length - 1]?.ctr}
                     </p>
                   </CardContent>
                 </Card>
 
                 <Card>
                   <CardHeader className="py-4">
-                    <CardTitle className="text-sm">Conversions</CardTitle>
+                    <CardTitle className="text-sm">Conversion Rate</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <p className="text-2xl font-bold">
-                      {data[data.length - 1]?.conversions.toLocaleString()}
+                      {data[data.length - 1]?.conversionRate}
                     </p>
                   </CardContent>
                 </Card>
 
                 <Card>
                   <CardHeader className="py-4">
-                    <CardTitle className="text-sm">Cost</CardTitle>
+                    <CardTitle className="text-sm">Cost Per Conversion</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <p className="text-2xl font-bold">
-                      ${data[data.length - 1]?.cost.toLocaleString()}
+                      {data[data.length - 1]?.cpa}
                     </p>
                   </CardContent>
                 </Card>
+              </div>
+
+              {/* Performance Insights */}
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold mb-3">Performance Insights</h3>
+                <div className="space-y-2">
+                  {insights.map((insight, index) => (
+                    <Alert key={index}>
+                      <AlertCircle className="h-4 w-4" />
+                      <AlertDescription>{insight}</AlertDescription>
+                    </Alert>
+                  ))}
+                </div>
               </div>
 
               <div className="h-[300px]">
