@@ -2,15 +2,13 @@ import { pgTable, text, serial, integer, json, timestamp, decimal } from "drizzl
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-// User API settings table
+// User API settings table - for LLM providers only
 export const userApiSettings = pgTable("user_api_settings", {
   id: serial("id").primaryKey(),
   activeProvider: text("active_provider").notNull(), // 'anthropic', 'openai', or 'gemini'
   anthropicApiKey: text("anthropic_api_key"),
   openaiApiKey: text("openai_api_key"),
   geminiApiKey: text("gemini_api_key"),
-  stripeReadApiKey: text("stripe_read_api_key"), // New field for Stripe read-only key
-  stripeWriteApiKey: text("stripe_write_api_key"), // New field for Stripe write-only key
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
@@ -113,7 +111,6 @@ export type InsertPersona = z.infer<typeof insertPersonaSchema>;
 export type InsertCampaign = z.infer<typeof insertCampaignSchema>;
 export type InsertSimulationData = z.infer<typeof insertSimulationDataSchema>;
 
-// Add to existing schema.ts file
 export const marketingResources = pgTable("marketing_resources", {
   id: serial("id").primaryKey(),
   category: text("category").notNull(), // 'best_practices', 'case_studies', 'strategy_guides', etc.

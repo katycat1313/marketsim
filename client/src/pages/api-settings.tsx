@@ -13,7 +13,6 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-  FormDescription,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import {
@@ -36,8 +35,6 @@ export default function ApiSettings() {
       anthropicApiKey: "",
       openaiApiKey: "",
       geminiApiKey: "",
-      stripeReadApiKey: "",
-      stripeWriteApiKey: "",
     },
   });
 
@@ -72,7 +69,7 @@ export default function ApiSettings() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Key className="h-5 w-5" />
-            API Settings
+            AI Provider Settings
           </CardTitle>
           <CardDescription>
             Configure your preferred AI provider for market analysis and insights
@@ -103,7 +100,6 @@ export default function ApiSettings() {
                         <SelectItem value="anthropic">Anthropic (Claude)</SelectItem>
                         <SelectItem value="openai">OpenAI (GPT-4)</SelectItem>
                         <SelectItem value="gemini">Google (Gemini)</SelectItem>
-                        <SelectItem value="stripe">Stripe</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -157,44 +153,6 @@ export default function ApiSettings() {
                     </FormItem>
                   )}
                 />
-              )}
-
-              {selectedProvider === "stripe" && (
-                <>
-                  <FormField
-                    control={form.control}
-                    name="stripeReadApiKey"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Stripe Read-Only API Key</FormLabel>
-                        <FormControl>
-                          <Input type="password" placeholder="Enter your Stripe read-only API key" {...field} />
-                        </FormControl>
-                        <FormDescription>
-                          Used for viewing transaction data and subscription status
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="stripeWriteApiKey"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Stripe Write-Only API Key</FormLabel>
-                        <FormControl>
-                          <Input type="password" placeholder="Enter your Stripe write-only API key" {...field} />
-                        </FormControl>
-                        <FormDescription>
-                          Used for processing payments and managing subscriptions
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </>
               )}
 
               <Button type="submit" className="w-full">
