@@ -9,6 +9,8 @@ export const userApiSettings = pgTable("user_api_settings", {
   anthropicApiKey: text("anthropic_api_key"),
   openaiApiKey: text("openai_api_key"),
   geminiApiKey: text("gemini_api_key"),
+  stripeReadApiKey: text("stripe_read_api_key"), // New field for Stripe read-only key
+  stripeWriteApiKey: text("stripe_write_api_key"), // New field for Stripe write-only key
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
