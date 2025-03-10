@@ -2,6 +2,8 @@ import type { Express } from "express";
 import { createServer } from "http";
 import { storage } from "./storage";
 import { insertPersonaSchema, insertCampaignSchema, insertSimulationDataSchema } from "@shared/schema";
+import { simulationEngine } from "./services/simulationEngine";
+import { freeMarketingAI, premiumMarketingAI, enterpriseMarketingAI } from "./services/marketingAI";
 
 export async function registerRoutes(app: Express) {
   const httpServer = createServer(app);
@@ -70,6 +72,60 @@ export async function registerRoutes(app: Express) {
   app.get("/api/campaigns/:id/simulation", async (req, res) => {
     const data = await storage.getSimulationData(parseInt(req.params.id));
     res.json(data);
+  });
+
+  // New Campaign Preview & Suggestions Routes
+  app.post("/api/campaigns/preview", async (req, res) => {
+    try {
+      const campaignData = req.body;
+      const [user] = await storage.getUserSubscription(req.user?.id);
+
+      // Generate preview simulation data
+      const previewData = await simulationEngine.simulateDay({
+        ...campaignData,
+        id: 0, // Temporary ID for preview
+      }, 1); // Simulate first day
+
+      res.json({
+        impressions: previewData.impressions,
+        clicks: previewData.clicks,
+        conversions: previewData.conversions,
+        ctr: previewData.ctr,
+        cpc: previewData.cpc,
+        costPerConversion: previewData.cpa,
+        qualityScore: previewData.qualityScore
+      });
+    } catch (error) {
+      res.status(400).json({ error: "Failed to generate campaign preview" });
+    }
+  });
+
+  app.post("/api/campaigns/suggestions", async (req, res) => {
+    try {
+      const campaignData = req.body;
+      const [user] = await storage.getUserSubscription(req.user?.id);
+
+      // Get appropriate AI service based on subscription
+      const marketingAI = user?.subscription?.tier === 'enterprise' 
+        ? enterpriseMarketingAI 
+        : user?.subscription?.tier === 'premium'
+          ? premiumMarketingAI
+          : freeMarketingAI;
+
+      // Get personalized or general advice based on subscription
+      const suggestions = await marketingAI.getMarketingAdvice(
+        campaignData,
+        user,
+        {
+          brandName: campaignData.brandName,
+          industry: campaignData.industry
+        }
+      );
+
+      res.json(suggestions);
+    } catch (error) {
+      res.status(400).json({ error: "Failed to generate suggestions" });
+    }
   });
 
   return httpServer;

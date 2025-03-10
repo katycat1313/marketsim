@@ -142,6 +142,62 @@ export type InsertMarketingResource = z.infer<typeof insertMarketingResourceSche
 export type InsertKnowledgeBase = z.infer<typeof insertKnowledgeBaseSchema>;
 
 
+// User-contributed marketing knowledge
+export const userMarketingKnowledge = pgTable("user_marketing_knowledge", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  brandName: text("brand_name"),
+  industry: text("industry").notNull(),
+  topic: text("topic").notNull(),
+  context: text("context").notNull(),
+  strategy: text("strategy").notNull(),
+  results: text("results").notNull(),
+  effectiveness: integer("effectiveness").notNull(), // 1-100 rating
+  tags: text("tags").array().notNull(),
+  isPublic: boolean("is_public").default(true).notNull(),
+  verifiedByAI: boolean("verified_by_ai").default(false).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Industry-specific benchmarks and insights
+export const industryBenchmarks = pgTable("industry_benchmarks", {
+  id: serial("id").primaryKey(),
+  industry: text("industry").notNull(),
+  platform: text("platform").notNull(), // e.g., 'google_ads', 'facebook', etc.
+  metric: text("metric").notNull(), // e.g., 'ctr', 'conversion_rate', etc.
+  averageValue: decimal("average_value").notNull(),
+  topPerformerValue: decimal("top_performer_value").notNull(),
+  context: text("context").notNull(),
+  lastUpdated: timestamp("last_updated").defaultNow().notNull(),
+});
+
+// Brand-specific performance data
+export const brandPerformanceData = pgTable("brand_performance_data", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  brandName: text("brand_name").notNull(),
+  industry: text("industry").notNull(),
+  platform: text("platform").notNull(),
+  metric: text("metric").notNull(),
+  value: decimal("value").notNull(),
+  timeframe: text("timeframe").notNull(), // e.g., 'last_30_days', 'last_quarter'
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// Add validation schemas
+export const insertUserMarketingKnowledgeSchema = createInsertSchema(userMarketingKnowledge);
+export const insertIndustryBenchmarkSchema = createInsertSchema(industryBenchmarks);
+export const insertBrandPerformanceDataSchema = createInsertSchema(brandPerformanceData);
+
+// Add types
+export type UserMarketingKnowledge = typeof userMarketingKnowledge.$inferSelect;
+export type IndustryBenchmark = typeof industryBenchmarks.$inferSelect;
+export type BrandPerformanceData = typeof brandPerformanceData.$inferSelect;
+export type InsertUserMarketingKnowledge = z.infer<typeof insertUserMarketingKnowledgeSchema>;
+export type InsertIndustryBenchmark = z.infer<typeof insertIndustryBenchmarkSchema>;
+export type InsertBrandPerformanceData = z.infer<typeof insertBrandPerformanceDataSchema>;
+
 // User profiles and levels
 export const userProfiles = pgTable("user_profiles", {
   id: serial("id").primaryKey(),

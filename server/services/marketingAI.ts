@@ -1,12 +1,49 @@
 import Anthropic from '@anthropic-ai/sdk';
 import OpenAI from 'openai';
 import { db } from '../db';
-import { marketingResources, marketingKnowledgeBase, userProfiles } from '@shared/schema';
+import { 
+  marketingResources, marketingKnowledgeBase, userProfiles, 
+  brandPerformanceData, industryBenchmarks, userMarketingKnowledge 
+} from '@shared/schema';
 
 // the newest Anthropic model is "claude-3-7-sonnet-20250219" which was released February 24, 2025
 const ANTHROPIC_MODEL = "claude-3-7-sonnet-20250219";
 // the newest OpenAI model is "gpt-4o" which was released May 13, 2024
 const OPENAI_MODEL = "gpt-4o";
+
+enum SubscriptionTier {
+  FREE = 'free',
+  PREMIUM = 'premium',
+  ENTERPRISE = 'enterprise'
+}
+
+interface AIServiceConfig {
+  tier: SubscriptionTier;
+  personalizationEnabled: boolean;
+  historyRetention: number; // days
+  maxContextSize: number;
+}
+
+const TIER_CONFIGS: Record<SubscriptionTier, AIServiceConfig> = {
+  [SubscriptionTier.FREE]: {
+    tier: SubscriptionTier.FREE,
+    personalizationEnabled: false,
+    historyRetention: 7,
+    maxContextSize: 1000,
+  },
+  [SubscriptionTier.PREMIUM]: {
+    tier: SubscriptionTier.PREMIUM,
+    personalizationEnabled: true,
+    historyRetention: 30,
+    maxContextSize: 2000,
+  },
+  [SubscriptionTier.ENTERPRISE]: {
+    tier: SubscriptionTier.ENTERPRISE,
+    personalizationEnabled: true,
+    historyRetention: 90,
+    maxContextSize: 4000,
+  }
+};
 
 // Define level requirements and skills
 const MARKETING_LEVELS = {
@@ -79,16 +116,38 @@ const MARKETING_LEVELS = {
   }
 };
 
+interface InsertUserMarketingKnowledge {
+    brandName: string;
+    industry: string;
+    topic: string;
+    strategy: string;
+    results: string;
+    context: string;
+    effectiveness: number;
+    userId: number;
+}
+
+interface UserMarketingKnowledge extends InsertUserMarketingKnowledge {
+    id: number;
+    isPublic: boolean;
+    verifiedByAI: boolean;
+}
+
+
 export class MarketingAI {
   private anthropic: Anthropic | null = null;
   private openai: OpenAI | null = null;
   private geminiKey: string | null = null;
+  private userConfig: AIServiceConfig;
 
   constructor(
+    tier: SubscriptionTier = SubscriptionTier.FREE,
     anthropicKey?: string,
     openaiKey?: string,
     geminiKey?: string
   ) {
+    this.userConfig = TIER_CONFIGS[tier];
+
     if (anthropicKey) {
       this.anthropic = new Anthropic({ apiKey: anthropicKey });
     }
@@ -264,99 +323,163 @@ export class MarketingAI {
 
   async getMarketingAdvice(
     campaignContext: any,
-    provider: 'anthropic' | 'openai' | 'gemini' = 'anthropic'
-  ) {
-    // Get relevant knowledge base entries
-    const relevantKnowledge = await db.select().from(marketingKnowledgeBase).where({
-      topic: campaignContext.type
-    });
-
-    // Get relevant marketing resources
-    const resources = await db.select().from(marketingResources).where({
-      category: 'best_practices'
-    });
-
-    // Construct context from knowledge base
-    const context = `
-    Campaign Context:
-    - Type: ${campaignContext.type}
-    - Platform: ${campaignContext.platform}
-    - Goal: ${campaignContext.goal}
-    - Budget: ${campaignContext.dailyBudget}
-
-    Relevant Marketing Knowledge:
-    ${relevantKnowledge.map(k => `- ${k.recommendation}`).join('\n')}
-
-    Best Practices:
-    ${resources.map(r => `- ${r.title}: ${r.content}`).join('\n')}
-    `;
-
-    switch (provider) {
-      case 'anthropic':
-        return this.getAnthropicAdvice(context);
-      case 'openai':
-        return this.getOpenAIAdvice(context);
-      case 'gemini':
-        return this.getGeminiAdvice(context);
-      default:
-        throw new Error('Unsupported AI provider');
+    userProfile?: any,
+    brandContext?: {
+      brandName: string;
+      industry: string;
+    }
+  ): Promise<string> {
+    if (this.userConfig.personalizationEnabled && userProfile) {
+      return this.getPersonalizedAdvice(campaignContext, userProfile, brandContext);
+    } else {
+      return this.getGeneralAdvice(campaignContext);
     }
   }
 
-  private async getAnthropicAdvice(context: string) {
-    if (!this.anthropic) throw new Error('Anthropic not configured');
+  private async getGeneralAdvice(campaignContext: any): Promise<string> {
+    // Get general marketing knowledge and best practices
+    const [knowledge, resources] = await Promise.all([
+      db.select().from(marketingKnowledgeBase)
+        .where({ topic: campaignContext.type })
+        .orderBy('effectiveness', 'desc')
+        .limit(5),
+      db.select().from(marketingResources)
+        .where({ category: 'best_practices' })
+    ]);
 
-    const response = await this.anthropic.messages.create({
-      model: ANTHROPIC_MODEL,
-      max_tokens: 1000,
+    const context = `
+Campaign Context:
+- Type: ${campaignContext.type}
+- Platform: ${campaignContext.platform}
+- Goal: ${campaignContext.goal}
+- Budget: ${campaignContext.dailyBudget}
+
+General Best Practices:
+${knowledge.map(k => `- ${k.recommendation}`).join('\n')}
+
+Marketing Resources:
+${resources.map(r => `- ${r.title}: ${r.content}`).join('\n')}
+
+Provide recommendations focusing on:
+1. Basic campaign setup
+2. Standard best practices
+3. Common optimization strategies
+4. Key metrics to monitor
+5. Risk mitigation
+`;
+
+    const response = await this.getAIProvider().messages.create({
+      model: this.getModelName(),
+      max_tokens: this.userConfig.maxContextSize,
       messages: [{
+        role: 'system',
+        content: 'You are a marketing advisor providing general guidance based on industry best practices.'
+      }, {
         role: 'user',
-        content: `As a marketing expert, analyze this campaign and provide specific recommendations for improvement:
-
-        ${context}
-
-        Provide advice in the following areas:
-        1. Targeting Optimization
-        2. Ad Copy Improvements
-        3. Budget Allocation
-        4. Performance Metrics to Monitor
-        `
+        content: context
       }]
     });
 
     return response.content[0].text;
   }
 
-  private async getOpenAIAdvice(context: string) {
-    if (!this.openai) throw new Error('OpenAI not configured');
+  async getPersonalizedAdvice(
+    campaignContext: any,
+    userProfile: any,
+    brandContext?: {
+      brandName: string;
+      industry: string;
+    }
+  ): Promise<string> {
+    // Get all relevant knowledge sources
+    const [
+      generalKnowledge,
+      industryKnowledge,
+      brandKnowledge,
+      benchmarks,
+      userContributions
+    ] = await Promise.all([
+      db.select().from(marketingKnowledgeBase)
+        .where({ topic: campaignContext.type })
+        .orderBy('effectiveness', 'desc')
+        .limit(5),
+      db.select().from(marketingKnowledgeBase)
+        .where({ 
+          topic: campaignContext.type,
+          industry: brandContext?.industry 
+        })
+        .orderBy('effectiveness', 'desc')
+        .limit(5),
+      brandContext ? db.select().from(brandPerformanceData)
+        .where({ 
+          brandName: brandContext.brandName,
+          platform: campaignContext.platform 
+        })
+        .limit(5) : Promise.resolve([]),
+      brandContext ? db.select().from(industryBenchmarks)
+        .where({ 
+          industry: brandContext.industry,
+          platform: campaignContext.platform 
+        }) : Promise.resolve([]),
+      db.select().from(userMarketingKnowledge)
+        .where({ 
+          industry: brandContext?.industry,
+          isPublic: true,
+          verifiedByAI: true 
+        })
+        .orderBy('effectiveness', 'desc')
+        .limit(5)
+    ]);
 
-    const response = await this.openai.chat.completions.create({
-      model: OPENAI_MODEL,
+    const enhancedContext = `
+Campaign Context:
+- Type: ${campaignContext.type}
+- Platform: ${campaignContext.platform}
+- Goal: ${campaignContext.goal}
+- Budget: ${campaignContext.dailyBudget}
+
+${brandContext ? `
+Brand Context:
+- Brand: ${brandContext.brandName}
+- Industry: ${brandContext.industry}
+- Historical Performance: ${JSON.stringify(brandKnowledge, null, 2)}
+- Industry Benchmarks: ${JSON.stringify(benchmarks, null, 2)}
+` : ''}
+
+User Context:
+- Current Level: ${userProfile.level}
+- Required Skills: ${MARKETING_LEVELS[userProfile.level as keyof typeof MARKETING_LEVELS].skills.join(', ')}
+
+General Best Practices:
+${generalKnowledge.map(k => `- ${k.recommendation}`).join('\n')}
+
+Industry-Specific Knowledge:
+${industryKnowledge.map(k => `- ${k.recommendation}`).join('\n')}
+
+Community Insights:
+${userContributions.map(k => `- ${k.strategy} (Effectiveness: ${k.effectiveness}%)`).join('\n')}
+
+Provide personalized recommendations considering:
+1. User's current skill level and learning path
+2. Brand-specific historical performance (if available)
+3. Industry benchmarks and standards
+4. Community-validated strategies
+5. Step-by-step implementation guide
+`;
+
+    const response = await this.getAIProvider().messages.create({
+      model: this.getModelName(),
+      max_tokens: 2000,
       messages: [{
         role: 'system',
-        content: 'You are an expert digital marketing consultant with deep knowledge of online advertising platforms.'
+        content: 'You are an expert marketing mentor providing personalized guidance based on comprehensive market knowledge.'
       }, {
         role: 'user',
-        content: `Analyze this campaign and provide specific recommendations:
-
-        ${context}
-
-        Focus on:
-        1. Targeting Optimization
-        2. Ad Copy Improvements
-        3. Budget Allocation
-        4. Performance Metrics to Monitor
-        `
-      }],
-      response_format: { type: "json_object" }
+        content: enhancedContext
+      }]
     });
 
-    return response.choices[0].message.content;
-  }
-
-  private async getGeminiAdvice(context: string) {
-    // Implement Gemini API integration when available
-    throw new Error('Gemini integration coming soon');
+    return response.content[0].text;
   }
 
   async learnFromCampaignResults(campaignResults: any, feedback: any) {
@@ -417,59 +540,100 @@ export class MarketingAI {
     throw new Error('No AI model available');
   }
 
-  async getEnhancedMarketingAdvice(campaignContext: any, userProfile: any, provider: 'anthropic' | 'openai' | 'gemini' = 'anthropic') {
-    // Get relevant knowledge and resources
-    const [relevantKnowledge, resources, userLevel] = await Promise.all([
-      db.select().from(marketingKnowledgeBase)
-        .where({ topic: campaignContext.type })
-        .orderBy('effectiveness', 'desc')
-        .limit(5),
-      db.select().from(marketingResources)
-        .where({ category: 'best_practices' }),
-      db.select().from(userProfiles)
-        .where({ id: userProfile.id })
-    ]);
 
-    // Construct enhanced context with user's level and past learnings
-    const enhancedContext = `
-  Campaign Context:
-  - Type: ${campaignContext.type}
-  - Platform: ${campaignContext.platform}
-  - Goal: ${campaignContext.goal}
-  - Budget: ${campaignContext.dailyBudget}
+  async validateUserKnowledge(knowledge: InsertUserMarketingKnowledge): Promise<{
+    isValid: boolean;
+    confidence: number;
+    suggestions: string[];
+  }> {
+    const prompt = `As a marketing expert, validate this user-contributed marketing knowledge:
 
-  User Context:
-  - Current Level: ${userLevel.level}
-  - Required Skills: ${MARKETING_LEVELS[userLevel.level as keyof typeof MARKETING_LEVELS].skills.join(', ')}
+    Brand: ${knowledge.brandName}
+    Industry: ${knowledge.industry}
+    Topic: ${knowledge.topic}
+    Strategy: ${knowledge.strategy}
+    Results: ${knowledge.results}
 
-  Top Performing Strategies:
-  ${relevantKnowledge.map(k => `- ${k.recommendation} (Effectiveness: ${k.effectiveness}%)`).join('\n')}
+    Evaluate:
+    1. Is this knowledge valid and useful for the specified industry?
+    2. How confident are you in this assessment (0-100)?
+    3. What suggestions would you make to improve this knowledge?
 
-  Best Practices:
-  ${resources.map(r => `- ${r.title}: ${r.content}`).join('\n')}
+    Format response as JSON with keys: isValid (boolean), confidence (number), suggestions (array of strings)`;
 
-  Provide personalized recommendations considering:
-  1. User's current skill level and learning path
-  2. Past successful strategies
-  3. Platform-specific optimizations
-  4. Budget allocation based on proven patterns
-  5. Step-by-step implementation guide
-  `;
-
-    const advice = await this.getAIProvider().messages.create({
+    const response = await this.getAIProvider().messages.create({
       model: this.getModelName(),
-      max_tokens: 2000,
+      max_tokens: 1000,
       messages: [{
         role: 'system',
-        content: 'You are an expert marketing mentor, providing personalized guidance based on the user\'s skill level and learning goals.'
+        content: 'You are an expert marketing knowledge validator.'
       }, {
         role: 'user',
-        content: enhancedContext
-      }]
+        content: prompt
+      }],
+      response_format: { type: "json_object" }
     });
 
-    return advice.content[0].text;
+    return JSON.parse(response.content[0].text);
+  }
+
+  async submitUserKnowledge(knowledge: InsertUserMarketingKnowledge): Promise<boolean> {
+    if (!this.userConfig.personalizationEnabled) {
+      throw new Error('Knowledge contribution is only available for premium users');
+    }
+
+    const validation = await this.validateUserKnowledge(knowledge);
+
+    if (validation.isValid && validation.confidence > 70) {
+      await db.insert(userMarketingKnowledge).values({
+        ...knowledge,
+        isPublic: true,
+        verifiedByAI: true,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      });
+
+      // Also add to the main knowledge base if highly effective
+      if (knowledge.effectiveness > 80) {
+        await this.learnFromUserContributions([{
+          ...knowledge,
+          id: 0, // Temporary ID for the interface
+          isPublic: true,
+          verifiedByAI: true
+        }]);
+      }
+
+      return true;
+    }
+
+    return false;
+  }
+  async learnFromUserContributions(contributions: UserMarketingKnowledge[]): Promise<void> {
+    for (const contribution of contributions) {
+      const validation = await this.validateUserKnowledge(contribution);
+
+      if (validation.isValid && validation.confidence > 70) {
+        // Add validated knowledge to the main knowledge base
+        await db.insert(marketingKnowledgeBase).values({
+          topic: contribution.topic,
+          context: contribution.context,
+          recommendation: contribution.strategy,
+          source: `user_contribution_${contribution.userId}`,
+          effectiveness: contribution.effectiveness,
+          createdAt: new Date().toISOString()
+        });
+
+        // Update the user contribution status
+        await db
+          .update(userMarketingKnowledge)
+          .set({ verifiedByAI: true })
+          .where({ id: contribution.id });
+      }
+    }
   }
 }
 
-export const marketingAI = new MarketingAI();
+// Create instances for different subscription tiers
+export const freeMarketingAI = new MarketingAI(SubscriptionTier.FREE);
+export const premiumMarketingAI = new MarketingAI(SubscriptionTier.PREMIUM);
+export const enterpriseMarketingAI = new MarketingAI(SubscriptionTier.ENTERPRISE);
