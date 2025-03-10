@@ -48,8 +48,10 @@ export default function CampaignCreator() {
   const [platform, setPlatform] = useState<"google" | "meta">("google");
   const [headlines, setHeadlines] = useState<string[]>([""]);
   const [descriptions, setDescriptions] = useState<string[]>([""]);
+  const [selectedMatchType, setSelectedMatchType] = useState("broad");
 
-  const { data: personas = [], isLoading: loadingPersonas } = useQuery<any[]>({
+  // Update the personas query to handle loading and error states
+  const { data: personas = [], isLoading: loadingPersonas, error: personasError } = useQuery<any[]>({
     queryKey: ["/api/personas"],
     initialData: [],
   });
@@ -87,13 +89,13 @@ export default function CampaignCreator() {
   const [isLoading, setIsLoading] = useState(false);
 
   const addHeadline = () => {
-    if (headlines.length < 15) { 
+    if (headlines.length < 15) {
       setHeadlines([...headlines, ""]);
     }
   };
 
   const addDescription = () => {
-    if (descriptions.length < 4) { 
+    if (descriptions.length < 4) {
       setDescriptions([...descriptions, ""]);
     }
   };
@@ -137,7 +139,7 @@ export default function CampaignCreator() {
     try {
       const formattedKeywords = data.keywords.split(",").map((keyword: string) => ({
         text: keyword.trim(),
-        matchType: "broad" 
+        matchType: selectedMatchType
       }));
 
       const response = await apiRequest("POST", "/api/campaigns", {
@@ -155,7 +157,7 @@ export default function CampaignCreator() {
         clicks: 0,
         conversions: 0,
         cost: 0,
-        qualityScore: 7, 
+        qualityScore: 7,
         date: new Date(),
       });
 
@@ -363,7 +365,12 @@ export default function CampaignCreator() {
                               </FormDescription>
                               <div className="mt-2 flex flex-wrap gap-2">
                                 {matchTypes.map((type) => (
-                                  <Badge key={type.value} variant="outline">
+                                  <Badge
+                                    key={type.value}
+                                    variant={selectedMatchType === type.value ? "default" : "outline"}
+                                    className="cursor-pointer hover:bg-primary/10"
+                                    onClick={() => setSelectedMatchType(type.value)}
+                                  >
                                     {type.label}
                                   </Badge>
                                 ))}
@@ -379,23 +386,29 @@ export default function CampaignCreator() {
                           render={({ field }) => (
                             <FormItem>
                               <FormLabel>Target Persona</FormLabel>
-                              <Select
-                                onValueChange={(value) => field.onChange(parseInt(value))}
-                                defaultValue={field.value.toString()}
-                              >
-                                <FormControl>
-                                  <SelectTrigger>
-                                    <SelectValue placeholder="Select persona" />
-                                  </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                  {personas.map((persona: any) => (
-                                    <SelectItem key={persona.id} value={persona.id.toString()}>
-                                      {persona.name}
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
+                              {loadingPersonas ? (
+                                <Skeleton className="h-10 w-full" />
+                              ) : personasError ? (
+                                <div className="text-sm text-destructive">Failed to load personas</div>
+                              ) : (
+                                <Select
+                                  onValueChange={(value) => field.onChange(parseInt(value))}
+                                  defaultValue={field.value.toString()}
+                                >
+                                  <FormControl>
+                                    <SelectTrigger>
+                                      <SelectValue placeholder="Select persona" />
+                                    </SelectTrigger>
+                                  </FormControl>
+                                  <SelectContent>
+                                    {personas.map((persona: any) => (
+                                      <SelectItem key={persona.id} value={persona.id.toString()}>
+                                        {persona.name}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                              )}
                               <FormMessage />
                             </FormItem>
                           )}
