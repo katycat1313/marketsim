@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, json, timestamp, decimal } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, json, timestamp, decimal, boolean } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -140,3 +140,93 @@ export type MarketingResource = typeof marketingResources.$inferSelect;
 export type KnowledgeBase = typeof marketingKnowledgeBase.$inferSelect;
 export type InsertMarketingResource = z.infer<typeof insertMarketingResourceSchema>;
 export type InsertKnowledgeBase = z.infer<typeof insertKnowledgeBaseSchema>;
+
+
+// User profiles and levels
+export const userProfiles = pgTable("user_profiles", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  username: text("username").unique().notNull(),
+  displayName: text("display_name"),
+  avatarUrl: text("avatar_url"),
+  bio: text("bio"),
+  level: text("level").notNull().default('Newborn'), // Newborn, Beginner, Skilled, Innovator, Strategist, Expert, Master
+  experiencePoints: integer("experience_points").notNull().default(0),
+  achievements: json("achievements").$type<string[]>().default([]),
+  badges: json("badges").$type<string[]>().default([]),
+  specializations: json("specializations").$type<string[]>().default([]),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Social connections
+export const connections = pgTable("connections", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  connectedUserId: integer("connected_user_id").notNull(),
+  status: text("status").notNull(), // pending, accepted, blocked
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// Projects and collaborations
+export const projects = pgTable("projects", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  description: text("description"),
+  ownerId: integer("owner_id").notNull(),
+  status: text("status").notNull(), // draft, active, completed
+  visibility: text("visibility").notNull(), // private, public, collaborative
+  collaborators: json("collaborators").$type<number[]>().default([]),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Posts and discussions
+export const posts = pgTable("posts", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  title: text("title").notNull(),
+  content: text("content").notNull(),
+  type: text("type").notNull(), // question, discussion, showcase
+  tags: json("tags").$type<string[]>().default([]),
+  likes: integer("likes").notNull().default(0),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Comments
+export const comments = pgTable("comments", {
+  id: serial("id").primaryKey(),
+  postId: integer("post_id").notNull(),
+  userId: integer("user_id").notNull(),
+  content: text("content").notNull(),
+  likes: integer("likes").notNull().default(0),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// Achievements and awards
+export const achievements = pgTable("achievements", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  description: text("description").notNull(),
+  type: text("type").notNull(), // skill, campaign, social, special
+  requirements: json("requirements").notNull(),
+  icon: text("icon").notNull(),
+  experiencePoints: integer("experience_points").notNull(),
+});
+
+// Add validation schemas
+export const insertUserProfileSchema = createInsertSchema(userProfiles);
+export const insertConnectionSchema = createInsertSchema(connections);
+export const insertProjectSchema = createInsertSchema(projects);
+export const insertPostSchema = createInsertSchema(posts);
+export const insertCommentSchema = createInsertSchema(comments);
+export const insertAchievementSchema = createInsertSchema(achievements);
+
+// Add types
+export type UserProfile = typeof userProfiles.$inferSelect;
+export type Connection = typeof connections.$inferSelect;
+export type Project = typeof projects.$inferSelect;
+export type Post = typeof posts.$inferSelect;
+export type Comment = typeof comments.$inferSelect;
+export type Achievement = typeof achievements.$inferSelect;
