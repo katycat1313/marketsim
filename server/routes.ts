@@ -106,19 +106,34 @@ export async function registerRoutes(app: Express) {
       const [user] = await storage.getUserSubscription(req.user?.id);
 
       // Get appropriate AI service based on subscription
-      const marketingAI = user?.subscription?.tier === 'enterprise' 
-        ? enterpriseMarketingAI 
+      const marketingAI = user?.subscription?.tier === 'enterprise'
+        ? enterpriseMarketingAI
         : user?.subscription?.tier === 'premium'
           ? premiumMarketingAI
           : freeMarketingAI;
+
+      // Check minimum required information
+      if (!campaignData.productDescription) {
+        return res.json([
+          "Please describe what you're promoting to get tailored suggestions"
+        ]);
+      }
+
+      if (!campaignData.goal) {
+        return res.json([
+          "Select a campaign goal to receive targeted recommendations"
+        ]);
+      }
 
       // Get personalized or general advice based on subscription
       const suggestions = await marketingAI.getMarketingAdvice(
         campaignData,
         user,
         {
+          productDescription: campaignData.productDescription,
           brandName: campaignData.brandName,
-          industry: campaignData.industry
+          industry: campaignData.industry,
+          goal: campaignData.goal
         }
       );
 

@@ -81,6 +81,7 @@ export default function CampaignCreator() {
       adDescriptions: [""],
       finalUrl: "",
       personaId: 0,
+      productDescription: "", // Add this field
     },
   });
 
@@ -342,6 +343,26 @@ export default function CampaignCreator() {
                             )}
                           />
                         </div>
+                        <FormField
+                          control={form.control}
+                          name="productDescription"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>What are you promoting?</FormLabel>
+                              <FormControl>
+                                <Textarea
+                                  placeholder="Describe your product or service (e.g., 'A new fitness app that provides personalized workout plans')"
+                                  className="h-20"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormDescription>
+                                This helps our AI provide more relevant suggestions for your campaign
+                              </FormDescription>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
                       </div>
                     </TabsContent>
 
@@ -600,6 +621,23 @@ export default function CampaignCreator() {
                       <Skeleton className="h-4 w-full" />
                       <Skeleton className="h-4 w-3/4" />
                     </div>
+                  ) : !form.getValues("productDescription") ? (
+                    <div className="space-y-2">
+                      <p className="text-sm text-muted-foreground">
+                        Start by describing what you're promoting to get personalized AI suggestions
+                      </p>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="w-full"
+                        onClick={() => {
+                          const tab = document.querySelector('[data-value="campaign"]');
+                          if (tab) (tab as HTMLElement).click();
+                        }}
+                      >
+                        Add Product Description
+                      </Button>
+                    </div>
                   ) : aiSuggestions.length > 0 ? (
                     <ul className="space-y-2">
                       {aiSuggestions.map((suggestion, index) => (
@@ -611,7 +649,9 @@ export default function CampaignCreator() {
                     </ul>
                   ) : (
                     <p className="text-sm text-muted-foreground">
-                      Add more campaign details to get AI-powered suggestions
+                      {form.getValues("goal") ?
+                        "Add more targeting details to get AI suggestions" :
+                        "Select a campaign goal to get AI suggestions"}
                     </p>
                   )}
                 </CardContent>
