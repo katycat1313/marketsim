@@ -1,69 +1,56 @@
-import express, { type Request, Response, NextFunction } from "express";
-import { registerRoutes } from "./routes";
-import { setupVite, serveStatic, log } from "./vite";
+import express from 'express';
+import bodyParser from 'body-parser';
+import { db } from './db'; // Import your database instance
+import { Campaign } from '@shared/schema'; // Adjust import based on your schema setup
 
 const app = express();
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+const port = 5000; // Always serve on port 5000
 
-app.use((req, res, next) => {
-  const start = Date.now();
-  const path = req.path;
-  let capturedJsonResponse: Record<string, any> | undefined = undefined;
+app.use(bodyParser.json());
 
-  const originalResJson = res.json;
-  res.json = function (bodyJson, ...args) {
-    capturedJsonResponse = bodyJson;
-    return originalResJson.apply(res, [bodyJson, ...args]);
-  };
-
-  res.on("finish", () => {
-    const duration = Date.now() - start;
-    if (path.startsWith("/api")) {
-      let logLine = `${req.method} ${path} ${res.statusCode} in ${duration}ms`;
-      if (capturedJsonResponse) {
-        logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
-      }
-
-      if (logLine.length > 80) {
-        logLine = logLine.slice(0, 79) + "…";
-      }
-
-      log(logLine);
+// Sample API endpoint to get campaigns
+app.get('/api/campaigns', async (req, res) => {
+    try {
+        const campaigns = await db.select().from('campaigns'); // Assuming you have a campaigns table
+        res.json(campaigns);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
     }
-  });
-
-  next();
 });
 
-(async () => {
-  const server = await registerRoutes(app);
+// Sample API endpoint to create a campaign
+app.post('/api/campaigns', async (req, res) => {
+    const newCampaign: Campaign = req.body; // Capture the campaign data from request body
+    try {
+        const createdCampaign = await db.insert('campaigns').values(newCampaign);
+        res.status(201).json(createdCampaign); // Respond with created campaign data
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
 
-  app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-    const status = err.status || err.statusCode || 500;
-    const message = err.message || "Internal Server Error";
+// Sample API endpoint to get simulation data for a specific campaign
+app.get('/api/campaigns/:id/simulation', async (req, res) => {
+    const campaignId = req.params.id;
+    // Logic to retrieve simulation data for the specified campaign
+    try {
+        const simulationData = await getSimulationData(campaignId); // Function to fetch simulation data
+        res.json(simulationData);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
 
-    res.status(status).json({ message });
-    throw err;
-  });
+// Sample function to get simulation data (you'll need to define this)
+async function getSimulationData(campaignId: string) {
+    // Logic to fetch and return simulation data based on campaignId
+    return {
+        qualityScore: 8,
+        insights: ["Good engagement", "Consider improving visuals"]
+    };
+}
 
-  // importantly only setup vite in development and after
-  // setting up all the other routes so the catch-all route
-  // doesn't interfere with the other routes
-  if (app.get("env") === "development") {
-    await setupVite(app, server);
-  } else {
-    serveStatic(app);
-  }
-
-  // ALWAYS serve the app on port 5000
-  // this serves both the API and the client
-  const port = 5000;
-  server.listen({
-    port,
-    host: "0.0.0.0",
-    reusePort: true,
-  }, () => {
-    log(`serving on port ${port}`);
-  });
-})();
+// Start the server
+app.listen(port, '0.0.0.0', () => {
+    console.log(`Server is running on http://0.0.0.0:${port}`);
+});
