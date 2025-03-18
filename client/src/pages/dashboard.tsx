@@ -1,13 +1,16 @@
 // client/src/pages/dashboard.tsx
 import { useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
-import Connections from "@/components/Connections";
+import Connections from "@/components/ui/connections";
 import Posts from "@/components/Posts";
 import Achievements from "@/components/Achievements";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
-import { Campaign } from "@shared/schema";
+import { Campaign, SimulationData } from "@shared/schema";
+import { calculateSimulationFactors, generateSimulationData, getPerformanceInsights } from "@/lib/simulation";
 
 const COLORS = ['hsl(var(--primary))', 'hsl(var(--secondary))', 'hsl(var(--accent))'];
 
