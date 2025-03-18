@@ -41,11 +41,7 @@ export class DrizzleStorage implements IStorage {
   }
 
   async createCampaign(campaign: InsertCampaign): Promise<Campaign> {
-    const [result] = await db.insert(campaigns).values({
-      ...campaign,
-      status: 'active',
-      createdAt: new Date()
-    }).returning();
+    const [result] = await db.insert(campaigns).values([campaign]).returning();
     return result;
   }
 
@@ -59,10 +55,7 @@ export class DrizzleStorage implements IStorage {
   }
 
   async addSimulationData(data: InsertSimulationData): Promise<SimulationData> {
-    const [result] = await db.insert(simulationData).values({
-      ...data,
-      date: new Date()
-    }).returning();
+    const [result] = await db.insert(simulationData).values([data]).returning();
     return result;
   }
 
