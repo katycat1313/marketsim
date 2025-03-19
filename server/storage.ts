@@ -176,13 +176,12 @@ export class DrizzleStorage implements IStorage {
   // Connection operations
   async createConnection(connection: InsertConnection): Promise<Connection> {
     // Explicitly construct the connection object
-    // Using array syntax to fix TypeScript type error with Drizzle ORM
-    const connectionData = [{
+    const connectionData = {
       userId: connection.userId,
       connectedUserId: connection.connectedUserId,
       status: connection.status,
       createdAt: new Date()
-    }];
+    };
     
     const [result] = await db.insert(connections).values(connectionData).returning();
     return result;
@@ -205,8 +204,7 @@ export class DrizzleStorage implements IStorage {
   // Post operations
   async createPost(post: InsertPost): Promise<Post> {
     // Explicitly construct the post object to match expected schema
-    // Using array syntax to fix TypeScript type error with Drizzle ORM
-    const postData = [{
+    const postData = {
       userId: post.userId,
       title: post.title,
       content: post.content,
@@ -215,7 +213,7 @@ export class DrizzleStorage implements IStorage {
       likes: post.likes || 0,
       createdAt: new Date(),
       updatedAt: new Date()
-    }];
+    };
     
     const [result] = await db.insert(posts).values(postData).returning();
     return result;
@@ -233,14 +231,13 @@ export class DrizzleStorage implements IStorage {
   // Comment operations
   async createComment(comment: InsertComment): Promise<Comment> {
     // Explicitly construct the comment object
-    // Using array syntax to fix TypeScript type error with Drizzle ORM
-    const commentData = [{
+    const commentData = {
       postId: comment.postId,
       userId: comment.userId,
       content: comment.content,
       likes: comment.likes || 0,
       createdAt: new Date()
-    }];
+    };
     
     const [result] = await db.insert(comments).values(commentData).returning();
     return result;
@@ -256,15 +253,14 @@ export class DrizzleStorage implements IStorage {
   // Achievement operations
   async createAchievement(achievement: InsertAchievement): Promise<Achievement> {
     // Explicitly construct the achievement object
-    // Using array syntax to fix TypeScript type error with Drizzle ORM
-    const achievementData = [{
+    const achievementData = {
       name: achievement.name,
       description: achievement.description,
       type: achievement.type,
       requirements: achievement.requirements,
       icon: achievement.icon,
       experiencePoints: achievement.experiencePoints
-    }];
+    };
     
     const [result] = await db.insert(achievements).values(achievementData).returning();
     return result;
