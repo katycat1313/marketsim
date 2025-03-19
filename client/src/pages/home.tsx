@@ -10,7 +10,7 @@ export default function Home() {
         <div className="flex justify-between items-center mb-16">
           <div>
             <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-              Dummy Market
+              MarketSim
             </h1>
             <p className="text-xl text-muted-foreground">
               Master Marketing Without the Risk
@@ -91,7 +91,7 @@ export default function Home() {
             Learn Digital Marketing Skills
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Dummy Market provides a safe environment to experiment with marketing
+            MarketSim provides a safe environment to experiment with marketing
             strategies, understand audience targeting, and master campaign
             optimization without spending real money.
           </p>
