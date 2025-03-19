@@ -138,7 +138,23 @@ export class DrizzleStorage implements IStorage {
   
   // User Profile operations
   async createUserProfile(profile: InsertUserProfile): Promise<UserProfile> {
-    const [result] = await db.insert(userProfiles).values(profile).returning();
+    // Explicitly construct the data object to match expected schema
+    const profileData = {
+      userId: profile.userId,
+      username: profile.username,
+      displayName: profile.displayName,
+      avatarUrl: profile.avatarUrl,
+      bio: profile.bio,
+      level: profile.level || 'Newborn',
+      experiencePoints: profile.experiencePoints || 0,
+      achievements: profile.achievements || [],
+      badges: profile.badges || [],
+      specializations: profile.specializations || [],
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    
+    const [result] = await db.insert(userProfiles).values(profileData).returning();
     return result;
   }
   
@@ -149,7 +165,15 @@ export class DrizzleStorage implements IStorage {
   
   // Connection operations
   async createConnection(connection: InsertConnection): Promise<Connection> {
-    const [result] = await db.insert(connections).values(connection).returning();
+    // Explicitly construct the connection object
+    const connectionData = {
+      userId: connection.userId,
+      connectedUserId: connection.connectedUserId,
+      status: connection.status,
+      createdAt: new Date()
+    };
+    
+    const [result] = await db.insert(connections).values(connectionData).returning();
     return result;
   }
   
@@ -169,7 +193,19 @@ export class DrizzleStorage implements IStorage {
   
   // Post operations
   async createPost(post: InsertPost): Promise<Post> {
-    const [result] = await db.insert(posts).values(post).returning();
+    // Explicitly construct the post object to match expected schema
+    const postData = {
+      userId: post.userId,
+      title: post.title,
+      content: post.content,
+      type: post.type,
+      tags: post.tags || [],
+      likes: post.likes || 0,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    
+    const [result] = await db.insert(posts).values(postData).returning();
     return result;
   }
   
