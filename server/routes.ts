@@ -314,5 +314,46 @@ export async function registerRoutes(app: Express) {
     }
   });
 
+  // Connections Routes
+  app.post("/api/connections", async (req, res) => {
+    try {
+      const data = insertConnectionSchema.parse(req.body);
+      const connection = await storage.createConnection(data);
+      res.json(connection);
+    } catch (error) {
+      res.status(400).json({ error: "Invalid connection data" });
+    }
+  });
+
+  app.get("/api/users/:userId/connections", async (req, res) => {
+    try {
+      const userId = parseInt(req.params.userId);
+      const connections = await storage.getConnectionsByUserId(userId);
+      res.json(connections);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to retrieve connections" });
+    }
+  });
+
+  app.patch("/api/connections/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const { status } = req.body;
+      
+      if (!status || !['accepted', 'rejected', 'pending'].includes(status)) {
+        return res.status(400).json({ error: "Invalid connection status" });
+      }
+      
+      const updatedConnection = await storage.updateConnectionStatus(id, status);
+      if (!updatedConnection) {
+        return res.status(404).json({ error: "Connection not found" });
+      }
+      
+      res.json(updatedConnection);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to update connection" });
+    }
+  });
+
   return httpServer;
 }
