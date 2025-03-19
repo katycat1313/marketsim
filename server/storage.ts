@@ -1,8 +1,13 @@
 import { db } from "./db";
 import { 
   type Persona, type Campaign, type SimulationData,
-  type InsertPersona, type InsertCampaign, type InsertSimulationData, 
-  personas, campaigns, simulationData, userProfiles
+  type InsertPersona, type InsertCampaign, type InsertSimulationData,
+  type Connection, type InsertConnection,
+  type Post, type InsertPost,
+  type Comment, type InsertComment,
+  type Achievement, type InsertAchievement,
+  type UserProfile, type InsertUserProfile,
+  personas, campaigns, simulationData, userProfiles, connections, posts, comments, achievements
 } from "@shared/schema";
 import { eq } from "drizzle-orm";
 
@@ -23,6 +28,27 @@ export interface IStorage {
   
   // User operations
   getUserSubscription(userId?: number): Promise<any[]>;
+  createUserProfile(profile: InsertUserProfile): Promise<UserProfile>;
+  getUserProfile(userId: number): Promise<UserProfile | undefined>;
+  
+  // Connection operations
+  createConnection(connection: InsertConnection): Promise<Connection>;
+  getConnectionsByUserId(userId: number): Promise<Connection[]>;
+  updateConnectionStatus(id: number, status: string): Promise<Connection | undefined>;
+  
+  // Post operations
+  createPost(post: InsertPost): Promise<Post>;
+  getPostById(id: number): Promise<Post | undefined>;
+  listPosts(): Promise<Post[]>;
+  
+  // Comment operations
+  createComment(comment: InsertComment): Promise<Comment>;
+  getCommentsByPostId(postId: number): Promise<Comment[]>;
+  
+  // Achievement operations
+  createAchievement(achievement: InsertAchievement): Promise<Achievement>;
+  getAchievementById(id: number): Promise<Achievement | undefined>;
+  listAchievements(): Promise<Achievement[]>;
 }
 
 export class DrizzleStorage implements IStorage {
