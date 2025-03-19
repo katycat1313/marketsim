@@ -73,23 +73,24 @@ export class DrizzleStorage implements IStorage {
 
   async createCampaign(campaign: InsertCampaign): Promise<Campaign> {
     // Create a campaign object that only includes properties defined in the schema
-    const campaignData = {
+    // Using array syntax to fix TypeScript type error with Drizzle ORM
+    const campaignData = [{
       name: campaign.name,
       platform: campaign.platform,
       type: campaign.type,
       goal: campaign.goal,
       dailyBudget: campaign.dailyBudget,
       targetCpa: campaign.targetCpa,
-      keywords: campaign.keywords,
-      negativeKeywords: campaign.negativeKeywords,
-      targeting: campaign.targeting,
-      adHeadlines: campaign.adHeadlines,
-      adDescriptions: campaign.adDescriptions,
+      keywords: campaign.keywords || [],
+      negativeKeywords: campaign.negativeKeywords || [],
+      targeting: campaign.targeting || {},
+      adHeadlines: campaign.adHeadlines || [],
+      adDescriptions: campaign.adDescriptions || [],
       finalUrl: campaign.finalUrl,
       personaId: campaign.personaId,
       createdAt: new Date(),
       status: 'active'
-    };
+    }];
     
     const [result] = await db.insert(campaigns).values(campaignData).returning();
     return result;
@@ -139,7 +140,8 @@ export class DrizzleStorage implements IStorage {
   // User Profile operations
   async createUserProfile(profile: InsertUserProfile): Promise<UserProfile> {
     // Explicitly construct the data object to match expected schema
-    const profileData = {
+    // Using array syntax to fix TypeScript type error with Drizzle ORM
+    const profileData = [{
       userId: profile.userId,
       username: profile.username,
       displayName: profile.displayName,
@@ -152,7 +154,7 @@ export class DrizzleStorage implements IStorage {
       specializations: profile.specializations || [],
       createdAt: new Date(),
       updatedAt: new Date()
-    };
+    }];
     
     const [result] = await db.insert(userProfiles).values(profileData).returning();
     return result;
@@ -166,12 +168,13 @@ export class DrizzleStorage implements IStorage {
   // Connection operations
   async createConnection(connection: InsertConnection): Promise<Connection> {
     // Explicitly construct the connection object
-    const connectionData = {
+    // Using array syntax to fix TypeScript type error with Drizzle ORM
+    const connectionData = [{
       userId: connection.userId,
       connectedUserId: connection.connectedUserId,
       status: connection.status,
       createdAt: new Date()
-    };
+    }];
     
     const [result] = await db.insert(connections).values(connectionData).returning();
     return result;
@@ -194,7 +197,8 @@ export class DrizzleStorage implements IStorage {
   // Post operations
   async createPost(post: InsertPost): Promise<Post> {
     // Explicitly construct the post object to match expected schema
-    const postData = {
+    // Using array syntax to fix TypeScript type error with Drizzle ORM
+    const postData = [{
       userId: post.userId,
       title: post.title,
       content: post.content,
@@ -203,7 +207,7 @@ export class DrizzleStorage implements IStorage {
       likes: post.likes || 0,
       createdAt: new Date(),
       updatedAt: new Date()
-    };
+    }];
     
     const [result] = await db.insert(posts).values(postData).returning();
     return result;
@@ -220,7 +224,17 @@ export class DrizzleStorage implements IStorage {
   
   // Comment operations
   async createComment(comment: InsertComment): Promise<Comment> {
-    const [result] = await db.insert(comments).values(comment).returning();
+    // Explicitly construct the comment object
+    // Using array syntax to fix TypeScript type error with Drizzle ORM
+    const commentData = [{
+      postId: comment.postId,
+      userId: comment.userId,
+      content: comment.content,
+      likes: comment.likes || 0,
+      createdAt: new Date()
+    }];
+    
+    const [result] = await db.insert(comments).values(commentData).returning();
     return result;
   }
   
@@ -233,7 +247,18 @@ export class DrizzleStorage implements IStorage {
   
   // Achievement operations
   async createAchievement(achievement: InsertAchievement): Promise<Achievement> {
-    const [result] = await db.insert(achievements).values(achievement).returning();
+    // Explicitly construct the achievement object
+    // Using array syntax to fix TypeScript type error with Drizzle ORM
+    const achievementData = [{
+      name: achievement.name,
+      description: achievement.description,
+      type: achievement.type,
+      requirements: achievement.requirements,
+      icon: achievement.icon,
+      experiencePoints: achievement.experiencePoints
+    }];
+    
+    const [result] = await db.insert(achievements).values(achievementData).returning();
     return result;
   }
   
