@@ -74,7 +74,7 @@ export class DrizzleStorage implements IStorage {
   async createCampaign(campaign: InsertCampaign): Promise<Campaign> {
     // Create a campaign object that only includes properties defined in the schema
     // Using array syntax to fix TypeScript type error with Drizzle ORM
-    const campaignData = [{
+    const campaignData = {
       name: campaign.name,
       platform: campaign.platform,
       type: campaign.type,
@@ -83,14 +83,23 @@ export class DrizzleStorage implements IStorage {
       targetCpa: campaign.targetCpa,
       keywords: campaign.keywords || [],
       negativeKeywords: campaign.negativeKeywords || [],
-      targeting: campaign.targeting || {},
+      targeting: {
+        locations: campaign.targeting?.locations || [],
+        languages: campaign.targeting?.languages || [],
+        devices: campaign.targeting?.devices || [],
+        demographics: {
+          ageRanges: campaign.targeting?.demographics?.ageRanges || [],
+          genders: campaign.targeting?.demographics?.genders || [],
+          householdIncomes: campaign.targeting?.demographics?.householdIncomes || []
+        }
+      },
       adHeadlines: campaign.adHeadlines || [],
       adDescriptions: campaign.adDescriptions || [],
       finalUrl: campaign.finalUrl,
       personaId: campaign.personaId,
       createdAt: new Date(),
       status: 'active'
-    }];
+    };
     
     const [result] = await db.insert(campaigns).values(campaignData).returning();
     return result;
@@ -140,8 +149,7 @@ export class DrizzleStorage implements IStorage {
   // User Profile operations
   async createUserProfile(profile: InsertUserProfile): Promise<UserProfile> {
     // Explicitly construct the data object to match expected schema
-    // Using array syntax to fix TypeScript type error with Drizzle ORM
-    const profileData = [{
+    const profileData = {
       userId: profile.userId,
       username: profile.username,
       displayName: profile.displayName,
@@ -154,7 +162,7 @@ export class DrizzleStorage implements IStorage {
       specializations: profile.specializations || [],
       createdAt: new Date(),
       updatedAt: new Date()
-    }];
+    };
     
     const [result] = await db.insert(userProfiles).values(profileData).returning();
     return result;

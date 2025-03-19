@@ -150,14 +150,9 @@ export async function registerRoutes(app: Express) {
         campaignData,
         user,
         {
-          // Pass the context object with correct types
-          // These properties are expected by the AI service
+          // Only pass the properties expected by the AI service
           brandName: campaignData.brandName || '',
-          industry: campaignData.industry || '',
-          context: {
-            productDescription: campaignData.productDescription,
-            goal: campaignData.goal
-          }
+          industry: campaignData.industry || ''
         }
       );
 
