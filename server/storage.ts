@@ -3,10 +3,18 @@ import {
   type Persona, type Campaign, type SimulationData, 
   type UserProfile, type Connection, type Post, type Comment, type Achievement,
   type InsertPersona, type InsertCampaign, type InsertSimulationData,
-  type InsertUserProfile, type InsertConnection, type InsertPost, type InsertComment, type InsertAchievement,
-  personas, campaigns, simulationData, userProfiles, connections, posts, comments, achievements
+  personas, campaigns, simulationData, userProfiles, connections, posts, comments, achievements,
+  insertUserProfileSchema, insertConnectionSchema, insertPostSchema, insertCommentSchema, insertAchievementSchema
 } from "@shared/schema";
-import { eq } from "drizzle-orm";
+import { eq, desc } from "drizzle-orm";
+import { z } from "zod";
+
+// Type aliases for insert types
+type InsertUserProfile = z.infer<typeof insertUserProfileSchema>;
+type InsertConnection = z.infer<typeof insertConnectionSchema>;
+type InsertPost = z.infer<typeof insertPostSchema>;
+type InsertComment = z.infer<typeof insertCommentSchema>;
+type InsertAchievement = z.infer<typeof insertAchievementSchema>;
 
 export interface IStorage {
   // Persona operations
@@ -64,11 +72,26 @@ export class DrizzleStorage implements IStorage {
   }
 
   async createCampaign(campaign: InsertCampaign): Promise<Campaign> {
-    const [result] = await db.insert(campaigns).values({
-      ...campaign,
+    // Create a campaign object that only includes properties defined in the schema
+    const campaignData = {
+      name: campaign.name,
+      platform: campaign.platform,
+      type: campaign.type,
+      goal: campaign.goal,
+      dailyBudget: campaign.dailyBudget,
+      targetCpa: campaign.targetCpa,
+      keywords: campaign.keywords,
+      negativeKeywords: campaign.negativeKeywords,
+      targeting: campaign.targeting,
+      adHeadlines: campaign.adHeadlines,
+      adDescriptions: campaign.adDescriptions,
+      finalUrl: campaign.finalUrl,
+      personaId: campaign.personaId,
       createdAt: new Date(),
       status: 'active'
-    }).returning();
+    };
+    
+    const [result] = await db.insert(campaigns).values(campaignData).returning();
     return result;
   }
 
@@ -156,7 +179,7 @@ export class DrizzleStorage implements IStorage {
   }
   
   async listPosts(): Promise<Post[]> {
-    return await db.select().from(posts).orderBy(posts.createdAt, "desc");
+    return await db.select().from(posts).orderBy(desc(posts.createdAt));
   }
   
   // Comment operations
