@@ -2,14 +2,18 @@ import { db } from "./db";
 import { 
   type Persona, type Campaign, type SimulationData,
   type InsertPersona, type InsertCampaign, type InsertSimulationData,
-  type Connection, type InsertConnection,
-  type Post, type InsertPost,
-  type Comment, type InsertComment,
-  type Achievement, type InsertAchievement,
-  type UserProfile, type InsertUserProfile,
+  type Connection, type UserProfile, type Post, type Comment, type Achievement,
   personas, campaigns, simulationData, userProfiles, connections, posts, comments, achievements
 } from "@shared/schema";
+import { insertConnectionSchema, insertUserProfileSchema, insertPostSchema, insertCommentSchema, insertAchievementSchema } from "@shared/schema";
 import { eq } from "drizzle-orm";
+
+// Type aliases
+type InsertUserProfile = typeof insertUserProfileSchema._type;
+type InsertConnection = typeof insertConnectionSchema._type;
+type InsertPost = typeof insertPostSchema._type;
+type InsertComment = typeof insertCommentSchema._type;
+type InsertAchievement = typeof insertAchievementSchema._type;
 
 export interface IStorage {
   // Persona operations
@@ -67,7 +71,7 @@ export class DrizzleStorage implements IStorage {
   }
 
   async createCampaign(campaign: InsertCampaign): Promise<Campaign> {
-    const [result] = await db.insert(campaigns).values([campaign]).returning();
+    const [result] = await db.insert(campaigns).values(campaign).returning();
     return result;
   }
 
@@ -81,7 +85,7 @@ export class DrizzleStorage implements IStorage {
   }
 
   async addSimulationData(data: InsertSimulationData): Promise<SimulationData> {
-    const [result] = await db.insert(simulationData).values([data]).returning();
+    const [result] = await db.insert(simulationData).values(data).returning();
     return result;
   }
 
@@ -110,6 +114,80 @@ export class DrizzleStorage implements IStorage {
       console.error('Error fetching user subscription:', error);
       return [{ subscription: { tier: 'free' } }];
     }
+  }
+  
+  // User Profile operations
+  async createUserProfile(profile: InsertUserProfile): Promise<UserProfile> {
+    const [result] = await db.insert(userProfiles).values(profile).returning();
+    return result;
+  }
+  
+  async getUserProfile(userId: number): Promise<UserProfile | undefined> {
+    const [result] = await db.select().from(userProfiles).where(eq(userProfiles.userId, userId));
+    return result;
+  }
+  
+  // Connection operations
+  async createConnection(connection: InsertConnection): Promise<Connection> {
+    const [result] = await db.insert(connections).values(connection).returning();
+    return result;
+  }
+  
+  async getConnectionsByUserId(userId: number): Promise<Connection[]> {
+    return await db.select()
+      .from(connections)
+      .where(eq(connections.userId, userId));
+  }
+  
+  async updateConnectionStatus(id: number, status: string): Promise<Connection | undefined> {
+    const [result] = await db.update(connections)
+      .set({ status })
+      .where(eq(connections.id, id))
+      .returning();
+    return result;
+  }
+  
+  // Post operations
+  async createPost(post: InsertPost): Promise<Post> {
+    const [result] = await db.insert(posts).values(post).returning();
+    return result;
+  }
+  
+  async getPostById(id: number): Promise<Post | undefined> {
+    const [result] = await db.select().from(posts).where(eq(posts.id, id));
+    return result;
+  }
+  
+  async listPosts(): Promise<Post[]> {
+    return await db.select().from(posts).orderBy(posts.createdAt, "desc");
+  }
+  
+  // Comment operations
+  async createComment(comment: InsertComment): Promise<Comment> {
+    const [result] = await db.insert(comments).values(comment).returning();
+    return result;
+  }
+  
+  async getCommentsByPostId(postId: number): Promise<Comment[]> {
+    return await db.select()
+      .from(comments)
+      .where(eq(comments.postId, postId))
+      .orderBy(comments.createdAt);
+  }
+  
+  // Achievement operations
+  async createAchievement(achievement: InsertAchievement): Promise<Achievement> {
+    const [result] = await db.insert(achievements).values(achievement).returning();
+    return result;
+  }
+  
+  async getAchievementById(id: number): Promise<Achievement | undefined> {
+    const [result] = await db.select().from(achievements).where(eq(achievements.id, id));
+    return result;
+  }
+  
+  async listAchievements(): Promise<Achievement[]> {
+    return await db.select().from(achievements);
   }
 }
 
