@@ -1,19 +1,12 @@
 import { db } from "./db";
 import { 
-  type Persona, type Campaign, type SimulationData,
+  type Persona, type Campaign, type SimulationData, 
+  type UserProfile, type Connection, type Post, type Comment, type Achievement,
   type InsertPersona, type InsertCampaign, type InsertSimulationData,
-  type Connection, type UserProfile, type Post, type Comment, type Achievement,
+  type InsertUserProfile, type InsertConnection, type InsertPost, type InsertComment, type InsertAchievement,
   personas, campaigns, simulationData, userProfiles, connections, posts, comments, achievements
 } from "@shared/schema";
-import { insertConnectionSchema, insertUserProfileSchema, insertPostSchema, insertCommentSchema, insertAchievementSchema } from "@shared/schema";
 import { eq } from "drizzle-orm";
-
-// Type aliases
-type InsertUserProfile = typeof insertUserProfileSchema._type;
-type InsertConnection = typeof insertConnectionSchema._type;
-type InsertPost = typeof insertPostSchema._type;
-type InsertComment = typeof insertCommentSchema._type;
-type InsertAchievement = typeof insertAchievementSchema._type;
 
 export interface IStorage {
   // Persona operations
@@ -71,7 +64,11 @@ export class DrizzleStorage implements IStorage {
   }
 
   async createCampaign(campaign: InsertCampaign): Promise<Campaign> {
-    const [result] = await db.insert(campaigns).values(campaign).returning();
+    const [result] = await db.insert(campaigns).values({
+      ...campaign,
+      createdAt: new Date(),
+      status: 'active'
+    }).returning();
     return result;
   }
 
