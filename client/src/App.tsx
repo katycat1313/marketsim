@@ -34,55 +34,55 @@ function NavBar() {
           
           <nav className="hidden md:flex items-center gap-6">
             <Link href="/">
-              <a className={`flex items-center gap-1 text-sm ${location === '/' ? 'text-primary font-medium' : 'text-muted-foreground'}`}>
+              <div className={`flex items-center gap-1 text-sm cursor-pointer ${location === '/' ? 'text-primary font-medium' : 'text-muted-foreground'}`}>
                 <HomeIcon className="h-4 w-4" />
                 <span>Home</span>
-              </a>
+              </div>
             </Link>
             <Link href="/persona-builder">
-              <a className={`flex items-center gap-1 text-sm ${location === '/persona-builder' ? 'text-primary font-medium' : 'text-muted-foreground'}`}>
+              <div className={`flex items-center gap-1 text-sm cursor-pointer ${location === '/persona-builder' ? 'text-primary font-medium' : 'text-muted-foreground'}`}>
                 <Target className="h-4 w-4" />
                 <span>Personas</span>
-              </a>
+              </div>
             </Link>
             <Link href="/campaign-creator">
-              <a className={`flex items-center gap-1 text-sm ${location === '/campaign-creator' ? 'text-primary font-medium' : 'text-muted-foreground'}`}>
+              <div className={`flex items-center gap-1 text-sm cursor-pointer ${location === '/campaign-creator' ? 'text-primary font-medium' : 'text-muted-foreground'}`}>
                 <BarChart2 className="h-4 w-4" />
                 <span>Campaigns</span>
-              </a>
+              </div>
             </Link>
             <Link href="/dashboard">
-              <a className={`flex items-center gap-1 text-sm ${location === '/dashboard' ? 'text-primary font-medium' : 'text-muted-foreground'}`}>
+              <div className={`flex items-center gap-1 text-sm cursor-pointer ${location === '/dashboard' ? 'text-primary font-medium' : 'text-muted-foreground'}`}>
                 <BarChart2 className="h-4 w-4" />
                 <span>Dashboard</span>
-              </a>
+              </div>
             </Link>
             <Link href="/network">
-              <a className={`flex items-center gap-1 text-sm ${location === '/network' ? 'text-primary font-medium' : 'text-muted-foreground'}`}>
+              <div className={`flex items-center gap-1 text-sm cursor-pointer ${location === '/network' ? 'text-primary font-medium' : 'text-muted-foreground'}`}>
                 <Users className="h-4 w-4" />
                 <span>Network</span>
-              </a>
+              </div>
             </Link>
             <Link href="/community">
-              <a className={`flex items-center gap-1 text-sm ${location === '/community' ? 'text-primary font-medium' : 'text-muted-foreground'}`}>
+              <div className={`flex items-center gap-1 text-sm cursor-pointer ${location === '/community' ? 'text-primary font-medium' : 'text-muted-foreground'}`}>
                 <MessageSquare className="h-4 w-4" />
                 <span>Community</span>
-              </a>
+              </div>
             </Link>
             <Link href="/achievements">
-              <a className={`flex items-center gap-1 text-sm ${location === '/achievements' ? 'text-primary font-medium' : 'text-muted-foreground'}`}>
+              <div className={`flex items-center gap-1 text-sm cursor-pointer ${location === '/achievements' ? 'text-primary font-medium' : 'text-muted-foreground'}`}>
                 <Award className="h-4 w-4" />
                 <span>Achievements</span>
-              </a>
+              </div>
             </Link>
           </nav>
           
           <div className="flex items-center gap-4">
             <Link href="/api-settings">
-              <a className={`flex items-center gap-1 text-sm ${location === '/api-settings' ? 'text-primary font-medium' : 'text-muted-foreground'}`}>
+              <div className={`flex items-center gap-1 text-sm cursor-pointer ${location === '/api-settings' ? 'text-primary font-medium' : 'text-muted-foreground'}`}>
                 <Settings className="h-4 w-4" />
                 <span className="sr-only md:not-sr-only">Settings</span>
-              </a>
+              </div>
             </Link>
           </div>
         </div>
