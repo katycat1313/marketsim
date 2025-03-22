@@ -355,5 +355,38 @@ export async function registerRoutes(app: Express) {
     }
   });
 
+  // Tutorial Routes
+  app.get("/api/tutorials", async (req, res) => {
+    try {
+      const tutorialService = new TutorialService();
+      const [user] = await storage.getUserProfile(req.user?.id);
+      const tutorials = await tutorialService.getTutorials(user?.level || 'Beginner');
+      res.json(tutorials);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to retrieve tutorials" });
+    }
+  });
+
+  app.get("/api/tutorials/progress", async (req, res) => {
+    try {
+      const tutorialService = new TutorialService();
+      const progress = await tutorialService.getUserProgress(req.user?.id);
+      res.json(progress);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to retrieve tutorial progress" });
+    }
+  });
+
+  app.post("/api/tutorials/complete", async (req, res) => {
+    try {
+      const { tutorialId } = req.body;
+      const tutorialService = new TutorialService();
+      await tutorialService.markTutorialComplete(req.user?.id, tutorialId);
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to mark tutorial as complete" });
+    }
+  });
+
   return httpServer;
 }
