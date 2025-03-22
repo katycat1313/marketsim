@@ -47,14 +47,76 @@ const TIER_CONFIGS: Record<SubscriptionTier, AIServiceConfig> = {
 
 // Define level requirements and skills
 const MARKETING_LEVELS = {
-  Newborn: {
+  Beginner: {
     requiredXP: 0,
     skills: [
-      "Basic understanding of digital marketing concepts",
-      "Familiarity with ad platforms",
-      "Understanding of target audience"
+      "Campaign setup basics",
+      "Basic audience targeting",
+      "Ad platform fundamentals",
+      "Basic budget management"
+    ],
+    challenges: [
+      "Create your first campaign",
+      "Define target audience persona",
+      "Set up conversion tracking"
     ]
   },
+  Intermediate: {
+    requiredXP: 500,
+    skills: [
+      "Advanced audience segmentation",
+      "A/B testing implementation",
+      "Performance analysis",
+      "Budget optimization"
+    ],
+    challenges: [
+      "Optimize campaign performance",
+      "Analyze competitor strategies",
+      "Implement retargeting campaigns"
+    ]
+  },
+  Advanced: {
+    requiredXP: 1500,
+    skills: [
+      "Multi-channel campaign management",
+      "Advanced analytics",
+      "Marketing automation",
+      "ROI optimization"
+    ],
+    challenges: [
+      "Create cross-channel strategy",
+      "Implement marketing automation",
+      "Optimize ROAS across channels"
+    ]
+  },
+  Expert: {
+    requiredXP: 3000,
+    skills: [
+      "Strategic campaign planning",
+      "Advanced conversion optimization",
+      "Marketing technology integration",
+      "Team leadership"
+    ],
+    challenges: [
+      "Develop comprehensive marketing strategy",
+      "Lead team projects",
+      "Optimize complex campaigns"
+    ]
+  },
+  Master: {
+    requiredXP: 5000,
+    skills: [
+      "Industry thought leadership",
+      "Innovation in marketing strategies",
+      "Complex multi-channel orchestration",
+      "Strategic business alignment"
+    ],
+    challenges: [
+      "Create industry-leading campaigns",
+      "Mentor other marketers",
+      "Drive strategic initiatives"
+    ]
+  }
   Beginner: {
     requiredXP: 100,
     skills: [
