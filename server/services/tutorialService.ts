@@ -118,6 +118,61 @@ export class TutorialService {
       ],
       estimatedTime: 75,
       skillsLearned: ["Multi-channel Strategy", "Campaign Performance Analysis", "Budget Optimization"]
+    },
+    {
+      id: 5,
+      title: "Advanced Campaign Strategies",
+      level: "Advanced",
+      content: this.loadTutorialContent('chapter3-1.ts'),
+      tasks: [
+        {
+          id: 501,
+          description: "Design and implement an A/B testing plan",
+          type: "practical",
+          requirements: ["Active Google Ads campaign", "Testing hypothesis"],
+          verificationCriteria: ["Two ad variations created", "Testing metrics defined", "Results analysis framework prepared"]
+        },
+        {
+          id: 502,
+          description: "Optimize audience targeting",
+          type: "practical",
+          requirements: ["Campaign performance data", "Customer behavior analysis"],
+          verificationCriteria: ["Audience segments refined", "Ad schedule customized", "Performance improvement measured"]
+        }
+      ],
+      estimatedTime: 90,
+      skillsLearned: ["A/B Testing", "Audience Optimization", "Performance Analytics", "Campaign Refinement"]
+    },
+    {
+      id: 6,
+      title: "Effective Campaign Management",
+      level: "Advanced",
+      content: this.loadTutorialContent('chapter3-2.ts'),
+      tasks: [
+        {
+          id: 601,
+          description: "Develop a campaign monitoring strategy",
+          type: "practical",
+          requirements: ["Active Google Ads campaigns", "Performance metrics baseline"],
+          verificationCriteria: ["KPI monitoring plan created", "Reporting schedule established", "Optimization protocols defined"]
+        },
+        {
+          id: 602,
+          description: "Implement budget optimization techniques",
+          type: "practical",
+          requirements: ["Campaign performance data", "Budget allocation plan"],
+          verificationCriteria: ["Budget reallocation plan created", "Performance improvement forecasted", "ROI metrics defined"]
+        },
+        {
+          id: 603,
+          description: "Run an advanced campaign simulation",
+          type: "simulation",
+          requirements: ["Completed management strategy"],
+          verificationCriteria: ["Simulation completed", "Budget optimization applied", "Performance improvement demonstrated"]
+        }
+      ],
+      estimatedTime: 100,
+      skillsLearned: ["Performance Monitoring", "Budget Optimization", "Keyword Refinement", "Analytics Interpretation"]
     }
   ];
 
