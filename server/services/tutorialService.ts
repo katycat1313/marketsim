@@ -357,7 +357,18 @@ export class TutorialService {
     
     // Return tutorials at the user's level and below
     const availableLevels = levels.slice(0, userLevelIndex + 1);
-    return this.tutorials.filter(t => availableLevels.includes(t.level));
+    const filteredTutorials = [...this.tutorials].filter(t => availableLevels.includes(t.level));
+    
+    // Mark tutorials that have simulations available
+    const challenges = await tutorialSimulationService.getAllChallenges();
+    const tutorialIdsWithSimulations = challenges.map(c => c.tutorialId);
+    
+    return filteredTutorials.map(tutorial => {
+      return {
+        ...tutorial,
+        hasSimulation: tutorialIdsWithSimulations.includes(tutorial.id)
+      };
+    });
   }
 
   async getUserProgress(userId: number): Promise<number[]> {

@@ -43,23 +43,29 @@ export class TutorialSimulationService {
       ],
       initialSetup: {
         name: "My First Campaign",
-        type: "Search",
-        status: "Draft",
-        budget: 10,
-        bidStrategy: "Manual CPC",
+        platform: "google",
+        type: "search",
+        goal: "leads",
+        dailyBudget: "10.00",
+        status: "active",
         targeting: {
           locations: ["United States"],
           languages: ["English"],
           devices: ["All"],
-          schedule: []
+          demographics: {
+            ageRanges: ["18-24", "25-34", "35-44"],
+            genders: ["All"],
+            householdIncomes: ["All"]
+          }
         },
         keywords: [],
-        headlines: [],
-        descriptions: []
+        adHeadlines: [],
+        adDescriptions: [],
+        finalUrl: "https://example.com"
       },
       successCriteria: [
         { metric: "qualityScore", target: 6, comparison: "greater" },
-        { metric: "keywords", target: 3, comparison: "greater" },
+        { metric: "keywordsCount", target: 3, comparison: "greater" },
         { metric: "impressions", target: 100, comparison: "greater" }
       ],
       hints: [
@@ -82,28 +88,31 @@ export class TutorialSimulationService {
       ],
       initialSetup: {
         name: "Brand Awareness Campaign",
-        type: "Display",
-        status: "Draft",
-        budget: 15,
-        bidStrategy: "Target CPA",
+        platform: "google",
+        type: "display",
+        goal: "awareness",
+        dailyBudget: "15.00",
+        status: "active",
+        targetCpa: "15.00",
         targeting: {
           locations: ["United States"],
           languages: ["English"],
           devices: ["All"],
           demographics: {
-            age: ["18-24", "25-34", "35-44"],
-            gender: ["All"]
-          },
-          interests: [],
-          schedule: []
+            ageRanges: ["18-24", "25-34", "35-44"],
+            genders: ["All"],
+            householdIncomes: ["All"]
+          }
         },
-        headlines: [],
-        descriptions: []
+        keywords: [],
+        adHeadlines: [],
+        adDescriptions: [],
+        finalUrl: "https://example.com"
       },
       successCriteria: [
         { metric: "impressions", target: 1000, comparison: "greater" },
-        { metric: "targeting.interests.length", target: 3, comparison: "greater" },
-        { metric: "headlines.length", target: 3, comparison: "greater" }
+        { metric: "adHeadlinesCount", target: 3, comparison: "greater" },
+        { metric: "adDescriptionsCount", target: 2, comparison: "greater" }
       ],
       hints: [
         "For Display campaigns, visual appeal is crucial",
@@ -125,29 +134,31 @@ export class TutorialSimulationService {
       ],
       initialSetup: {
         name: "Conversion-Focused Campaign",
-        type: "Search",
-        status: "Draft",
-        budget: 25,
-        bidStrategy: "Target CPA",
-        targetCpa: 15,
+        platform: "google",
+        type: "search",
+        goal: "conversions",
+        dailyBudget: "25.00",
+        status: "active",
+        targetCpa: "15.00",
         targeting: {
           locations: ["United States"],
           languages: ["English"],
           devices: ["All"],
-          schedule: []
-        },
-        conversionTracking: {
-          enabled: false,
-          conversionActions: []
+          demographics: {
+            ageRanges: ["25-34", "35-44", "45-54"],
+            genders: ["All"],
+            householdIncomes: ["All"]
+          }
         },
         keywords: [],
-        headlines: [],
-        descriptions: []
+        adHeadlines: [],
+        adDescriptions: [],
+        finalUrl: "https://example.com"
       },
       successCriteria: [
         { metric: "conversionRate", target: 2, comparison: "greater" },
-        { metric: "conversionTracking.enabled", target: 1, comparison: "equal" },
-        { metric: "conversionTracking.conversionActions.length", target: 1, comparison: "greater" }
+        { metric: "conversions", target: 5, comparison: "greater" },
+        { metric: "cpa", target: 15, comparison: "less" }
       ],
       hints: [
         "Set up conversion tracking for key actions on your website",
@@ -169,29 +180,28 @@ export class TutorialSimulationService {
       ],
       initialSetup: {
         name: "Precision Targeting Campaign",
-        type: "Search",
-        status: "Draft",
-        budget: 20,
-        bidStrategy: "Enhanced CPC",
+        platform: "google",
+        type: "search",
+        goal: "leads",
+        dailyBudget: "20.00",
+        status: "active",
         targeting: {
           locations: ["United States"],
           languages: ["English"],
           devices: ["All"],
           demographics: {
-            age: ["25-34", "35-44"],
-            gender: ["All"],
-            parentalStatus: ["Parents"],
-            householdIncome: ["Top 10%"]
-          },
-          audiences: [],
-          schedule: []
+            ageRanges: ["25-34", "35-44"],
+            genders: ["All"],
+            householdIncomes: ["Top 10%"]
+          }
         },
         keywords: [],
-        headlines: [],
-        descriptions: []
+        adHeadlines: [],
+        adDescriptions: [],
+        finalUrl: "https://example.com"
       },
       successCriteria: [
-        { metric: "targeting.audiences.length", target: 2, comparison: "greater" },
+        { metric: "demographicsSpecificity", target: 3, comparison: "greater" },
         { metric: "ctr", target: 2.5, comparison: "greater" },
         { metric: "conversions", target: 5, comparison: "greater" }
       ],
@@ -215,33 +225,35 @@ export class TutorialSimulationService {
       ],
       initialSetup: {
         name: "A/B Testing Campaign",
-        type: "Search",
-        status: "Draft",
-        budget: 30,
-        bidStrategy: "Manual CPC",
+        platform: "google",
+        type: "search",
+        goal: "conversions",
+        dailyBudget: "30.00",
+        status: "active",
         targeting: {
           locations: ["United States"],
           languages: ["English"],
           devices: ["All"],
-          schedule: []
-        },
-        abTesting: {
-          enabled: false,
-          variables: []
+          demographics: {
+            ageRanges: ["All"],
+            genders: ["All"],
+            householdIncomes: ["All"]
+          }
         },
         keywords: [],
-        headlines: [
+        adHeadlines: [
           "High-Quality Products",
           "Shop Our Selection"
         ],
-        descriptions: [
+        adDescriptions: [
           "Find what you need at great prices."
-        ]
+        ],
+        finalUrl: "https://example.com"
       },
       successCriteria: [
-        { metric: "abTesting.enabled", target: 1, comparison: "equal" },
-        { metric: "headlines.length", target: 4, comparison: "greater" },
-        { metric: "descriptions.length", target: 2, comparison: "greater" }
+        { metric: "adHeadlinesCount", target: 4, comparison: "greater" },
+        { metric: "adDescriptionsCount", target: 2, comparison: "greater" },
+        { metric: "ctr", target: 3, comparison: "greater" }
       ],
       hints: [
         "Create at least 3 variations of headlines to test",
@@ -264,34 +276,32 @@ export class TutorialSimulationService {
       ],
       initialSetup: {
         name: "Comprehensive Campaign",
-        type: "Search",
-        status: "Draft",
-        budget: 50,
-        bidStrategy: "Target ROAS",
-        targetRoas: 300,
+        platform: "google",
+        type: "search",
+        goal: "conversions",
+        dailyBudget: "50.00",
+        status: "active",
+        targetCpa: "20.00",
         targeting: {
           locations: ["United States"],
           languages: ["English"],
           devices: ["All"],
           demographics: {
-            age: ["All"],
-            gender: ["All"]
-          },
-          schedule: []
-        },
-        conversionTracking: {
-          enabled: false,
-          conversionActions: []
+            ageRanges: ["All"],
+            genders: ["All"],
+            householdIncomes: ["All"]
+          }
         },
         keywords: [],
-        headlines: [],
-        descriptions: []
+        adHeadlines: [],
+        adDescriptions: [],
+        finalUrl: "https://example.com"
       },
       successCriteria: [
         { metric: "qualityScore", target: 8, comparison: "greater" },
         { metric: "conversionRate", target: 3, comparison: "greater" },
         { metric: "cpa", target: 20, comparison: "less" },
-        { metric: "roas", target: 250, comparison: "greater" }
+        { metric: "keywordsCount", target: 10, comparison: "greater" }
       ],
       hints: [
         "Implement all the best practices you've learned throughout the course",
@@ -335,34 +345,29 @@ export class TutorialSimulationService {
       impressions: simulationData.impressions,
       clicks: simulationData.clicks,
       conversions: simulationData.conversions,
-      ctr: simulationData.clicks / simulationData.impressions * 100,
-      cpc: simulationData.cost / simulationData.clicks,
-      conversionRate: simulationData.conversions / simulationData.clicks * 100,
-      cpa: simulationData.cost / simulationData.conversions,
-      roas: simulationData.conversionValue / simulationData.cost * 100,
-      qualityScore: simulationData.qualityScore,
-      averagePosition: parseFloat(simulationData.averagePosition),
+      ctr: parseFloat(simulationData.ctr || "0"),
+      cpc: parseFloat(simulationData.cpc || "0"),
+      conversionRate: parseFloat(simulationData.conversionRate || "0"),
+      cpa: parseFloat(simulationData.cpa || "0"),
+      qualityScore: simulationData.qualityScore || 0,
+      averagePosition: parseFloat(simulationData.averagePosition || "0")
     };
     
     // Add campaign-specific metrics
-    metrics['keywords'] = submission.keywords?.length || 0;
-    metrics['headlines'] = submission.headlines?.length || 0;
-    metrics['descriptions'] = submission.descriptions?.length || 0;
+    metrics['keywordsCount'] = submission.keywords?.length || 0;
+    metrics['adHeadlinesCount'] = submission.adHeadlines?.length || 0;
+    metrics['adDescriptionsCount'] = submission.adDescriptions?.length || 0;
     
-    if (submission.targeting?.audiences) {
-      metrics['targeting.audiences.length'] = submission.targeting.audiences.length;
-    }
+    // Calculate demographics specificity (how targeted the demographics settings are)
+    const ageRangesCount = submission.targeting?.demographics?.ageRanges?.length || 0;
+    const gendersCount = submission.targeting?.demographics?.genders?.length || 0;
+    const incomesCount = submission.targeting?.demographics?.householdIncomes?.length || 0;
     
-    if (submission.abTesting) {
-      metrics['abTesting.enabled'] = submission.abTesting.enabled ? 1 : 0;
-      metrics['abTesting.variables'] = submission.abTesting.variables?.length || 0;
-    }
-    
-    if (submission.conversionTracking) {
-      metrics['conversionTracking.enabled'] = submission.conversionTracking.enabled ? 1 : 0;
-      metrics['conversionTracking.conversionActions.length'] = 
-        submission.conversionTracking.conversionActions?.length || 0;
-    }
+    // If any demographic setting is set to a specific value rather than "All", it counts as more specific
+    metrics['demographicsSpecificity'] = 
+      (ageRangesCount > 0 && !submission.targeting?.demographics?.ageRanges?.includes("All") ? 1 : 0) +
+      (gendersCount > 0 && !submission.targeting?.demographics?.genders?.includes("All") ? 1 : 0) +
+      (incomesCount > 0 && !submission.targeting?.demographics?.householdIncomes?.includes("All") ? 1 : 0);
     
     // Check if all success criteria are met
     const criteriaResults = challenge.successCriteria.map(criteria => {
