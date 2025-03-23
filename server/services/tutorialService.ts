@@ -2,6 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { db } from '../db';
 import { userProfiles } from '@shared/schema';
+import { tutorialSimulationService } from './tutorialSimulationService';
 
 export interface Tutorial {
   id: number;
@@ -11,6 +12,7 @@ export interface Tutorial {
   tasks: TutorialTask[];
   estimatedTime: number;
   skillsLearned: string[];
+  hasSimulation?: boolean; // Flag to indicate if this tutorial has an associated simulation
 }
 
 interface TutorialTask {
