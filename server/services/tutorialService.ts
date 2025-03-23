@@ -173,6 +173,61 @@ export class TutorialService {
       ],
       estimatedTime: 100,
       skillsLearned: ["Performance Monitoring", "Budget Optimization", "Keyword Refinement", "Analytics Interpretation"]
+    },
+    {
+      id: 7,
+      title: "Goal Setting for Google Ads",
+      level: "Advanced",
+      content: this.loadTutorialContent('chapter4-1.ts'),
+      tasks: [
+        {
+          id: 701,
+          description: "Create SMART goals for your business",
+          type: "practical",
+          requirements: ["Business objectives", "Marketing plan"],
+          verificationCriteria: ["SMART goals documented", "Goal alignment with business objectives verified", "Measurable metrics defined"]
+        },
+        {
+          id: 702,
+          description: "Set up proper conversion tracking",
+          type: "practical",
+          requirements: ["Google Ads account", "Website access", "Clear conversion actions"],
+          verificationCriteria: ["Conversion tracking implemented", "Goal values assigned", "Testing of tracking completed"]
+        }
+      ],
+      estimatedTime: 60,
+      skillsLearned: ["SMART Goal Creation", "Campaign Objective Setting", "Conversion Strategy", "Performance Measurement"]
+    },
+    {
+      id: 8,
+      title: "Audience Targeting Strategies",
+      level: "Advanced",
+      content: this.loadTutorialContent('chapter4-2.ts'),
+      tasks: [
+        {
+          id: 801,
+          description: "Create audience segments based on demographics and behavior",
+          type: "practical",
+          requirements: ["Customer data", "Google Ads account", "Marketing objectives"],
+          verificationCriteria: ["Audience segments created", "Targeting parameters defined", "Segment sizes evaluated"]
+        },
+        {
+          id: 802,
+          description: "Implement retargeting campaigns",
+          type: "practical",
+          requirements: ["Website with Google tag", "Product/service list", "Audience lists"],
+          verificationCriteria: ["Retargeting audiences created", "Campaign settings optimized", "Ad creative tailored to audience segments"]
+        },
+        {
+          id: 803,
+          description: "Develop an A/B testing plan for audiences",
+          type: "practical",
+          requirements: ["Defined audience segments", "Test hypothesis", "Performance metrics"],
+          verificationCriteria: ["A/B test structure created", "Success metrics defined", "Implementation timeline established"]
+        }
+      ],
+      estimatedTime: 90,
+      skillsLearned: ["Audience Segmentation", "Demographic Targeting", "Behavioral Marketing", "Retargeting Strategies", "A/B Testing"]
     }
   ];
 
