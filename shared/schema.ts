@@ -401,3 +401,100 @@ export type InsertUserQuizResult = z.infer<typeof insertUserQuizResultSchema>;
 export type InsertUserSimulationResult = z.infer<typeof insertUserSimulationResultSchema>;
 export type InsertUserExperienceLog = z.infer<typeof insertUserExperienceLogSchema>;
 export type InsertLevelRequirement = z.infer<typeof insertLevelRequirementSchema>;
+
+// Contest system for portfolio building and skill demonstration
+export const marketingContests = pgTable("marketing_contests", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  brief: text("brief").notNull(), // Detailed brief of what contestants need to create
+  level: text("level").notNull(), // Beginner, Intermediate, Advanced, Expert
+  category: text("category").notNull(), // e.g., "search-ads", "display-ads", "social-media", "content-marketing", etc.
+  maxSubmissions: integer("max_submissions").default(1).notNull(),
+  startDate: timestamp("start_date").notNull(),
+  endDate: timestamp("end_date").notNull(),
+  judgingEndDate: timestamp("judging_end_date").notNull(),
+  prizeBadgeId: integer("prize_badge_id").references(() => achievements.id),
+  prizeBadgeName: text("prize_badge_name").notNull(),
+  xpReward: integer("xp_reward").notNull(),
+  status: text("status").notNull().default('upcoming'), // upcoming, active, judging, completed
+  visibleToLevels: text("visible_to_levels").array().notNull(), // Which user levels can see and participate
+  allowTeams: boolean("allow_teams").default(false).notNull(),
+  maxTeamSize: integer("max_team_size").default(1),
+  submissionCount: integer("submission_count").default(0).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const contestSubmissions = pgTable("contest_submissions", {
+  id: serial("id").primaryKey(),
+  contestId: integer("contest_id").references(() => marketingContests.id).notNull(),
+  userId: integer("user_id").notNull(),
+  teamId: integer("team_id"), // If this is a team submission
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  campaignId: integer("campaign_id").references(() => campaigns.id), // If submission includes a campaign
+  attachments: json("attachments").$type<{url: string, type: string, description: string}[]>().default([]),
+  submissionData: json("submission_data").notNull(), // Flexible JSON structure for submission content
+  averageScore: decimal("average_score"), // 0-100 scale
+  status: text("status").notNull().default('submitted'), // submitted, under_review, scored, winner, honorable_mention, rejected
+  feedback: text("feedback").array(), // Feedback from judges
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const contestTeams = pgTable("contest_teams", {
+  id: serial("id").primaryKey(),
+  contestId: integer("contest_id").references(() => marketingContests.id).notNull(),
+  name: text("name").notNull(),
+  description: text("description"),
+  leaderId: integer("leader_id").notNull(), // User ID of team leader
+  memberIds: integer("member_ids").array().notNull(), // Array of user IDs
+  status: text("status").notNull().default('forming'), // forming, complete, submitted
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const contestVotes = pgTable("contest_votes", {
+  id: serial("id").primaryKey(),
+  submissionId: integer("submission_id").references(() => contestSubmissions.id).notNull(),
+  userId: integer("user_id").notNull(),
+  score: integer("score").notNull(), // 1-5 stars
+  comment: text("comment"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const portfolioEntries = pgTable("portfolio_entries", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  submissionId: integer("submission_id").references(() => contestSubmissions.id), // If entry is from a contest
+  campaignId: integer("campaign_id").references(() => campaigns.id), // If entry is a campaign
+  tags: text("tags").array().default([]),
+  skills: text("skills").array().notNull(),
+  showcased: boolean("showcased").default(false).notNull(), // Featured on profile
+  visibleToPublic: boolean("visible_to_public").default(true).notNull(),
+  visibleToEmployers: boolean("visible_to_employers").default(true).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Add validation schemas
+export const insertMarketingContestSchema = createInsertSchema(marketingContests);
+export const insertContestSubmissionSchema = createInsertSchema(contestSubmissions);
+export const insertContestTeamSchema = createInsertSchema(contestTeams);
+export const insertContestVoteSchema = createInsertSchema(contestVotes);
+export const insertPortfolioEntrySchema = createInsertSchema(portfolioEntries);
+
+// Add types
+export type MarketingContest = typeof marketingContests.$inferSelect;
+export type ContestSubmission = typeof contestSubmissions.$inferSelect;
+export type ContestTeam = typeof contestTeams.$inferSelect;
+export type ContestVote = typeof contestVotes.$inferSelect;
+export type PortfolioEntry = typeof portfolioEntries.$inferSelect;
+export type InsertMarketingContest = z.infer<typeof insertMarketingContestSchema>;
+export type InsertContestSubmission = z.infer<typeof insertContestSubmissionSchema>;
+export type InsertContestTeam = z.infer<typeof insertContestTeamSchema>;
+export type InsertContestVote = z.infer<typeof insertContestVoteSchema>;
+export type InsertPortfolioEntry = z.infer<typeof insertPortfolioEntrySchema>;
