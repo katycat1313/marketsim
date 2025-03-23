@@ -206,11 +206,14 @@ export const userProfiles = pgTable("user_profiles", {
   displayName: text("display_name"),
   avatarUrl: text("avatar_url"),
   bio: text("bio"),
-  level: text("level").notNull().default('Newborn'), // Newborn, Beginner, Skilled, Innovator, Strategist, Expert, Master
+  level: text("level").notNull().default('Beginner'), // Beginner, Intermediate, Advanced, Expert
   experiencePoints: integer("experience_points").notNull().default(0),
+  dailyXpEarned: integer("daily_xp_earned").notNull().default(0),
+  lastXpReset: timestamp("last_xp_reset").defaultNow().notNull(),
   achievements: json("achievements").$type<string[]>().default([]),
   badges: json("badges").$type<string[]>().default([]),
   specializations: json("specializations").$type<string[]>().default([]),
+  lastActivityDate: timestamp("last_activity_date").defaultNow().notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
@@ -279,6 +282,104 @@ export const insertPostSchema = createInsertSchema(posts);
 export const insertCommentSchema = createInsertSchema(comments);
 export const insertAchievementSchema = createInsertSchema(achievements);
 
+// Tutorial modules and user progress
+export const tutorialModules = pgTable("tutorial_modules", {
+  id: serial("id").primaryKey(),
+  moduleNumber: integer("module_number").notNull(),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  level: text("level").notNull(), // Beginner, Intermediate, Advanced, Expert
+  skillsLearned: json("skills_learned").$type<string[]>().notNull(),
+  prerequisiteModuleIds: integer("prerequisite_module_ids").array(), // Modules that must be completed first
+  estimatedTimeHours: decimal("estimated_time_hours").notNull(),
+  xpReward: integer("xp_reward").notNull(),
+  badgeId: integer("badge_id"), // Optional badge awarded upon completion
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const tutorialSections = pgTable("tutorial_sections", {
+  id: serial("id").primaryKey(),
+  moduleId: integer("module_id").references(() => tutorialModules.id).notNull(),
+  sectionNumber: integer("section_number").notNull(),
+  title: text("title").notNull(),
+  content: text("content").notNull(),
+  estimatedTimeMinutes: integer("estimated_time_minutes").notNull(),
+  hasQuiz: boolean("has_quiz").default(false).notNull(),
+  hasSimulation: boolean("has_simulation").default(false).notNull(),
+  xpReward: integer("xp_reward").notNull(),
+});
+
+export const userTutorialProgress = pgTable("user_tutorial_progress", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  moduleId: integer("module_id").references(() => tutorialModules.id).notNull(),
+  completedSections: integer("completed_sections").array().default([]),
+  started: boolean("started").default(false).notNull(),
+  completed: boolean("completed").default(false).notNull(),
+  startedAt: timestamp("started_at"),
+  completedAt: timestamp("completed_at"),
+  earnedXp: integer("earned_xp").default(0).notNull(),
+  timeSpentMinutes: integer("time_spent_minutes").default(0).notNull(),
+});
+
+export const userQuizResults = pgTable("user_quiz_results", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  sectionId: integer("section_id").references(() => tutorialSections.id).notNull(),
+  score: integer("score").notNull(), // 0-100 percentage
+  maxScore: integer("max_score").notNull(),
+  passed: boolean("passed").default(false).notNull(),
+  attempts: integer("attempts").default(1).notNull(),
+  lastAttemptAt: timestamp("last_attempt_at").defaultNow().notNull(),
+  answers: json("answers").$type<{questionId: number, answer: string, correct: boolean}[]>().notNull(),
+});
+
+export const userSimulationResults = pgTable("user_simulation_results", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  sectionId: integer("section_id").references(() => tutorialSections.id).notNull(),
+  challengeId: integer("challenge_id").notNull(),
+  campaignId: integer("campaign_id").references(() => campaigns.id),
+  score: integer("score").notNull(), // 0-100 percentage
+  passed: boolean("passed").default(false).notNull(),
+  feedback: json("feedback").$type<string[]>().notNull(),
+  metrics: json("metrics").$type<Record<string, number>>().notNull(),
+  attempts: integer("attempts").default(1).notNull(),
+  completedAt: timestamp("completed_at"),
+  timeSpentMinutes: integer("time_spent_minutes").default(0).notNull(),
+});
+
+export const userExperienceLog = pgTable("user_experience_log", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  amount: integer("amount").notNull(), // Can be positive or negative
+  source: text("source").notNull(), // tutorial, quiz, simulation, achievement, daily-activity, inactivity-decay
+  entityId: integer("entity_id"), // ID of the related entity (tutorial, achievement, etc.)
+  reason: text("reason").notNull(), // Short description of why XP was awarded
+  timestamp: timestamp("timestamp").defaultNow().notNull(),
+});
+
+// Level progression requirements
+export const levelRequirements = pgTable("level_requirements", {
+  id: serial("id").primaryKey(),
+  level: text("level").notNull().unique(), // Beginner, Intermediate, Advanced, Expert
+  xpRequired: integer("xp_required").notNull(),
+  requiredModuleIds: integer("required_module_ids").array(),
+  requiredAchievementCount: integer("required_achievement_count").default(0).notNull(),
+  minDaysAtPreviousLevel: integer("min_days_at_previous_level").default(7).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// Add validation schemas
+export const insertTutorialModuleSchema = createInsertSchema(tutorialModules);
+export const insertTutorialSectionSchema = createInsertSchema(tutorialSections);
+export const insertUserTutorialProgressSchema = createInsertSchema(userTutorialProgress);
+export const insertUserQuizResultSchema = createInsertSchema(userQuizResults);
+export const insertUserSimulationResultSchema = createInsertSchema(userSimulationResults);
+export const insertUserExperienceLogSchema = createInsertSchema(userExperienceLog);
+export const insertLevelRequirementSchema = createInsertSchema(levelRequirements);
+
 // Add types
 export type UserProfile = typeof userProfiles.$inferSelect;
 export type Connection = typeof connections.$inferSelect;
@@ -286,3 +387,17 @@ export type Project = typeof projects.$inferSelect;
 export type Post = typeof posts.$inferSelect;
 export type Comment = typeof comments.$inferSelect;
 export type Achievement = typeof achievements.$inferSelect;
+export type TutorialModule = typeof tutorialModules.$inferSelect;
+export type TutorialSection = typeof tutorialSections.$inferSelect;
+export type UserTutorialProgress = typeof userTutorialProgress.$inferSelect;
+export type UserQuizResult = typeof userQuizResults.$inferSelect;
+export type UserSimulationResult = typeof userSimulationResults.$inferSelect;
+export type UserExperienceLog = typeof userExperienceLog.$inferSelect;
+export type LevelRequirement = typeof levelRequirements.$inferSelect;
+export type InsertTutorialModule = z.infer<typeof insertTutorialModuleSchema>;
+export type InsertTutorialSection = z.infer<typeof insertTutorialSectionSchema>;
+export type InsertUserTutorialProgress = z.infer<typeof insertUserTutorialProgressSchema>;
+export type InsertUserQuizResult = z.infer<typeof insertUserQuizResultSchema>;
+export type InsertUserSimulationResult = z.infer<typeof insertUserSimulationResultSchema>;
+export type InsertUserExperienceLog = z.infer<typeof insertUserExperienceLogSchema>;
+export type InsertLevelRequirement = z.infer<typeof insertLevelRequirementSchema>;
