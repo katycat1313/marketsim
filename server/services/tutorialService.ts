@@ -228,6 +228,99 @@ export class TutorialService {
       ],
       estimatedTime: 90,
       skillsLearned: ["Audience Segmentation", "Demographic Targeting", "Behavioral Marketing", "Retargeting Strategies", "A/B Testing"]
+    },
+    {
+      id: 9,
+      title: "Testing Methodologies",
+      level: "Expert",
+      content: this.loadTutorialContent('chapter5-1.ts'),
+      tasks: [
+        {
+          id: 901,
+          description: "Design and execute a complete A/B testing strategy",
+          type: "practical",
+          requirements: ["Active Google Ads account", "Ad variations", "Statistical significance calculator"],
+          verificationCriteria: ["Testing plan created", "Test execution completed", "Results analysis documented"]
+        },
+        {
+          id: 902,
+          description: "Implement multivariate testing",
+          type: "practical",
+          requirements: ["High-traffic campaign", "Multiple variables to test", "Analytics access"],
+          verificationCriteria: ["Multivariate test designed", "Multiple variables simultaneously tested", "Optimal combination identified"]
+        },
+        {
+          id: 903,
+          description: "Optimize ad rotation for better performance",
+          type: "practical",
+          requirements: ["Multiple ad variations", "At least 2 weeks of campaign data"],
+          verificationCriteria: ["Ad rotation settings configured", "Performance differences analyzed", "Optimization strategy implemented"]
+        }
+      ],
+      estimatedTime: 120,
+      skillsLearned: ["A/B Testing Methodology", "Multivariate Testing", "Statistical Significance Analysis", "Ad Rotation Optimization", "Experiment Design"]
+    },
+    {
+      id: 10,
+      title: "Data Analysis for Google Ads",
+      level: "Expert",
+      content: this.loadTutorialContent('chapter5-2.ts'),
+      tasks: [
+        {
+          id: 1001,
+          description: "Create a comprehensive campaign analysis dashboard",
+          type: "practical",
+          requirements: ["Google Data Studio access", "Campaign data", "KPI definitions"],
+          verificationCriteria: ["Dashboard created", "Key metrics visualized", "Actionable insights identified"]
+        },
+        {
+          id: 1002,
+          description: "Perform segmentation analysis",
+          type: "practical",
+          requirements: ["Campaign data", "Analytics access", "Segment definitions"],
+          verificationCriteria: ["Segments analyzed", "Performance differences identified", "Targeting recommendations documented"]
+        },
+        {
+          id: 1003,
+          description: "Implement attribution modeling",
+          type: "practical",
+          requirements: ["Conversion data", "Multiple touchpoints", "Analytics access"],
+          verificationCriteria: ["Attribution model selected", "Path to conversion analyzed", "Budget allocation optimized"]
+        }
+      ],
+      estimatedTime: 120,
+      skillsLearned: ["Advanced Metrics Analysis", "Data Visualization", "Segmentation Strategy", "Attribution Modeling", "Performance Optimization"]
+    },
+    {
+      id: 11,
+      title: "Course Summary and Next Steps",
+      level: "Expert",
+      content: this.loadTutorialContent('chapter6-1.ts'),
+      tasks: [
+        {
+          id: 1101,
+          description: "Create a comprehensive Google Ads strategy for your business",
+          type: "practical",
+          requirements: ["Course completion", "Business objectives", "Marketing plan"],
+          verificationCriteria: ["Strategy document created", "Implementation timeline defined", "Success metrics established"]
+        },
+        {
+          id: 1102,
+          description: "Complete the final assessment",
+          type: "quiz",
+          requirements: ["All previous modules completed"],
+          verificationCriteria: ["95% or higher score", "Practical application demonstrated"]
+        },
+        {
+          id: 1103,
+          description: "Develop an ongoing optimization plan",
+          type: "practical",
+          requirements: ["Strategy document", "Performance analysis framework"],
+          verificationCriteria: ["Optimization schedule created", "Testing plan established", "Performance monitoring protocols defined"]
+        }
+      ],
+      estimatedTime: 90,
+      skillsLearned: ["Strategic Planning", "Performance Measurement", "Campaign Optimization", "ROI Maximization", "Continuous Improvement"]
     }
   ];
 
