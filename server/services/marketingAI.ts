@@ -116,7 +116,7 @@ const MARKETING_LEVELS = {
       "Mentor other marketers",
       "Drive strategic initiatives"
     ]
-  }
+  },
   Beginner: {
     requiredXP: 100,
     skills: [

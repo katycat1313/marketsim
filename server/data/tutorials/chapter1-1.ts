@@ -1,4 +1,4 @@
-Welcome to Google Ads Mastery: From Setup to Success!
+export const content = `Welcome to Google Ads Mastery: From Setup to Success!
 We are excited to have you in this comprehensive course designed specifically for small business owners and digital marketers like you. This course will empower you to create, optimize, and scale effective Google Ads campaigns that can significantly enhance your digital marketing efforts.
 
 What You Will Learn:
@@ -17,4 +17,6 @@ Quiz Pass Grade: 100%
 Assignment Pass Grade: 50%
 We encourage you to engage fully with the course material and take advantage of the interactive elements, quizzes, and assignments to reinforce your learning.
 
-Enjoy the course and get ready to master Google Ads!
+Enjoy the course and get ready to master Google Ads!`;
+
+export default content;
