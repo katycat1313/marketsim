@@ -125,17 +125,14 @@ export class TutorialService {
     try {
       // Import tutorial content directly (these are TypeScript modules now)
       // Note: Dynamic imports aren't supported in this context, so we use a direct approach
-      switch (filename) {
-        case 'chapter1-1.ts':
-          return require('../data/tutorials/chapter1-1').default;
-        case 'chapter1-2.ts':
-          return require('../data/tutorials/chapter1-2').default;
-        case 'chapter2-1.ts':
-          return require('../data/tutorials/chapter2-1').default;
-        case 'chapter2-2.ts':
-          return require('../data/tutorials/chapter2-2').default;
-        default:
-          return "Tutorial content not found.";
+      const tutorialPath = `../data/tutorials/${filename}`;
+      
+      try {
+        // This approach eliminates the need for a switch statement - more maintainable
+        return require(tutorialPath).default;
+      } catch (importError) {
+        console.error(`Could not import tutorial from ${filename}:`, importError);
+        return "Tutorial content not found.";
       }
     } catch (error) {
       console.error(`Error loading tutorial content from ${filename}:`, error);
