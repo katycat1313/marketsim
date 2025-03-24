@@ -156,10 +156,20 @@ export function TutorialSystem() {
               <div className="space-y-6">
                 {/* Render the tutorial content */}
                 <div className="prose prose-blue max-w-none">
-                  {/* Simple rendering of content with line breaks */}
+                  {/* Enhanced rendering of content with proper formatting */}
                   {currentTutorial.content ? (
-                    <div className="whitespace-pre-wrap">
-                      {currentTutorial.content}
+                    <div className="whitespace-pre-wrap p-4 bg-white rounded-lg shadow-sm">
+                      {/* Format the content to display nicely */}
+                      {currentTutorial.content.split('\n\n').map((paragraph, idx) => (
+                        <p key={idx} className="mb-4">
+                          {paragraph.split('\n').map((line, lineIdx) => (
+                            <React.Fragment key={lineIdx}>
+                              {line}
+                              {lineIdx < paragraph.split('\n').length - 1 && <br />}
+                            </React.Fragment>
+                          ))}
+                        </p>
+                      ))}
                     </div>
                   ) : (
                     <p>Content unavailable. Please try again later.</p>
