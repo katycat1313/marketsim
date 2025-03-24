@@ -363,28 +363,33 @@ export async function registerRoutes(app: Express) {
   // Tutorial Routes
   app.get("/api/tutorials", async (req, res) => {
     try {
-      const tutorialService = new TutorialService();
-      // Check user level if user is logged in, otherwise use query parameter or default to Beginner
-      let userLevel = 'Beginner';
+      // Get tutorials using the enhanced tutorial service
+      const userId = req.user?.id || 1; // Use user ID 1 as default for development
       
-      if (req.user?.id) {
-        try {
-          const userProfile = await storage.getUserProfile(req.user.id);
-          if (userProfile) {
-            userLevel = userProfile.level;
-          }
-        } catch (error) {
-          console.error("Error fetching user profile:", error);
-          // Continue with default level if user profile can't be fetched
-        }
-      } 
+      // Import enhanced tutorial service
+      const { enhancedTutorialService } = require('./services/enhancedTutorialService');
       
-      // Use query parameter if provided
-      if (req.query.level) {
-        userLevel = req.query.level as string;
-      }
+      // Get all modules with their sections
+      const modules = await enhancedTutorialService.getTutorialModules(userId);
       
-      const tutorials = await tutorialService.getTutorials(userLevel);
+      // Format the response to match the expected structure
+      const tutorials = modules.map(module => ({
+        id: module.id,
+        title: module.title,
+        level: module.level,
+        content: module.description || '',
+        estimatedTime: module.estimatedCompletionMinutes || 30,
+        skillsLearned: module.skillsTaught || [],
+        tasks: module.sections.map(section => ({
+          id: section.id,
+          description: section.title,
+          type: section.hasQuiz ? 'quiz' : (section.hasSimulation ? 'simulation' : 'practical'),
+          requirements: [section.description || ''],
+          verificationCriteria: []
+        })),
+        hasSimulation: module.sections.some(section => section.hasSimulation)
+      }));
+      
       res.json(tutorials);
     } catch (error) {
       console.error("Error retrieving tutorials:", error);
@@ -397,9 +402,27 @@ export async function registerRoutes(app: Express) {
       // Use a default user ID for development if not logged in
       const userId = req.user?.id || 1; // Use user ID 1 as default for development
       
-      const tutorialService = new TutorialService();
-      const progress = await tutorialService.getUserProgress(userId);
-      res.json(progress);
+      // Import enhanced tutorial service
+      const { enhancedTutorialService } = require('./services/enhancedTutorialService');
+      
+      // Get all modules with their sections
+      const modules = await enhancedTutorialService.getTutorialModules(userId);
+      const moduleIds = modules.map(module => module.id);
+      
+      // Get progress for all modules
+      const progressPromises = moduleIds.map(id => 
+        enhancedTutorialService.getModuleProgress(userId, id)
+      );
+      
+      // Wait for all promises to resolve
+      const progressResults = await Promise.all(progressPromises);
+      
+      // Filter out null results and get completed module IDs
+      const completedModuleIds = progressResults
+        .filter(progress => progress && progress.completed)
+        .map(progress => progress?.moduleId);
+      
+      res.json(completedModuleIds);
     } catch (error) {
       console.error("Error retrieving tutorial progress:", error);
       res.status(500).json({ error: "Failed to retrieve tutorial progress" });
@@ -417,12 +440,18 @@ export async function registerRoutes(app: Express) {
       // Use a default user ID for development if not logged in
       const userId = req.user?.id || 1; // Use user ID 1 as default for development
       
-      const tutorialService = new TutorialService();
-      await tutorialService.markTutorialComplete(userId, tutorialId);
+      console.log(`API request to complete tutorial ${tutorialId} for user ${userId}`);
+      
+      // Import enhanced tutorial service
+      const { enhancedTutorialService } = require('./services/enhancedTutorialService');
+      
+      // Complete the module
+      await enhancedTutorialService.completeModule(userId, tutorialId);
+      
       res.json({ success: true });
     } catch (error) {
       console.error("Error marking tutorial as complete:", error);
-      res.status(500).json({ error: "Failed to mark tutorial as complete" });
+      res.status(500).json({ error: "Failed to mark tutorial as complete", details: error.message });
     }
   });
 
