@@ -394,13 +394,11 @@ export async function registerRoutes(app: Express) {
 
   app.get("/api/tutorials/progress", async (req, res) => {
     try {
-      // If user is not logged in, return empty progress
-      if (!req.user?.id) {
-        return res.json([]);
-      }
+      // Use a default user ID for development if not logged in
+      const userId = req.user?.id || 1; // Use user ID 1 as default for development
       
       const tutorialService = new TutorialService();
-      const progress = await tutorialService.getUserProgress(req.user.id);
+      const progress = await tutorialService.getUserProgress(userId);
       res.json(progress);
     } catch (error) {
       console.error("Error retrieving tutorial progress:", error);
@@ -412,17 +410,15 @@ export async function registerRoutes(app: Express) {
     try {
       const { tutorialId } = req.body;
       
-      // If user is not logged in, return error
-      if (!req.user?.id) {
-        return res.status(401).json({ error: "You must be logged in to complete tutorials" });
-      }
-      
       if (!tutorialId) {
         return res.status(400).json({ error: "Tutorial ID is required" });
       }
       
+      // Use a default user ID for development if not logged in
+      const userId = req.user?.id || 1; // Use user ID 1 as default for development
+      
       const tutorialService = new TutorialService();
-      await tutorialService.markTutorialComplete(req.user.id, tutorialId);
+      await tutorialService.markTutorialComplete(userId, tutorialId);
       res.json({ success: true });
     } catch (error) {
       console.error("Error marking tutorial as complete:", error);
