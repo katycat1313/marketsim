@@ -50,6 +50,92 @@ export class TutorialService {
       skillsLearned: ["Google Ads Fundamentals", "Account Setup", "Campaign Structure Basics"]
     },
     {
+      id: 11,
+      title: "SEO Foundations: Basic On-Page Optimization",
+      level: "Beginner",
+      content: this.loadTutorialContent('seoFoundations.ts'),
+      tasks: [
+        {
+          id: 1101,
+          description: "Optimize a product page with on-page SEO elements",
+          type: "practical",
+          requirements: ["Access to content editor", "Understanding of basic SEO principles"],
+          verificationCriteria: ["Title tags optimized", "Meta descriptions written", "Heading hierarchy implemented", "Image alt text added"]
+        },
+        {
+          id: 1102,
+          description: "Complete the SEO basics quiz",
+          type: "quiz",
+          requirements: ["Completed readings"],
+          verificationCriteria: ["80% or higher score"]
+        }
+      ],
+      estimatedTime: 45, // minutes
+      skillsLearned: ["On-page SEO", "Title Tag Optimization", "Meta Description Writing", "Heading Structure", "Image Alt Text"]
+    },
+    {
+      id: 12,
+      title: "Intermediate SEO: Content Optimization & Local SEO",
+      level: "Intermediate",
+      content: this.loadTutorialContent('seoIntermediate.ts'),
+      tasks: [
+        {
+          id: 1201,
+          description: "Implement local business schema markup",
+          type: "practical",
+          requirements: ["Basic HTML knowledge", "Local business website"],
+          verificationCriteria: ["LocalBusiness schema implemented", "NAP information structured", "Business hours formatted"]
+        },
+        {
+          id: 1202,
+          description: "Optimize content for local search",
+          type: "practical",
+          requirements: ["Content editor access", "Local business information"],
+          verificationCriteria: ["Location-specific keywords added", "NAP consistency maintained", "Local content created"]
+        },
+        {
+          id: 1203,
+          description: "Apply SEO techniques in simulation",
+          type: "simulation",
+          requirements: ["Completed local SEO training"],
+          verificationCriteria: ["Simulation completed", "Local optimization applied", "Schema markup implemented"]
+        }
+      ],
+      estimatedTime: 60, // minutes
+      skillsLearned: ["Local SEO", "Schema Markup", "NAP Consistency", "Content Optimization for Local Search"]
+    },
+    {
+      id: 13,
+      title: "Advanced SEO: Technical Optimization & Content Strategy",
+      level: "Advanced",
+      content: this.loadTutorialContent('seoAdvanced.ts'),
+      tasks: [
+        {
+          id: 1301,
+          description: "Create and implement XML sitemaps",
+          type: "practical",
+          requirements: ["Website access", "Understanding of site structure"],
+          verificationCriteria: ["Sitemap created", "Submitted to search console", "Follow proper format"]
+        },
+        {
+          id: 1302,
+          description: "Implement canonical tags for duplicate content",
+          type: "practical",
+          requirements: ["Access to website head section", "Understanding of content duplication issues"],
+          verificationCriteria: ["Canonical tags implemented", "Self-referencing canonicals added", "Proper URL format used"]
+        },
+        {
+          id: 1303,
+          description: "Configure robots.txt",
+          type: "practical",
+          requirements: ["Server access", "Understanding of crawl budget"],
+          verificationCriteria: ["Robots.txt created/updated", "Proper directives used", "Critical paths protected"]
+        }
+      ],
+      estimatedTime: 90, // minutes
+      skillsLearned: ["Technical SEO", "XML Sitemaps", "Canonical Tags", "Robots.txt Configuration", "URL Structure"]
+    },
+    {
       id: 2,
       title: "Discovering the Power of Google Ads",
       level: "Beginner",
