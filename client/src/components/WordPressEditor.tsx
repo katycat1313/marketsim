@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
 import { AlertCircle, Edit, Save, Plus, Trash2, Image, Link, Code, Settings, Type, FileText, List, Check } from 'lucide-react';
+import ImageGallery from './ImageGallery';
 
 interface WordPressEditorProps {
   content: SeoPageContent;
