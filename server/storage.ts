@@ -2,9 +2,10 @@ import { db } from "./db";
 import { 
   type Persona, type Campaign, type SimulationData, 
   type UserProfile, type Connection, type Post, type Comment, type Achievement,
-  type InsertPersona, type InsertCampaign, type InsertSimulationData,
+  type UserQuizResult, type InsertPersona, type InsertCampaign, type InsertSimulationData,
   personas, campaigns, simulationData, userProfiles, connections, posts, comments, achievements,
-  insertUserProfileSchema, insertConnectionSchema, insertPostSchema, insertCommentSchema, insertAchievementSchema
+  userQuizResults, insertUserProfileSchema, insertConnectionSchema, insertPostSchema, insertCommentSchema, 
+  insertAchievementSchema, insertUserQuizResultSchema
 } from "@shared/schema";
 import { eq, desc } from "drizzle-orm";
 import { z } from "zod";
@@ -15,6 +16,7 @@ type InsertConnection = z.infer<typeof insertConnectionSchema>;
 type InsertPost = z.infer<typeof insertPostSchema>;
 type InsertComment = z.infer<typeof insertCommentSchema>;
 type InsertAchievement = z.infer<typeof insertAchievementSchema>;
+type InsertUserQuizResult = z.infer<typeof insertUserQuizResultSchema>;
 
 export interface IStorage {
   // Persona operations
@@ -54,6 +56,11 @@ export interface IStorage {
   createAchievement(achievement: InsertAchievement): Promise<Achievement>;
   getAchievementById(id: number): Promise<Achievement | undefined>;
   listAchievements(): Promise<Achievement[]>;
+  
+  // Quiz operations
+  createQuizResult(quizResult: InsertUserQuizResult): Promise<UserQuizResult>;
+  getUserQuizResults(userId: number, quizId?: string): Promise<UserQuizResult[]>;
+  getQuizCompletion(userId: number): Promise<{completedQuizzes: number, totalQuizzes: number}>;
 }
 
 export class DrizzleStorage implements IStorage {
@@ -273,6 +280,41 @@ export class DrizzleStorage implements IStorage {
   
   async listAchievements(): Promise<Achievement[]> {
     return await db.select().from(achievements);
+  }
+  
+  // Quiz operations
+  async createQuizResult(quizResult: InsertUserQuizResult): Promise<UserQuizResult> {
+    const [result] = await db.insert(userQuizResults).values(quizResult).returning();
+    return result;
+  }
+  
+  async getUserQuizResults(userId: number, quizId?: string): Promise<UserQuizResult[]> {
+    let query = db.select()
+      .from(userQuizResults)
+      .where(eq(userQuizResults.userId, userId));
+      
+    if (quizId) {
+      query = query.where(eq(userQuizResults.quizId, quizId));
+    }
+    
+    return await query.orderBy(desc(userQuizResults.lastAttemptAt));
+  }
+  
+  async getQuizCompletion(userId: number): Promise<{completedQuizzes: number, totalQuizzes: number}> {
+    // Get completed quizzes by this user
+    const completedQuizResults = await db.select()
+      .from(userQuizResults)
+      .where(eq(userQuizResults.userId, userId))
+      .where(eq(userQuizResults.passed, true));
+    
+    // For now, use a fixed number for total quizzes
+    // This would be replaced with an actual count from all available quizzes
+    const totalQuizzes = 5; // Adjust based on your actual quiz content
+    
+    return {
+      completedQuizzes: completedQuizResults.length,
+      totalQuizzes
+    };
   }
 }
 

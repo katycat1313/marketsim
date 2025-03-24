@@ -518,22 +518,41 @@ export async function registerRoutes(app: Express) {
         return res.status(401).json({ error: "Authentication required" });
       }
       
-      const { quizId, score } = req.body;
+      const { quizId, score, answers, maxScore } = req.body;
       
-      if (!quizId || score === undefined) {
-        return res.status(400).json({ error: "Quiz ID and score are required" });
+      if (!quizId || score === undefined || !maxScore) {
+        return res.status(400).json({ error: "Quiz ID, score, and maxScore are required" });
       }
       
-      // In a real implementation, we would:
-      // 1. Save the user's quiz results to the database
-      // 2. Update their achievements based on their scores
-      // 3. Return the updated progress
+      // Get the user ID from the session (or use default for demo)
+      const userId = req.user?.id || 1;
       
-      // For now, return success response for demo purposes
-      res.json({ 
-        success: true,
-        message: "Quiz completed successfully"
-      });
+      // Calculate if the user passed based on a threshold (e.g., 70%)
+      const passThreshold = 0.7;
+      const passed = (score / maxScore) >= passThreshold;
+      
+      try {
+        // 1. Save the user's quiz results to the database
+        const quizResult = await storage.createQuizResult({
+          userId,
+          quizId,
+          score,
+          maxScore,
+          passed,
+          answers: answers || [],
+          lastAttemptAt: new Date()
+        });
+        
+        // 2. Get updated completion stats
+        const quizCompletion = await storage.getQuizCompletion(userId);
+        
+        // 3. Return the updated progress
+        res.json({ 
+          success: true,
+          message: "Quiz completed successfully",
+          result: quizResult,
+          completion: quizCompletion
+        });
     } catch (error) {
       console.error('Failed to complete quiz:', error);
       res.status(500).json({ error: "Failed to complete quiz" });
