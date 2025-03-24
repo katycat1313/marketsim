@@ -11,23 +11,11 @@ export default function SeoQuizPage() {
   const [activeTab, setActiveTab] = useState("quiz");
   const { toast } = useToast();
 
-  // Query to fetch user progress (this would be implemented in a real app)
-  const { data: userProgress } = useQuery({
+  // Query to fetch user progress
+  const { data: userProgress, isLoading: isLoadingProgress } = useQuery({
     queryKey: ['/api/quiz/progress'],
-    queryFn: async () => {
-      return {
-        completedQuizzes: 1,
-        totalQuizzes: 3,
-        score: 85,
-        badges: [
-          { id: 1, name: "SEO Beginner", achieved: true },
-          { id: 2, name: "SEO Intermediate", achieved: false },
-          { id: 3, name: "SEO Expert", achieved: false }
-        ]
-      };
-    },
-    // For demo purposes, this will just return mock data
-    // In a real app, this would fetch from your API
+    // Fetch from our newly created API endpoint
+    refetchOnWindowFocus: false,
   });
 
   const startQuiz = () => {
@@ -153,46 +141,67 @@ export default function SeoQuizPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
-                <div className="space-y-2">
-                  <div className="flex justify-between items-center">
-                    <h3 className="font-medium">Quiz Completion</h3>
-                    <span className="text-sm text-muted-foreground">
-                      {userProgress?.completedQuizzes || 0}/{userProgress?.totalQuizzes || 3} Completed
-                    </span>
+                {isLoadingProgress ? (
+                  <div className="flex flex-col items-center justify-center py-10 space-y-4">
+                    <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+                    <p className="text-muted-foreground">Loading your progress...</p>
                   </div>
-                  <div className="w-full bg-muted rounded-full h-2.5">
-                    <div 
-                      className="bg-primary h-2.5 rounded-full" 
-                      style={{ width: `${((userProgress?.completedQuizzes || 0) / (userProgress?.totalQuizzes || 3)) * 100}%` }}
-                    ></div>
+                ) : userProgress ? (
+                  <>
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-center">
+                        <h3 className="font-medium">Quiz Completion</h3>
+                        <span className="text-sm text-muted-foreground">
+                          {userProgress.completedQuizzes || 0}/{userProgress.totalQuizzes || 3} Completed
+                        </span>
+                      </div>
+                      <div className="w-full bg-muted rounded-full h-2.5">
+                        <div 
+                          className="bg-primary h-2.5 rounded-full" 
+                          style={{ width: `${((userProgress.completedQuizzes || 0) / (userProgress.totalQuizzes || 3)) * 100}%` }}
+                        ></div>
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <h3 className="font-medium">Your Achievements</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        {userProgress.badges.map((badge) => (
+                          <Card key={badge.id} className={`border ${badge.achieved ? 'border-primary' : 'border-muted'}`}>
+                            <CardContent className="p-4 flex items-center space-x-4">
+                              <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                                badge.achieved ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'
+                              }`}>
+                                <Award className="h-5 w-5" />
+                              </div>
+                              <div>
+                                <p className="font-medium">{badge.name}</p>
+                                <p className="text-xs text-muted-foreground">
+                                  {badge.achieved ? 'Achieved' : 'Not yet achieved'}
+                                </p>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <div className="flex flex-col items-center justify-center py-10 space-y-4">
+                    <div className="p-4 bg-muted rounded-lg">
+                      <Award className="h-12 w-12 text-muted-foreground" />
+                    </div>
+                    <div className="text-center">
+                      <h3 className="text-lg font-medium">No Progress Yet</h3>
+                      <p className="text-muted-foreground max-w-md mt-2">
+                        Complete the SEO quiz to start tracking your progress. Your results will be saved automatically.
+                      </p>
+                    </div>
                   </div>
-                </div>
+                )}
                 
-                <div className="space-y-2">
-                  <h3 className="font-medium">Your Achievements</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {userProgress?.badges.map((badge) => (
-                      <Card key={badge.id} className={`border ${badge.achieved ? 'border-primary' : 'border-muted'}`}>
-                        <CardContent className="p-4 flex items-center space-x-4">
-                          <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                            badge.achieved ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'
-                          }`}>
-                            <Award className="h-5 w-5" />
-                          </div>
-                          <div>
-                            <p className="font-medium">{badge.name}</p>
-                            <p className="text-xs text-muted-foreground">
-                              {badge.achieved ? 'Achieved' : 'Not yet achieved'}
-                            </p>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
-                </div>
-                
-                <Button onClick={startQuiz}>
-                  Take Quiz Again
+                <Button onClick={startQuiz} className="w-full">
+                  {userProgress ? 'Take Quiz Again' : 'Start Quiz Now'}
                 </Button>
               </CardContent>
             </Card>

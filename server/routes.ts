@@ -474,5 +474,71 @@ export async function registerRoutes(app: Express) {
     }
   });
 
+  // SEO Quiz Routes
+  app.get("/api/quiz/progress", async (req, res) => {
+    try {
+      if (!req.user?.id) {
+        // For demo purposes, return mock data for unauthenticated users
+        return res.json({
+          completedQuizzes: 1,
+          totalQuizzes: 3,
+          score: 85,
+          badges: [
+            { id: 1, name: "SEO Beginner", achieved: true },
+            { id: 2, name: "SEO Intermediate", achieved: false },
+            { id: 3, name: "SEO Expert", achieved: false }
+          ]
+        });
+      }
+      
+      // In a real implementation, we would fetch this from the database
+      // based on the user's actual quiz history and achievements
+      // This would need to be implemented in the storage layer
+      
+      // For now, return mock data for demo purposes
+      res.json({
+        completedQuizzes: 1,
+        totalQuizzes: 3,
+        score: 85,
+        badges: [
+          { id: 1, name: "SEO Beginner", achieved: true },
+          { id: 2, name: "SEO Intermediate", achieved: false },
+          { id: 3, name: "SEO Expert", achieved: false }
+        ]
+      });
+    } catch (error) {
+      console.error('Failed to retrieve quiz progress:', error);
+      res.status(500).json({ error: "Failed to retrieve quiz progress" });
+    }
+  });
+
+  app.post("/api/quiz/complete", async (req, res) => {
+    try {
+      if (!req.user?.id) {
+        return res.status(401).json({ error: "Authentication required" });
+      }
+      
+      const { quizId, score } = req.body;
+      
+      if (!quizId || score === undefined) {
+        return res.status(400).json({ error: "Quiz ID and score are required" });
+      }
+      
+      // In a real implementation, we would:
+      // 1. Save the user's quiz results to the database
+      // 2. Update their achievements based on their scores
+      // 3. Return the updated progress
+      
+      // For now, return success response for demo purposes
+      res.json({ 
+        success: true,
+        message: "Quiz completed successfully"
+      });
+    } catch (error) {
+      console.error('Failed to complete quiz:', error);
+      res.status(500).json({ error: "Failed to complete quiz" });
+    }
+  });
+
   return httpServer;
 }

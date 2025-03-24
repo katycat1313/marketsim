@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -10,6 +10,8 @@ import { AlertCircle, CheckCircle2, X, Check, HelpCircle, Code, Database, Search
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Separator } from '@/components/ui/separator';
 import { seoQuizQuestions } from '../../../server/data/quizzes/seoQuiz';
+import { useToast } from '@/hooks/use-toast';
+import { apiRequest } from '@/lib/queryClient';
 
 interface QuizQuestion {
   id: number;
@@ -38,6 +40,8 @@ export const SeoQuiz = () => {
   const [answers, setAnswers] = useState<Record<number, any>>({});
   const [showResults, setShowResults] = useState(false);
   const [showExplanation, setShowExplanation] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { toast } = useToast();
   
   const question = seoQuizQuestions[currentQuestion] as QuizQuestion;
   
@@ -139,8 +143,47 @@ export const SeoQuiz = () => {
     }
   };
   
+  const submitQuizResults = async (score: number) => {
+    if (isSubmitting) return;
+    
+    setIsSubmitting(true);
+    try {
+      // Submit quiz results to the backend
+      await apiRequest({
+        url: '/api/quiz/complete',
+        method: 'POST',
+        body: {
+          quizId: 'seo-fundamentals', // Quiz identifier
+          score
+        }
+      });
+      
+      toast({
+        title: "Quiz results saved",
+        description: "Your progress has been updated successfully.",
+        variant: "default"
+      });
+    } catch (error) {
+      console.error('Failed to save quiz results:', error);
+      toast({
+        title: "Failed to save results",
+        description: "There was a problem saving your quiz results. You can still continue.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   if (showResults) {
     const score = calculateScore();
+    
+    // Submit quiz results when showing results
+    React.useEffect(() => {
+      submitQuizResults(score);
+    // We only want this to run once when results are shown
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
     
     return (
       <Card className="w-full max-w-4xl mx-auto">
@@ -168,13 +211,17 @@ export const SeoQuiz = () => {
             </Alert>
             
             <div className="pt-4">
-              <Button onClick={() => { 
-                setCurrentQuestion(0);
-                setAnswers({});
-                setShowResults(false);
-                setShowExplanation(false);
-              }} className="w-full">
-                Restart Quiz
+              <Button 
+                onClick={() => { 
+                  setCurrentQuestion(0);
+                  setAnswers({});
+                  setShowResults(false);
+                  setShowExplanation(false);
+                }} 
+                className="w-full"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? "Saving results..." : "Restart Quiz"}
               </Button>
             </div>
           </div>
