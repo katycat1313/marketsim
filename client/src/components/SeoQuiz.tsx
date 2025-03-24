@@ -151,7 +151,9 @@ export const SeoQuiz = () => {
       // Submit quiz results to the backend
       await apiRequest('POST', '/api/quiz/complete', {
         quizId: 'seo-fundamentals', // Quiz identifier
-        score
+        score,
+        maxScore: 100, // Maximum possible score is 100
+        answers: answers // Include the user's answers
       });
       
       toast({
