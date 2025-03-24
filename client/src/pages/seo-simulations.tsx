@@ -24,13 +24,13 @@ interface SeoSimulation {
 }
 
 export default function SeoSimulationsPage() {
-  const { data: simulations, isLoading, error } = useQuery({
+  const { data, isLoading, error } = useQuery({
     queryKey: ['/api/seo-simulations'],
     queryFn: () => apiRequest('GET', '/api/seo-simulations')
   });
 
-  console.log('Received simulations data:', simulations);
-  console.log('Type of simulations data:', simulations ? typeof simulations : 'undefined', Array.isArray(simulations));
+  // Make sure we're working with an array of simulations
+  const simulations = Array.isArray(data) ? data : [];
 
   if (isLoading) {
     return (
