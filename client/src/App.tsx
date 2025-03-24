@@ -9,6 +9,8 @@ import CampaignCreator from "@/pages/campaign-creator";
 import Dashboard from "@/pages/dashboard";
 import ApiSettings from "@/pages/api-settings";
 import NetworkPage from "@/pages/network";
+import SeoSimulationsPage from "@/pages/seo-simulations";
+import SeoSimulationPage from "@/pages/seo-simulation";
 import Achievements from "@/components/Achievements";
 import Posts from "@/components/Posts";
 import { 
@@ -18,7 +20,8 @@ import {
   MessageSquare, 
   BarChart2, 
   Target, 
-  Settings 
+  Settings,
+  Search
 } from "lucide-react";
 
 function NavBar() {
@@ -75,6 +78,12 @@ function NavBar() {
                 <span>Achievements</span>
               </div>
             </Link>
+            <Link href="/seo-simulations">
+              <div className={`flex items-center gap-1 text-sm cursor-pointer ${location === '/seo-simulations' ? 'text-primary font-medium' : 'text-muted-foreground'}`}>
+                <Search className="h-4 w-4" />
+                <span>SEO Practice</span>
+              </div>
+            </Link>
           </nav>
           
           <div className="flex items-center gap-4">
@@ -105,6 +114,8 @@ function Router() {
           <Route path="/network" component={NetworkPage} />
           <Route path="/community" component={Posts} />
           <Route path="/achievements" component={Achievements} />
+          <Route path="/seo-simulations" component={SeoSimulationsPage} />
+          <Route path="/seo-simulation/:id" component={SeoSimulationPage} />
           <Route component={NotFound} />
         </Switch>
       </main>

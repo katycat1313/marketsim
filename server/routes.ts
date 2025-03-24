@@ -391,5 +391,88 @@ export async function registerRoutes(app: Express) {
     }
   });
 
+  // SEO Simulation Routes
+  app.get("/api/seo-simulations", async (req, res) => {
+    try {
+      // Seed simulations if they don't exist
+      await seoSimulationService.seedSimulations();
+      
+      // Get all simulations
+      const simulations = await seoSimulationService.getSimulations();
+      res.json(simulations);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to retrieve SEO simulations" });
+    }
+  });
+
+  app.get("/api/seo-simulations/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const simulation = await seoSimulationService.getSimulation(id);
+      
+      if (!simulation) {
+        return res.status(404).json({ error: "SEO simulation not found" });
+      }
+      
+      res.json(simulation);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to retrieve SEO simulation" });
+    }
+  });
+
+  app.post("/api/seo-simulations/:id/attempts", async (req, res) => {
+    try {
+      if (!req.user?.id) {
+        return res.status(401).json({ error: "Authentication required" });
+      }
+      
+      const simulationId = parseInt(req.params.id);
+      const { modifiedContent } = req.body;
+      
+      if (!modifiedContent) {
+        return res.status(400).json({ error: "Modified content is required" });
+      }
+      
+      const attempt = await seoSimulationService.submitAttempt({
+        simulationId,
+        userId: req.user.id,
+        modifiedContent,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      });
+      
+      res.json(attempt);
+    } catch (error) {
+      console.error('SEO simulation attempt submission error:', error);
+      res.status(500).json({ error: "Failed to submit SEO simulation attempt" });
+    }
+  });
+
+  app.get("/api/seo-simulations/:id/attempts", async (req, res) => {
+    try {
+      if (!req.user?.id) {
+        return res.status(401).json({ error: "Authentication required" });
+      }
+      
+      const simulationId = parseInt(req.params.id);
+      const attempts = await seoSimulationService.getUserAttempts(req.user.id, simulationId);
+      
+      res.json(attempts);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to retrieve SEO simulation attempts" });
+    }
+  });
+
+  app.get("/api/seo-simulations/:id/analytics", async (req, res) => {
+    try {
+      const simulationId = parseInt(req.params.id);
+      const analytics = await seoSimulationService.getSimulationAnalytics(simulationId);
+      
+      res.json(analytics);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to retrieve SEO simulation analytics" });
+    }
+  });
+
   return httpServer;
 }
