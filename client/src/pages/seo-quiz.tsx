@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Search, BookOpen, Award } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { apiRequest } from '@/lib/queryClient';
 
 export default function SeoQuizPage() {
   const [activeTab, setActiveTab] = useState("quiz");
@@ -14,7 +15,7 @@ export default function SeoQuizPage() {
   // Query to fetch user progress
   const { data: userProgress, isLoading: isLoadingProgress } = useQuery({
     queryKey: ['/api/quiz/progress'],
-    // Fetch from our newly created API endpoint
+    queryFn: () => apiRequest('GET', '/api/quiz/progress'),
     refetchOnWindowFocus: false,
   });
 
