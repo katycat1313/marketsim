@@ -410,6 +410,37 @@ export class TutorialService {
       ],
       estimatedTime: 90,
       skillsLearned: ["Strategic Planning", "Performance Measurement", "Campaign Optimization", "ROI Maximization", "Continuous Improvement"]
+    },
+    {
+      id: 14,
+      title: "Analytics Foundations: Understanding Marketing Performance Metrics",
+      level: "Beginner",
+      content: this.loadTutorialContent('analyticsFoundations.ts'),
+      tasks: [
+        {
+          id: 1401,
+          description: "Set up Google Analytics for a marketing campaign",
+          type: "practical",
+          requirements: ["Google Analytics account", "Website access", "Marketing campaign plan"],
+          verificationCriteria: ["GA4 property created", "Tags implemented", "Custom events defined"]
+        },
+        {
+          id: 1402,
+          description: "Create a performance dashboard",
+          type: "practical",
+          requirements: ["Google Analytics access", "Marketing goals", "KPI definitions"],
+          verificationCriteria: ["Dashboard created", "Key metrics visualized", "Regular reporting schedule established"]
+        },
+        {
+          id: 1403,
+          description: "Complete the analytics fundamentals quiz",
+          type: "quiz",
+          requirements: ["Completed readings"],
+          verificationCriteria: ["80% or higher score"]
+        }
+      ],
+      estimatedTime: 60,
+      skillsLearned: ["Data Analysis", "KPI Identification", "Performance Measurement", "Dashboard Creation", "Analytics Implementation"]
     }
   ];
 
