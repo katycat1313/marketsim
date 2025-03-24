@@ -326,13 +326,14 @@ export const userTutorialProgress = pgTable("user_tutorial_progress", {
 export const userQuizResults = pgTable("user_quiz_results", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").notNull(),
-  sectionId: integer("section_id").references(() => tutorialSections.id).notNull(),
+  sectionId: integer("section_id").references(() => tutorialSections.id),
+  quizId: text("quiz_id"), // For standalone quizzes like 'seo-fundamentals'
   score: integer("score").notNull(), // 0-100 percentage
   maxScore: integer("max_score").notNull(),
   passed: boolean("passed").default(false).notNull(),
   attempts: integer("attempts").default(1).notNull(),
   lastAttemptAt: timestamp("last_attempt_at").defaultNow().notNull(),
-  answers: json("answers").$type<{questionId: number, answer: string, correct: boolean}[]>().notNull(),
+  answers: json("answers").$type<{questionId: number, answer: string, correct: boolean}[]>(),
 });
 
 export const userSimulationResults = pgTable("user_simulation_results", {
