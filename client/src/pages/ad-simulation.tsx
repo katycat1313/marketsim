@@ -184,7 +184,7 @@ export default function AdSimulationPage() {
   // Fetch the simulation details
   const { data: simulation, isLoading } = useQuery({
     queryKey: [`/api/ad-simulations/${id}`],
-    queryFn: getQueryFn(),
+    queryFn: getQueryFn({ on401: "throw" }),
   });
 
   // Set the active platform tab based on the simulation data

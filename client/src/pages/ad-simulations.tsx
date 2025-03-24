@@ -15,7 +15,7 @@ export default function AdSimulationsPage() {
   // Fetch all ad platform simulations
   const { data: simulations, isLoading } = useQuery({
     queryKey: ["/api/ad-simulations"],
-    queryFn: getQueryFn(),
+    queryFn: getQueryFn({ on401: "throw" }),
   });
 
   // Filter simulations by platform
