@@ -261,23 +261,26 @@ export default function SeoSimulationPage() {
               <TabsContent value="editor" className="space-y-6">
                 {content && (
                   <>
-                    <Card>
-                      <CardHeader>
-                        <CardTitle>Page Title</CardTitle>
-                        <CardDescription>The title tag is a critical SEO element (50-60 characters ideal)</CardDescription>
-                      </CardHeader>
-                      <CardContent>
-                        <Input 
-                          value={content.title} 
-                          onChange={handleTitleChange}
-                          disabled={!editMode}
-                          className={editMode ? "border-blue-300" : ""}
-                        />
-                        <div className="mt-2 text-xs text-gray-500">
-                          {content.title.length} characters
-                        </div>
-                      </CardContent>
-                    </Card>
+                    {simulation.difficulty === 'Beginner' ? (
+                      // Beginner mode - Form-based editor
+                      <>
+                        <Card>
+                          <CardHeader>
+                            <CardTitle>Page Title</CardTitle>
+                            <CardDescription>The title tag is a critical SEO element (50-60 characters ideal)</CardDescription>
+                          </CardHeader>
+                          <CardContent>
+                            <Input 
+                              value={content.title} 
+                              onChange={handleTitleChange}
+                              disabled={!editMode}
+                              className={editMode ? "border-blue-300" : ""}
+                            />
+                            <div className="mt-2 text-xs text-gray-500">
+                              {content.title.length} characters
+                            </div>
+                          </CardContent>
+                        </Card>
                     
                     <Card>
                       <CardHeader>
