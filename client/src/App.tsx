@@ -32,12 +32,12 @@ function NavBar() {
   return (
     <header className="border-b shadow-sm bg-background">
       <div className="container mx-auto px-4">
-        <div className="flex h-16 items-center justify-between">
-          <div className="flex items-center gap-2 font-bold text-xl">
+        <div className="flex flex-col h-24 items-center justify-center">
+          <div className="flex items-center gap-2 font-bold text-xl mb-2">
             <span className="text-primary">MarketSim</span>
           </div>
           
-          <nav className="flex items-center gap-6">
+          <nav className="flex items-center justify-center gap-6">
             <Link href="/">
               <div className={`flex items-center gap-1 text-sm cursor-pointer ${location === '/' ? 'text-primary font-medium' : 'text-muted-foreground'}`}>
                 <HomeIcon className="h-4 w-4" />
@@ -92,16 +92,13 @@ function NavBar() {
                 <span>SEO Quiz</span>
               </div>
             </Link>
-          </nav>
-          
-          <div className="flex items-center gap-4">
             <Link href="/api-settings">
               <div className={`flex items-center gap-1 text-sm cursor-pointer ${location === '/api-settings' ? 'text-primary font-medium' : 'text-muted-foreground'}`}>
                 <Settings className="h-4 w-4" />
                 <span>Settings</span>
               </div>
             </Link>
-          </div>
+          </nav>
         </div>
       </div>
     </header>
