@@ -1,6 +1,8 @@
 import { SeoSimulation, SeoSimulationAttempt, InsertSeoSimulation, InsertSeoSimulationAttempt } from '@shared/schema';
 import { db } from '../db';
 import { freeMarketingAI, premiumMarketingAI, enterpriseMarketingAI } from './marketingAI';
+import { eq, and, desc } from 'drizzle-orm';
+import * as schema from '@shared/schema';
 
 interface SeoPageContent {
   title: string;
@@ -221,7 +223,7 @@ export class SeoSimulationService {
     try {
       console.log('Querying seo_simulations table...');
       // Use the imported schema type instead of a string
-      const simulations = await db.select().from(seoSimulations);
+      const simulations = await db.select().from(schema.seoSimulations);
       console.log('Found simulations:', simulations.length);
       return simulations;
     } catch (error) {
@@ -235,8 +237,8 @@ export class SeoSimulationService {
     try {
       const [simulation] = await db
         .select()
-        .from(seoSimulations)
-        .where(eq(seoSimulations.id, id));
+        .from(schema.seoSimulations)
+        .where(eq(schema.seoSimulations.id, id));
       
       return simulation;
     } catch (error) {
@@ -247,12 +249,18 @@ export class SeoSimulationService {
   
   // Create a new simulation
   async createSimulation(simulation: InsertSeoSimulation): Promise<SeoSimulation> {
-    const [result] = await db
-      .insert('seo_simulations')
-      .values(simulation)
-      .returning();
-    
-    return result;
+    try {
+      console.log('Creating simulation:', simulation.title);
+      const [result] = await db
+        .insert(seoSimulations)
+        .values(simulation)
+        .returning();
+      
+      return result;
+    } catch (error) {
+      console.error('Error creating simulation:', error);
+      throw error;
+    }
   }
   
   // Seed initial simulations
@@ -280,44 +288,54 @@ export class SeoSimulationService {
   
   // Submit a simulation attempt
   async submitAttempt(attempt: InsertSeoSimulationAttempt): Promise<SeoSimulationAttempt> {
-    // Get the original simulation to compare against
-    const simulation = await this.getSimulation(attempt.simulationId);
-    
-    if (!simulation) {
-      throw new Error('Simulation not found');
+    try {
+      // Get the original simulation to compare against
+      const simulation = await this.getSimulation(attempt.simulationId);
+      
+      if (!simulation) {
+        throw new Error('Simulation not found');
+      }
+      
+      // Evaluate the attempt and calculate scores
+      const evaluation = await this.evaluateAttempt(simulation, attempt);
+      
+      // Combine evaluation results with the attempt
+      const finalAttempt: InsertSeoSimulationAttempt = {
+        ...attempt,
+        ...evaluation,
+        completedAt: new Date()
+      };
+      
+      // Save to database
+      const [result] = await db
+        .insert(seoSimulationAttempts)
+        .values(finalAttempt)
+        .returning();
+      
+      return result;
+    } catch (error) {
+      console.error('Error submitting simulation attempt:', error);
+      throw error;
     }
-    
-    // Evaluate the attempt and calculate scores
-    const evaluation = await this.evaluateAttempt(simulation, attempt);
-    
-    // Combine evaluation results with the attempt
-    const finalAttempt: InsertSeoSimulationAttempt = {
-      ...attempt,
-      ...evaluation,
-      completedAt: new Date()
-    };
-    
-    // Save to database
-    const [result] = await db
-      .insert('seo_simulation_attempts')
-      .values(finalAttempt)
-      .returning();
-    
-    return result;
   }
   
   // Get user's attempts for a simulation
   async getUserAttempts(userId: number, simulationId: number): Promise<SeoSimulationAttempt[]> {
-    const attempts = await db
-      .select()
-      .from('seo_simulation_attempts')
-      .where({ 
-        userId,
-        simulationId
-      })
-      .orderBy('createdAt', 'desc');
-    
-    return attempts;
+    try {
+      const attempts = await db
+        .select()
+        .from(seoSimulationAttempts)
+        .where(and(
+          eq(seoSimulationAttempts.userId, userId),
+          eq(seoSimulationAttempts.simulationId, simulationId)
+        ))
+        .orderBy(desc(seoSimulationAttempts.createdAt));
+      
+      return attempts;
+    } catch (error) {
+      console.error('Error getting user attempts:', error);
+      return [];
+    }
   }
   
   // Evaluate a simulation attempt against the original
