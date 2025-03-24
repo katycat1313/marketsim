@@ -27,6 +27,7 @@ import { freeMarketingAI, premiumMarketingAI, enterpriseMarketingAI } from "./se
 import { TutorialService } from "./services/tutorialService";
 import { tutorialSimulationService } from "./services/tutorialSimulationService";
 import { seoSimulationService } from "./services/seoSimulationService";
+import stripeRoutes from "./routes/stripeRoutes";
 
 export async function registerRoutes(app: Express) {
   const httpServer = createServer(app);
@@ -561,6 +562,10 @@ export async function registerRoutes(app: Express) {
       res.status(500).json({ error: "Failed to complete quiz" });
     }
   });
+
+  // Mount Stripe routes
+  app.use('/api/stripe', stripeRoutes);
+  console.log('Stripe routes registered');
 
   return httpServer;
 }
