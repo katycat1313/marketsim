@@ -565,7 +565,12 @@ export default function SeoSimulationPage() {
                       <div>
                         <h3 className="text-lg font-medium mb-3">Keyword Optimization</h3>
                         <div className="space-y-3">
-                          {latestAttempt.keywordOptimization.map((keyword, index) => (
+                          {latestAttempt.keywordOptimization.map((keyword: {
+                              keyword: string;
+                              density: number;
+                              placement: string[];
+                              feedback: string;
+                            }, index: number) => (
                             <Card key={index}>
                               <CardContent className="p-4">
                                 <div className="flex justify-between items-start">
@@ -577,8 +582,8 @@ export default function SeoSimulationPage() {
                                     </p>
                                   </div>
                                   <Badge variant={
-                                    keyword.density >= 0.5 && keyword.density <= 2.5 ? "success" : 
-                                    keyword.density > 0 ? "warning" : "destructive"
+                                    keyword.density >= 0.5 && keyword.density <= 2.5 ? "secondary" : 
+                                    keyword.density > 0 ? "outline" : "destructive"
                                   }>
                                     {keyword.density >= 0.5 && keyword.density <= 2.5 ? "Optimal" : 
                                      keyword.density > 0 ? "Suboptimal" : "Missing"}
@@ -594,7 +599,11 @@ export default function SeoSimulationPage() {
                       <div>
                         <h3 className="text-lg font-medium mb-3">SEO Issues</h3>
                         <div className="space-y-2">
-                          {latestAttempt.issuesFixed.map((issue, index) => (
+                          {latestAttempt.issuesFixed.map((issue: {
+                            issueType: string;
+                            fixed: boolean;
+                            feedback: string;
+                          }, index: number) => (
                             <div key={index} className="flex items-start space-x-2 p-2 border rounded-md">
                               {issue.fixed ? (
                                 <div className="h-6 w-6 rounded-full bg-green-100 flex items-center justify-center">
@@ -621,7 +630,7 @@ export default function SeoSimulationPage() {
                           <AlertTitle>Areas for Improvement</AlertTitle>
                           <AlertDescription>
                             <ul className="list-disc list-inside space-y-1 mt-2">
-                              {latestAttempt.recommendations.map((rec, index) => (
+                              {latestAttempt.recommendations.map((rec: string, index: number) => (
                                 <li key={index}>{rec}</li>
                               ))}
                             </ul>
@@ -643,7 +652,7 @@ export default function SeoSimulationPage() {
               </CardHeader>
               <CardContent>
                 <div className="flex flex-wrap gap-2">
-                  {simulation.targetKeywords.map((keyword, index) => (
+                  {simulation.targetKeywords.map((keyword: string, index: number) => (
                     <Badge key={index} variant="secondary">
                       {keyword}
                     </Badge>
@@ -658,7 +667,12 @@ export default function SeoSimulationPage() {
                 <CardDescription>Problems identified in the original content</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                {simulation.seoIssues.map((issue, index) => (
+                {simulation.seoIssues.map((issue: {
+                  type: string;
+                  description: string;
+                  severity: 'low' | 'medium' | 'high';
+                  location: string;
+                }, index: number) => (
                   <div key={index} className="space-y-1">
                     <div className="flex items-center gap-2">
                       <Badge variant={
@@ -736,7 +750,12 @@ export default function SeoSimulationPage() {
                   <CardDescription>Your submission history</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-2">
-                  {attempts.map((attempt, index) => (
+                  {attempts.map((attempt: {
+                      id: number;
+                      simulationId: number;
+                      score: number;
+                      completedAt: string;
+                    }, index: number) => (
                     <div key={index} className="flex justify-between items-center p-2 border rounded hover:bg-gray-50">
                       <div>
                         <div className="font-medium">Attempt #{attempts.length - index}</div>
@@ -745,7 +764,7 @@ export default function SeoSimulationPage() {
                         </div>
                       </div>
                       <Badge variant={
-                        attempt.score >= 80 ? 'success' :
+                        attempt.score >= 80 ? 'secondary' :
                         attempt.score >= 60 ? 'default' :
                         'destructive'
                       }>
