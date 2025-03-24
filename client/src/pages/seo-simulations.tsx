@@ -29,6 +29,9 @@ export default function SeoSimulationsPage() {
     queryFn: () => apiRequest('GET', '/api/seo-simulations')
   });
 
+  console.log('Received simulations data:', simulations);
+  console.log('Type of simulations data:', simulations ? typeof simulations : 'undefined', Array.isArray(simulations));
+
   if (isLoading) {
     return (
       <div className="container mx-auto p-4">
