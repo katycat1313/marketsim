@@ -12,6 +12,9 @@ import NetworkPage from "@/pages/network";
 import SeoSimulationsPage from "@/pages/seo-simulations";
 import SeoSimulationPage from "@/pages/seo-simulation";
 import SeoQuizPage from "@/pages/seo-quiz";
+import SubscriptionPage from "@/pages/subscription";
+import SubscriptionSuccessPage from "@/pages/subscription/success";
+import SubscriptionCancelPage from "@/pages/subscription/cancel";
 import Achievements from "@/components/Achievements";
 import Posts from "@/components/Posts";
 import { 
@@ -23,7 +26,8 @@ import {
   Target, 
   Settings,
   Search,
-  BookOpen
+  BookOpen,
+  CreditCard
 } from "lucide-react";
 
 function NavBar() {
@@ -92,6 +96,12 @@ function NavBar() {
                 <span>SEO Quiz</span>
               </div>
             </Link>
+            <Link href="/subscription">
+              <div className={`flex items-center gap-1 text-sm cursor-pointer ${location === '/subscription' ? 'text-primary font-medium' : 'text-muted-foreground'}`}>
+                <CreditCard className="h-4 w-4" />
+                <span>Subscription</span>
+              </div>
+            </Link>
             <Link href="/api-settings">
               <div className={`flex items-center gap-1 text-sm cursor-pointer ${location === '/api-settings' ? 'text-primary font-medium' : 'text-muted-foreground'}`}>
                 <Settings className="h-4 w-4" />
@@ -122,6 +132,9 @@ function Router() {
           <Route path="/seo-simulations" component={SeoSimulationsPage} />
           <Route path="/seo-simulation/:id" component={SeoSimulationPage} />
           <Route path="/seo-quiz" component={SeoQuizPage} />
+          <Route path="/subscription" component={SubscriptionPage} />
+          <Route path="/subscription/success" component={SubscriptionSuccessPage} />
+          <Route path="/subscription/cancel" component={SubscriptionCancelPage} />
           <Route component={NotFound} />
         </Switch>
       </main>
