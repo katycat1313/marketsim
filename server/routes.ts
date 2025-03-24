@@ -395,12 +395,16 @@ export async function registerRoutes(app: Express) {
   app.get("/api/seo-simulations", async (req, res) => {
     try {
       // Seed simulations if they don't exist
+      console.log("Seeding SEO simulations...");
       await seoSimulationService.seedSimulations();
       
       // Get all simulations
+      console.log("Getting SEO simulations...");
       const simulations = await seoSimulationService.getSimulations();
+      console.log("SEO simulations retrieved:", simulations.length);
       res.json(simulations);
     } catch (error) {
+      console.error("Error retrieving SEO simulations:", error);
       res.status(500).json({ error: "Failed to retrieve SEO simulations" });
     }
   });

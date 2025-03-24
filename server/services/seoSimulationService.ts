@@ -218,18 +218,31 @@ const seoSimulationTemplates: InsertSeoSimulation[] = [
 export class SeoSimulationService {
   // Get all available simulations
   async getSimulations(): Promise<SeoSimulation[]> {
-    const simulations = await db.select().from('seo_simulations');
-    return simulations;
+    try {
+      console.log('Querying seo_simulations table...');
+      // Use the imported schema type instead of a string
+      const simulations = await db.select().from(seoSimulations);
+      console.log('Found simulations:', simulations.length);
+      return simulations;
+    } catch (error) {
+      console.error('Error getting simulations:', error);
+      throw error;
+    }
   }
   
   // Get simulation by ID
   async getSimulation(id: number): Promise<SeoSimulation | undefined> {
-    const [simulation] = await db
-      .select()
-      .from('seo_simulations')
-      .where({ id });
-    
-    return simulation;
+    try {
+      const [simulation] = await db
+        .select()
+        .from(seoSimulations)
+        .where(eq(seoSimulations.id, id));
+      
+      return simulation;
+    } catch (error) {
+      console.error('Error getting simulation by ID:', error);
+      return undefined;
+    }
   }
   
   // Create a new simulation
@@ -244,13 +257,24 @@ export class SeoSimulationService {
   
   // Seed initial simulations
   async seedSimulations(): Promise<void> {
-    const existingSimulations = await this.getSimulations();
-    
-    if (existingSimulations.length === 0) {
-      for (const template of seoSimulationTemplates) {
-        await this.createSimulation(template);
+    try {
+      console.log('Getting existing simulations...');
+      const existingSimulations = await this.getSimulations();
+      console.log('Existing simulations:', existingSimulations.length);
+      
+      if (existingSimulations.length === 0) {
+        console.log('No existing simulations found, seeding...');
+        for (const template of seoSimulationTemplates) {
+          console.log('Creating simulation:', template.title);
+          await this.createSimulation(template);
+        }
+        console.log('SEO simulations seeded successfully');
+      } else {
+        console.log('Simulations already exist, skipping seed');
       }
-      console.log('SEO simulations seeded successfully');
+    } catch (error) {
+      console.error('Error seeding simulations:', error);
+      throw error;
     }
   }
   
