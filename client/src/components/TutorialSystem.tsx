@@ -33,15 +33,40 @@ export function TutorialSystem() {
   }, []);
 
   const fetchTutorials = async () => {
-    const response = await fetch('/api/tutorials');
-    const data = await response.json();
-    setTutorials(data);
+    try {
+      const response = await fetch('/api/tutorials');
+      const data = await response.json();
+      
+      // Check if data is an array before setting it
+      if (Array.isArray(data)) {
+        setTutorials(data);
+      } else {
+        console.error('Tutorials API did not return an array:', data);
+        // Initialize with empty array if not an array
+        setTutorials([]);
+      }
+    } catch (error) {
+      console.error('Error fetching tutorials:', error);
+      setTutorials([]);
+    }
   };
 
   const fetchProgress = async () => {
-    const response = await fetch('/api/tutorials/progress');
-    const data = await response.json();
-    setProgress(data);
+    try {
+      const response = await fetch('/api/tutorials/progress');
+      const data = await response.json();
+      
+      // Check if data is an array before setting it
+      if (Array.isArray(data)) {
+        setProgress(data);
+      } else {
+        console.error('Progress API did not return an array:', data);
+        setProgress([]);
+      }
+    } catch (error) {
+      console.error('Error fetching progress:', error);
+      setProgress([]);
+    }
   };
 
   const startTutorial = (tutorial: Tutorial) => {
