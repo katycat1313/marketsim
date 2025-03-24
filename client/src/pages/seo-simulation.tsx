@@ -31,6 +31,7 @@ interface SeoPageContent {
     text: string;
     isInternal: boolean;
   }[];
+  schemaMarkup?: string; // Optional JSON-LD schema markup
 }
 
 interface SeoSimulation {
@@ -170,6 +171,11 @@ export default function SeoSimulationPage() {
     const newLinks = [...content.links];
     newLinks[index] = { ...newLinks[index], text: value };
     setContent({ ...content, links: newLinks });
+  };
+  
+  const handleSchemaMarkupChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    if (!content) return;
+    setContent({ ...content, schemaMarkup: e.target.value });
   };
   
   const handleSubmit = () => {
@@ -389,6 +395,27 @@ export default function SeoSimulationPage() {
                             </div>
                           </div>
                         ))}
+                      </CardContent>
+                    </Card>
+
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Schema Markup</CardTitle>
+                        <CardDescription>Structured data helps search engines understand your content (JSON-LD format)</CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <Textarea 
+                          value={content.schemaMarkup || ''} 
+                          onChange={handleSchemaMarkupChange}
+                          disabled={!editMode}
+                          className={editMode ? "border-blue-300 font-mono text-sm" : "font-mono text-sm"}
+                          rows={8}
+                          placeholder={`{\n  "@context": "https://schema.org",\n  "@type": "Article",\n  "headline": "Your headline here",\n  "author": {\n    "@type": "Person",\n    "name": "Author Name"\n  }\n}`}
+                        />
+                        <div className="mt-2 text-xs text-gray-500 flex items-center">
+                          <AlertCircle className="h-3 w-3 mr-1" />
+                          <span>Valid JSON-LD required for structured data</span>
+                        </div>
                       </CardContent>
                     </Card>
                   </>
