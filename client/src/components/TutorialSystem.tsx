@@ -52,7 +52,15 @@ export function TutorialSystem() {
                 <p className="text-sm text-gray-500">Level: {tutorial.level}</p>
               </CardHeader>
               <CardContent>
-                <p>{tutorial.content}</p>
+                <p className="text-sm text-gray-700 mb-2">
+                  {tutorial.skillsLearned && tutorial.skillsLearned.length > 0 ? 
+                    `Skills: ${tutorial.skillsLearned.slice(0, 3).join(', ')}${tutorial.skillsLearned.length > 3 ? '...' : ''}` : 
+                    'Learn essential marketing skills'
+                  }
+                </p>
+                <p className="text-xs text-gray-500 mb-3">
+                  Estimated time: {tutorial.estimatedTime || 60} minutes
+                </p>
                 <div className="mt-4">
                   <Progress value={
                     progress.includes(tutorial.id) ? 100 : 0
@@ -60,8 +68,9 @@ export function TutorialSystem() {
                 </div>
                 <Button
                   onClick={() => startTutorial(tutorial)}
-                  className="mt-4"
+                  className="mt-4 w-full"
                   disabled={progress.includes(tutorial.id)}
+                  variant={progress.includes(tutorial.id) ? "outline" : "default"}
                 >
                   {progress.includes(tutorial.id) ? 'Completed' : 'Start Tutorial'}
                 </Button>
