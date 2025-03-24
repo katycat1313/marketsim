@@ -58,7 +58,7 @@ export class TutorialService {
       tasks: [
         {
           id: 1101,
-          description: "Optimize a product page with on-page SEO elements",
+          description: "Optimize a product page with On-Page SEO elements",
           type: "practical",
           requirements: ["Access to content editor", "Understanding of basic SEO principles"],
           verificationCriteria: ["Title tags optimized", "Meta descriptions written", "Heading hierarchy implemented", "Image alt text added"]
