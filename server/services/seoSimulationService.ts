@@ -252,8 +252,8 @@ export class SeoSimulationService {
     try {
       console.log('Creating simulation:', simulation.title);
       const [result] = await db
-        .insert(seoSimulations)
-        .values(simulation)
+        .insert(schema.seoSimulations)
+        .values([simulation])
         .returning();
       
       return result;
@@ -308,8 +308,8 @@ export class SeoSimulationService {
       
       // Save to database
       const [result] = await db
-        .insert(seoSimulationAttempts)
-        .values(finalAttempt)
+        .insert(schema.seoSimulationAttempts)
+        .values([finalAttempt])
         .returning();
       
       return result;
@@ -324,12 +324,12 @@ export class SeoSimulationService {
     try {
       const attempts = await db
         .select()
-        .from(seoSimulationAttempts)
+        .from(schema.seoSimulationAttempts)
         .where(and(
-          eq(seoSimulationAttempts.userId, userId),
-          eq(seoSimulationAttempts.simulationId, simulationId)
+          eq(schema.seoSimulationAttempts.userId, userId),
+          eq(schema.seoSimulationAttempts.simulationId, simulationId)
         ))
-        .orderBy(desc(seoSimulationAttempts.createdAt));
+        .orderBy(desc(schema.seoSimulationAttempts.createdAt));
       
       return attempts;
     } catch (error) {
@@ -415,8 +415,8 @@ export class SeoSimulationService {
           
         case 'schema':
           // Simple check for schema markup
-          fixed = attempt.modifiedContent.toString().includes('@type') && 
-                  attempt.modifiedContent.toString().includes('schema.org');
+          fixed = modified.body.includes('@type') && 
+                  modified.body.includes('schema.org');
           feedback = fixed 
             ? 'Schema markup has been implemented.' 
             : 'Consider adding schema markup for better search visibility.';
