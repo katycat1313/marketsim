@@ -13,24 +13,29 @@ import { seoQuizQuestions } from '../../../server/data/quizzes/seoQuiz';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
 
+// Define the type for quiz questions to match the data structure
+type QuizOption = {
+  id: string;
+  text: string;
+  isCorrect?: boolean;
+  isRelevant?: boolean;
+  isNegative?: boolean;
+};
+
+type MatchingItem = {
+  query: string;
+  intent: string;
+  isCorrect: boolean;
+};
+
 interface QuizQuestion {
   id: number;
   type: string;
   text: string;
-  options: {
-    id: string;
-    text: string;
-    isCorrect?: boolean;
-    isRelevant?: boolean;
-    isNegative?: boolean;
-  }[];
+  options?: QuizOption[];
   contentSample?: string;
   dataSample?: string;
-  matchingItems?: {
-    query: string;
-    intent: string;
-    isCorrect: boolean;
-  }[];
+  matchingItems?: MatchingItem[];
   correctMatches?: Record<string, string>;
   explanation: string;
 }

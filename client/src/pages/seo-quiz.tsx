@@ -8,14 +8,28 @@ import { Search, BookOpen, Award } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
 
+// Define interfaces for API responses
+interface Badge {
+  id: string;
+  name: string;
+  achieved: boolean;
+  description: string;
+}
+
+interface UserProgress {
+  completedQuizzes: number;
+  totalQuizzes: number;
+  badges: Badge[];
+}
+
 export default function SeoQuizPage() {
   const [activeTab, setActiveTab] = useState("quiz");
   const { toast } = useToast();
 
-  // Query to fetch user progress
-  const { data: userProgress, isLoading: isLoadingProgress } = useQuery({
+  // Query to fetch user progress with proper typing
+  const { data: userProgress, isLoading: isLoadingProgress } = useQuery<UserProgress>({
     queryKey: ['/api/quiz/progress'],
-    queryFn: () => apiRequest('GET', '/api/quiz/progress'),
+    queryFn: getQueryFn<UserProgress>({ on401: "returnNull" }),
     refetchOnWindowFocus: false,
   });
 
