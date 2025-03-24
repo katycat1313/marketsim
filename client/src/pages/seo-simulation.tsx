@@ -94,23 +94,24 @@ export default function SeoSimulationPage() {
   // Get simulation data
   const { data: simulation, isLoading: simulationLoading } = useQuery({
     queryKey: ['/api/seo-simulations', simulationId],
-    queryFn: () => apiRequest('GET', `/api/seo-simulations/${simulationId}`),
+    queryFn: () => apiRequest(`/api/seo-simulations/${simulationId}`, { method: 'GET' }),
     enabled: !!simulationId
   });
   
   // Get user's previous attempts
   const { data: attempts, isLoading: attemptsLoading } = useQuery({
     queryKey: ['/api/seo-simulations', simulationId, 'attempts'],
-    queryFn: () => apiRequest('GET', `/api/seo-simulations/${simulationId}/attempts`),
+    queryFn: () => apiRequest(`/api/seo-simulations/${simulationId}/attempts`, { method: 'GET' }),
     enabled: !!simulationId
   });
   
   // Submit attempt mutation
   const submitMutation = useMutation({
     mutationFn: (modifiedContent: SeoPageContent) => 
-      apiRequest('POST', `/api/seo-simulations/${simulationId}/attempts`, 
-        { modifiedContent }
-      ),
+      apiRequest(`/api/seo-simulations/${simulationId}/attempts`, {
+        method: 'POST',
+        body: JSON.stringify({ modifiedContent })
+      }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/seo-simulations', simulationId, 'attempts'] });
       toast({

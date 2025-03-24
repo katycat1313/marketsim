@@ -29,12 +29,8 @@ export default function SeoSimulationsPage() {
     queryFn: () => apiRequest('/api/seo-simulations', { method: 'GET' })
   });
 
-  // Debug what's coming back from the API
-  console.log('API Response:', data);
-  console.log('Is array?', Array.isArray(data));
-  
   // Make sure we're working with an array of simulations
-  const simulations = Array.isArray(data) ? data : (data?.simulations || []);
+  const simulations = Array.isArray(data) ? data : [];
 
   if (isLoading) {
     return (
