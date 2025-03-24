@@ -714,15 +714,28 @@ export class SeoSimulationService {
       const existingSimulations = await this.getSimulations();
       console.log('Existing simulations:', existingSimulations.length);
       
-      if (existingSimulations.length === 0) {
-        console.log('No existing simulations found, seeding...');
-        for (const template of seoSimulationTemplates) {
-          console.log('Creating simulation:', template.title);
+      // Get existing simulation titles
+      const existingTitles = existingSimulations.map(sim => sim.title);
+      console.log('Existing simulation titles:', existingTitles);
+      
+      // Add any new simulations that don't already exist
+      console.log('Checking for new simulations to add...');
+      let addedCount = 0;
+      
+      for (const template of seoSimulationTemplates) {
+        if (!existingTitles.includes(template.title)) {
+          console.log('Creating new simulation:', template.title);
           await this.createSimulation(template);
+          addedCount++;
+        } else {
+          console.log('Simulation already exists, skipping:', template.title);
         }
-        console.log('SEO simulations seeded successfully');
+      }
+      
+      if (addedCount > 0) {
+        console.log(`Added ${addedCount} new SEO simulations successfully`);
       } else {
-        console.log('Simulations already exist, skipping seed');
+        console.log('No new simulations to add');
       }
     } catch (error) {
       console.error('Error seeding simulations:', error);
