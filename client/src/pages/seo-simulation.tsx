@@ -13,6 +13,7 @@ import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { useToast } from '@/hooks/use-toast';
 import { Info, AlertCircle, Check, X, Edit, Save } from 'lucide-react';
+import WordPressEditor from '@/components/WordPressEditor';
 
 interface SeoPageContent {
   title: string;
