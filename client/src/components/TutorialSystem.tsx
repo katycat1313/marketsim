@@ -153,25 +153,55 @@ export function TutorialSystem() {
               <h3 className="text-xl font-bold">{currentTutorial.title}</h3>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
+              <div className="space-y-6">
+                {/* Render the tutorial content */}
+                <div className="prose prose-blue max-w-none">
+                  {/* Simple rendering of content with line breaks */}
+                  {currentTutorial.content ? (
+                    <div className="whitespace-pre-wrap">
+                      {currentTutorial.content}
+                    </div>
+                  ) : (
+                    <p>Content unavailable. Please try again later.</p>
+                  )}
+                </div>
+                
+                <h3 className="text-lg font-semibold mt-6 border-t pt-4">Tutorial Tasks</h3>
+                
                 {currentTutorial.tasks.map(task => (
                   <div key={task.id} className="border p-4 rounded">
                     <h4 className="font-semibold">{task.description}</h4>
-                    <ul className="list-disc ml-4 mt-2">
-                      {task.requirements.map((req, i) => (
-                        <li key={i}>{req}</li>
-                      ))}
-                    </ul>
+                    <p className="text-sm text-gray-500 mb-2">Type: {task.type}</p>
+                    
+                    <div className="mt-3">
+                      <h5 className="text-sm font-medium">Requirements:</h5>
+                      <ul className="list-disc ml-4 mt-1">
+                        {task.requirements.map((req, i) => (
+                          <li key={i} className="text-sm">{req}</li>
+                        ))}
+                      </ul>
+                    </div>
+                    
+                    <div className="mt-3">
+                      <h5 className="text-sm font-medium">Verification Criteria:</h5>
+                      <ul className="list-disc ml-4 mt-1">
+                        {task.verificationCriteria.map((criteria, i) => (
+                          <li key={i} className="text-sm">{criteria}</li>
+                        ))}
+                      </ul>
+                    </div>
                   </div>
                 ))}
+                
                 {completionError && (
                   <div className="p-4 mb-4 text-red-600 bg-red-50 border border-red-200 rounded-md">
                     {completionError}
                   </div>
                 )}
+                
                 <Button 
                   onClick={() => completeTutorial(currentTutorial.id)}
-                  className="mt-4 w-full"
+                  className="mt-6 w-full"
                   disabled={isCompleting}
                 >
                   {isCompleting ? 'Completing...' : 'Complete Tutorial'}
