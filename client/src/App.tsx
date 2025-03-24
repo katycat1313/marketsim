@@ -124,6 +124,7 @@ function Router() {
           <Route path="/achievements" component={Achievements} />
           <Route path="/seo-simulations" component={SeoSimulationsPage} />
           <Route path="/seo-simulation/:id" component={SeoSimulationPage} />
+          <Route path="/seo-quiz" component={SeoQuizPage} />
           <Route component={NotFound} />
         </Switch>
       </main>
