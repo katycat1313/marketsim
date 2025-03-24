@@ -414,12 +414,15 @@ export class SeoSimulationService {
           break;
           
         case 'schema':
-          // Simple check for schema markup
-          fixed = modified.body.includes('@type') && 
-                  modified.body.includes('schema.org');
+          // Check for schema markup in dedicated field or body content
+          fixed = (modified.schemaMarkup && 
+                  modified.schemaMarkup.includes('@type') && 
+                  modified.schemaMarkup.includes('schema.org')) || 
+                  (modified.body.includes('@type') && 
+                  modified.body.includes('schema.org'));
           feedback = fixed 
-            ? 'Schema markup has been implemented.' 
-            : 'Consider adding schema markup for better search visibility.';
+            ? 'Schema markup has been properly implemented.' 
+            : 'Consider adding structured data schema markup for better local business visibility.';
           break;
       }
       
