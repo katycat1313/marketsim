@@ -149,13 +149,9 @@ export const SeoQuiz = () => {
     setIsSubmitting(true);
     try {
       // Submit quiz results to the backend
-      await apiRequest({
-        url: '/api/quiz/complete',
-        method: 'POST',
-        body: {
-          quizId: 'seo-fundamentals', // Quiz identifier
-          score
-        }
+      await apiRequest('POST', '/api/quiz/complete', {
+        quizId: 'seo-fundamentals', // Quiz identifier
+        score
       });
       
       toast({
