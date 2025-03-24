@@ -439,83 +439,129 @@ export default function SeoSimulationPage() {
               
               <TabsContent value="preview" className="space-y-6">
                 {content && (
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Page Preview</CardTitle>
-                      <CardDescription>How your page would appear</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="border rounded-md p-6 space-y-4">
-                        <div className="flex flex-col space-y-2">
-                          <div className="text-xs text-gray-500 flex items-center">
-                            <div className="w-full h-2 bg-green-100 rounded" />
-                            <div className="ml-2">example.com</div>
-                          </div>
-                          <h1 className="text-blue-600 text-xl font-medium hover:underline cursor-pointer">
-                            {content.title}
-                          </h1>
-                          <p className="text-sm text-gray-600">
-                            {content.metaDescription}
-                          </p>
-                        </div>
-                        
-                        <Separator />
-                        
-                        <div className="space-y-4">
-                          {content.headings.map((heading, index) => {
-                            const HeadingTag = heading.tag as keyof JSX.IntrinsicElements;
-                            return (
-                              <HeadingTag key={index} className={
-                                heading.tag === 'h1' ? 'text-2xl font-bold' :
-                                heading.tag === 'h2' ? 'text-xl font-bold' :
-                                heading.tag === 'h3' ? 'text-lg font-bold' :
-                                'text-base font-bold'
-                              }>
-                                {heading.content}
-                              </HeadingTag>
-                            );
-                          })}
-                          
-                          <div className="text-gray-700 whitespace-pre-wrap">
-                            {content.body.split('\n').map((paragraph, i) => (
-                              <p key={i} className="mb-4">{paragraph}</p>
-                            ))}
+                  simulation.difficulty === 'Beginner' ? (
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Page Preview</CardTitle>
+                        <CardDescription>How your page would appear</CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="border rounded-md p-6 space-y-4">
+                          <div className="flex flex-col space-y-2">
+                            <div className="text-xs text-gray-500 flex items-center">
+                              <div className="w-full h-2 bg-green-100 rounded" />
+                              <div className="ml-2">example.com</div>
+                            </div>
+                            <h1 className="text-blue-600 text-xl font-medium hover:underline cursor-pointer">
+                              {content.title}
+                            </h1>
+                            <p className="text-sm text-gray-600">
+                              {content.metaDescription}
+                            </p>
                           </div>
                           
-                          <div className="flex flex-wrap gap-4">
-                            {content.images.map((image, index) => (
-                              <div key={index} className="border p-2 text-center">
-                                <div className="bg-gray-100 h-20 w-32 flex items-center justify-center text-gray-400">
-                                  [Image: {image.src.split('/').pop()}]
-                                </div>
-                                <div className="text-xs text-gray-500 mt-1">Alt: {image.alt}</div>
-                              </div>
-                            ))}
-                          </div>
+                          <Separator />
                           
-                          <div className="space-y-2">
-                            <h3 className="font-medium">Links:</h3>
-                            <ul className="space-y-1 list-disc list-inside">
-                              {content.links.map((link, index) => (
-                                <li key={index}>
-                                  <a 
-                                    href="#" 
-                                    className={link.isInternal ? "text-blue-600" : "text-green-600"}
-                                    onClick={(e) => e.preventDefault()}
-                                  >
-                                    {link.text}
-                                  </a>
-                                  <span className="text-xs text-gray-500 ml-2">
-                                    ({link.href})
-                                  </span>
-                                </li>
+                          <div className="space-y-4">
+                            {content.headings.map((heading, index) => {
+                              const HeadingTag = heading.tag as keyof JSX.IntrinsicElements;
+                              return (
+                                <HeadingTag key={index} className={
+                                  heading.tag === 'h1' ? 'text-2xl font-bold' :
+                                  heading.tag === 'h2' ? 'text-xl font-bold' :
+                                  heading.tag === 'h3' ? 'text-lg font-bold' :
+                                  'text-base font-bold'
+                                }>
+                                  {heading.content}
+                                </HeadingTag>
+                              );
+                            })}
+                            
+                            <div className="text-gray-700 whitespace-pre-wrap">
+                              {content.body.split('\n').map((paragraph, i) => (
+                                <p key={i} className="mb-4">{paragraph}</p>
                               ))}
-                            </ul>
+                            </div>
+                            
+                            <div className="flex flex-wrap gap-4">
+                              {content.images.map((image, index) => (
+                                <div key={index} className="border p-2 text-center">
+                                  <div className="bg-gray-100 h-20 w-32 flex items-center justify-center text-gray-400">
+                                    [Image: {image.src.split('/').pop()}]
+                                  </div>
+                                  <div className="text-xs text-gray-500 mt-1">Alt: {image.alt}</div>
+                                </div>
+                              ))}
+                            </div>
+                            
+                            <div className="space-y-2">
+                              <h3 className="font-medium">Links:</h3>
+                              <ul className="space-y-1 list-disc list-inside">
+                                {content.links.map((link, index) => (
+                                  <li key={index}>
+                                    <a 
+                                      href="#" 
+                                      className={link.isInternal ? "text-blue-600" : "text-green-600"}
+                                      onClick={(e) => e.preventDefault()}
+                                    >
+                                      {link.text}
+                                    </a>
+                                    <span className="text-xs text-gray-500 ml-2">
+                                      ({link.href})
+                                    </span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </CardContent>
-                  </Card>
+                      </CardContent>
+                    </Card>
+                  ) : (
+                    <>
+                      <Card>
+                        <CardHeader>
+                          <CardTitle>Realistic Website Preview</CardTitle>
+                          <CardDescription>Professional view of your optimized page</CardDescription>
+                        </CardHeader>
+                        <CardContent className="p-0 overflow-hidden">
+                          <WebsitePreview 
+                            content={content} 
+                            industry={simulation.industry} 
+                            difficulty={simulation.difficulty} 
+                          />
+                        </CardContent>
+                      </Card>
+                      
+                      <Card>
+                        <CardHeader>
+                          <CardTitle>Search Engine Results Preview</CardTitle>
+                          <CardDescription>How your page might appear in search results</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="bg-white p-4 rounded-md border">
+                            <div className="text-blue-600 text-xl hover:underline cursor-pointer">{content.title}</div>
+                            <div className="text-green-700 text-sm">example.com/your-page-url</div>
+                            <div className="text-gray-600">
+                              {content.metaDescription.length > 160 
+                                ? content.metaDescription.substring(0, 157) + '...' 
+                                : content.metaDescription}
+                            </div>
+                            {content.schemaMarkup && (
+                              <div className="mt-2 p-2 border border-gray-200 rounded bg-gray-50">
+                                <p className="text-xs text-gray-500">Rich result preview (based on schema markup)</p>
+                                <div className="flex items-center gap-2 mt-1">
+                                  <span className="text-yellow-500">★★★★★</span>
+                                  <span className="text-sm font-medium">5.0</span>
+                                  <span className="text-sm text-gray-500">(24 reviews)</span>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </>
+                  )
                 )}
               </TabsContent>
               
