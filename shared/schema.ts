@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, json, timestamp, decimal, boolean, numeric } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, json, timestamp, decimal, boolean } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -560,7 +560,7 @@ export const adPlatformSimulations = pgTable("ad_platform_simulations", {
   difficulty: text("difficulty").notNull(), // beginner, intermediate, advanced, expert
   industry: text("industry").notNull(),
   objectives: json("objectives").$type<string[]>().notNull(),
-  budget: numeric("budget", { precision: 10, scale: 2 }).notNull(),
+  budget: decimal("budget").notNull(),
   businessType: text("business_type").notNull(),
   scenarioDescription: text("scenario_description").notNull(),
   targetAudience: json("target_audience").$type<{
@@ -605,7 +605,7 @@ export const adPlatformSimulationAttempts = pgTable("ad_platform_simulation_atte
     callToAction?: string
   }>>().notNull(),
   bidStrategy: text("bid_strategy").notNull(),
-  dailyBudget: numeric("daily_budget", { precision: 10, scale: 2 }).notNull(),
+  dailyBudget: decimal("daily_budget").notNull(),
   schedule: json("schedule").$type<Record<string, any>>(),
   score: integer("score").default(0).notNull(),
   feedback: json("feedback").$type<string[]>().notNull(),
@@ -632,8 +632,8 @@ export const googleAdsSimulationDetails = pgTable("google_ads_simulation_details
   }>>(),
   negativeKeywords: json("negative_keywords").$type<string[]>(),
   qualityScore: integer("quality_score").default(0),
-  adRank: numeric("ad_rank", { precision: 5, scale: 2 }).default(0),
-  impressionShare: numeric("impression_share", { precision: 5, scale: 2 }).default(0),
+  adRank: decimal("ad_rank").default("0"),
+  impressionShare: decimal("impression_share").default("0"),
   searchTerms: json("search_terms").$type<Array<{
     term: string,
     impressions: number,
