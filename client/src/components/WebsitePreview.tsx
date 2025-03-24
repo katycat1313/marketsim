@@ -95,14 +95,14 @@ const WebsitePreview: React.FC<WebsitePreviewProps> = ({ content, industry, diff
   };
 
   const renderHeadings = () => {
-    return content.headings.map((heading, index) => {
+    return content.headings.map((heading: any, index: number) => {
       const Tag = heading.tag as keyof JSX.IntrinsicElements;
       return <Tag key={index} className="preview-heading">{heading.content}</Tag>;
     });
   };
 
   const renderImages = () => {
-    return content.images.map((image, index) => (
+    return content.images.map((image: any, index: number) => (
       <div key={index} className="preview-image-container">
         <img 
           src={image.src} 
@@ -115,7 +115,7 @@ const WebsitePreview: React.FC<WebsitePreviewProps> = ({ content, industry, diff
   };
 
   const renderLinks = () => {
-    return content.links.map((link, index) => (
+    return content.links.map((link: any, index: number) => (
       <a 
         key={index} 
         href={link.href} 
@@ -130,13 +130,13 @@ const WebsitePreview: React.FC<WebsitePreviewProps> = ({ content, industry, diff
 
   const renderParagraphs = () => {
     // Split body into paragraphs
-    return content.body.split('\n\n').map((paragraph, index) => (
+    return content.body.split('\n\n').map((paragraph: any, index: number) => (
       <p key={index} className="preview-paragraph">{paragraph}</p>
     ));
   };
 
   return (
-    <div className="website-preview" style={{ fontFamily: template.fontFamily }}>
+    <div className={`website-preview ${template.theme}`} style={{ fontFamily: template.fontFamily }}>
       {/* Page title (in browser tab) */}
       <div className="browser-mockup">
         <div className="browser-controls">
@@ -225,8 +225,8 @@ const WebsitePreview: React.FC<WebsitePreviewProps> = ({ content, industry, diff
             <ul>
               <li><strong>Title:</strong> {content.title.length} chars</li>
               <li><strong>Meta:</strong> {content.metaDescription.length} chars</li>
-              <li><strong>H1 Tags:</strong> {content.headings.filter(h => h.tag === 'h1').length}</li>
-              <li><strong>Images Alt:</strong> {content.images.filter(img => img.alt && img.alt.trim() !== '').length}/{content.images.length}</li>
+              <li><strong>H1 Tags:</strong> {content.headings.filter((h) => h.tag === 'h1').length}</li>
+              <li><strong>Images Alt:</strong> {content.images.filter((img) => img.alt && img.alt.trim() !== '').length}/{content.images.length}</li>
               <li><strong>Schema:</strong> {content.schemaMarkup ? "Implemented" : "Missing"}</li>
             </ul>
           </div>
