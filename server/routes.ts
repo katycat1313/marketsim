@@ -394,10 +394,16 @@ export async function registerRoutes(app: Express) {
 
   app.get("/api/tutorials/progress", async (req, res) => {
     try {
+      // If user is not logged in, return empty progress
+      if (!req.user?.id) {
+        return res.json([]);
+      }
+      
       const tutorialService = new TutorialService();
-      const progress = await tutorialService.getUserProgress(req.user?.id);
+      const progress = await tutorialService.getUserProgress(req.user.id);
       res.json(progress);
     } catch (error) {
+      console.error("Error retrieving tutorial progress:", error);
       res.status(500).json({ error: "Failed to retrieve tutorial progress" });
     }
   });
@@ -405,10 +411,21 @@ export async function registerRoutes(app: Express) {
   app.post("/api/tutorials/complete", async (req, res) => {
     try {
       const { tutorialId } = req.body;
+      
+      // If user is not logged in, return error
+      if (!req.user?.id) {
+        return res.status(401).json({ error: "You must be logged in to complete tutorials" });
+      }
+      
+      if (!tutorialId) {
+        return res.status(400).json({ error: "Tutorial ID is required" });
+      }
+      
       const tutorialService = new TutorialService();
-      await tutorialService.markTutorialComplete(req.user?.id, tutorialId);
+      await tutorialService.markTutorialComplete(req.user.id, tutorialId);
       res.json({ success: true });
     } catch (error) {
+      console.error("Error marking tutorial as complete:", error);
       res.status(500).json({ error: "Failed to mark tutorial as complete" });
     }
   });

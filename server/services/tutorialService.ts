@@ -540,13 +540,34 @@ export class TutorialService {
   }
 
   async getUserProgress(userId: number): Promise<number[]> {
-    // In a real implementation, we would fetch the user's completed tutorials from a database
-    // For now, we'll return an empty array (no completed tutorials)
     if (!userId) return [];
     
     try {
-      // This is a placeholder - in a real implementation, you would query a user_tutorials table
-      return [1, 2]; // Assuming tutorials 1 and 2 are completed
+      // Check if the table exists, if not return empty array
+      const tableName = 'user_completed_tutorials';
+      
+      // Check if the table exists
+      const tableCheck = await db.execute(`
+        SELECT EXISTS (
+          SELECT FROM information_schema.tables 
+          WHERE table_name = $1
+        );
+      `, [tableName]);
+      
+      const tableExists = tableCheck.rows?.[0]?.exists;
+      
+      if (!tableExists) {
+        return [];
+      }
+      
+      // Query for completed tutorials
+      const result = await db.execute(`
+        SELECT tutorial_id FROM ${tableName}
+        WHERE user_id = $1;
+      `, [userId]);
+      
+      // Extract tutorial IDs from the result
+      return result.rows.map(row => parseInt(row.tutorial_id));
     } catch (error) {
       console.error('Error getting user tutorial progress:', error);
       return [];
@@ -556,11 +577,28 @@ export class TutorialService {
   async markTutorialComplete(userId: number, tutorialId: number): Promise<void> {
     if (!userId) throw new Error('User ID is required');
     
-    // Here we would typically record the completion in a user_tutorials table
-    // For now, we'll just log that the tutorial was completed
-    
     try {
-      // This is a placeholder - in a real implementation, you would insert into a user_tutorials table
+      // Create a user_completed_tutorials table entry if it doesn't exist
+      const tableName = 'user_completed_tutorials';
+      
+      // Check if the table exists, create if it doesn't
+      await db.execute(`
+        CREATE TABLE IF NOT EXISTS ${tableName} (
+          id SERIAL PRIMARY KEY,
+          user_id INTEGER NOT NULL,
+          tutorial_id INTEGER NOT NULL,
+          completed_at TIMESTAMP NOT NULL DEFAULT NOW(),
+          UNIQUE(user_id, tutorial_id)
+        );
+      `);
+      
+      // Insert the completed tutorial record
+      await db.execute(`
+        INSERT INTO ${tableName} (user_id, tutorial_id)
+        VALUES ($1, $2)
+        ON CONFLICT (user_id, tutorial_id) DO NOTHING;
+      `, [userId, tutorialId]);
+      
       console.log(`User ${userId} completed tutorial ${tutorialId}`);
       
       // Update user experience points as an incentive
