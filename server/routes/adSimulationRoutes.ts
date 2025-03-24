@@ -1,6 +1,6 @@
 import { Express, Request, Response } from "express";
 import { AdPlatformSimulation, insertAdPlatformSimulationSchema, insertAdPlatformSimulationAttemptSchema } from "@shared/schema";
-import { storage } from "@server/storage";
+import { storage } from "../storage";
 import { z } from "zod";
 
 /**

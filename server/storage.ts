@@ -3,9 +3,11 @@ import {
   type Persona, type Campaign, type SimulationData, 
   type UserProfile, type Connection, type Post, type Comment, type Achievement,
   type UserQuizResult, type InsertPersona, type InsertCampaign, type InsertSimulationData,
+  type AdPlatformSimulation, type AdPlatformSimulationAttempt,
   personas, campaigns, simulationData, userProfiles, connections, posts, comments, achievements,
-  userQuizResults, insertUserProfileSchema, insertConnectionSchema, insertPostSchema, insertCommentSchema, 
-  insertAchievementSchema, insertUserQuizResultSchema
+  userQuizResults, adPlatformSimulations, adPlatformSimulationAttempts,
+  insertUserProfileSchema, insertConnectionSchema, insertPostSchema, insertCommentSchema, 
+  insertAchievementSchema, insertUserQuizResultSchema, insertAdPlatformSimulationAttemptSchema
 } from "@shared/schema";
 import { eq, desc } from "drizzle-orm";
 import { z } from "zod";
@@ -61,6 +63,12 @@ export interface IStorage {
   createQuizResult(quizResult: InsertUserQuizResult): Promise<UserQuizResult>;
   getUserQuizResults(userId: number, quizId?: string): Promise<UserQuizResult[]>;
   getQuizCompletion(userId: number): Promise<{completedQuizzes: number, totalQuizzes: number}>;
+  
+  // Ad Platform Simulation operations
+  listAdPlatformSimulations(): Promise<AdPlatformSimulation[]>;
+  getAdPlatformSimulation(id: number): Promise<AdPlatformSimulation | undefined>;
+  createAdPlatformSimulationAttempt(attempt: any): Promise<AdPlatformSimulationAttempt>;
+  getAdPlatformSimulationAttempts(userId: number, simulationId: number): Promise<AdPlatformSimulationAttempt[]>;
 }
 
 export class DrizzleStorage implements IStorage {

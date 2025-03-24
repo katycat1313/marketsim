@@ -28,6 +28,7 @@ import { TutorialService } from "./services/tutorialService";
 import { tutorialSimulationService } from "./services/tutorialSimulationService";
 import { seoSimulationService } from "./services/seoSimulationService";
 import stripeRoutes from "./routes/stripeRoutes";
+import { registerAdSimulationRoutes } from "./routes/adSimulationRoutes";
 
 export async function registerRoutes(app: Express) {
   const httpServer = createServer(app);
@@ -586,6 +587,10 @@ export async function registerRoutes(app: Express) {
   // Mount Stripe routes
   app.use('/api/stripe', stripeRoutes);
   console.log('Stripe routes registered');
+
+  // Register Ad Simulation routes
+  registerAdSimulationRoutes(app);
+  console.log('Ad Simulation routes registered');
 
   return httpServer;
 }
