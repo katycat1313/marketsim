@@ -321,42 +321,48 @@ const WordPressEditor: React.FC<WordPressEditorProps> = ({ content, onContentCha
                   </div>
                 </div>
                 
-                <div className="grid grid-cols-1 gap-2">
-                  <div>
-                    <label className="text-xs text-gray-500 mb-1 block">Image URL</label>
-                    <Input
-                      value={block.properties?.src || ''}
-                      onChange={(e) => handlePropertyChange(block.id, 'src', e.target.value)}
-                      className="border-blue-300"
-                      placeholder="https://example.com/image.jpg"
-                    />
+                <div className="space-y-4">
+                  <div className="bg-gray-100 rounded p-4 text-center">
+                    <div className="text-gray-500 text-sm font-medium mb-2">Current Image</div>
+                    <div className="my-2 h-40 flex items-center justify-center overflow-hidden">
+                      {block.properties?.src ? (
+                        <img 
+                          src={block.properties.src} 
+                          alt={block.properties?.alt || ''} 
+                          className="max-h-full" 
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = 'https://via.placeholder.com/300x200?text=Image+Not+Found';
+                          }}
+                        />
+                      ) : (
+                        <div className="text-gray-400">No image selected</div>
+                      )}
+                    </div>
+                    {block.properties?.alt && (
+                      <div className="text-xs text-gray-500 mt-1">Alt text: {block.properties.alt}</div>
+                    )}
                   </div>
-                  <div>
-                    <label className="text-xs text-gray-500 mb-1 block">Alt Text</label>
+                  
+                  <ImageGallery 
+                    onSelectImage={(image) => {
+                      handlePropertyChange(block.id, 'src', image.src);
+                      handlePropertyChange(block.id, 'alt', image.alt);
+                    }}
+                    currentImageSrc={block.properties?.src}
+                    category={block.properties?.category || 'product'}
+                  />
+                  
+                  <div className="mt-2">
+                    <label className="text-xs text-gray-500 mb-1 block">Custom Alt Text</label>
                     <Input
                       value={block.properties?.alt || ''}
                       onChange={(e) => handlePropertyChange(block.id, 'alt', e.target.value)}
                       className="border-blue-300"
                       placeholder="Descriptive alt text for SEO"
                     />
-                  </div>
-                </div>
-                
-                <div className="bg-gray-100 rounded p-4 text-center">
-                  <div className="text-gray-400 text-sm">Image Preview</div>
-                  <div className="my-2 h-40 flex items-center justify-center overflow-hidden">
-                    {block.properties?.src ? (
-                      <img 
-                        src={block.properties.src} 
-                        alt={block.properties?.alt || ''} 
-                        className="max-h-full" 
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).src = 'https://via.placeholder.com/300x200?text=Image+Not+Found';
-                        }}
-                      />
-                    ) : (
-                      <div className="text-gray-400">No image URL provided</div>
-                    )}
+                    <p className="text-xs text-gray-500 mt-1">
+                      Good alt text is descriptive, concise, and includes relevant keywords when appropriate.
+                    </p>
                   </div>
                 </div>
               </div>
