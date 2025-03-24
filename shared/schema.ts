@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, json, timestamp, decimal, boolean } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, json, timestamp, decimal, boolean, numeric } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -551,10 +551,153 @@ export const seoSimulationAttempts = pgTable("seo_simulation_attempts", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+// Ad Platform Simulation Tables
+export const adPlatformSimulations = pgTable("ad_platform_simulations", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  platform: text("platform").notNull(), // google_ads, meta_ads, linkedin_ads
+  difficulty: text("difficulty").notNull(), // beginner, intermediate, advanced, expert
+  industry: text("industry").notNull(),
+  objectives: json("objectives").$type<string[]>().notNull(),
+  budget: numeric("budget", { precision: 10, scale: 2 }).notNull(),
+  businessType: text("business_type").notNull(),
+  scenarioDescription: text("scenario_description").notNull(),
+  targetAudience: json("target_audience").$type<{
+    demographics: Record<string, any>,
+    interests: string[],
+    behaviors: string[],
+    locations: string[]
+  }>().notNull(),
+  challengePoints: json("challenge_points").$type<string[]>().notNull(),
+  successCriteria: json("success_criteria").$type<Array<{
+    metric: string,
+    target: number,
+    comparison: "greater" | "less" | "equal"
+  }>>().notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const adPlatformSimulationAttempts = pgTable("ad_platform_simulation_attempts", {
+  id: serial("id").primaryKey(),
+  simulationId: integer("simulation_id").references(() => adPlatformSimulations.id).notNull(),
+  userId: integer("user_id").notNull(),
+  campaignName: text("campaign_name").notNull(),
+  campaignObjective: text("campaign_objective").notNull(),
+  adGroupStructure: json("ad_group_structure").$type<Array<{
+    name: string,
+    targeting: Record<string, any>
+  }>>().notNull(),
+  targeting: json("targeting").$type<{
+    demographics: Record<string, any>,
+    interests: string[],
+    behaviors: string[],
+    locations: string[],
+    placements?: string[]
+  }>().notNull(),
+  creatives: json("creatives").$type<Array<{
+    type: string, // text, image, video
+    headline?: string,
+    description?: string,
+    imageUrl?: string,
+    videoUrl?: string,
+    callToAction?: string
+  }>>().notNull(),
+  bidStrategy: text("bid_strategy").notNull(),
+  dailyBudget: numeric("daily_budget", { precision: 10, scale: 2 }).notNull(),
+  schedule: json("schedule").$type<Record<string, any>>(),
+  score: integer("score").default(0).notNull(),
+  feedback: json("feedback").$type<string[]>().notNull(),
+  metrics: json("metrics").$type<Record<string, number>>().notNull(),
+  // Platform-specific fields
+  platformSpecificSettings: json("platform_specific_settings").$type<Record<string, any>>(),
+  completedAt: timestamp("completed_at").defaultNow(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Google Ads specific simulation data
+export const googleAdsSimulationDetails = pgTable("google_ads_simulation_details", {
+  id: serial("id").primaryKey(),
+  attemptId: integer("attempt_id").references(() => adPlatformSimulationAttempts.id).notNull(),
+  keywordBidding: json("keyword_bidding").$type<Array<{
+    keyword: string,
+    matchType: string,
+    bid: number
+  }>>(),
+  adExtensions: json("ad_extensions").$type<Array<{
+    type: string,
+    content: string
+  }>>(),
+  negativeKeywords: json("negative_keywords").$type<string[]>(),
+  qualityScore: integer("quality_score").default(0),
+  adRank: numeric("ad_rank", { precision: 5, scale: 2 }).default(0),
+  impressionShare: numeric("impression_share", { precision: 5, scale: 2 }).default(0),
+  searchTerms: json("search_terms").$type<Array<{
+    term: string,
+    impressions: number,
+    clicks: number
+  }>>(),
+});
+
+// Meta Ads specific simulation data
+export const metaAdsSimulationDetails = pgTable("meta_ads_simulation_details", {
+  id: serial("id").primaryKey(),
+  attemptId: integer("attempt_id").references(() => adPlatformSimulationAttempts.id).notNull(),
+  adFormats: json("ad_formats").$type<string[]>(),
+  placements: json("placements").$type<string[]>(),
+  audienceInsights: json("audience_insights").$type<Record<string, any>>(),
+  engagementMetrics: json("engagement_metrics").$type<{
+    reactions: number,
+    comments: number,
+    shares: number,
+    profileVisits: number
+  }>(),
+  pixelImplementation: boolean("pixel_implementation").default(false),
+  catalogSetup: boolean("catalog_setup").default(false),
+});
+
+// LinkedIn Ads specific simulation data
+export const linkedinAdsSimulationDetails = pgTable("linkedin_ads_simulation_details", {
+  id: serial("id").primaryKey(),
+  attemptId: integer("attempt_id").references(() => adPlatformSimulationAttempts.id).notNull(),
+  professionalTargeting: json("professional_targeting").$type<{
+    jobTitles: string[],
+    jobFunctions: string[],
+    industries: string[],
+    companySize: string[],
+    seniorityLevel: string[]
+  }>(),
+  linkedinAudienceNetwork: boolean("linkedin_audience_network").default(false),
+  sponsoredContent: boolean("sponsored_content").default(false),
+  insightTagImplementation: boolean("insight_tag_implementation").default(false),
+  leadGenForms: json("lead_gen_forms").$type<Array<{
+    name: string,
+    fields: string[]
+  }>>(),
+});
+
 export const insertSeoSimulationSchema = createInsertSchema(seoSimulations);
 export const insertSeoSimulationAttemptSchema = createInsertSchema(seoSimulationAttempts);
+export const insertAdPlatformSimulationSchema = createInsertSchema(adPlatformSimulations);
+export const insertAdPlatformSimulationAttemptSchema = createInsertSchema(adPlatformSimulationAttempts);
+export const insertGoogleAdsSimulationDetailsSchema = createInsertSchema(googleAdsSimulationDetails);
+export const insertMetaAdsSimulationDetailsSchema = createInsertSchema(metaAdsSimulationDetails);
+export const insertLinkedinAdsSimulationDetailsSchema = createInsertSchema(linkedinAdsSimulationDetails);
 
 export type SeoSimulation = typeof seoSimulations.$inferSelect;
 export type SeoSimulationAttempt = typeof seoSimulationAttempts.$inferSelect;
+export type AdPlatformSimulation = typeof adPlatformSimulations.$inferSelect;
+export type AdPlatformSimulationAttempt = typeof adPlatformSimulationAttempts.$inferSelect;
+export type GoogleAdsSimulationDetails = typeof googleAdsSimulationDetails.$inferSelect;
+export type MetaAdsSimulationDetails = typeof metaAdsSimulationDetails.$inferSelect;
+export type LinkedinAdsSimulationDetails = typeof linkedinAdsSimulationDetails.$inferSelect;
+
 export type InsertSeoSimulation = z.infer<typeof insertSeoSimulationSchema>;
 export type InsertSeoSimulationAttempt = z.infer<typeof insertSeoSimulationAttemptSchema>;
+export type InsertAdPlatformSimulation = z.infer<typeof insertAdPlatformSimulationSchema>;
+export type InsertAdPlatformSimulationAttempt = z.infer<typeof insertAdPlatformSimulationAttemptSchema>;
+export type InsertGoogleAdsSimulationDetails = z.infer<typeof insertGoogleAdsSimulationDetailsSchema>;
+export type InsertMetaAdsSimulationDetails = z.infer<typeof insertMetaAdsSimulationDetailsSchema>;
+export type InsertLinkedinAdsSimulationDetails = z.infer<typeof insertLinkedinAdsSimulationDetailsSchema>;
