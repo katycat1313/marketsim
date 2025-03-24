@@ -26,7 +26,7 @@ interface SeoSimulation {
 export default function SeoSimulationsPage() {
   const { data, isLoading, error } = useQuery({
     queryKey: ['/api/seo-simulations'],
-    queryFn: () => apiRequest('GET', '/api/seo-simulations')
+    queryFn: () => apiRequest('/api/seo-simulations')
   });
 
   // Make sure we're working with an array of simulations
