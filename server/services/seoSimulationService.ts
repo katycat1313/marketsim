@@ -21,13 +21,15 @@ interface SeoPageContent {
     text: string;
     isInternal: boolean;
   }[];
+  schemaMarkup?: string; // JSON-LD structured data
 }
 
-// Sample SEO simulations library
+// Sample SEO simulations library - Progressive Learning Journey
 const seoSimulationTemplates: InsertSeoSimulation[] = [
+  // Level 1: Beginner Basics - Core on-page SEO foundations
   {
-    title: "E-commerce Product Page Optimization",
-    description: "Optimize a poorly structured product page for a coffee shop's online store to improve its search engine visibility for coffee-related keywords.",
+    title: "Level 1: Coffee Shop Product Page - Basic On-Page SEO",
+    description: "Learn the fundamentals of on-page SEO by optimizing a basic product page for a coffee shop. Focus on title tags, meta descriptions, and basic headings.",
     difficulty: "Beginner",
     industry: "E-commerce",
     originalContent: {
@@ -120,9 +122,10 @@ const seoSimulationTemplates: InsertSeoSimulation[] = [
       }
     ]
   },
+  // Level 2: Intermediate Foundations - Content optimization and keyword integration
   {
-    title: "Local Business Homepage Optimization",
-    description: "Improve the SEO of a local dental practice's homepage to increase visibility for local search queries.",
+    title: "Level 2: Local Business Homepage - Content & Keyword Optimization",
+    description: "Build on basic SEO foundations and learn about content optimization, local SEO factors, and keyword integration for a dental practice website.",
     difficulty: "Intermediate",
     industry: "Healthcare",
     originalContent: {
@@ -212,6 +215,447 @@ const seoSimulationTemplates: InsertSeoSimulation[] = [
         category: "mobile optimization",
         description: "Ensure site is fully responsive with fast loading times for mobile users",
         example: "Use responsive design, optimize images, minimize code, and use browser caching"
+      }
+    ]
+  },
+  // Level 3: Advanced Tactics - Technical SEO elements
+  {
+    title: "Level 3: E-commerce Technical SEO - Advanced Optimization",
+    description: "Master advanced technical SEO elements including schema markup, URL structure, mobile optimization, and page speed factors for an e-commerce website.",
+    difficulty: "Advanced",
+    industry: "E-commerce",
+    originalContent: {
+      title: "Online Furniture Store | Buy Home Furniture",
+      metaDescription: "Shop for furniture online. Delivery available. Quality furniture for your home.",
+      headings: [
+        { tag: "h1", content: "Online Furniture Store" },
+        { tag: "h2", content: "Featured Products" },
+        { tag: "h2", content: "About Us" },
+        { tag: "h2", content: "Contact" }
+      ],
+      body: `Welcome to our online furniture store. We offer a wide range of quality furniture for your home. 
+      
+      Featured Products:
+      
+      Living Room: sofas, coffee tables, TV stands
+      Bedroom: beds, dressers, nightstands
+      Dining Room: dining tables, dining chairs
+      Office: desks, office chairs, bookcases
+      
+      About Us:
+      
+      We have been in the furniture business for over 10 years. Our mission is to provide quality furniture at affordable prices.
+      
+      Contact:
+      
+      Email: info@furnitureshop.com
+      Phone: (555) 123-4567`,
+      images: [
+        { src: "/images/sofa.jpg", alt: "sofa" },
+        { src: "/images/bed.jpg", alt: "bed" },
+        { src: "/images/dining-table.jpg", alt: "dining table" },
+        { src: "/images/desk.jpg", alt: "desk" }
+      ],
+      links: [
+        { href: "/living-room", text: "Living Room", isInternal: true },
+        { href: "/bedroom", text: "Bedroom", isInternal: true },
+        { href: "/dining-room", text: "Dining Room", isInternal: true },
+        { href: "/office", text: "Office", isInternal: true },
+        { href: "https://example.com", text: "Partner Site", isInternal: false }
+      ],
+      schemaMarkup: "{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"Store\",\n  \"name\": \"Furniture Shop\"\n}"
+    },
+    targetKeywords: ["modern furniture", "home furniture", "online furniture store", "affordable sofas", "quality bedroom furniture", "furniture delivery", "luxury dining sets"],
+    seoIssues: [
+      {
+        type: "schema",
+        description: "Incomplete product schema markup",
+        severity: "high",
+        location: "schemaMarkup"
+      },
+      {
+        type: "url",
+        description: "Non-descriptive URL structure for product categories",
+        severity: "medium",
+        location: "links"
+      },
+      {
+        type: "mobile",
+        description: "Content not optimized for mobile viewing",
+        severity: "high",
+        location: "body"
+      },
+      {
+        type: "speed",
+        description: "Images not optimized for faster loading",
+        severity: "medium",
+        location: "images"
+      },
+      {
+        type: "internal",
+        description: "Inefficient internal linking structure",
+        severity: "medium",
+        location: "links"
+      },
+      {
+        type: "content",
+        description: "Thin content on product categories",
+        severity: "medium",
+        location: "body"
+      },
+      {
+        type: "headings",
+        description: "Heading structure doesn't properly highlight furniture categories",
+        severity: "low",
+        location: "headings"
+      }
+    ],
+    bestPractices: [
+      {
+        category: "schema markup",
+        description: "Implement detailed Product and WebSite structured data",
+        example: "{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"WebSite\",\n  \"name\": \"Modern Home Furniture\",\n  \"url\": \"https://www.modernhomefurniture.com\",\n  \"potentialAction\": {\n    \"@type\": \"SearchAction\",\n    \"target\": \"https://www.modernhomefurniture.com/search?q={search_term_string}\",\n    \"query-input\": \"required name=search_term_string\"\n  }\n}\n\n{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"Product\",\n  \"name\": \"Modern Sectional Sofa\",\n  \"image\": \"https://www.modernhomefurniture.com/images/sofa.jpg\",\n  \"description\": \"Contemporary sectional sofa with chaise lounge, perfect for modern living rooms.\",\n  \"brand\": {\n    \"@type\": \"Brand\",\n    \"name\": \"Modern Home\"\n  },\n  \"offers\": {\n    \"@type\": \"Offer\",\n    \"price\": \"1299.99\",\n    \"priceCurrency\": \"USD\",\n    \"availability\": \"https://schema.org/InStock\"\n  }\n}"
+      },
+      {
+        category: "URL structure",
+        description: "Create keyword-rich, hierarchical URLs",
+        example: "/furniture/living-room/sofas/sectional-sofas/modern-gray-sectional-sofa"
+      },
+      {
+        category: "mobile optimization",
+        description: "Ensure responsive design with mobile-friendly navigation and touch targets",
+        example: "Use CSS media queries, viewport meta tags, and touch-friendly button sizes (minimum 44x44px)"
+      },
+      {
+        category: "page speed",
+        description: "Optimize images and minimize render-blocking resources",
+        example: "Compress images, use WebP format, implement lazy loading, and defer non-critical JavaScript"
+      },
+      {
+        category: "internal linking",
+        description: "Create a strategic linking structure with descriptive anchor text",
+        example: "Link between related products and categories using keyword-rich anchor text like \"Browse our collection of modern sectional sofas\""
+      },
+      {
+        category: "content depth",
+        description: "Create detailed, unique descriptions for each product category",
+        example: "Our modern living room furniture combines contemporary design with exceptional comfort. Each piece is crafted from premium materials including solid hardwood frames and high-resilience foam cushions..."
+      }
+    ]
+  },
+  // Level 4: Expert Analysis - Comprehensive site audit
+  {
+    title: "Level 4: Travel Blog Audit - Expert SEO Analysis",
+    description: "Perform a comprehensive site audit for a travel blog, identifying and fixing broken links, duplicate content issues, canonical problems, and implementing advanced schema for rich snippets.",
+    difficulty: "Expert",
+    industry: "Travel & Tourism",
+    originalContent: {
+      title: "Travel Tips and Destinations | Travel Blog",
+      metaDescription: "Find travel tips, destination guides, and travel stories on our blog.",
+      headings: [
+        { tag: "h1", content: "Travel Tips and Destinations" },
+        { tag: "h2", content: "Popular Destinations" },
+        { tag: "h2", content: "Travel Tips" },
+        { tag: "h2", content: "About the Author" }
+      ],
+      body: `Welcome to our travel blog! We share travel tips, destination guides, and personal travel stories to help you plan your next adventure.
+
+      Popular Destinations:
+      - Paris, France
+      - Tokyo, Japan
+      - New York City, USA
+      - Bali, Indonesia
+      - Rome, Italy
+      
+      Travel Tips:
+      - Packing essentials
+      - Budget travel
+      - Solo travel
+      - Family travel
+      - Luxury travel
+      
+      About the Author:
+      Jane Doe is a travel enthusiast who has visited over 30 countries. She started this blog to share her experiences and help others plan their travels.`,
+      images: [
+        { src: "/images/paris.jpg", alt: "Paris" },
+        { src: "/images/tokyo.jpg", alt: "Tokyo" },
+        { src: "/images/new-york.jpg", alt: "New York" },
+        { src: "/images/bali.jpg", alt: "Bali" },
+        { src: "/images/rome.jpg", alt: "Rome" }
+      ],
+      links: [
+        { href: "/destinations/paris", text: "Paris Guide", isInternal: true },
+        { href: "/destinations/tokyo", text: "Tokyo Guide", isInternal: true },
+        { href: "/destinations/new-york", text: "NYC Guide", isInternal: true },
+        { href: "/destinations/bali", text: "Bali Guide", isInternal: true },
+        { href: "/destinations/rome", text: "Rome Guide", isInternal: true },
+        { href: "/tips/packing", text: "Packing Tips", isInternal: true },
+        { href: "/tips/budget", text: "Budget Travel", isInternal: true },
+        { href: "/tips/solo", text: "Solo Travel", isInternal: true },
+        { href: "/tips/family", text: "Family Travel", isInternal: true },
+        { href: "/tips/luxury", text: "Luxury Travel", isInternal: true },
+        { href: "/about", text: "About", isInternal: true },
+        { href: "/contact", text: "Contact", isInternal: true },
+        { href: "/destinations/paris.html", text: "Paris Information", isInternal: true },
+        { href: "/tips/packing.html", text: "What to Pack", isInternal: true },
+        { href: "https://instagram.com/travelblog", text: "Follow on Instagram", isInternal: false },
+        { href: "https://pinterest.com/travelblog", text: "Follow on Pinterest", isInternal: false },
+        { href: "/destinations/newyork", text: "New York", isInternal: true },
+        { href: "/broken-link", text: "Travel Resources", isInternal: true }
+      ],
+      schemaMarkup: "{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"Blog\",\n  \"name\": \"Travel Blog\"\n}"
+    },
+    targetKeywords: ["travel blog", "travel tips", "destination guides", "best places to visit", "travel planning", "budget travel tips", "luxury travel experiences"],
+    seoIssues: [
+      {
+        type: "broken",
+        description: "Broken internal links",
+        severity: "high",
+        location: "links"
+      },
+      {
+        type: "duplicate",
+        description: "Duplicate content due to multiple URLs for the same destination",
+        severity: "high",
+        location: "links"
+      },
+      {
+        type: "canonical",
+        description: "Missing canonical tags for similar content",
+        severity: "medium",
+        location: "overall"
+      },
+      {
+        type: "schema",
+        description: "Incomplete blog and article schema markup",
+        severity: "medium",
+        location: "schemaMarkup"
+      },
+      {
+        type: "breadcrumbs",
+        description: "Missing breadcrumb navigation",
+        severity: "medium",
+        location: "overall"
+      },
+      {
+        type: "hreflang",
+        description: "Missing hreflang tags for international audience",
+        severity: "low",
+        location: "overall"
+      },
+      {
+        type: "sitemap",
+        description: "No XML sitemap reference",
+        severity: "medium",
+        location: "overall"
+      }
+    ],
+    bestPractices: [
+      {
+        category: "broken links",
+        description: "Regularly check and fix broken links",
+        example: "Use tools like Screaming Frog to scan for 404 errors and fix or redirect broken links"
+      },
+      {
+        category: "duplicate content",
+        description: "Implement canonical tags to indicate preferred URL versions",
+        example: "<link rel=\"canonical\" href=\"https://travelblog.com/destinations/paris/\" />"
+      },
+      {
+        category: "URL consistency",
+        description: "Maintain consistent URL patterns and implement 301 redirects for variations",
+        example: "Redirect /destinations/newyork to /destinations/new-york"
+      },
+      {
+        category: "rich snippets",
+        description: "Implement detailed schema markup for blog articles with BreadcrumbList",
+        example: "{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"BlogPosting\",\n  \"headline\": \"10 Essential Tips for Visiting Paris on a Budget\",\n  \"image\": \"https://travelblog.com/images/paris-budget-guide.jpg\",\n  \"datePublished\": \"2023-03-15\",\n  \"dateModified\": \"2023-04-02\",\n  \"author\": {\n    \"@type\": \"Person\",\n    \"name\": \"Jane Doe\"\n  },\n  \"publisher\": {\n    \"@type\": \"Organization\",\n    \"name\": \"Travel Blog\",\n    \"logo\": {\n      \"@type\": \"ImageObject\",\n      \"url\": \"https://travelblog.com/logo.png\"\n    }\n  },\n  \"description\": \"Discover how to experience the magic of Paris without breaking the bank with these 10 budget travel tips.\"\n}\n\n{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"BreadcrumbList\",\n  \"itemListElement\": [\n    {\n      \"@type\": \"ListItem\",\n      \"position\": 1,\n      \"name\": \"Home\",\n      \"item\": \"https://travelblog.com/\"\n    },\n    {\n      \"@type\": \"ListItem\",\n      \"position\": 2,\n      \"name\": \"Destinations\",\n      \"item\": \"https://travelblog.com/destinations/\"\n    },\n    {\n      \"@type\": \"ListItem\",\n      \"position\": 3,\n      \"name\": \"Paris\",\n      \"item\": \"https://travelblog.com/destinations/paris/\"\n    }\n  ]\n}"
+      },
+      {
+        category: "breadcrumbs",
+        description: "Implement visible breadcrumb navigation matching the site structure",
+        example: "Home > Destinations > Europe > France > Paris"
+      },
+      {
+        category: "international SEO",
+        description: "Implement hreflang tags for content available in multiple languages",
+        example: "<link rel=\"alternate\" hreflang=\"en\" href=\"https://travelblog.com/destinations/paris/\" />\n<link rel=\"alternate\" hreflang=\"fr\" href=\"https://travelblog.com/fr/destinations/paris/\" />"
+      },
+      {
+        category: "XML sitemap",
+        description: "Create and reference an XML sitemap in robots.txt",
+        example: "Generate a comprehensive XML sitemap and add a reference in robots.txt: Sitemap: https://travelblog.com/sitemap.xml"
+      }
+    ]
+  },
+  // Level 5: Master Implementation - Complete SEO strategy
+  {
+    title: "Level 5: Complete Business Website Audit - Master SEO Implementation",
+    description: "Apply all your SEO knowledge to conduct a full site audit for a business website, implementing a comprehensive SEO strategy addressing all aspects from technical issues to content optimization and competitive analysis.",
+    difficulty: "Master",
+    industry: "Business Services",
+    originalContent: {
+      title: "Business Consulting Services | Company Name",
+      metaDescription: "We provide business consulting services to help your business grow.",
+      headings: [
+        { tag: "h1", content: "Business Consulting Services" },
+        { tag: "h2", content: "Our Services" },
+        { tag: "h2", content: "About Us" },
+        { tag: "h2", content: "Contact Us" }
+      ],
+      body: `Welcome to our business consulting firm. We help businesses grow and succeed through our expert consulting services.
+
+      Our Services:
+      - Strategic Planning
+      - Financial Analysis
+      - Marketing Strategy
+      - Operations Improvement
+      - Leadership Development
+      
+      About Us:
+      Our team of consultants has years of experience in various industries. We are dedicated to helping our clients achieve their business goals.
+      
+      Contact Us:
+      Email: info@consultingfirm.com
+      Phone: (555) 987-6543`,
+      images: [
+        { src: "/images/consulting.jpg", alt: "Business Consulting" },
+        { src: "/images/team.jpg", alt: "Our Team" },
+        { src: "/images/office.jpg", alt: "Our Office" }
+      ],
+      links: [
+        { href: "/services", text: "Services", isInternal: true },
+        { href: "/about", text: "About", isInternal: true },
+        { href: "/contact", text: "Contact", isInternal: true },
+        { href: "/services/strategic-planning", text: "Strategic Planning", isInternal: true },
+        { href: "/services/financial-analysis", text: "Financial Analysis", isInternal: true },
+        { href: "/services/marketing-strategy", text: "Marketing Strategy", isInternal: true },
+        { href: "/services/operations-improvement", text: "Operations", isInternal: true },
+        { href: "/services/leadership-development", text: "Leadership", isInternal: true },
+        { href: "/blog", text: "Blog", isInternal: true },
+        { href: "/case-studies", text: "Case Studies", isInternal: true },
+        { href: "/testimonials", text: "Testimonials", isInternal: true },
+        { href: "https://linkedin.com/company/consultingfirm", text: "LinkedIn", isInternal: false },
+        { href: "https://twitter.com/consultingfirm", text: "Twitter", isInternal: false },
+        { href: "/old-services.html", text: "Our Services", isInternal: true },
+        { href: "/broken-link", text: "Resources", isInternal: true },
+        { href: "/careers", text: "Careers", isInternal: true }
+      ],
+      schemaMarkup: "{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"LocalBusiness\",\n  \"name\": \"Consulting Firm\"\n}"
+    },
+    targetKeywords: ["business consulting services", "strategic planning consultants", "financial analysis services", "marketing strategy development", "operations improvement", "leadership development programs", "business growth consulting"],
+    seoIssues: [
+      {
+        type: "technical",
+        description: "Multiple technical SEO issues including broken links, duplicate content, and missing canonical tags",
+        severity: "high",
+        location: "overall"
+      },
+      {
+        type: "content",
+        description: "Thin content across service pages and lack of keyword optimization",
+        severity: "high",
+        location: "body"
+      },
+      {
+        type: "mobile",
+        description: "Poor mobile usability and page speed issues",
+        severity: "high",
+        location: "overall"
+      },
+      {
+        type: "schema",
+        description: "Incomplete and poorly implemented schema markup",
+        severity: "medium",
+        location: "schemaMarkup"
+      },
+      {
+        type: "meta",
+        description: "Generic title tags and meta descriptions across multiple pages",
+        severity: "high",
+        location: "title,metaDescription"
+      },
+      {
+        type: "internal",
+        description: "Inefficient internal linking structure and poor anchor text usage",
+        severity: "medium",
+        location: "links"
+      },
+      {
+        type: "competitive",
+        description: "No competitive analysis or differentiation in content strategy",
+        severity: "medium",
+        location: "overall"
+      },
+      {
+        type: "local",
+        description: "Missing local SEO elements and location-specific content",
+        severity: "high",
+        location: "overall"
+      },
+      {
+        type: "images",
+        description: "Unoptimized images with generic alt text",
+        severity: "medium",
+        location: "images"
+      },
+      {
+        type: "security",
+        description: "Missing HTTPS implementation",
+        severity: "high",
+        location: "overall"
+      }
+    ],
+    bestPractices: [
+      {
+        category: "comprehensive audit",
+        description: "Conduct a full technical SEO audit covering all aspects of the site",
+        example: "Use multiple tools like Screaming Frog, Google Search Console, PageSpeed Insights, and Mobile-Friendly Test to identify all issues"
+      },
+      {
+        category: "content strategy",
+        description: "Develop in-depth, keyword-optimized content for each service with clear value propositions",
+        example: "Create 1500+ word comprehensive guides for each service with case studies, statistics, and actionable insights"
+      },
+      {
+        category: "technical fixes",
+        description: "Implement fixes for all technical issues in priority order",
+        example: "Fix broken links, implement proper redirects, add canonical tags, and ensure proper URL structure"
+      },
+      {
+        category: "schema implementation",
+        description: "Create comprehensive structured data markup for the business and all services",
+        example: "{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"ProfessionalService\",\n  \"name\": \"Strategic Growth Partners\",\n  \"description\": \"Comprehensive business consulting services focused on strategic growth, financial optimization, and operational excellence for mid-sized companies.\",\n  \"url\": \"https://strategicgrowthpartners.com\",\n  \"logo\": \"https://strategicgrowthpartners.com/images/logo.png\",\n  \"address\": {\n    \"@type\": \"PostalAddress\",\n    \"streetAddress\": \"123 Business Avenue, Suite 500\",\n    \"addressLocality\": \"Chicago\",\n    \"addressRegion\": \"IL\",\n    \"postalCode\": \"60601\",\n    \"addressCountry\": \"US\"\n  },\n  \"telephone\": \"+13125559876\",\n  \"priceRange\": \"$$$\",\n  \"openingHoursSpecification\": [\n    {\n      \"@type\": \"OpeningHoursSpecification\",\n      \"dayOfWeek\": [\"Monday\", \"Tuesday\", \"Wednesday\", \"Thursday\", \"Friday\"],\n      \"opens\": \"09:00\",\n      \"closes\": \"17:00\"\n    }\n  ],\n  \"sameAs\": [\n    \"https://www.linkedin.com/company/strategicgrowthpartners\",\n    \"https://twitter.com/sgpartners\",\n    \"https://www.facebook.com/StrategicGrowthPartners\"\n  ],\n  \"hasOfferCatalog\": {\n    \"@type\": \"OfferCatalog\",\n    \"name\": \"Consulting Services\",\n    \"itemListElement\": [\n      {\n        \"@type\": \"Offer\",\n        \"itemOffered\": {\n          \"@type\": \"Service\",\n          \"name\": \"Strategic Planning\",\n          \"url\": \"https://strategicgrowthpartners.com/services/strategic-planning/\"\n        }\n      },\n      {\n        \"@type\": \"Offer\",\n        \"itemOffered\": {\n          \"@type\": \"Service\",\n          \"name\": \"Financial Analysis\",\n          \"url\": \"https://strategicgrowthpartners.com/services/financial-analysis/\"\n        }\n      }\n    ]\n  }\n}"
+      },
+      {
+        category: "local SEO",
+        description: "Optimize for local search with location-specific content and Google Business Profile",
+        example: "Create location-specific service pages, implement local business schema, optimize Google Business Profile with complete information, and build local citations"
+      },
+      {
+        category: "competitive analysis",
+        description: "Analyze competitors' SEO strategies and identify opportunities to differentiate",
+        example: "Research top 5 competitors' keyword strategies, content gaps, backlink profiles, and use findings to develop a unique positioning strategy"
+      },
+      {
+        category: "site architecture",
+        description: "Implement a logical site structure with clear categories and breadcrumbs",
+        example: "Organize content in a pyramid structure: Home > Main Service Categories > Specific Services > Case Studies/Resources"
+      },
+      {
+        category: "content enhancement",
+        description: "Expand thin content with in-depth service descriptions, case studies, and FAQs",
+        example: "For each service page, include: detailed service description, benefits, process, case studies, testimonials, FAQs, and clear calls to action"
+      },
+      {
+        category: "performance optimization",
+        description: "Improve site speed and mobile experience",
+        example: "Implement image optimization, browser caching, code minification, and ensure responsive design with touch-friendly elements"
+      },
+      {
+        category: "measurement plan",
+        description: "Set up comprehensive analytics and tracking",
+        example: "Implement Google Analytics 4, set up conversion tracking, create custom dashboards for key metrics, and establish regular reporting schedule"
       }
     ]
   }
