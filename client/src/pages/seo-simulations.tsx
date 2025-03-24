@@ -7,6 +7,7 @@ import { ArrowRight, Book, Clock, AlertTriangle, GraduationCap, BookOpen } from 
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import Logo from "@/components/Logo";
 
 interface SeoSimulation {
   id: number;
