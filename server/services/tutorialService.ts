@@ -546,13 +546,13 @@ export class TutorialService {
       // Check if the table exists, if not return empty array
       const tableName = 'user_completed_tutorials';
       
-      // Check if the table exists
+      // Check if the table exists - use the tableName directly in the query
       const tableCheck = await db.execute(`
         SELECT EXISTS (
           SELECT FROM information_schema.tables 
-          WHERE table_name = $1
+          WHERE table_name = 'user_completed_tutorials'
         );
-      `, [tableName]);
+      `);
       
       const tableExists = tableCheck.rows?.[0]?.exists;
       
@@ -560,9 +560,9 @@ export class TutorialService {
         return [];
       }
       
-      // Query for completed tutorials
+      // Query for completed tutorials - safer approach to avoid SQL injection
       const result = await db.execute(`
-        SELECT tutorial_id FROM ${tableName}
+        SELECT tutorial_id FROM user_completed_tutorials
         WHERE user_id = $1;
       `, [userId]);
       
@@ -578,12 +578,11 @@ export class TutorialService {
     if (!userId) throw new Error('User ID is required');
     
     try {
-      // Create a user_completed_tutorials table entry if it doesn't exist
-      const tableName = 'user_completed_tutorials';
+      // Create the user_completed_tutorials table entry if it doesn't exist
       
-      // Check if the table exists, create if it doesn't
+      // Check if the table exists, create if it doesn't - use direct table name instead of variable
       await db.execute(`
-        CREATE TABLE IF NOT EXISTS ${tableName} (
+        CREATE TABLE IF NOT EXISTS user_completed_tutorials (
           id SERIAL PRIMARY KEY,
           user_id INTEGER NOT NULL,
           tutorial_id INTEGER NOT NULL,
@@ -594,7 +593,7 @@ export class TutorialService {
       
       // Insert the completed tutorial record
       await db.execute(`
-        INSERT INTO ${tableName} (user_id, tutorial_id)
+        INSERT INTO user_completed_tutorials (user_id, tutorial_id)
         VALUES ($1, $2)
         ON CONFLICT (user_id, tutorial_id) DO NOTHING;
       `, [userId, tutorialId]);
@@ -602,12 +601,17 @@ export class TutorialService {
       console.log(`User ${userId} completed tutorial ${tutorialId}`);
       
       // Update user experience points as an incentive
-      await db.update(userProfiles)
-        .set({
-          experiencePoints: db.sql`"experiencePoints" + 50`, // Award 50 XP for completing a tutorial
-          updatedAt: new Date()
-        })
-        .where(eb => eb.eq(userProfiles.userId, userId));
+      try {
+        await db.update(userProfiles)
+          .set({
+            experiencePoints: db.sql`"experiencePoints" + 50`, // Award 50 XP for completing a tutorial
+            updatedAt: new Date()
+          })
+          .where(eb => eb.eq(userProfiles.userId, userId));
+      } catch (xpError) {
+        // If updating XP fails, just log it but continue. The tutorial is still marked as complete.
+        console.error('Error updating user XP:', xpError);
+      }
     } catch (error) {
       console.error('Error marking tutorial as complete:', error);
       throw new Error('Failed to mark tutorial as complete');
