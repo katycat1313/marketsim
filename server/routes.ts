@@ -531,28 +531,27 @@ export async function registerRoutes(app: Express) {
       const passThreshold = 0.7;
       const passed = (score / maxScore) >= passThreshold;
       
-      try {
-        // 1. Save the user's quiz results to the database
-        const quizResult = await storage.createQuizResult({
-          userId,
-          quizId,
-          score,
-          maxScore,
-          passed,
-          answers: answers || [],
-          lastAttemptAt: new Date()
-        });
-        
-        // 2. Get updated completion stats
-        const quizCompletion = await storage.getQuizCompletion(userId);
-        
-        // 3. Return the updated progress
-        res.json({ 
-          success: true,
-          message: "Quiz completed successfully",
-          result: quizResult,
-          completion: quizCompletion
-        });
+      // 1. Save the user's quiz results to the database
+      const quizResult = await storage.createQuizResult({
+        userId,
+        quizId,
+        score,
+        maxScore,
+        passed,
+        answers: answers || [],
+        lastAttemptAt: new Date()
+      });
+      
+      // 2. Get updated completion stats
+      const quizCompletion = await storage.getQuizCompletion(userId);
+      
+      // 3. Return the updated progress
+      res.json({ 
+        success: true,
+        message: "Quiz completed successfully",
+        result: quizResult,
+        completion: quizCompletion
+      });
     } catch (error) {
       console.error('Failed to complete quiz:', error);
       res.status(500).json({ error: "Failed to complete quiz" });
