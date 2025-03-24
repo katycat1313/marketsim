@@ -363,10 +363,30 @@ export async function registerRoutes(app: Express) {
   app.get("/api/tutorials", async (req, res) => {
     try {
       const tutorialService = new TutorialService();
-      const [user] = await storage.getUserProfile(req.user?.id);
-      const tutorials = await tutorialService.getTutorials(user?.level || 'Beginner');
+      // Check user level if user is logged in, otherwise use query parameter or default to Beginner
+      let userLevel = 'Beginner';
+      
+      if (req.user?.id) {
+        try {
+          const userProfile = await storage.getUserProfile(req.user.id);
+          if (userProfile) {
+            userLevel = userProfile.level;
+          }
+        } catch (error) {
+          console.error("Error fetching user profile:", error);
+          // Continue with default level if user profile can't be fetched
+        }
+      } 
+      
+      // Use query parameter if provided
+      if (req.query.level) {
+        userLevel = req.query.level as string;
+      }
+      
+      const tutorials = await tutorialService.getTutorials(userLevel);
       res.json(tutorials);
     } catch (error) {
+      console.error("Error retrieving tutorials:", error);
       res.status(500).json({ error: "Failed to retrieve tutorials" });
     }
   });
