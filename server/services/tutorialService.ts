@@ -441,6 +441,44 @@ export class TutorialService {
       ],
       estimatedTime: 60,
       skillsLearned: ["Data Analysis", "KPI Identification", "Performance Measurement", "Dashboard Creation", "Analytics Implementation"]
+    },
+    {
+      id: 15,
+      title: "Site Analytics: Visualizing and Interpreting Website Performance",
+      level: "Intermediate",
+      content: this.loadTutorialContent('siteAnalytics.ts'),
+      tasks: [
+        {
+          id: 1501,
+          description: "Create a comprehensive site analytics dashboard",
+          type: "practical",
+          requirements: ["Google Analytics account", "Website with significant traffic", "Business objectives"],
+          verificationCriteria: ["Dashboard includes key site metrics", "Multiple visualization types used", "Insights documented"]
+        },
+        {
+          id: 1502,
+          description: "Perform a website user journey analysis",
+          type: "practical",
+          requirements: ["Site analytics access", "Conversion funnel definition"],
+          verificationCriteria: ["User paths mapped", "Drop-off points identified", "Optimization opportunities listed"]
+        },
+        {
+          id: 1503,
+          description: "Develop actionable insights from site analytics",
+          type: "practical",
+          requirements: ["Analytics dashboard", "Historical data (at least 3 months)"],
+          verificationCriteria: ["Trends identified", "Hypotheses developed", "A/B test plan created"]
+        },
+        {
+          id: 1504,
+          description: "Complete the site analytics mastery quiz",
+          type: "quiz",
+          requirements: ["Completed readings and practical tasks"],
+          verificationCriteria: ["85% or higher score"]
+        }
+      ],
+      estimatedTime: 90,
+      skillsLearned: ["Data Visualization", "User Journey Mapping", "Conversion Funnel Analysis", "Behavior Pattern Recognition", "Actionable Insight Development"]
     }
   ];
 
