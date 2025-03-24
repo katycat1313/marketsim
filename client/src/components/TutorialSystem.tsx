@@ -3,7 +3,24 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardHeader, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { Progress } from './ui/progress';
-import { Tutorial } from '@server/services/tutorialService';
+
+// Define the Tutorial interface directly in the component
+interface Tutorial {
+  id: number;
+  title: string;
+  level: string;
+  content: string;
+  tasks: {
+    id: number;
+    description: string;
+    type: 'quiz' | 'practical' | 'simulation';
+    requirements: string[];
+    verificationCriteria: string[];
+  }[];
+  estimatedTime: number;
+  skillsLearned: string[];
+  hasSimulation?: boolean;
+}
 
 export function TutorialSystem() {
   const [tutorials, setTutorials] = useState<Tutorial[]>([]);
@@ -31,13 +48,36 @@ export function TutorialSystem() {
     setCurrentTutorial(tutorial);
   };
 
+  const [isCompleting, setIsCompleting] = useState(false);
+  const [completionError, setCompletionError] = useState<string | null>(null);
+
   const completeTutorial = async (tutorialId: number) => {
-    await fetch('/api/tutorials/complete', {
-      method: 'POST',
-      body: JSON.stringify({ tutorialId }),
-      headers: { 'Content-Type': 'application/json' }
-    });
-    fetchProgress();
+    setIsCompleting(true);
+    setCompletionError(null);
+    
+    try {
+      const response = await fetch('/api/tutorials/complete', {
+        method: 'POST',
+        body: JSON.stringify({ tutorialId }),
+        headers: { 'Content-Type': 'application/json' }
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to complete tutorial');
+      }
+      
+      // Wait a brief moment to show the success state
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      await fetchProgress();
+      setCurrentTutorial(null); // Return to tutorial list after completion
+    } catch (error) {
+      console.error('Error completing tutorial:', error);
+      setCompletionError(error instanceof Error ? error.message : 'An unknown error occurred');
+    } finally {
+      setIsCompleting(false);
+    }
   };
 
   return (
@@ -99,11 +139,17 @@ export function TutorialSystem() {
                     </ul>
                   </div>
                 ))}
+                {completionError && (
+                  <div className="p-4 mb-4 text-red-600 bg-red-50 border border-red-200 rounded-md">
+                    {completionError}
+                  </div>
+                )}
                 <Button 
                   onClick={() => completeTutorial(currentTutorial.id)}
-                  className="mt-4"
+                  className="mt-4 w-full"
+                  disabled={isCompleting}
                 >
-                  Complete Tutorial
+                  {isCompleting ? 'Completing...' : 'Complete Tutorial'}
                 </Button>
               </div>
             </CardContent>
