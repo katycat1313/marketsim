@@ -26,6 +26,7 @@ import { simulationEngine } from "./services/simulationEngine";
 import { freeMarketingAI, premiumMarketingAI, enterpriseMarketingAI } from "./services/marketingAI";
 import { TutorialService } from "./services/tutorialService";
 import { tutorialSimulationService } from "./services/tutorialSimulationService";
+import { seoSimulationService } from "./services/seoSimulationService";
 
 export async function registerRoutes(app: Express) {
   const httpServer = createServer(app);

@@ -498,3 +498,62 @@ export type InsertContestSubmission = z.infer<typeof insertContestSubmissionSche
 export type InsertContestTeam = z.infer<typeof insertContestTeamSchema>;
 export type InsertContestVote = z.infer<typeof insertContestVoteSchema>;
 export type InsertPortfolioEntry = z.infer<typeof insertPortfolioEntrySchema>;
+
+// SEO Simulation system
+export const seoSimulations = pgTable("seo_simulations", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  difficulty: text("difficulty").notNull(), // Beginner, Intermediate, Advanced
+  industry: text("industry").notNull(), // E-commerce, Healthcare, Education, etc.
+  originalContent: json("original_content").notNull(), // Original webpage content with SEO issues
+  targetKeywords: text("target_keywords").array().notNull(), // Keywords to optimize for
+  seoIssues: json("seo_issues").$type<{
+    type: string, // title, meta, headings, content, links, etc.
+    description: string,
+    severity: 'low' | 'medium' | 'high',
+    location: string, // Where in the original content this issue is found
+  }[]>().notNull(),
+  bestPractices: json("best_practices").$type<{
+    category: string,
+    description: string,
+    example: string
+  }[]>().notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const seoSimulationAttempts = pgTable("seo_simulation_attempts", {
+  id: serial("id").primaryKey(),
+  simulationId: integer("simulation_id").references(() => seoSimulations.id).notNull(),
+  userId: integer("user_id").notNull(),
+  modifiedContent: json("modified_content").notNull(), // User's optimized version
+  score: integer("score"), // 0-100 scale
+  issuesFixed: json("issues_fixed").$type<{
+    issueType: string,
+    fixed: boolean,
+    feedback: string
+  }[]>(),
+  keywordOptimization: json("keyword_optimization").$type<{
+    keyword: string,
+    density: number,
+    placement: string[], // where keywords were used (title, h1, content, etc.)
+    feedback: string
+  }[]>(),
+  readabilityScore: integer("readability_score"), // 0-100 scale
+  technicalSeoScore: integer("technical_seo_score"), // 0-100 scale
+  contentQualityScore: integer("content_quality_score"), // 0-100 scale
+  feedback: text("feedback"), // Overall feedback from the AI
+  recommendations: text("recommendations").array(), // Specific recommendations for improvement
+  completedAt: timestamp("completed_at"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const insertSeoSimulationSchema = createInsertSchema(seoSimulations);
+export const insertSeoSimulationAttemptSchema = createInsertSchema(seoSimulationAttempts);
+
+export type SeoSimulation = typeof seoSimulations.$inferSelect;
+export type SeoSimulationAttempt = typeof seoSimulationAttempts.$inferSelect;
+export type InsertSeoSimulation = z.infer<typeof insertSeoSimulationSchema>;
+export type InsertSeoSimulationAttempt = z.infer<typeof insertSeoSimulationAttemptSchema>;
