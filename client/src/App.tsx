@@ -37,7 +37,7 @@ function NavBar() {
             <span className="text-primary">MarketSim</span>
           </div>
           
-          <nav className="hidden md:flex items-center gap-6">
+          <nav className="flex items-center gap-6">
             <Link href="/">
               <div className={`flex items-center gap-1 text-sm cursor-pointer ${location === '/' ? 'text-primary font-medium' : 'text-muted-foreground'}`}>
                 <HomeIcon className="h-4 w-4" />
@@ -98,7 +98,7 @@ function NavBar() {
             <Link href="/api-settings">
               <div className={`flex items-center gap-1 text-sm cursor-pointer ${location === '/api-settings' ? 'text-primary font-medium' : 'text-muted-foreground'}`}>
                 <Settings className="h-4 w-4" />
-                <span className="sr-only md:not-sr-only">Settings</span>
+                <span>Settings</span>
               </div>
             </Link>
           </div>
