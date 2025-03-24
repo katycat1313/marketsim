@@ -263,7 +263,7 @@ export default function SeoSimulationPage() {
                   <>
                     {simulation.difficulty === 'Beginner' ? (
                       // Beginner mode - Form-based editor
-                      <>
+                      <div className="space-y-6">
                         <Card>
                           <CardHeader>
                             <CardTitle>Page Title</CardTitle>
@@ -282,146 +282,155 @@ export default function SeoSimulationPage() {
                           </CardContent>
                         </Card>
                     
-                    <Card>
-                      <CardHeader>
-                        <CardTitle>Meta Description</CardTitle>
-                        <CardDescription>Appears in search results (150-160 characters ideal)</CardDescription>
-                      </CardHeader>
-                      <CardContent>
-                        <Textarea 
-                          value={content.metaDescription} 
-                          onChange={handleMetaDescriptionChange}
-                          disabled={!editMode}
-                          className={editMode ? "border-blue-300" : ""}
-                          rows={3}
-                        />
-                        <div className="mt-2 text-xs text-gray-500">
-                          {content.metaDescription.length} characters
-                        </div>
-                      </CardContent>
-                    </Card>
-                    
-                    <Card>
-                      <CardHeader>
-                        <CardTitle>Headings</CardTitle>
-                        <CardDescription>Heading structure is important for SEO and accessibility</CardDescription>
-                      </CardHeader>
-                      <CardContent className="space-y-4">
-                        {content.headings.map((heading, index) => (
-                          <div key={index} className="space-y-2">
-                            <div className="flex items-center gap-2">
-                              <Badge variant="outline">{heading.tag}</Badge>
-                              <Input 
-                                value={heading.content} 
-                                onChange={(e) => handleHeadingChange(index, e.target.value)}
-                                disabled={!editMode}
-                                className={editMode ? "border-blue-300" : ""}
-                              />
+                        <Card>
+                          <CardHeader>
+                            <CardTitle>Meta Description</CardTitle>
+                            <CardDescription>Appears in search results (150-160 characters ideal)</CardDescription>
+                          </CardHeader>
+                          <CardContent>
+                            <Textarea 
+                              value={content.metaDescription} 
+                              onChange={handleMetaDescriptionChange}
+                              disabled={!editMode}
+                              className={editMode ? "border-blue-300" : ""}
+                              rows={3}
+                            />
+                            <div className="mt-2 text-xs text-gray-500">
+                              {content.metaDescription.length} characters
                             </div>
-                          </div>
-                        ))}
-                      </CardContent>
-                    </Card>
-                    
-                    <Card>
-                      <CardHeader>
-                        <CardTitle>Body Content</CardTitle>
-                        <CardDescription>Main content of the page (300+ words recommended)</CardDescription>
-                      </CardHeader>
-                      <CardContent>
-                        <Textarea 
-                          value={content.body} 
-                          onChange={handleBodyChange}
-                          disabled={!editMode}
-                          className={editMode ? "border-blue-300" : ""}
-                          rows={8}
-                        />
-                        <div className="mt-2 text-xs text-gray-500">
-                          {content.body.split(/\s+/).length} words
-                        </div>
-                      </CardContent>
-                    </Card>
-                    
-                    <Card>
-                      <CardHeader>
-                        <CardTitle>Images</CardTitle>
-                        <CardDescription>Images should have descriptive alt text</CardDescription>
-                      </CardHeader>
-                      <CardContent className="space-y-4">
-                        {content.images.map((image, index) => (
-                          <div key={index} className="space-y-2">
-                            <div className="flex items-center gap-2">
-                              <div className="w-1/4">
-                                <Badge variant="outline">Image src</Badge>
-                                <div className="text-sm mt-1 truncate">{image.src}</div>
+                          </CardContent>
+                        </Card>
+                        
+                        <Card>
+                          <CardHeader>
+                            <CardTitle>Headings</CardTitle>
+                            <CardDescription>Heading structure is important for SEO and accessibility</CardDescription>
+                          </CardHeader>
+                          <CardContent className="space-y-4">
+                            {content.headings.map((heading, index) => (
+                              <div key={index} className="space-y-2">
+                                <div className="flex items-center gap-2">
+                                  <Badge variant="outline">{heading.tag}</Badge>
+                                  <Input 
+                                    value={heading.content} 
+                                    onChange={(e) => handleHeadingChange(index, e.target.value)}
+                                    disabled={!editMode}
+                                    className={editMode ? "border-blue-300" : ""}
+                                  />
+                                </div>
                               </div>
-                              <div className="w-3/4">
-                                <Badge variant="outline">Alt Text</Badge>
-                                <Input 
-                                  value={image.alt} 
-                                  onChange={(e) => handleImageAltChange(index, e.target.value)}
-                                  disabled={!editMode}
-                                  className={editMode ? "border-blue-300" : ""}
-                                  placeholder="Descriptive alt text for the image"
-                                />
-                              </div>
+                            ))}
+                          </CardContent>
+                        </Card>
+                        
+                        <Card>
+                          <CardHeader>
+                            <CardTitle>Body Content</CardTitle>
+                            <CardDescription>Main content of the page (300+ words recommended)</CardDescription>
+                          </CardHeader>
+                          <CardContent>
+                            <Textarea 
+                              value={content.body} 
+                              onChange={handleBodyChange}
+                              disabled={!editMode}
+                              className={editMode ? "border-blue-300" : ""}
+                              rows={8}
+                            />
+                            <div className="mt-2 text-xs text-gray-500">
+                              {content.body.split(/\s+/).length} words
                             </div>
-                          </div>
-                        ))}
-                      </CardContent>
-                    </Card>
-                    
-                    <Card>
-                      <CardHeader>
-                        <CardTitle>Links</CardTitle>
-                        <CardDescription>Links should have descriptive anchor text</CardDescription>
-                      </CardHeader>
-                      <CardContent className="space-y-4">
-                        {content.links.map((link, index) => (
-                          <div key={index} className="space-y-2">
-                            <div className="flex items-center gap-2">
-                              <div className="w-1/4">
-                                <Badge variant={link.isInternal ? "secondary" : "outline"}>
-                                  {link.isInternal ? "Internal" : "External"}
-                                </Badge>
-                                <div className="text-sm mt-1 truncate">{link.href}</div>
+                          </CardContent>
+                        </Card>
+                        
+                        <Card>
+                          <CardHeader>
+                            <CardTitle>Images</CardTitle>
+                            <CardDescription>Images should have descriptive alt text</CardDescription>
+                          </CardHeader>
+                          <CardContent className="space-y-4">
+                            {content.images.map((image, index) => (
+                              <div key={index} className="space-y-2">
+                                <div className="flex items-center gap-2">
+                                  <div className="w-1/4">
+                                    <Badge variant="outline">Image src</Badge>
+                                    <div className="text-sm mt-1 truncate">{image.src}</div>
+                                  </div>
+                                  <div className="w-3/4">
+                                    <Badge variant="outline">Alt Text</Badge>
+                                    <Input 
+                                      value={image.alt} 
+                                      onChange={(e) => handleImageAltChange(index, e.target.value)}
+                                      disabled={!editMode}
+                                      className={editMode ? "border-blue-300" : ""}
+                                      placeholder="Descriptive alt text for the image"
+                                    />
+                                  </div>
+                                </div>
                               </div>
-                              <div className="w-3/4">
-                                <Badge variant="outline">Link Text</Badge>
-                                <Input 
-                                  value={link.text} 
-                                  onChange={(e) => handleLinkTextChange(index, e.target.value)}
-                                  disabled={!editMode}
-                                  className={editMode ? "border-blue-300" : ""}
-                                  placeholder="Descriptive link text"
-                                />
+                            ))}
+                          </CardContent>
+                        </Card>
+                        
+                        <Card>
+                          <CardHeader>
+                            <CardTitle>Links</CardTitle>
+                            <CardDescription>Links should have descriptive anchor text</CardDescription>
+                          </CardHeader>
+                          <CardContent className="space-y-4">
+                            {content.links.map((link, index) => (
+                              <div key={index} className="space-y-2">
+                                <div className="flex items-center gap-2">
+                                  <div className="w-1/4">
+                                    <Badge variant={link.isInternal ? "secondary" : "outline"}>
+                                      {link.isInternal ? "Internal" : "External"}
+                                    </Badge>
+                                    <div className="text-sm mt-1 truncate">{link.href}</div>
+                                  </div>
+                                  <div className="w-3/4">
+                                    <Badge variant="outline">Link Text</Badge>
+                                    <Input 
+                                      value={link.text} 
+                                      onChange={(e) => handleLinkTextChange(index, e.target.value)}
+                                      disabled={!editMode}
+                                      className={editMode ? "border-blue-300" : ""}
+                                      placeholder="Descriptive link text"
+                                    />
+                                  </div>
+                                </div>
                               </div>
-                            </div>
-                          </div>
-                        ))}
-                      </CardContent>
-                    </Card>
+                            ))}
+                          </CardContent>
+                        </Card>
 
-                    <Card>
-                      <CardHeader>
-                        <CardTitle>Schema Markup</CardTitle>
-                        <CardDescription>Structured data helps search engines understand your content (JSON-LD format)</CardDescription>
-                      </CardHeader>
-                      <CardContent>
-                        <Textarea 
-                          value={content.schemaMarkup || ''} 
-                          onChange={handleSchemaMarkupChange}
-                          disabled={!editMode}
-                          className={editMode ? "border-blue-300 font-mono text-sm" : "font-mono text-sm"}
-                          rows={8}
-                          placeholder={`{\n  "@context": "https://schema.org",\n  "@type": "Article",\n  "headline": "Your headline here",\n  "author": {\n    "@type": "Person",\n    "name": "Author Name"\n  }\n}`}
-                        />
-                        <div className="mt-2 text-xs text-gray-500 flex items-center">
-                          <AlertCircle className="h-3 w-3 mr-1" />
-                          <span>Valid JSON-LD required for structured data</span>
-                        </div>
-                      </CardContent>
-                    </Card>
+                        <Card>
+                          <CardHeader>
+                            <CardTitle>Schema Markup</CardTitle>
+                            <CardDescription>Structured data helps search engines understand your content (JSON-LD format)</CardDescription>
+                          </CardHeader>
+                          <CardContent>
+                            <Textarea 
+                              value={content.schemaMarkup || ''} 
+                              onChange={handleSchemaMarkupChange}
+                              disabled={!editMode}
+                              className={editMode ? "border-blue-300 font-mono text-sm" : "font-mono text-sm"}
+                              rows={8}
+                              placeholder={`{\n  "@context": "https://schema.org",\n  "@type": "Article",\n  "headline": "Your headline here",\n  "author": {\n    "@type": "Person",\n    "name": "Author Name"\n  }\n}`}
+                            />
+                            <div className="mt-2 text-xs text-gray-500 flex items-center">
+                              <AlertCircle className="h-3 w-3 mr-1" />
+                              <span>Valid JSON-LD required for structured data</span>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </div>
+                    ) : (
+                      // Advanced mode - WordPress-like editor
+                      <WordPressEditor 
+                        content={content}
+                        onContentChange={setContent}
+                        readOnly={!editMode}
+                      />
+                    )}
                   </>
                 )}
               </TabsContent>
