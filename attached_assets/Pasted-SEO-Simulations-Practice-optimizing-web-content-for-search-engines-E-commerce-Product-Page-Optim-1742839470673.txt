@@ -1,0 +1,66 @@
+SEO Simulations
+Practice optimizing web content for search engines
+
+E-commerce Product Page Optimization
+E-commerce Industry
+
+Optimize a poorly structured product page for a coffee shop's online store to improve its search engine visibility for coffee-related keywords.
+
+Beginner
+6 issues
+Estimated time: 30-45 minutes
+Start Simulation
+Local Business Homepage Optimization
+Healthcare Industry
+
+Improve the SEO of a local dental practice's homepage to increase visibility for local search queries.
+
+Intermediate
+6 issues
+Estimated time: 30-45 minutes
+Start Simulation
+Level 1: Coffee Shop Product Page - Basic On-Page SEO
+E-commerce Industry
+
+Learn the fundamentals of on-page SEO by optimizing a basic product page for a coffee shop. Focus on title tags, meta descriptions, and basic headings.
+
+Beginner
+6 issues
+Estimated time: 30-45 minutes
+Start Simulation
+Level 2: Local Business Homepage - Content & Keyword Optimization
+Healthcare Industry
+
+Build on basic SEO foundations and learn about content optimization, local SEO factors, and keyword integration for a dental practice website.
+
+Intermediate
+6 issues
+Estimated time: 30-45 minutes
+Start Simulation
+Level 3: E-commerce Technical SEO - Advanced Optimization
+E-commerce Industry
+
+Master advanced technical SEO elements including schema markup, URL structure, mobile optimization, and page speed factors for an e-commerce website.
+
+Advanced
+7 issues
+Estimated time: 30-45 minutes
+Start Simulation
+Level 4: Travel Blog Audit - Expert SEO Analysis
+Travel & Tourism Industry
+
+Perform a comprehensive site audit for a travel blog, identifying and fixing broken links, duplicate content issues, canonical problems, and implementing advanced schema for rich snippets.
+
+Expert
+7 issues
+Estimated time: 30-45 minutes
+Start Simulation
+Level 5: Complete Business Website Audit - Master SEO Implementation
+Business Services Industry
+
+Apply all your SEO knowledge to conduct a full site audit for a business website, implementing a comprehensive SEO strategy addressing all aspects from technical issues to content optimization and competitive analysis.
+
+Master
+10 issues
+Estimated time: 30-45 minutes
+Start Simulation
