@@ -11,6 +11,7 @@ import ApiSettings from "@/pages/api-settings";
 import NetworkPage from "@/pages/network";
 import SeoSimulationsPage from "@/pages/seo-simulations";
 import SeoSimulationPage from "@/pages/seo-simulation";
+import SeoQuizPage from "@/pages/seo-quiz";
 import Achievements from "@/components/Achievements";
 import Posts from "@/components/Posts";
 import { 
@@ -21,7 +22,8 @@ import {
   BarChart2, 
   Target, 
   Settings,
-  Search
+  Search,
+  BookOpen
 } from "lucide-react";
 
 function NavBar() {
@@ -82,6 +84,12 @@ function NavBar() {
               <div className={`flex items-center gap-1 text-sm cursor-pointer ${location === '/seo-simulations' ? 'text-primary font-medium' : 'text-muted-foreground'}`}>
                 <Search className="h-4 w-4" />
                 <span>SEO Practice</span>
+              </div>
+            </Link>
+            <Link href="/seo-quiz">
+              <div className={`flex items-center gap-1 text-sm cursor-pointer ${location === '/seo-quiz' ? 'text-primary font-medium' : 'text-muted-foreground'}`}>
+                <BookOpen className="h-4 w-4" />
+                <span>SEO Quiz</span>
               </div>
             </Link>
           </nav>
