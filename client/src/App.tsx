@@ -12,6 +12,8 @@ import NetworkPage from "@/pages/network";
 import SeoSimulationsPage from "@/pages/seo-simulations";
 import SeoSimulationPage from "@/pages/seo-simulation";
 import SeoQuizPage from "@/pages/seo-quiz";
+import AdSimulationsPage from "@/pages/ad-simulations";
+import AdSimulationPage from "@/pages/ad-simulation";
 import TutorialsPage from "@/pages/tutorials";
 import SubscriptionPage from "@/pages/subscription";
 import SubscriptionSuccessPage from "@/pages/subscription/success";
@@ -29,8 +31,9 @@ import {
   Search,
   BookOpen,
   CreditCard,
-  Notebook,
-  GraduationCap
+  GraduationCap,
+  MousePointer,
+  Monitor
 } from "lucide-react";
 
 function NavBar() {
@@ -93,6 +96,12 @@ function NavBar() {
                 <span>SEO Practice</span>
               </div>
             </Link>
+            <Link href="/ad-simulations">
+              <div className={`flex items-center gap-1 text-sm cursor-pointer ${location === '/ad-simulations' ? 'text-primary font-medium' : 'text-muted-foreground'}`}>
+                <MousePointer className="h-4 w-4" />
+                <span>Ad Platforms</span>
+              </div>
+            </Link>
             <Link href="/seo-quiz">
               <div className={`flex items-center gap-1 text-sm cursor-pointer ${location === '/seo-quiz' ? 'text-primary font-medium' : 'text-muted-foreground'}`}>
                 <BookOpen className="h-4 w-4" />
@@ -140,6 +149,8 @@ function Router() {
           <Route path="/achievements" component={Achievements} />
           <Route path="/seo-simulations" component={SeoSimulationsPage} />
           <Route path="/seo-simulation/:id" component={SeoSimulationPage} />
+          <Route path="/ad-simulations" component={AdSimulationsPage} />
+          <Route path="/ad-simulation/:id" component={AdSimulationPage} />
           <Route path="/seo-quiz" component={SeoQuizPage} />
           <Route path="/tutorials" component={TutorialsPage} />
           <Route path="/subscription" component={SubscriptionPage} />
