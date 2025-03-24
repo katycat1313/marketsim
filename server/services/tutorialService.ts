@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import { fileURLToPath } from 'url';
 import { db } from '../db';
 import { userProfiles } from '@shared/schema';
 import { tutorialSimulationService } from './tutorialSimulationService';
@@ -414,13 +415,25 @@ export class TutorialService {
 
   private loadTutorialContent(filename: string): string {
     try {
-      // Import tutorial content directly (these are TypeScript modules now)
-      // Note: Dynamic imports aren't supported in this context, so we use a direct approach
-      const tutorialPath = `../data/tutorials/${filename}`;
+      // Using fileURLToPath for ESM compatibility to get correct file paths
+      const currentFilePath = fileURLToPath(import.meta.url);
+      const currentDir = path.dirname(currentFilePath);
+      
+      // Navigate to the tutorials directory
+      const tutorialPath = path.join(currentDir, '..', 'data', 'tutorials', filename);
       
       try {
-        // This approach eliminates the need for a switch statement - more maintainable
-        return require(tutorialPath).default;
+        // Read the file directly and extract the content
+        const fileContent = fs.readFileSync(tutorialPath, 'utf8');
+        
+        // Parse the content to extract the exported content string
+        const contentMatch = fileContent.match(/export const content = `([\s\S]*?)`/);
+        if (contentMatch && contentMatch[1]) {
+          return contentMatch[1];
+        } else {
+          console.error(`Could not parse content from ${filename}`);
+          return "Tutorial content structure is invalid.";
+        }
       } catch (importError) {
         console.error(`Could not import tutorial from ${filename}:`, importError);
         return "Tutorial content not found.";
