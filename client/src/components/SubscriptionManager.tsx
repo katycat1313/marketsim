@@ -123,9 +123,16 @@ export default function SubscriptionManager({ userId, userEmail }: SubscriptionM
         setCustomerId(stripeCustomerId);
       }
 
-      // Create checkout session
+      // Create checkout session - ensure stripeCustomerId is never null
+      if (!stripeCustomerId) {
+        throw new Error('Failed to create customer');
+      }
+      
+      // Type guard to ensure stripeCustomerId is definitely string
+      const customerId: string = stripeCustomerId;
+      
       return createCheckoutSession(
-        stripeCustomerId,
+        customerId,
         priceId,
         `${window.location.origin}/subscription/success`,
         `${window.location.origin}/subscription/cancel`
