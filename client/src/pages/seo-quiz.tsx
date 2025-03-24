@@ -167,23 +167,39 @@ export default function SeoQuizPage() {
                     <div className="space-y-2">
                       <h3 className="font-medium">Your Achievements</h3>
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        {userProgress.badges.map((badge) => (
-                          <Card key={badge.id} className={`border ${badge.achieved ? 'border-primary' : 'border-muted'}`}>
+                        {userProgress.badges && userProgress.badges.length > 0 ? (
+                          userProgress.badges.map((badge) => (
+                            <Card key={badge.id} className={`border ${badge.achieved ? 'border-primary' : 'border-muted'}`}>
+                              <CardContent className="p-4 flex items-center space-x-4">
+                                <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                                  badge.achieved ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'
+                                }`}>
+                                  <Award className="h-5 w-5" />
+                                </div>
+                                <div>
+                                  <p className="font-medium">{badge.name}</p>
+                                  <p className="text-xs text-muted-foreground">
+                                    {badge.achieved ? 'Achieved' : 'Not yet achieved'}
+                                  </p>
+                                </div>
+                              </CardContent>
+                            </Card>
+                          ))
+                        ) : (
+                          <Card className="border border-muted col-span-3">
                             <CardContent className="p-4 flex items-center space-x-4">
-                              <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                                badge.achieved ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'
-                              }`}>
+                              <div className="w-10 h-10 rounded-full flex items-center justify-center bg-muted text-muted-foreground">
                                 <Award className="h-5 w-5" />
                               </div>
                               <div>
-                                <p className="font-medium">{badge.name}</p>
+                                <p className="font-medium">No badges yet</p>
                                 <p className="text-xs text-muted-foreground">
-                                  {badge.achieved ? 'Achieved' : 'Not yet achieved'}
+                                  Complete more quizzes to earn badges
                                 </p>
                               </div>
                             </CardContent>
                           </Card>
-                        ))}
+                        )}
                       </div>
                     </div>
                   </>
