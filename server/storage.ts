@@ -324,6 +324,29 @@ export class DrizzleStorage implements IStorage {
       totalQuizzes
     };
   }
+
+  // Ad Platform Simulation operations
+  async listAdPlatformSimulations(): Promise<AdPlatformSimulation[]> {
+    return await db.select().from(adPlatformSimulations);
+  }
+
+  async getAdPlatformSimulation(id: number): Promise<AdPlatformSimulation | undefined> {
+    const [result] = await db.select().from(adPlatformSimulations).where(eq(adPlatformSimulations.id, id));
+    return result;
+  }
+
+  async createAdPlatformSimulationAttempt(attempt: any): Promise<AdPlatformSimulationAttempt> {
+    const [result] = await db.insert(adPlatformSimulationAttempts).values(attempt).returning();
+    return result;
+  }
+
+  async getAdPlatformSimulationAttempts(userId: number, simulationId: number): Promise<AdPlatformSimulationAttempt[]> {
+    return await db.select()
+      .from(adPlatformSimulationAttempts)
+      .where(eq(adPlatformSimulationAttempts.userId, userId))
+      .where(eq(adPlatformSimulationAttempts.simulationId, simulationId))
+      .orderBy(desc(adPlatformSimulationAttempts.createdAt));
+  }
 }
 
 // Export a singleton instance
