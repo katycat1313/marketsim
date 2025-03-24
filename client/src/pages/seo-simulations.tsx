@@ -26,11 +26,15 @@ interface SeoSimulation {
 export default function SeoSimulationsPage() {
   const { data, isLoading, error } = useQuery({
     queryKey: ['/api/seo-simulations'],
-    queryFn: () => apiRequest('/api/seo-simulations')
+    queryFn: () => apiRequest('/api/seo-simulations', { method: 'GET' })
   });
 
+  // Debug what's coming back from the API
+  console.log('API Response:', data);
+  console.log('Is array?', Array.isArray(data));
+  
   // Make sure we're working with an array of simulations
-  const simulations = Array.isArray(data) ? data : [];
+  const simulations = Array.isArray(data) ? data : (data?.simulations || []);
 
   if (isLoading) {
     return (
@@ -85,7 +89,7 @@ export default function SeoSimulationsPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {simulations?.map((simulation) => (
+        {simulations?.map((simulation: SeoSimulation) => (
           <Card key={simulation.id} className="overflow-hidden">
             <CardHeader>
               <CardTitle>{simulation.title}</CardTitle>
