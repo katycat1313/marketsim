@@ -40,6 +40,11 @@ interface QuizQuestion {
   explanation: string;
 }
 
+// Helper function to safely get options or return an empty array
+const getOptions = (question: QuizQuestion): QuizOption[] => {
+  return question.options || [];
+}
+
 export const SeoQuiz = () => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<Record<number, any>>({});
@@ -94,12 +99,13 @@ export const SeoQuiz = () => {
     
     seoQuizQuestions.forEach((q: QuizQuestion) => {
       const userAnswer = answers[q.id];
+      const options = getOptions(q);
       
-      if (q.type === 'multiple-choice' || q.type === 'content-analysis' || q.type === 'data-analysis') {
-        const correctOption = q.options.find(opt => opt.isCorrect)?.id;
+      if ((q.type === 'multiple-choice' || q.type === 'content-analysis' || q.type === 'data-analysis')) {
+        const correctOption = options.find(opt => opt.isCorrect)?.id;
         if (userAnswer === correctOption) correctAnswers++;
       } else if (q.type === 'keyword-selection') {
-        const relevantOptions = q.options.filter(opt => opt.isRelevant).map(opt => opt.id);
+        const relevantOptions = options.filter(opt => opt.isRelevant).map(opt => opt.id);
         const correctCount = userAnswer?.filter((id: string) => relevantOptions.includes(id)).length || 0;
         const incorrectCount = userAnswer?.filter((id: string) => !relevantOptions.includes(id)).length || 0;
         
@@ -110,7 +116,7 @@ export const SeoQuiz = () => {
           correctAnswers += 0.5;
         }
       } else if (q.type === 'negative-keywords') {
-        const negativeOptions = q.options.filter(opt => opt.isNegative).map(opt => opt.id);
+        const negativeOptions = options.filter(opt => opt.isNegative).map(opt => opt.id);
         const correctCount = userAnswer?.filter((id: string) => negativeOptions.includes(id)).length || 0;
         const incorrectCount = userAnswer?.filter((id: string) => !negativeOptions.includes(id)).length || 0;
         
@@ -269,7 +275,7 @@ export const SeoQuiz = () => {
               value={answers[question.id] || ''} 
               onValueChange={handleSingleChoice}
             >
-              {question.options.map((option) => (
+              {getOptions(question).map((option) => (
                 <div key={option.id} className="flex items-center space-x-2 p-3 rounded-md border hover:bg-muted/50">
                   <RadioGroupItem 
                     value={option.id} 
@@ -292,7 +298,7 @@ export const SeoQuiz = () => {
           {/* Keyword Selection */}
           {['keyword-selection', 'negative-keywords'].includes(question.type) && (
             <div className="space-y-3">
-              {question.options.map((option) => {
+              {getOptions(question).map((option) => {
                 const isSelected = (answers[question.id] || []).includes(option.id);
                 const isCorrect = 
                   question.type === 'keyword-selection' ? option.isRelevant : option.isNegative;
