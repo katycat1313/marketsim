@@ -44,6 +44,22 @@ export default {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
+        // DIGITAL ZOOM Brand Colors
+        gold: {
+          400: "#FFD700", // Regular gold
+          500: "#FFC000", // Deeper gold
+          600: "#D4AF37", // Royal gold
+        },
+        navy: {
+          700: "#0A1E3C", // Dark navy
+          800: "#091832", // Deeper navy
+          900: "#071428", // Darkest navy
+        },
+        "matte-blue": {
+          300: "#8CABD9", // Light matte blue
+          400: "#6C8DC1", // Matte blue
+          500: "#4B6FA9", // Deeper matte blue
+        },
         chart: {
           "1": "hsl(var(--chart-1))",
           "2": "hsl(var(--chart-2))",

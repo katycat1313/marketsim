@@ -101,13 +101,13 @@ export default function SeoSimulationsPage() {
   }
 
   const renderSimulationCard = (simulation: SeoSimulation) => (
-    <Card key={simulation.id} className="overflow-hidden border border-gray-200 hover:border-gold-400 transition-all hover:shadow-md">
-      <CardHeader>
+    <Card key={simulation.id} className="overflow-hidden border border-navy-700 hover:border-matte-blue-400 transition-all hover:shadow-md">
+      <CardHeader className="bg-navy-800 text-white">
         <CardTitle>{simulation.title}</CardTitle>
-        <CardDescription>{simulation.industry} Industry</CardDescription>
+        <CardDescription className="text-matte-blue-300">{simulation.industry} Industry</CardDescription>
       </CardHeader>
-      <CardContent>
-        <p className="text-gray-600 mb-4 line-clamp-3">{simulation.description}</p>
+      <CardContent className="bg-white">
+        <p className="text-gray-700 mb-4 line-clamp-3">{simulation.description}</p>
         <div className="flex flex-wrap gap-2 mb-4">
           <Badge 
             variant={
@@ -116,21 +116,22 @@ export default function SeoSimulationsPage() {
               simulation.difficulty === 'Advanced' ? 'outline' :
               simulation.difficulty === 'Expert' ? 'destructive' : 'destructive'
             }
+            className="bg-matte-blue-400 text-white hover:bg-matte-blue-500"
           >
             {simulation.difficulty}
           </Badge>
-          <Badge variant="outline">
+          <Badge variant="outline" className="border-navy-700 text-navy-700">
             <AlertTriangle className="h-3 w-3 mr-1" /> 
             {simulation.seoIssues.length} issues
           </Badge>
         </div>
-        <div className="flex items-center text-sm text-gray-500">
-          <Clock className="h-4 w-4 mr-1" /> 
+        <div className="flex items-center text-sm text-gray-600">
+          <Clock className="h-4 w-4 mr-1 text-navy-700" /> 
           <span>Estimated time: 30-45 minutes</span>
         </div>
       </CardContent>
-      <CardFooter>
-        <Button asChild className="w-full">
+      <CardFooter className="bg-white border-t border-navy-700 border-opacity-10">
+        <Button asChild className="w-full bg-navy-700 hover:bg-navy-800">
           <Link to={`/seo-simulation/${simulation.id}`}>
             Start Simulation <ArrowRight className="ml-2 h-4 w-4" />
           </Link>
@@ -143,18 +144,18 @@ export default function SeoSimulationsPage() {
     <div className="container mx-auto p-4">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gold-400 to-gold-600">SEO Simulations</h1>
-          <p className="text-gray-400">Practice optimizing web content for search engines</p>
+          <h1 className="text-3xl font-bold text-navy-700">SEO Simulations</h1>
+          <p className="text-matte-blue-400">Practice optimizing web content for search engines</p>
         </div>
       </div>
 
       <Tabs defaultValue="learning-path" className="mb-8">
-        <TabsList className="mb-4">
-          <TabsTrigger value="learning-path" className="flex items-center">
+        <TabsList className="mb-4 bg-navy-800">
+          <TabsTrigger value="learning-path" className="flex items-center data-[state=active]:bg-matte-blue-500 data-[state=active]:text-white">
             <GraduationCap className="mr-2 h-4 w-4" />
             Learning Path (5 Levels)
           </TabsTrigger>
-          <TabsTrigger value="practice" className="flex items-center">
+          <TabsTrigger value="practice" className="flex items-center data-[state=active]:bg-matte-blue-500 data-[state=active]:text-white">
             <BookOpen className="mr-2 h-4 w-4" />
             Additional Practice
           </TabsTrigger>
@@ -162,20 +163,20 @@ export default function SeoSimulationsPage() {
         
         <TabsContent value="learning-path">
           <div className="mb-4">
-            <h2 className="text-xl font-semibold mb-1">SEO Mastery Path</h2>
-            <p className="text-gray-400 mb-4">Progress through five levels from beginner to master SEO practitioner</p>
+            <h2 className="text-xl font-semibold mb-1 text-navy-700">SEO Mastery Path</h2>
+            <p className="text-matte-blue-500 mb-4">Progress through five levels from beginner to master SEO practitioner</p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {sortedLeveledSimulations.map(renderSimulationCard)}
             
             {sortedLeveledSimulations.length === 0 && (
-              <div className="col-span-full bg-blue-950 p-6 rounded-lg border border-blue-800">
-                <h2 className="text-xl font-semibold text-blue-300 flex items-center">
+              <div className="col-span-full bg-navy-800 p-6 rounded-lg border border-navy-700">
+                <h2 className="text-xl font-semibold text-white flex items-center">
                   <Book className="mr-2" />
                   No Learning Path Available
                 </h2>
-                <p className="mt-2 text-blue-200">Check back later for our structured SEO learning path.</p>
+                <p className="mt-2 text-matte-blue-300">Check back later for our structured SEO learning path.</p>
               </div>
             )}
           </div>
@@ -183,20 +184,20 @@ export default function SeoSimulationsPage() {
         
         <TabsContent value="practice">
           <div className="mb-4">
-            <h2 className="text-xl font-semibold mb-1">Additional Practice Simulations</h2>
-            <p className="text-gray-400 mb-4">Standalone simulations for extra practice and skill-building</p>
+            <h2 className="text-xl font-semibold mb-1 text-navy-700">Additional Practice Simulations</h2>
+            <p className="text-matte-blue-500 mb-4">Standalone simulations for extra practice and skill-building</p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {sortedPracticeSimulations.map(renderSimulationCard)}
             
             {sortedPracticeSimulations.length === 0 && (
-              <div className="col-span-full bg-blue-950 p-6 rounded-lg border border-blue-800">
-                <h2 className="text-xl font-semibold text-blue-300 flex items-center">
+              <div className="col-span-full bg-navy-800 p-6 rounded-lg border border-navy-700">
+                <h2 className="text-xl font-semibold text-white flex items-center">
                   <Book className="mr-2" />
                   No Practice Simulations Available
                 </h2>
-                <p className="mt-2 text-blue-200">Check back later for additional practice simulations.</p>
+                <p className="mt-2 text-matte-blue-300">Check back later for additional practice simulations.</p>
               </div>
             )}
           </div>
