@@ -491,24 +491,65 @@ export function TutorialSystem() {
   
   // Basic markdown to HTML formatter
   const formatMarkdown = (markdown: string): string => {
-    // Remove markdown headers (we'll handle them separately)
-    let html = markdown.replace(/^#+\s+(.+)$/gm, '<h3 class="text-xl font-semibold mb-4 text-blue-800">$1</h3>');
+    // First, preserve code blocks to avoid processing them with other transformations
+    const codeBlocks: string[] = [];
+    let html = markdown.replace(/```([^`]+)```/g, (match) => {
+      codeBlocks.push(match);
+      return `%%CODEBLOCK_${codeBlocks.length - 1}%%`;
+    });
     
-    // Convert bold
+    // Process headers from h1 to h6
+    html = html.replace(/^######\s+(.+)$/gm, '<h6 class="text-sm font-semibold mb-2 text-blue-600">$1</h6>');
+    html = html.replace(/^#####\s+(.+)$/gm, '<h5 class="text-base font-semibold mb-2 text-blue-600">$1</h5>');
+    html = html.replace(/^####\s+(.+)$/gm, '<h4 class="text-lg font-semibold mb-2 text-blue-700">$1</h4>');
+    html = html.replace(/^###\s+(.+)$/gm, '<h3 class="text-xl font-semibold mb-3 text-blue-700">$1</h3>');
+    html = html.replace(/^##\s+(.+)$/gm, '<h2 class="text-2xl font-bold mb-3 text-blue-800">$1</h2>');
+    html = html.replace(/^#\s+(.+)$/gm, '<h1 class="text-3xl font-bold mb-4 text-blue-900">$1</h1>');
+    
+    // Convert bold and italic
+    html = html.replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em class="text-blue-700">$1</em></strong>');
     html = html.replace(/\*\*(.+?)\*\*/g, '<strong class="text-blue-700">$1</strong>');
-    
-    // Convert italic
     html = html.replace(/\*(.+?)\*/g, '<em class="text-blue-600">$1</em>');
     
-    // Convert lists
-    html = html.replace(/^\s*-\s+(.+)$/gm, '<li class="text-gray-700">$1</li>');
-    html = html.replace(/(<li.*<\/li>\n)+/g, '<ul class="list-disc pl-5 mb-4">$&</ul>');
+    // Convert blockquotes for interactive challenges, polls, etc.
+    html = html.replace(/^>\s*\*\*(.+?)\*\*:\s*(.+)$/gm, 
+      '<div class="bg-blue-50 p-4 rounded-lg border border-blue-200 my-4"><h4 class="font-bold text-blue-800 mb-2">$1</h4><p class="text-blue-700">$2</p></div>');
     
-    // Convert paragraphs
-    html = html.replace(/^(?!<[uh]|<li|<ul|<ol)(.+)$/gm, '<p class="mb-4 text-gray-700 leading-relaxed">$1</p>');
+    html = html.replace(/^>\s*(.+)$/gm, 
+      '<div class="bg-blue-50 p-4 rounded-lg border border-blue-200 my-2 text-blue-700">$1</div>');
     
-    // Fix line breaks
-    html = html.replace(/\n\n/g, '<br/>');
+    // Convert lists (both ordered and unordered)
+    html = html.replace(/^\s*-\s+(.+)$/gm, '<li class="text-gray-700 mb-1">$1</li>');
+    html = html.replace(/^\s*\d+\.\s+(.+)$/gm, '<li class="text-gray-700 mb-1">$1</li>');
+    
+    // Group list items
+    html = html.replace(/(<li class="text-gray-700 mb-1">.*<\/li>\n)+/g, 
+      '<ul class="list-disc pl-5 mb-4 space-y-1">$&</ul>');
+    
+    // Convert inline code
+    html = html.replace(/`([^`]+)`/g, '<code class="bg-gray-100 text-red-500 px-1 py-0.5 rounded text-sm">$1</code>');
+    
+    // Process links
+    html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, 
+      '<a href="$2" class="text-blue-500 hover:underline font-medium">$1</a>');
+    
+    // Convert paragraphs (skip anything that looks like HTML)
+    html = html.replace(/^(?!<[a-z\/]).+$/gm, 
+      '<p class="mb-4 text-gray-700 leading-relaxed">$&</p>');
+    
+    // Fix multiple line breaks
+    html = html.replace(/\n{2,}/g, '<br/>');
+    
+    // Replace HTML in paragraphs (cleanup)
+    html = html.replace(/<p class="mb-4 text-gray-700 leading-relaxed">(<[^>]+>)(.*?)(<\/[^>]+>)<\/p>/g, '$1$2$3');
+    
+    // Restore code blocks with syntax highlighting
+    codeBlocks.forEach((block, index) => {
+      // Strip the markdown code block syntax
+      const cleanCode = block.replace(/```(?:\w+)?\n([\s\S]*?)```/g, '$1');
+      const highlightedCode = `<pre class="bg-gray-800 text-gray-200 p-4 rounded-lg overflow-x-auto mb-4"><code>${cleanCode.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>`;
+      html = html.replace(`%%CODEBLOCK_${index}%%`, highlightedCode);
+    });
     
     return html;
   };
