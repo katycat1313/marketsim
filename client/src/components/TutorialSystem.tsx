@@ -1,8 +1,11 @@
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardHeader, CardContent } from './ui/card';
+import React, { useState, useEffect, useRef } from 'react';
+import { Card, CardHeader, CardContent, CardFooter } from './ui/card';
 import { Button } from './ui/button';
 import { Progress } from './ui/progress';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Separator } from '@/components/ui/separator';
 
 // Define the Tutorial interface directly in the component
 interface Tutorial {
@@ -22,15 +25,136 @@ interface Tutorial {
   hasSimulation?: boolean;
 }
 
+interface Slide {
+  id: number;
+  title: string;
+  content: string;
+  image?: string;
+  contentType: 'text' | 'image' | 'quiz' | 'video' | 'interactive';
+}
+
 export function TutorialSystem() {
   const [tutorials, setTutorials] = useState<Tutorial[]>([]);
   const [currentTutorial, setCurrentTutorial] = useState<Tutorial | null>(null);
   const [progress, setProgress] = useState<number[]>([]);
+  const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
+  const [slides, setSlides] = useState<Slide[]>([]);
+  const [slideAnimation, setSlideAnimation] = useState('');
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  // Sample learning path visual
+  const learningPathSteps = [
+    { id: 1, title: 'Foundations', completed: true },
+    { id: 2, title: 'Setup & Configuration', completed: true },
+    { id: 3, title: 'Campaign Strategy', completed: false },
+    { id: 4, title: 'Optimization', completed: false },
+    { id: 5, title: 'Advanced Tactics', completed: false },
+    { id: 6, title: 'Analytics & Reporting', completed: false },
+  ];
 
   useEffect(() => {
     fetchTutorials();
     fetchProgress();
   }, []);
+
+  useEffect(() => {
+    if (currentTutorial) {
+      // Generate slides from tutorial content
+      const generatedSlides = generateSlidesFromContent(currentTutorial);
+      setSlides(generatedSlides);
+      setCurrentSlideIndex(0);
+      
+      // Scroll to top when tutorial changes
+      if (contentRef.current) {
+        contentRef.current.scrollTop = 0;
+      }
+    }
+  }, [currentTutorial]);
+
+  // Generate slides from tutorial content
+  const generateSlidesFromContent = (tutorial: Tutorial): Slide[] => {
+    // Split the content by sections (headers)
+    const contentSections = tutorial.content.split(/(?=^#+ )/m);
+    
+    // Create slides from the sections
+    const slides: Slide[] = [];
+    
+    // Add intro slide
+    slides.push({
+      id: 0,
+      title: tutorial.title,
+      content: `<div class="text-center">
+                  <h2 class="text-2xl font-bold mb-4">${tutorial.title}</h2>
+                  <p class="text-lg mb-6">Level: ${tutorial.level}</p>
+                  <div class="flex justify-center space-x-2 mb-4">
+                    ${tutorial.skillsLearned?.map(skill => `<span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">${skill}</span>`).join('') || ''}
+                  </div>
+                  <p class="text-gray-600 italic">Estimated time: ${tutorial.estimatedTime || 60} minutes</p>
+                </div>`,
+      contentType: 'text'
+    });
+    
+    // Process each content section
+    contentSections.forEach((section, index) => {
+      if (section.trim()) {
+        // Extract header
+        const headerMatch = section.match(/^(#+) (.+)$/m);
+        const title = headerMatch ? headerMatch[2] : `Section ${index + 1}`;
+        
+        // Check for special image markers
+        const hasImage = section.includes('![') || section.includes('<img');
+        
+        slides.push({
+          id: index + 1,
+          title,
+          content: section,
+          contentType: hasImage ? 'image' : 'text',
+          image: hasImage ? extractImagePath(section) : undefined
+        });
+      }
+    });
+    
+    // Add tasks as slides
+    tutorial.tasks.forEach((task, index) => {
+      slides.push({
+        id: slides.length,
+        title: `Task: ${task.description}`,
+        content: `<div>
+                    <h3 class="text-xl font-semibold mb-4">${task.description}</h3>
+                    <p class="text-sm text-gray-600 mb-4">Type: ${task.type}</p>
+                    
+                    <div class="mb-4">
+                      <h4 class="font-medium mb-2">Requirements:</h4>
+                      <ul class="list-disc pl-5">
+                        ${task.requirements.map(req => `<li>${req}</li>`).join('')}
+                      </ul>
+                    </div>
+                    
+                    <div>
+                      <h4 class="font-medium mb-2">Verification Criteria:</h4>
+                      <ul class="list-disc pl-5">
+                        ${task.verificationCriteria.map(crit => `<li>${crit}</li>`).join('')}
+                      </ul>
+                    </div>
+                  </div>`,
+        contentType: 'interactive'
+      });
+    });
+    
+    return slides;
+  };
+  
+  // Extract image path from content (simple version)
+  const extractImagePath = (content: string): string => {
+    const imgTagMatch = content.match(/<img.*?src=["'](.+?)["']/);
+    if (imgTagMatch) return imgTagMatch[1];
+    
+    const markdownMatch = content.match(/!\[.*?\]\((.+?)\)/);
+    if (markdownMatch) return markdownMatch[1];
+    
+    // Default image if none found
+    return '/placeholder-image.png';
+  };
 
   const fetchTutorials = async () => {
     try {
@@ -141,122 +265,429 @@ export function TutorialSystem() {
     }
   };
 
+  const nextSlide = () => {
+    if (currentSlideIndex < slides.length - 1) {
+      setSlideAnimation('slide-left');
+      setTimeout(() => {
+        setCurrentSlideIndex(currentSlideIndex + 1);
+        setSlideAnimation('');
+      }, 300);
+    }
+  };
+
+  const prevSlide = () => {
+    if (currentSlideIndex > 0) {
+      setSlideAnimation('slide-right');
+      setTimeout(() => {
+        setCurrentSlideIndex(currentSlideIndex - 1);
+        setSlideAnimation('');
+      }, 300);
+    }
+  };
+  
+  const renderSlideContent = (slide: Slide) => {
+    if (slide.contentType === 'image' && slide.image) {
+      return (
+        <div className="flex flex-col md:flex-row gap-6 items-center">
+          <div className="md:w-1/2">
+            <div className="prose prose-blue max-w-none" dangerouslySetInnerHTML={{ __html: formatMarkdown(slide.content) }}></div>
+          </div>
+          <div className="md:w-1/2 rounded-lg overflow-hidden shadow-lg">
+            <img src={slide.image} alt={slide.title} className="w-full h-auto object-cover" />
+          </div>
+        </div>
+      );
+    } else if (slide.contentType === 'interactive') {
+      return (
+        <div className="bg-blue-50 p-6 rounded-lg border border-blue-200" dangerouslySetInnerHTML={{ __html: slide.content }}></div>
+      );
+    } else {
+      return (
+        <div className="prose prose-blue max-w-none" dangerouslySetInnerHTML={{ __html: formatMarkdown(slide.content) }}></div>
+      );
+    }
+  };
+  
+  // Basic markdown to HTML formatter
+  const formatMarkdown = (markdown: string): string => {
+    // Remove markdown headers (we'll handle them separately)
+    let html = markdown.replace(/^#+\s+(.+)$/gm, '<h3 class="text-xl font-semibold mb-4">$1</h3>');
+    
+    // Convert bold
+    html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    
+    // Convert italic
+    html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
+    
+    // Convert lists
+    html = html.replace(/^\s*-\s+(.+)$/gm, '<li>$1</li>');
+    html = html.replace(/(<li>.*<\/li>\n)+/g, '<ul class="list-disc pl-5 mb-4">$&</ul>');
+    
+    // Convert paragraphs
+    html = html.replace(/^(?!<[uh]|<li|<ul|<ol)(.+)$/gm, '<p class="mb-4">$1</p>');
+    
+    // Fix line breaks
+    html = html.replace(/\n\n/g, '<br/>');
+    
+    return html;
+  };
+
+  const renderLearningPath = () => {
+    return (
+      <div className="mt-8">
+        <h3 className="text-lg font-semibold mb-4">Your Learning Path</h3>
+        <div className="flex flex-wrap gap-2">
+          {learningPathSteps.map((step, index) => (
+            <div key={step.id} className="flex items-center">
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${step.completed ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-600'}`}>
+                {step.completed ? '✓' : step.id}
+              </div>
+              <div className="ml-2 mr-4">
+                <span className={`text-sm ${step.completed ? 'text-green-700 font-medium' : 'text-gray-600'}`}>
+                  {step.title}
+                </span>
+              </div>
+              {index < learningPathSteps.length - 1 && (
+                <div className={`w-8 h-1 ${index < 2 ? 'bg-green-300' : 'bg-gray-200'}`}></div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="p-4">
       <h2 className="text-2xl font-bold mb-4">Marketing Tutorials</h2>
+      
       {!currentTutorial ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {tutorials.map(tutorial => (
-            <Card key={tutorial.id}>
-              <CardHeader>
-                <h3 className="text-lg font-semibold">{tutorial.title}</h3>
-                <p className="text-sm text-gray-500">Level: {tutorial.level}</p>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-gray-700 mb-2">
-                  {tutorial.skillsLearned && tutorial.skillsLearned.length > 0 ? 
-                    `Skills: ${tutorial.skillsLearned.slice(0, 3).join(', ')}${tutorial.skillsLearned.length > 3 ? '...' : ''}` : 
-                    'Learn essential marketing skills'
-                  }
-                </p>
-                <p className="text-xs text-gray-500 mb-3">
-                  Estimated time: {tutorial.estimatedTime || 60} minutes
-                </p>
-                <div className="mt-4">
-                  <Progress value={
-                    progress.includes(tutorial.id) ? 100 : 0
-                  } />
-                </div>
-                <Button
-                  onClick={() => startTutorial(tutorial)}
-                  className="mt-4 w-full"
-                  disabled={progress.includes(tutorial.id)}
-                  variant={progress.includes(tutorial.id) ? "outline" : "default"}
-                >
-                  {progress.includes(tutorial.id) ? 'Completed' : 'Start Tutorial'}
-                </Button>
-              </CardContent>
-            </Card>
-          ))}
+        <div>
+          {renderLearningPath()}
+          
+          <div className="mt-8 mb-6">
+            <Tabs defaultValue="all">
+              <TabsList className="mb-6">
+                <TabsTrigger value="all">All Tutorials</TabsTrigger>
+                <TabsTrigger value="beginner">Beginner</TabsTrigger>
+                <TabsTrigger value="intermediate">Intermediate</TabsTrigger>
+                <TabsTrigger value="advanced">Advanced</TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="all" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {tutorials.map(tutorial => (
+                  <Card key={tutorial.id} className="transition-all duration-300 hover:shadow-lg">
+                    <CardHeader className="pb-2">
+                      <h3 className="text-lg font-semibold">{tutorial.title}</h3>
+                      <p className="text-sm text-gray-500">Level: {tutorial.level}</p>
+                    </CardHeader>
+                    <CardContent className="pb-2">
+                      <div className="flex flex-wrap gap-2 mb-3">
+                        {tutorial.skillsLearned && tutorial.skillsLearned.slice(0, 3).map((skill, i) => (
+                          <span key={i} className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
+                            {skill}
+                          </span>
+                        ))}
+                        {tutorial.skillsLearned && tutorial.skillsLearned.length > 3 && (
+                          <span className="px-2 py-1 bg-gray-100 text-gray-800 rounded-full text-xs">
+                            +{tutorial.skillsLearned.length - 3} more
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs text-gray-500 mb-3">
+                        Estimated time: {tutorial.estimatedTime || 60} minutes
+                      </p>
+                      <div className="mt-4">
+                        <Progress value={progress.includes(tutorial.id) ? 100 : 0} />
+                        <p className="text-xs text-right mt-1 text-gray-500">
+                          {progress.includes(tutorial.id) ? 'Completed' : 'Not started'}
+                        </p>
+                      </div>
+                    </CardContent>
+                    <CardFooter>
+                      <Button
+                        onClick={() => startTutorial(tutorial)}
+                        className="w-full"
+                        variant={progress.includes(tutorial.id) ? "outline" : "default"}
+                      >
+                        {progress.includes(tutorial.id) ? 'Review Tutorial' : 'Start Tutorial'}
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                ))}
+              </TabsContent>
+              
+              <TabsContent value="beginner" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {tutorials.filter(t => t.level.toLowerCase().includes('beginner')).map(tutorial => (
+                  <Card key={tutorial.id} className="transition-all duration-300 hover:shadow-lg">
+                    <CardHeader className="pb-2">
+                      <h3 className="text-lg font-semibold">{tutorial.title}</h3>
+                      <p className="text-sm text-gray-500">Level: {tutorial.level}</p>
+                    </CardHeader>
+                    <CardContent className="pb-2">
+                      <div className="flex flex-wrap gap-2 mb-3">
+                        {tutorial.skillsLearned && tutorial.skillsLearned.slice(0, 3).map((skill, i) => (
+                          <span key={i} className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
+                            {skill}
+                          </span>
+                        ))}
+                      </div>
+                      <p className="text-xs text-gray-500 mb-3">
+                        Estimated time: {tutorial.estimatedTime || 60} minutes
+                      </p>
+                      <div className="mt-4">
+                        <Progress value={progress.includes(tutorial.id) ? 100 : 0} />
+                        <p className="text-xs text-right mt-1 text-gray-500">
+                          {progress.includes(tutorial.id) ? 'Completed' : 'Not started'}
+                        </p>
+                      </div>
+                    </CardContent>
+                    <CardFooter>
+                      <Button
+                        onClick={() => startTutorial(tutorial)}
+                        className="w-full"
+                        variant={progress.includes(tutorial.id) ? "outline" : "default"}
+                      >
+                        {progress.includes(tutorial.id) ? 'Review Tutorial' : 'Start Tutorial'}
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                ))}
+              </TabsContent>
+              
+              <TabsContent value="intermediate" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {tutorials.filter(t => t.level.toLowerCase().includes('intermediate')).map(tutorial => (
+                  // Same card component as above
+                  <Card key={tutorial.id} className="transition-all duration-300 hover:shadow-lg">
+                    <CardHeader className="pb-2">
+                      <h3 className="text-lg font-semibold">{tutorial.title}</h3>
+                      <p className="text-sm text-gray-500">Level: {tutorial.level}</p>
+                    </CardHeader>
+                    <CardContent className="pb-2">
+                      <div className="flex flex-wrap gap-2 mb-3">
+                        {tutorial.skillsLearned && tutorial.skillsLearned.slice(0, 3).map((skill, i) => (
+                          <span key={i} className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
+                            {skill}
+                          </span>
+                        ))}
+                      </div>
+                      <p className="text-xs text-gray-500 mb-3">
+                        Estimated time: {tutorial.estimatedTime || 60} minutes
+                      </p>
+                      <div className="mt-4">
+                        <Progress value={progress.includes(tutorial.id) ? 100 : 0} />
+                        <p className="text-xs text-right mt-1 text-gray-500">
+                          {progress.includes(tutorial.id) ? 'Completed' : 'Not started'}
+                        </p>
+                      </div>
+                    </CardContent>
+                    <CardFooter>
+                      <Button
+                        onClick={() => startTutorial(tutorial)}
+                        className="w-full"
+                        variant={progress.includes(tutorial.id) ? "outline" : "default"}
+                      >
+                        {progress.includes(tutorial.id) ? 'Review Tutorial' : 'Start Tutorial'}
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                ))}
+              </TabsContent>
+              
+              <TabsContent value="advanced" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {tutorials.filter(t => t.level.toLowerCase().includes('advanced')).map(tutorial => (
+                  // Same card component as above
+                  <Card key={tutorial.id} className="transition-all duration-300 hover:shadow-lg">
+                    <CardHeader className="pb-2">
+                      <h3 className="text-lg font-semibold">{tutorial.title}</h3>
+                      <p className="text-sm text-gray-500">Level: {tutorial.level}</p>
+                    </CardHeader>
+                    <CardContent className="pb-2">
+                      <div className="flex flex-wrap gap-2 mb-3">
+                        {tutorial.skillsLearned && tutorial.skillsLearned.slice(0, 3).map((skill, i) => (
+                          <span key={i} className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
+                            {skill}
+                          </span>
+                        ))}
+                      </div>
+                      <p className="text-xs text-gray-500 mb-3">
+                        Estimated time: {tutorial.estimatedTime || 60} minutes
+                      </p>
+                      <div className="mt-4">
+                        <Progress value={progress.includes(tutorial.id) ? 100 : 0} />
+                        <p className="text-xs text-right mt-1 text-gray-500">
+                          {progress.includes(tutorial.id) ? 'Completed' : 'Not started'}
+                        </p>
+                      </div>
+                    </CardContent>
+                    <CardFooter>
+                      <Button
+                        onClick={() => startTutorial(tutorial)}
+                        className="w-full"
+                        variant={progress.includes(tutorial.id) ? "outline" : "default"}
+                      >
+                        {progress.includes(tutorial.id) ? 'Review Tutorial' : 'Start Tutorial'}
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                ))}
+              </TabsContent>
+            </Tabs>
+          </div>
         </div>
       ) : (
-        <div className="max-w-2xl mx-auto">
-          <Button onClick={() => setCurrentTutorial(null)} className="mb-4">
-            Back to Tutorials
-          </Button>
-          <Card>
-            <CardHeader>
-              <h3 className="text-xl font-bold">{currentTutorial.title}</h3>
+        <div className="max-w-4xl mx-auto" ref={contentRef}>
+          <div className="flex justify-between items-center mb-4">
+            <Button onClick={() => setCurrentTutorial(null)} variant="outline" size="sm">
+              ← Back to Tutorials
+            </Button>
+            <div className="text-sm text-gray-500">
+              Slide {currentSlideIndex + 1} of {slides.length}
+            </div>
+          </div>
+          
+          <Card className="mb-6">
+            <CardHeader className="pb-2 border-b">
+              <div className="flex justify-between items-center">
+                <h3 className="text-xl font-bold">{currentTutorial.title}</h3>
+                <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
+                  {currentTutorial.level}
+                </span>
+              </div>
             </CardHeader>
-            <CardContent>
-              <div className="space-y-6">
-                {/* Render the tutorial content */}
-                <div className="prose prose-blue max-w-none">
-                  {/* Enhanced rendering of content with proper formatting */}
-                  {currentTutorial.content ? (
-                    <div className="whitespace-pre-wrap p-4 bg-white rounded-lg shadow-sm">
-                      {/* Format the content to display nicely */}
-                      {currentTutorial.content.split('\n\n').map((paragraph, idx) => (
-                        <p key={idx} className="mb-4">
-                          {paragraph.split('\n').map((line, lineIdx) => (
-                            <React.Fragment key={lineIdx}>
-                              {line}
-                              {lineIdx < paragraph.split('\n').length - 1 && <br />}
-                            </React.Fragment>
-                          ))}
-                        </p>
-                      ))}
-                    </div>
-                  ) : (
-                    <p>Content unavailable. Please try again later.</p>
-                  )}
-                </div>
-                
-                <h3 className="text-lg font-semibold mt-6 border-t pt-4">Tutorial Tasks</h3>
-                
-                {currentTutorial.tasks.map(task => (
-                  <div key={task.id} className="border p-4 rounded">
-                    <h4 className="font-semibold">{task.description}</h4>
-                    <p className="text-sm text-gray-500 mb-2">Type: {task.type}</p>
-                    
-                    <div className="mt-3">
-                      <h5 className="text-sm font-medium">Requirements:</h5>
-                      <ul className="list-disc ml-4 mt-1">
-                        {task.requirements.map((req, i) => (
-                          <li key={i} className="text-sm">{req}</li>
-                        ))}
-                      </ul>
+            
+            <CardContent className="pt-6">
+              <div className={`tutorial-slide ${slideAnimation}`}>
+                {slides.length > 0 && (
+                  <>
+                    <div className="mb-4">
+                      <h4 className="text-lg font-semibold mb-2">{slides[currentSlideIndex].title}</h4>
+                      <Separator className="mb-4" />
                     </div>
                     
-                    <div className="mt-3">
-                      <h5 className="text-sm font-medium">Verification Criteria:</h5>
-                      <ul className="list-disc ml-4 mt-1">
-                        {task.verificationCriteria.map((criteria, i) => (
-                          <li key={i} className="text-sm">{criteria}</li>
-                        ))}
-                      </ul>
+                    <div className="min-h-[400px]">
+                      {renderSlideContent(slides[currentSlideIndex])}
                     </div>
-                  </div>
-                ))}
-                
-                {completionError && (
-                  <div className="p-4 mb-4 text-red-600 bg-red-50 border border-red-200 rounded-md">
-                    {completionError}
-                  </div>
+                  </>
                 )}
-                
+              </div>
+            </CardContent>
+            
+            <CardFooter className="pt-4 border-t flex justify-between">
+              <Button 
+                onClick={prevSlide} 
+                disabled={currentSlideIndex === 0}
+                variant="outline"
+              >
+                Previous
+              </Button>
+              
+              <div className="flex space-x-1">
+                {slides.map((_, index) => (
+                  <div 
+                    key={index}
+                    className={`w-2 h-2 rounded-full ${index === currentSlideIndex ? 'bg-blue-500' : 'bg-gray-300'}`}
+                    onClick={() => setCurrentSlideIndex(index)}
+                    style={{ cursor: 'pointer' }}
+                  />
+                ))}
+              </div>
+              
+              {currentSlideIndex === slides.length - 1 ? (
                 <Button 
                   onClick={() => completeTutorial(currentTutorial.id)}
-                  className="mt-6 w-full"
                   disabled={isCompleting}
                 >
                   {isCompleting ? 'Completing...' : 'Complete Tutorial'}
                 </Button>
-              </div>
-            </CardContent>
+              ) : (
+                <Button onClick={nextSlide}>
+                  Next
+                </Button>
+              )}
+            </CardFooter>
           </Card>
+          
+          {completionError && (
+            <div className="p-4 mb-4 text-red-600 bg-red-50 border border-red-200 rounded-md">
+              {completionError}
+            </div>
+          )}
+          
+          <div className="mb-6">
+            <Accordion type="single" collapsible>
+              <AccordionItem value="resources">
+                <AccordionTrigger>Additional Resources</AccordionTrigger>
+                <AccordionContent>
+                  <ul className="space-y-2">
+                    <li className="flex items-center">
+                      <span className="w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mr-2">
+                        📄
+                      </span>
+                      <a href="#" className="text-blue-600 hover:underline">
+                        Downloadable PDF Guide
+                      </a>
+                    </li>
+                    <li className="flex items-center">
+                      <span className="w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mr-2">
+                        🎬
+                      </span>
+                      <a href="#" className="text-blue-600 hover:underline">
+                        Supplementary Video Tutorial
+                      </a>
+                    </li>
+                    <li className="flex items-center">
+                      <span className="w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mr-2">
+                        🔗
+                      </span>
+                      <a href="#" className="text-blue-600 hover:underline">
+                        Google Documentation Reference
+                      </a>
+                    </li>
+                  </ul>
+                </AccordionContent>
+              </AccordionItem>
+              
+              <AccordionItem value="tasks">
+                <AccordionTrigger>Tutorial Tasks</AccordionTrigger>
+                <AccordionContent>
+                  {currentTutorial.tasks.map((task, index) => (
+                    <div key={task.id} className="mb-4 last:mb-0 p-3 bg-gray-50 rounded-md">
+                      <h5 className="font-medium">Task {index + 1}: {task.description}</h5>
+                      <p className="text-sm text-gray-600 mt-1">Type: {task.type}</p>
+                      
+                      <div className="mt-2">
+                        <h6 className="text-sm font-medium">Requirements:</h6>
+                        <ul className="list-disc ml-5 text-sm">
+                          {task.requirements.map((req, i) => (
+                            <li key={i}>{req}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  ))}
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          </div>
         </div>
       )}
+      
+      <style jsx>{`
+        .tutorial-slide {
+          transition: all 0.3s ease-in-out;
+        }
+        
+        .slide-left {
+          transform: translateX(-10px);
+          opacity: 0;
+        }
+        
+        .slide-right {
+          transform: translateX(10px);
+          opacity: 0;
+        }
+      `}</style>
     </div>
   );
 }
