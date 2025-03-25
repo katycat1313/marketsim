@@ -479,6 +479,44 @@ export class TutorialService {
       ],
       estimatedTime: 90,
       skillsLearned: ["Data Visualization", "User Journey Mapping", "Conversion Funnel Analysis", "Behavior Pattern Recognition", "Actionable Insight Development"]
+    },
+    {
+      id: 16,
+      title: "Email Marketing Automation: Best Practices and Implementation Strategies",
+      level: "Intermediate",
+      content: this.loadTutorialContent('emailMarketingAutomation.ts'),
+      tasks: [
+        {
+          id: 1601,
+          description: "Design a multi-stage welcome sequence",
+          type: "practical",
+          requirements: ["Email marketing platform", "Subscriber list", "Content ideas"],
+          verificationCriteria: ["Sequence includes at least 5 emails", "Progressive profiling implemented", "Clear goals for each message"]
+        },
+        {
+          id: 1602,
+          description: "Create an abandoned cart recovery automation",
+          type: "practical",
+          requirements: ["E-commerce integration", "Email templates"],
+          verificationCriteria: ["3-email sequence created", "Dynamic product insertion", "Incentive strategy defined"]
+        },
+        {
+          id: 1603,
+          description: "Implement behavioral segmentation and personalization",
+          type: "practical",
+          requirements: ["User behavior data", "Segmentation capabilities"],
+          verificationCriteria: ["At least 3 behavioral segments created", "Dynamic content blocks defined", "Personalization beyond basic merge fields"]
+        },
+        {
+          id: 1604,
+          description: "Complete the email automation mastery quiz",
+          type: "quiz",
+          requirements: ["Completed readings and practical tasks"],
+          verificationCriteria: ["85% or higher score"]
+        }
+      ],
+      estimatedTime: 120,
+      skillsLearned: ["Email Automation Workflow Design", "Behavioral Targeting", "Advanced Personalization", "A/B Testing Strategy", "Automation Performance Measurement"]
     }
   ];
 
