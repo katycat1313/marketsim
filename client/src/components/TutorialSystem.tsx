@@ -58,9 +58,11 @@ export function TutorialSystem() {
       
       // Check if data is an array before setting it
       if (Array.isArray(data)) {
+        console.log('Progress data received:', data);
         setProgress(data);
       } else {
         console.error('Progress API did not return an array:', data);
+        // Always initialize with empty array to prevent showing completed tutorials incorrectly
         setProgress([]);
       }
     } catch (error) {
