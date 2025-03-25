@@ -398,8 +398,13 @@ export async function registerRoutes(app: Express) {
 
   app.get("/api/tutorials/progress", async (req, res) => {
     try {
-      // Use a default user ID for development if not logged in
-      const userId = req.user?.id || 1; // Use user ID 1 as default for development
+      // Require authentication
+      if (!req.user?.id) {
+        return res.status(401).json({ error: "Authentication required" });
+      }
+      
+      const userId = req.user.id;
+      console.log(`API request to get tutorial progress for user ${userId}`);
       
       // For backward compatibility, we'll use the original TutorialService for now
       const tutorialService = new TutorialService();
@@ -419,9 +424,12 @@ export async function registerRoutes(app: Express) {
         return res.status(400).json({ error: "Tutorial ID is required" });
       }
       
-      // Use a default user ID for development if not logged in
-      const userId = req.user?.id || 1; // Use user ID 1 as default for development
+      // Require authentication
+      if (!req.user?.id) {
+        return res.status(401).json({ error: "Authentication required" });
+      }
       
+      const userId = req.user.id;
       console.log(`API request to complete tutorial ${tutorialId} for user ${userId}`);
       
       // For backward compatibility, we'll use the original TutorialService for now
@@ -431,7 +439,7 @@ export async function registerRoutes(app: Express) {
       res.json({ success: true });
     } catch (error) {
       console.error("Error marking tutorial as complete:", error);
-      res.status(500).json({ error: "Failed to mark tutorial as complete", details: error.message });
+      res.status(500).json({ error: "Failed to mark tutorial as complete", details: error instanceof Error ? error.message : String(error) });
     }
   });
 
@@ -572,8 +580,8 @@ export async function registerRoutes(app: Express) {
         return res.status(400).json({ error: "Quiz ID, score, and maxScore are required" });
       }
       
-      // Get the user ID from the session (or use default for demo)
-      const userId = req.user?.id || 1;
+      // User ID is already validated at this point
+      const userId = req.user.id;
       
       // Calculate if the user passed based on a threshold (e.g., 70%)
       const passThreshold = 0.7;
