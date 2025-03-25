@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
-import { db } from '../db';
+import { db, pool } from '../db';
 import { userProfiles } from '@shared/schema';
 import { tutorialSimulationService } from './tutorialSimulationService';
 
@@ -568,18 +568,18 @@ export class TutorialService {
         return []; // No tutorials completed yet
       }
       
-      // Use parameterized query to prevent SQL injection and ensure correct type handling
-      const result = await db.execute({
-        text: `SELECT tutorial_id FROM user_completed_tutorials
-               WHERE user_id = $1;`,
-        values: [userId]
-      });
+      // Use pool.query with parameterized query to prevent SQL injection
+      const result = await pool.query(
+        `SELECT tutorial_id FROM user_completed_tutorials
+         WHERE user_id = $1;`,
+        [userId]
+      );
       
       console.log(`Retrieved ${result.rows.length} completed tutorials for user ${userId}:`, 
-                  result.rows.map(row => row.tutorial_id));
+                  result.rows.map((row: any) => row.tutorial_id));
       
       // Extract tutorial IDs from the result
-      return result.rows.map(row => parseInt(row.tutorial_id));
+      return result.rows.map((row: any) => parseInt(row.tutorial_id));
     } catch (error) {
       console.error('Error getting user tutorial progress:', error);
       return [];
@@ -603,13 +603,13 @@ export class TutorialService {
         );
       `);
       
-      // Use parameterized query to prevent SQL injection and ensure correct type handling
-      await db.execute({
-        text: `INSERT INTO user_completed_tutorials (user_id, tutorial_id)
-               VALUES ($1, $2)
-               ON CONFLICT (user_id, tutorial_id) DO NOTHING;`,
-        values: [userId, tutorialId]
-      });
+      // Use pool.query with parameterized query to prevent SQL injection
+      await pool.query(
+        `INSERT INTO user_completed_tutorials (user_id, tutorial_id)
+         VALUES ($1, $2)
+         ON CONFLICT (user_id, tutorial_id) DO NOTHING;`,
+        [userId, tutorialId]
+      );
       
       console.log(`User ${userId} completed tutorial ${tutorialId}`);
       
