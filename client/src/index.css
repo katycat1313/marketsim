@@ -26,3 +26,135 @@
   transform: translateX(10px);
   opacity: 0;
 }
+
+/* Interactive tutorial elements */
+.tutorial-card {
+  border-radius: 10px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  position: relative;
+}
+
+.tutorial-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+.tutorial-header {
+  background-color: #f0f5ff;
+  padding: 1rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.tutorial-content {
+  padding: 1rem;
+  background-color: white;
+}
+
+/* Interactive expandable items */
+.expandable-item {
+  margin-bottom: 0.5rem;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.expandable-item-header {
+  padding: 0.75rem 1rem;
+  background-color: #5c6bc0;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.expandable-item-header:hover {
+  background-color: #4a58b2;
+}
+
+.expandable-item-content {
+  max-height: 0;
+  overflow: hidden;
+  background-color: #f8f9fa;
+  transition: max-height 0.3s ease, padding 0.3s ease;
+  padding: 0 1rem;
+}
+
+.expandable-item.expanded .expandable-item-content {
+  max-height: 500px;
+  padding: 1rem;
+}
+
+/* Swipeable tutorial slides */
+.swipeable-container {
+  position: relative;
+  overflow: hidden;
+  border-radius: 0.5rem;
+  background-color: #f0f5ff;
+}
+
+.swipeable-wrapper {
+  display: flex;
+  transition: transform 0.3s ease;
+}
+
+.swipeable-slide {
+  min-width: 100%;
+  padding: 1.5rem;
+}
+
+.swipe-indicator {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.swipe-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #d1d5db;
+  margin: 0 4px;
+  transition: all 0.2s ease;
+}
+
+.swipe-dot.active {
+  width: 24px;
+  border-radius: 4px;
+  background-color: #5c6bc0;
+}
+
+.swipe-instruction {
+  text-align: center;
+  color: #6b7280;
+  padding: 0.5rem;
+  font-size: 0.875rem;
+}
+
+/* Navigation buttons for swipeable content */
+.swipe-nav-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+  z-index: 10;
+}
+
+.swipe-nav-button.prev {
+  left: 10px;
+}
+
+.swipe-nav-button.next {
+  right: 10px;
+}

@@ -111,7 +111,7 @@ function NavBar() {
             <Link href="/tutorials">
               <div className={`flex items-center gap-1 text-sm cursor-pointer ${location === '/tutorials' ? 'text-primary font-medium' : 'text-muted-foreground'}`}>
                 <GraduationCap className="h-4 w-4" />
-                <span>Learning</span>
+                <span>Tutorials</span>
               </div>
             </Link>
             <Link href="/subscription">

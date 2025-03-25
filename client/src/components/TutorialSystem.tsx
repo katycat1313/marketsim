@@ -30,7 +30,18 @@ interface Slide {
   title: string;
   content: string;
   image?: string;
-  contentType: 'text' | 'image' | 'quiz' | 'video' | 'interactive';
+  contentType: 'text' | 'image' | 'quiz' | 'video' | 'interactive' | 'expandable' | 'swipeable';
+  items?: {
+    id: number;
+    title: string;
+    content: string;
+  }[];
+  cards?: {
+    id: number;
+    title: string;
+    content: string;
+    image?: string;
+  }[];
 }
 
 export function TutorialSystem() {
@@ -285,7 +296,118 @@ export function TutorialSystem() {
     }
   };
   
+  // Define state for expandable items and swipeable slides
+  const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({});
+  const [currentSwipeIndex, setCurrentSwipeIndex] = useState(0);
+
+  // Toggle expandable item
+  const toggleExpandItem = (itemId: string) => {
+    setExpandedItems(prev => ({
+      ...prev,
+      [itemId]: !prev[itemId]
+    }));
+  };
+
+  // Handle swipe navigation
+  const handleSwipe = (direction: 'next' | 'prev') => {
+    if (!slide?.cards) return;
+    
+    if (direction === 'next' && currentSwipeIndex < slide.cards.length - 1) {
+      setCurrentSwipeIndex(currentSwipeIndex + 1);
+    } else if (direction === 'prev' && currentSwipeIndex > 0) {
+      setCurrentSwipeIndex(currentSwipeIndex - 1);
+    }
+  };
+
+  // Render expandable content blocks (like in your screenshots)
+  const renderExpandableItems = (items: { id: number; title: string; content: string }[]) => {
+    return (
+      <div className="space-y-3">
+        {items.map(item => (
+          <div 
+            key={item.id} 
+            className={`expandable-item ${expandedItems[`item-${item.id}`] ? 'expanded' : ''}`}
+          >
+            <div 
+              className="expandable-item-header"
+              onClick={() => toggleExpandItem(`item-${item.id}`)}
+            >
+              <span>{item.title}</span>
+              <span>{expandedItems[`item-${item.id}`] ? '−' : '+'}</span>
+            </div>
+            <div className="expandable-item-content">
+              <div dangerouslySetInnerHTML={{ __html: item.content }}></div>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  // Render swipeable content (like in your screenshots)
+  const renderSwipeableContent = (cards: { id: number; title: string; content: string; image?: string }[]) => {
+    return (
+      <div className="swipeable-container">
+        <div 
+          className="swipeable-wrapper" 
+          style={{ transform: `translateX(-${currentSwipeIndex * 100}%)` }}
+        >
+          {cards.map((card, index) => (
+            <div key={card.id} className="swipeable-slide">
+              {card.image && (
+                <div className="mb-4">
+                  <img src={card.image} alt={card.title} className="w-full h-auto rounded-md max-h-64 object-contain" />
+                </div>
+              )}
+              <h4 className="text-lg font-semibold mb-2">{card.title}</h4>
+              <div dangerouslySetInnerHTML={{ __html: card.content }}></div>
+            </div>
+          ))}
+        </div>
+        
+        {/* Navigation buttons */}
+        {currentSwipeIndex > 0 && (
+          <div className="swipe-nav-button prev" onClick={() => handleSwipe('prev')}>
+            ←
+          </div>
+        )}
+        
+        {currentSwipeIndex < (slide?.cards?.length || 0) - 1 && (
+          <div className="swipe-nav-button next" onClick={() => handleSwipe('next')}>
+            →
+          </div>
+        )}
+        
+        {/* Swipe indicator dots */}
+        <div className="swipe-indicator">
+          {cards.map((_, index) => (
+            <div 
+              key={index} 
+              className={`swipe-dot ${index === currentSwipeIndex ? 'active' : ''}`}
+              onClick={() => setCurrentSwipeIndex(index)}
+            />
+          ))}
+        </div>
+        
+        <div className="swipe-instruction">SWIPE TO SEE MORE</div>
+      </div>
+    );
+  };
+
   const renderSlideContent = (slide: Slide) => {
+    // Reset current swipe index when slide changes
+    React.useEffect(() => {
+      setCurrentSwipeIndex(0);
+    }, [slide.id]);
+
+    if (slide.contentType === 'expandable' && slide.items) {
+      return renderExpandableItems(slide.items);
+    }
+    
+    if (slide.contentType === 'swipeable' && slide.cards) {
+      return renderSwipeableContent(slide.cards);
+    }
+    
     if (slide.contentType === 'image' && slide.image) {
       return (
         <div className="flex flex-col md:flex-row gap-6 items-center">
@@ -298,8 +420,34 @@ export function TutorialSystem() {
         </div>
       );
     } else if (slide.contentType === 'interactive') {
+      // Create a demo expandable content based on the tutorial content
+      const demoItems = [
+        {
+          id: 1,
+          title: "1. Key Concepts",
+          content: "<p>To implement effective digital marketing analytics, businesses should focus on setting clear goals and KPIs.</p>"
+        },
+        {
+          id: 2,
+          title: "2. Best Practices",
+          content: "<p>Regularly reviewing and adjusting strategies based on data insights is crucial for success.</p>"
+        },
+        {
+          id: 3,
+          title: "3. Implementation Tips",
+          content: "<p>Investing in the right tools and technologies can enhance data collection and analysis.</p>"
+        }
+      ];
+      
       return (
-        <div className="bg-blue-50 p-6 rounded-lg border border-blue-200" dangerouslySetInnerHTML={{ __html: slide.content }}></div>
+        <div className="space-y-6">
+          <div className="bg-blue-50 p-6 rounded-lg border border-blue-200 mb-4" dangerouslySetInnerHTML={{ __html: slide.content }}></div>
+          
+          <div className="mt-6">
+            <h3 className="text-xl font-semibold mb-4 text-center">Conclusion and Best Practices</h3>
+            {renderExpandableItems(demoItems)}
+          </div>
+        </div>
       );
     } else {
       return (
