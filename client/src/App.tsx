@@ -24,6 +24,16 @@ import SubscriptionCancelPage from "@/pages/subscription/cancel";
 import Achievements from "@/components/Achievements";
 import Posts from "@/components/Posts";
 import AIAssistant from "@/components/AIAssistant";
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
 import { 
   Home as HomeIcon, 
   Users, 
@@ -39,7 +49,14 @@ import {
   MousePointer,
   Monitor,
   LineChart,
-  PieChart
+  PieChart,
+  ChevronDown,
+  Layers,
+  Menu,
+  User,
+  Book,
+  Activity,
+  ScrollText
 } from "lucide-react";
 
 function NavBar() {
