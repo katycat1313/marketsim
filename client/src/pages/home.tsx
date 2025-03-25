@@ -15,21 +15,42 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-secondary/10">
       <div className="container mx-auto px-4 py-16">
-        <div className="flex justify-between items-center mb-16">
-          <div>
-            <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-8 mb-16">
+          <div className="md:w-1/2">
+            <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent mb-4">
               MarketSim
             </h1>
-            <p className="text-xl text-muted-foreground">
+            <p className="text-xl text-muted-foreground mb-6">
               Master Marketing Without the Risk
             </p>
+            <p className="text-muted-foreground mb-6">
+              Our interactive platform helps you develop practical marketing skills through simulations, 
+              real-world scenarios, and expert-guided tutorials. Build your portfolio and advance your career 
+              with confidence.
+            </p>
+            <div className="flex gap-4">
+              <Link href="/tutorials">
+                <Button className="bg-primary hover:bg-primary/90">
+                  Start Learning
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
+              <Link href="/api-settings">
+                <Button variant="outline" className="flex items-center gap-2">
+                  <Settings className="h-5 w-5" />
+                  Settings
+                </Button>
+              </Link>
+            </div>
           </div>
-          <Link href="/api-settings">
-            <Button variant="outline" className="flex items-center gap-2">
-              <Settings className="h-5 w-5" />
-              Settings
-            </Button>
-          </Link>
+          <div className="md:w-1/2 flex justify-center">
+            <img 
+              src="/images/group-thinking.jpeg" 
+              alt="Marketing team collaborating" 
+              className="rounded-lg shadow-xl max-w-full h-auto"
+              style={{ maxHeight: '350px' }} 
+            />
+          </div>
         </div>
 
         <div className="mb-16">
@@ -107,15 +128,91 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="text-center">
-          <h2 className="text-2xl font-semibold mb-4">
-            Learn Digital Marketing Skills
-          </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            MarketSim provides a safe environment to experiment with marketing
-            strategies, understand audience targeting, and master campaign
-            optimization without spending real money.
-          </p>
+        <div className="grid md:grid-cols-2 gap-12 items-center mt-16">
+          <div className="order-2 md:order-1">
+            <img 
+              src="/images/cart-with-packages.jpeg" 
+              alt="E-commerce marketing" 
+              className="rounded-lg shadow-xl max-w-full h-auto"
+              style={{ maxHeight: '350px' }} 
+            />
+          </div>
+          <div className="order-1 md:order-2">
+            <h2 className="text-2xl font-semibold mb-4">
+              Learn Digital Marketing Skills
+            </h2>
+            <p className="text-muted-foreground mb-6">
+              MarketSim provides a safe environment to experiment with marketing
+              strategies, understand audience targeting, and master campaign
+              optimization without spending real money.
+            </p>
+            <ul className="space-y-2 mb-6">
+              <li className="flex items-start gap-2">
+                <div className="text-primary mt-1">✓</div>
+                <div>Build real-world marketing portfolios</div>
+              </li>
+              <li className="flex items-start gap-2">
+                <div className="text-primary mt-1">✓</div>
+                <div>Receive AI-powered feedback on your campaigns</div>
+              </li>
+              <li className="flex items-start gap-2">
+                <div className="text-primary mt-1">✓</div>
+                <div>Connect with a community of marketing professionals</div>
+              </li>
+            </ul>
+            <Link href="/ad-simulations">
+              <Button className="bg-primary hover:bg-primary/90">
+                Try Ad Platform Simulations
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
+        </div>
+        
+        <div className="grid md:grid-cols-2 gap-12 items-center mt-16 mb-8">
+          <div>
+            <h2 className="text-2xl font-semibold mb-4">
+              Master SEO and Ad Platforms
+            </h2>
+            <p className="text-muted-foreground mb-6">
+              Practice creating optimized content for search engines and learn to build effective
+              campaigns across Google Ads, Meta Ads, and LinkedIn Ads platforms.
+            </p>
+            <ul className="space-y-2 mb-6">
+              <li className="flex items-start gap-2">
+                <div className="text-primary mt-1">✓</div>
+                <div>Learn on-page and technical SEO optimization</div>
+              </li>
+              <li className="flex items-start gap-2">
+                <div className="text-primary mt-1">✓</div>
+                <div>Create and optimize ad campaigns with real-time feedback</div>
+              </li>
+              <li className="flex items-start gap-2">
+                <div className="text-primary mt-1">✓</div>
+                <div>Earn certifications to showcase your expertise</div>
+              </li>
+            </ul>
+            <div className="flex gap-4">
+              <Link href="/seo-simulations">
+                <Button className="bg-green-500 hover:bg-green-600">
+                  SEO Practice
+                </Button>
+              </Link>
+              <Link href="/ad-simulations">
+                <Button className="bg-blue-500 hover:bg-blue-600">
+                  Ad Platforms
+                </Button>
+              </Link>
+            </div>
+          </div>
+          <div>
+            <img 
+              src="/images/ad-image.jpeg" 
+              alt="Digital advertising" 
+              className="rounded-lg shadow-xl max-w-full h-auto"
+              style={{ maxHeight: '350px' }} 
+            />
+          </div>
         </div>
       </div>
     </div>
