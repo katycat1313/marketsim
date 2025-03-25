@@ -1189,11 +1189,32 @@ export default function DataVisualizationPage() {
           
           <div className="col-span-1 lg:col-span-2">
             <Card className="bg-[#111]/60 border border-[#ffd700]/20">
-              <CardHeader>
-                <CardTitle className="text-[#ffd700]">Feedback</CardTitle>
-                <CardDescription className="text-[#f5f5f5]/70">
-                  Review your performance and learn how to improve
-                </CardDescription>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle className="text-[#ffd700]">Feedback</CardTitle>
+                  <CardDescription className="text-[#f5f5f5]/70">
+                    Review your performance and learn how to improve
+                  </CardDescription>
+                </div>
+                <Button
+                  onClick={() => {
+                    setPortfolioEntry({
+                      id: uuidv4(),
+                      title: 'Data Analysis Project',
+                      description: '',
+                      charts: charts,
+                      recommendations: recommendations,
+                      createdAt: new Date().toISOString(),
+                      skillsShown: ['Data Analysis', 'Data Visualization', 'Marketing Analytics'],
+                      visibility: 'private'
+                    });
+                    setShowPortfolioDialog(true);
+                  }}
+                  className="bg-[#111] border border-[#ffd700] text-[#ffd700] hover:bg-[#ffd700]/10 flex items-center gap-2"
+                >
+                  <Bookmark className="h-4 w-4" />
+                  Add to Portfolio
+                </Button>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -1243,6 +1264,104 @@ export default function DataVisualizationPage() {
           </div>
         </div>
       )}
+      
+      {/* Portfolio Dialog */}
+      <Dialog open={showPortfolioDialog} onOpenChange={setShowPortfolioDialog}>
+        <DialogContent className="sm:max-w-[500px] bg-[#111] border border-[#ffd700]/30 text-[#f5f5f5]">
+          <DialogHeader>
+            <DialogTitle className="text-[#ffd700]">Add to Portfolio</DialogTitle>
+            <DialogDescription className="text-[#f5f5f5]/70">
+              Save this visualization analysis to your portfolio to showcase your data analysis skills to potential employers.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 my-3">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-[#ffd700]">
+                Title
+              </label>
+              <Input 
+                value={portfolioEntry.title || ''}
+                onChange={(e) => setPortfolioEntry({...portfolioEntry, title: e.target.value})}
+                className="bg-[#222] border-[#444] text-[#f5f5f5]"
+                placeholder="Enter a professional title for this portfolio entry"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-[#ffd700]">
+                Description
+              </label>
+              <textarea 
+                value={portfolioEntry.description || ''}
+                onChange={(e) => setPortfolioEntry({...portfolioEntry, description: e.target.value})}
+                className="w-full h-24 px-3 py-2 text-[#f5f5f5] bg-[#222] rounded-md border border-[#444] focus:outline-none focus:ring-2 focus:ring-[#ffd700]/50"
+                placeholder="Describe what you analyzed and what skills you demonstrated"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-[#ffd700]">
+                Skills Demonstrated (separated by commas)
+              </label>
+              <Input 
+                value={portfolioEntry.skillsShown?.join(', ') || ''}
+                onChange={(e) => setPortfolioEntry({
+                  ...portfolioEntry, 
+                  skillsShown: e.target.value.split(',').map(skill => skill.trim()).filter(Boolean)
+                })}
+                className="bg-[#222] border-[#444] text-[#f5f5f5]"
+                placeholder="Data visualization, marketing analysis, trend identification..."
+              />
+              <p className="text-xs text-[#f5f5f5]/50">
+                Add relevant skills that you demonstrated in this analysis
+              </p>
+            </div>
+            
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-[#ffd700]">
+                Visibility
+              </label>
+              <Select 
+                value={portfolioEntry.visibility}
+                onValueChange={(value) => setPortfolioEntry({
+                  ...portfolioEntry, 
+                  visibility: value as 'private' | 'public'
+                })}
+              >
+                <SelectTrigger className="bg-[#222] border-[#444] text-[#f5f5f5]">
+                  <SelectValue placeholder="Select visibility" />
+                </SelectTrigger>
+                <SelectContent className="bg-[#222] border-[#444] text-[#f5f5f5]">
+                  <SelectItem value="private">Private (Only you can see)</SelectItem>
+                  <SelectItem value="public">Public (Can be shared with employers)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          
+          <DialogFooter className="flex flex-col space-y-2 sm:space-y-0 sm:space-x-2">
+            <div className="text-sm text-[#f5f5f5]/60 mb-2">
+              Adding this to your portfolio will help you showcase your data analysis and visualization skills to potential employers.
+            </div>
+            <div className="flex justify-end gap-2">
+              <Button
+                variant="outline"
+                onClick={() => setShowPortfolioDialog(false)}
+                className="border-[#ffd700]/30 text-[#f5f5f5] hover:bg-[#ffd700]/10"
+              >
+                Cancel
+              </Button>
+              <Button 
+                onClick={handleSaveToPortfolio}
+                className="bg-[#ffd700] text-black hover:bg-[#e6c200]"
+              >
+                Save to Portfolio
+              </Button>
+            </div>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
