@@ -1,0 +1,29 @@
+Warning: Invalid prop &#x60;data-replit-metadata&#x60; supplied to &#x60;React.Fragment&#x60;. React.Fragment can only have &#x60;key&#x60; and &#x60;children&#x60; props.
+    at TutorialSystem (https://8a18e115-fe70-4b75-91e5-2b2ead766cf9-00-2wto2la5y1pzf.worf.replit.dev/src/components/TutorialSystem.tsx:24:37)
+    at ErrorBoundary (https://8a18e115-fe70-4b75-91e5-2b2ead766cf9-00-2wto2la5y1pzf.worf.replit.dev/src/components/ErrorBoundary.tsx:9:5)
+    at div
+    at div
+    at TutorialsPage
+    at Route (https://8a18e115-fe70-4b75-91e5-2b2ead766cf9-00-2wto2la5y1pzf.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=3c040ccf:323:16)
+    at Switch (https://8a18e115-fe70-4b75-91e5-2b2ead766cf9-00-2wto2la5y1pzf.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=3c040ccf:379:17)
+    at main
+    at div
+    at Router
+    at QueryClientProvider (https://8a18e115-fe70-4b75-91e5-2b2ead766cf9-00-2wto2la5y1pzf.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=3c040ccf:2805:3)
+    at App
+at TutorialSystem (https://8a18e115-fe70-4b75-91e5-2b2ead766cf9-00-2wto2la5y1pzf.worf.replit.dev/src/components/TutorialSystem.tsx:24:37)
+at ErrorBoundary (https://8a18e115-fe70-4b75-91e5-2b2ead766cf9-00-2wto2la5y1pzf.worf.replit.dev/src/components/ErrorBoundary.tsx:9:5)
+at div
+at div
+at TutorialsPage
+at Route (https://8a18e115-fe70-4b75-91e5-2b2ead766cf9-00-2wto2la5y1pzf.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=3c040ccf:323:16)
+at Switch (https://8a18e115-fe70-4b75-91e5-2b2ead766cf9-00-2wto2la5y1pzf.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=3c040ccf:379:17)
+at main
+at div
+at Router
+at QueryClientProvider (https://8a18e115-fe70-4b75-91e5-2b2ead766cf9-00-2wto2la5y1pzf.worf.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=3c040ccf:2805:3)
+at App
+at t.value (https://8a18e115-fe70-4b75-91e5-2b2ead766cf9-00-2wto2la5y1pzf.worf.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:17465)
+at new t (https://8a18e115-fe70-4b75-91e5-2b2ead766cf9-00-2wto2la5y1pzf.worf.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:12630)
+at t.value (https://8a18e115-fe70-4b75-91e5-2b2ead766cf9-00-2wto2la5y1pzf.worf.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:32766)
+at https://8a18e115-fe70-4b75-91e5-2b2ead766cf9-00-2wto2la5y1pzf.worf.replit.dev/__replco/static/devtools/eruda/3.2.3/eruda.js:2:34400
