@@ -357,180 +357,214 @@ export function TutorialSystem() {
     );
   };
 
+  // Group tutorials by category
+  const categorizedTutorials = React.useMemo(() => {
+    const categories = {
+      'Google Ads': tutorials.filter(t => t.title.toLowerCase().includes('google') || t.title.toLowerCase().includes('ads')),
+      'SEO': tutorials.filter(t => t.title.toLowerCase().includes('seo')),
+      'Analytics': tutorials.filter(t => t.title.toLowerCase().includes('analytics')),
+      'Social Media': tutorials.filter(t => t.title.toLowerCase().includes('social') || t.title.toLowerCase().includes('facebook') || t.title.toLowerCase().includes('instagram')),
+      'Content Marketing': tutorials.filter(t => t.title.toLowerCase().includes('content')),
+      'Other': [] as Tutorial[]
+    };
+    
+    // Add any tutorials that don't fit specific categories to 'Other'
+    tutorials.forEach(tutorial => {
+      const inSpecificCategory = Object.entries(categories)
+        .filter(([key]) => key !== 'Other')
+        .some(([_, tutorialsInCategory]) => 
+          tutorialsInCategory.some(t => t.id === tutorial.id)
+        );
+      
+      if (!inSpecificCategory) {
+        categories['Other'].push(tutorial);
+      }
+    });
+    
+    return categories;
+  }, [tutorials]);
+  
+  // Render a tutorial card with consistent styling
+  const renderTutorialCard = (tutorial: Tutorial) => (
+    <Card key={tutorial.id} className="transition-all duration-300 hover:shadow-lg border-l-4 border-l-blue-500">
+      <CardHeader className="pb-2">
+        <div className="flex justify-between items-start">
+          <div>
+            <h3 className="text-lg font-semibold text-blue-800">{tutorial.title}</h3>
+            <p className="text-sm text-gray-500">Level: {tutorial.level}</p>
+          </div>
+          <span className={`px-2 py-1 rounded-full text-xs ${
+            progress.includes(tutorial.id) 
+              ? 'bg-green-100 text-green-800' 
+              : 'bg-gray-100 text-gray-600'
+          }`}>
+            {progress.includes(tutorial.id) ? 'Completed' : 'Not Started'}
+          </span>
+        </div>
+      </CardHeader>
+      <CardContent className="pb-2">
+        <div className="flex flex-wrap gap-2 mb-3">
+          {tutorial.skillsLearned && tutorial.skillsLearned.slice(0, 3).map((skill, i) => (
+            <span key={i} className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
+              {skill}
+            </span>
+          ))}
+          {tutorial.skillsLearned && tutorial.skillsLearned.length > 3 && (
+            <span className="px-2 py-1 bg-gray-100 text-gray-800 rounded-full text-xs">
+              +{tutorial.skillsLearned.length - 3} more
+            </span>
+          )}
+        </div>
+        <p className="text-xs text-gray-500 mb-3 flex items-center">
+          <span className="mr-1">⏱️</span> Estimated time: {tutorial.estimatedTime || 60} minutes
+        </p>
+        <div className="mt-4">
+          <Progress 
+            value={progress.includes(tutorial.id) ? 100 : 0} 
+            className={progress.includes(tutorial.id) ? "bg-green-100" : "bg-gray-100"}
+          />
+        </div>
+      </CardContent>
+      <CardFooter>
+        <Button
+          onClick={() => startTutorial(tutorial)}
+          className="w-full"
+          variant={progress.includes(tutorial.id) ? "outline" : "default"}
+        >
+          {progress.includes(tutorial.id) ? 'Review Tutorial' : 'Start Tutorial'}
+        </Button>
+      </CardFooter>
+    </Card>
+  );
+
   return (
     <div className="p-4">
-      <h2 className="text-2xl font-bold mb-4">Marketing Tutorials</h2>
+      <h2 className="text-2xl font-bold mb-4 text-blue-900">Digital Marketing Learning Center</h2>
       
       {!currentTutorial ? (
         <div>
           {renderLearningPath()}
           
           <div className="mt-8 mb-6">
-            <Tabs defaultValue="all">
+            <Tabs defaultValue="learning-path">
               <TabsList className="mb-6">
-                <TabsTrigger value="all">All Tutorials</TabsTrigger>
-                <TabsTrigger value="beginner">Beginner</TabsTrigger>
-                <TabsTrigger value="intermediate">Intermediate</TabsTrigger>
-                <TabsTrigger value="advanced">Advanced</TabsTrigger>
+                <TabsTrigger value="learning-path">Learning Path</TabsTrigger>
+                <TabsTrigger value="categories">By Category</TabsTrigger>
+                <TabsTrigger value="levels">By Level</TabsTrigger>
               </TabsList>
               
-              <TabsContent value="all" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {tutorials.map(tutorial => (
-                  <Card key={tutorial.id} className="transition-all duration-300 hover:shadow-lg">
-                    <CardHeader className="pb-2">
-                      <h3 className="text-lg font-semibold">{tutorial.title}</h3>
-                      <p className="text-sm text-gray-500">Level: {tutorial.level}</p>
-                    </CardHeader>
-                    <CardContent className="pb-2">
-                      <div className="flex flex-wrap gap-2 mb-3">
-                        {tutorial.skillsLearned && tutorial.skillsLearned.slice(0, 3).map((skill, i) => (
-                          <span key={i} className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
-                            {skill}
-                          </span>
-                        ))}
-                        {tutorial.skillsLearned && tutorial.skillsLearned.length > 3 && (
-                          <span className="px-2 py-1 bg-gray-100 text-gray-800 rounded-full text-xs">
-                            +{tutorial.skillsLearned.length - 3} more
-                          </span>
-                        )}
-                      </div>
-                      <p className="text-xs text-gray-500 mb-3">
-                        Estimated time: {tutorial.estimatedTime || 60} minutes
-                      </p>
-                      <div className="mt-4">
-                        <Progress value={progress.includes(tutorial.id) ? 100 : 0} />
-                        <p className="text-xs text-right mt-1 text-gray-500">
-                          {progress.includes(tutorial.id) ? 'Completed' : 'Not started'}
-                        </p>
-                      </div>
-                    </CardContent>
-                    <CardFooter>
-                      <Button
-                        onClick={() => startTutorial(tutorial)}
-                        className="w-full"
-                        variant={progress.includes(tutorial.id) ? "outline" : "default"}
-                      >
-                        {progress.includes(tutorial.id) ? 'Review Tutorial' : 'Start Tutorial'}
-                      </Button>
-                    </CardFooter>
-                  </Card>
-                ))}
+              {/* Learning Path Tab */}
+              <TabsContent value="learning-path">
+                <div className="space-y-6">
+                  <div className="bg-blue-50 p-4 rounded-lg border border-blue-100 mb-6">
+                    <h3 className="text-lg font-medium text-blue-800 mb-2">Recommended Learning Path</h3>
+                    <p className="text-gray-700">Follow this structured learning path for the best results. Start with the foundations and work your way up to advanced topics.</p>
+                  </div>
+                  
+                  {/* Foundation */}
+                  <div>
+                    <h3 className="text-xl font-bold text-blue-900 mb-4 flex items-center">
+                      <span className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center mr-2">1</span>
+                      Foundations
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {tutorials
+                        .filter(t => t.level.toLowerCase().includes('beginner') || t.title.toLowerCase().includes('foundation'))
+                        .slice(0, 3)
+                        .map(renderTutorialCard)}
+                    </div>
+                  </div>
+                  
+                  {/* Core Skills */}
+                  <div className="mt-8">
+                    <h3 className="text-xl font-bold text-blue-900 mb-4 flex items-center">
+                      <span className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center mr-2">2</span>
+                      Core Skills
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {tutorials
+                        .filter(t => !t.level.toLowerCase().includes('beginner') && !t.level.toLowerCase().includes('advanced'))
+                        .slice(0, 3)
+                        .map(renderTutorialCard)}
+                    </div>
+                  </div>
+                  
+                  {/* Advanced Techniques */}
+                  <div className="mt-8">
+                    <h3 className="text-xl font-bold text-blue-900 mb-4 flex items-center">
+                      <span className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center mr-2">3</span>
+                      Advanced Techniques
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {tutorials
+                        .filter(t => t.level.toLowerCase().includes('advanced'))
+                        .slice(0, 3)
+                        .map(renderTutorialCard)}
+                    </div>
+                  </div>
+                </div>
               </TabsContent>
               
-              <TabsContent value="beginner" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {tutorials.filter(t => t.level.toLowerCase().includes('beginner')).map(tutorial => (
-                  <Card key={tutorial.id} className="transition-all duration-300 hover:shadow-lg">
-                    <CardHeader className="pb-2">
-                      <h3 className="text-lg font-semibold">{tutorial.title}</h3>
-                      <p className="text-sm text-gray-500">Level: {tutorial.level}</p>
-                    </CardHeader>
-                    <CardContent className="pb-2">
-                      <div className="flex flex-wrap gap-2 mb-3">
-                        {tutorial.skillsLearned && tutorial.skillsLearned.slice(0, 3).map((skill, i) => (
-                          <span key={i} className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
-                            {skill}
-                          </span>
-                        ))}
+              {/* Categories Tab */}
+              <TabsContent value="categories">
+                <div className="space-y-10">
+                  {Object.entries(categorizedTutorials).map(([category, tutorialsInCategory]) => 
+                    tutorialsInCategory.length > 0 ? (
+                      <div key={category} className="mb-8">
+                        <h3 className="text-xl font-bold text-blue-900 mb-4 pb-2 border-b">
+                          {category}
+                        </h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                          {tutorialsInCategory.map(renderTutorialCard)}
+                        </div>
                       </div>
-                      <p className="text-xs text-gray-500 mb-3">
-                        Estimated time: {tutorial.estimatedTime || 60} minutes
-                      </p>
-                      <div className="mt-4">
-                        <Progress value={progress.includes(tutorial.id) ? 100 : 0} />
-                        <p className="text-xs text-right mt-1 text-gray-500">
-                          {progress.includes(tutorial.id) ? 'Completed' : 'Not started'}
-                        </p>
-                      </div>
-                    </CardContent>
-                    <CardFooter>
-                      <Button
-                        onClick={() => startTutorial(tutorial)}
-                        className="w-full"
-                        variant={progress.includes(tutorial.id) ? "outline" : "default"}
-                      >
-                        {progress.includes(tutorial.id) ? 'Review Tutorial' : 'Start Tutorial'}
-                      </Button>
-                    </CardFooter>
-                  </Card>
-                ))}
+                    ) : null
+                  )}
+                </div>
               </TabsContent>
               
-              <TabsContent value="intermediate" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {tutorials.filter(t => t.level.toLowerCase().includes('intermediate')).map(tutorial => (
-                  // Same card component as above
-                  <Card key={tutorial.id} className="transition-all duration-300 hover:shadow-lg">
-                    <CardHeader className="pb-2">
-                      <h3 className="text-lg font-semibold">{tutorial.title}</h3>
-                      <p className="text-sm text-gray-500">Level: {tutorial.level}</p>
-                    </CardHeader>
-                    <CardContent className="pb-2">
-                      <div className="flex flex-wrap gap-2 mb-3">
-                        {tutorial.skillsLearned && tutorial.skillsLearned.slice(0, 3).map((skill, i) => (
-                          <span key={i} className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
-                            {skill}
-                          </span>
-                        ))}
-                      </div>
-                      <p className="text-xs text-gray-500 mb-3">
-                        Estimated time: {tutorial.estimatedTime || 60} minutes
-                      </p>
-                      <div className="mt-4">
-                        <Progress value={progress.includes(tutorial.id) ? 100 : 0} />
-                        <p className="text-xs text-right mt-1 text-gray-500">
-                          {progress.includes(tutorial.id) ? 'Completed' : 'Not started'}
-                        </p>
-                      </div>
-                    </CardContent>
-                    <CardFooter>
-                      <Button
-                        onClick={() => startTutorial(tutorial)}
-                        className="w-full"
-                        variant={progress.includes(tutorial.id) ? "outline" : "default"}
-                      >
-                        {progress.includes(tutorial.id) ? 'Review Tutorial' : 'Start Tutorial'}
-                      </Button>
-                    </CardFooter>
-                  </Card>
-                ))}
-              </TabsContent>
-              
-              <TabsContent value="advanced" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {tutorials.filter(t => t.level.toLowerCase().includes('advanced')).map(tutorial => (
-                  // Same card component as above
-                  <Card key={tutorial.id} className="transition-all duration-300 hover:shadow-lg">
-                    <CardHeader className="pb-2">
-                      <h3 className="text-lg font-semibold">{tutorial.title}</h3>
-                      <p className="text-sm text-gray-500">Level: {tutorial.level}</p>
-                    </CardHeader>
-                    <CardContent className="pb-2">
-                      <div className="flex flex-wrap gap-2 mb-3">
-                        {tutorial.skillsLearned && tutorial.skillsLearned.slice(0, 3).map((skill, i) => (
-                          <span key={i} className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
-                            {skill}
-                          </span>
-                        ))}
-                      </div>
-                      <p className="text-xs text-gray-500 mb-3">
-                        Estimated time: {tutorial.estimatedTime || 60} minutes
-                      </p>
-                      <div className="mt-4">
-                        <Progress value={progress.includes(tutorial.id) ? 100 : 0} />
-                        <p className="text-xs text-right mt-1 text-gray-500">
-                          {progress.includes(tutorial.id) ? 'Completed' : 'Not started'}
-                        </p>
-                      </div>
-                    </CardContent>
-                    <CardFooter>
-                      <Button
-                        onClick={() => startTutorial(tutorial)}
-                        className="w-full"
-                        variant={progress.includes(tutorial.id) ? "outline" : "default"}
-                      >
-                        {progress.includes(tutorial.id) ? 'Review Tutorial' : 'Start Tutorial'}
-                      </Button>
-                    </CardFooter>
-                  </Card>
-                ))}
+              {/* Levels Tab */}
+              <TabsContent value="levels">
+                <div className="space-y-10">
+                  {/* Beginner Tutorials */}
+                  <div className="mb-8">
+                    <h3 className="text-xl font-bold text-blue-900 mb-4 pb-2 border-b flex items-center">
+                      <span className="bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded-full mr-2">Beginner</span>
+                      Start Here
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {tutorials
+                        .filter(t => t.level.toLowerCase().includes('beginner'))
+                        .map(renderTutorialCard)}
+                    </div>
+                  </div>
+                  
+                  {/* Intermediate Tutorials */}
+                  <div className="mb-8">
+                    <h3 className="text-xl font-bold text-blue-900 mb-4 pb-2 border-b flex items-center">
+                      <span className="bg-blue-100 text-blue-800 text-xs font-medium px-3 py-1 rounded-full mr-2">Intermediate</span>
+                      Build Your Skills
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {tutorials
+                        .filter(t => t.level.toLowerCase().includes('intermediate'))
+                        .map(renderTutorialCard)}
+                    </div>
+                  </div>
+                  
+                  {/* Advanced Tutorials */}
+                  <div className="mb-8">
+                    <h3 className="text-xl font-bold text-blue-900 mb-4 pb-2 border-b flex items-center">
+                      <span className="bg-purple-100 text-purple-800 text-xs font-medium px-3 py-1 rounded-full mr-2">Advanced</span>
+                      Master Your Craft
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {tutorials
+                        .filter(t => t.level.toLowerCase().includes('advanced'))
+                        .map(renderTutorialCard)}
+                    </div>
+                  </div>
+                </div>
               </TabsContent>
             </Tabs>
           </div>
