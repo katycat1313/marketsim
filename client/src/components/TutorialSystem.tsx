@@ -309,10 +309,10 @@ export function TutorialSystem() {
   };
 
   // Handle swipe navigation
-  const handleSwipe = (direction: 'next' | 'prev') => {
-    if (!slide?.cards) return;
+  const handleSwipe = (direction: 'next' | 'prev', cards: { id: number; title: string; content: string; image?: string }[]) => {
+    if (!cards) return;
     
-    if (direction === 'next' && currentSwipeIndex < slide.cards.length - 1) {
+    if (direction === 'next' && currentSwipeIndex < cards.length - 1) {
       setCurrentSwipeIndex(currentSwipeIndex + 1);
     } else if (direction === 'prev' && currentSwipeIndex > 0) {
       setCurrentSwipeIndex(currentSwipeIndex - 1);
@@ -367,13 +367,13 @@ export function TutorialSystem() {
         
         {/* Navigation buttons */}
         {currentSwipeIndex > 0 && (
-          <div className="swipe-nav-button prev" onClick={() => handleSwipe('prev')}>
+          <div className="swipe-nav-button prev" onClick={() => handleSwipe('prev', cards)}>
             ←
           </div>
         )}
         
-        {currentSwipeIndex < (slide?.cards?.length || 0) - 1 && (
-          <div className="swipe-nav-button next" onClick={() => handleSwipe('next')}>
+        {currentSwipeIndex < cards.length - 1 && (
+          <div className="swipe-nav-button next" onClick={() => handleSwipe('next', cards)}>
             →
           </div>
         )}
@@ -532,22 +532,68 @@ export function TutorialSystem() {
     return categories;
   }, [tutorials]);
   
+  // Assign lesson numbers to tutorials for consistent numbering
+  const assignLessonNumbers = () => {
+    const lessonMap = new Map<string, number>();
+    
+    // Group by category
+    const categories = {
+      'Google Ads': tutorials.filter(t => t.title.toLowerCase().includes('google') || t.title.toLowerCase().includes('ads')),
+      'SEO': tutorials.filter(t => t.title.toLowerCase().includes('seo')),
+      'Analytics': tutorials.filter(t => t.title.toLowerCase().includes('analytics')),
+      'Social Media': tutorials.filter(t => t.title.toLowerCase().includes('social') || t.title.toLowerCase().includes('facebook') || t.title.toLowerCase().includes('instagram')),
+      'Content Marketing': tutorials.filter(t => t.title.toLowerCase().includes('content')),
+      'Other': [] as Tutorial[]
+    };
+    
+    // Assign lesson numbers
+    let lessonNumber = 1;
+    Object.entries(categories).forEach(([category, tutorialsInCategory]) => {
+      if (tutorialsInCategory.length === 0) return;
+      
+      tutorialsInCategory.forEach((tutorial, subIndex) => {
+        const key = `${tutorial.id}`;
+        lessonMap.set(key, lessonNumber + (subIndex + 1) / 10);
+      });
+      
+      lessonNumber++;
+    });
+    
+    return lessonMap;
+  };
+  
+  const lessonNumberMap = React.useMemo(assignLessonNumbers, [tutorials]);
+  
+  // Format the lesson number as "Lesson X.Y"
+  const formatLessonNumber = (tutorial: Tutorial) => {
+    const number = lessonNumberMap.get(`${tutorial.id}`);
+    if (!number) return '';
+    
+    const mainNumber = Math.floor(number);
+    const subNumber = Math.round((number - mainNumber) * 10);
+    
+    return `Lesson ${mainNumber}-${subNumber}`;
+  };
+
   // Render a tutorial card with consistent styling
   const renderTutorialCard = (tutorial: Tutorial) => (
-    <Card key={tutorial.id} className="transition-all duration-300 hover:shadow-lg border-l-4 border-l-blue-500">
+    <Card key={tutorial.id} className="tutorial-card transition-all duration-300 hover:shadow-lg border-l-4 border-l-blue-500">
       <CardHeader className="pb-2">
         <div className="flex justify-between items-start">
           <div>
+            <div className="flex items-center mb-1">
+              <span className="bg-blue-100 text-blue-800 px-2 py-1 text-xs rounded-md font-medium mr-2">
+                {formatLessonNumber(tutorial)}
+              </span>
+              {progress.includes(tutorial.id) && (
+                <span className="bg-green-100 text-green-800 px-2 py-1 text-xs rounded-full">
+                  Completed
+                </span>
+              )}
+            </div>
             <h3 className="text-lg font-semibold text-blue-800">{tutorial.title}</h3>
             <p className="text-sm text-gray-500">Level: {tutorial.level}</p>
           </div>
-          <span className={`px-2 py-1 rounded-full text-xs ${
-            progress.includes(tutorial.id) 
-              ? 'bg-green-100 text-green-800' 
-              : 'bg-gray-100 text-gray-600'
-          }`}>
-            {progress.includes(tutorial.id) ? 'Completed' : 'Not Started'}
-          </span>
         </div>
       </CardHeader>
       <CardContent className="pb-2">
@@ -579,7 +625,7 @@ export function TutorialSystem() {
           className="w-full"
           variant={progress.includes(tutorial.id) ? "outline" : "default"}
         >
-          {progress.includes(tutorial.id) ? 'Review Tutorial' : 'Start Tutorial'}
+          {progress.includes(tutorial.id) ? 'Review Lesson' : 'Start Lesson'}
         </Button>
       </CardFooter>
     </Card>
