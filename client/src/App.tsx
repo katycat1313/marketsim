@@ -56,151 +56,305 @@ import {
   User,
   Book,
   Activity,
-  ScrollText
+  ScrollText,
+  X
 } from "lucide-react";
 
-function NavBar() {
+function SideNav() {
   const [location] = useLocation();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const isActive = (path: string) => {
+    if (path === '/' && location === '/') return true;
+    if (path !== '/' && location.startsWith(path)) return true;
+    return false;
+  };
 
   return (
-    <header className="border-b shadow-sm bg-background">
-      <div className="container mx-auto px-4">
-        <div className="flex flex-col h-24 items-center justify-center">
-          <div className="flex items-center gap-2 font-bold text-xl mb-2">
-            <span className="text-primary">MarketSim</span>
-          </div>
-          
-          <nav className="flex items-center justify-center gap-6">
-            <Link href="/">
-              <div className={`flex items-center gap-1 text-sm cursor-pointer ${location === '/' ? 'text-primary font-medium' : 'text-muted-foreground'}`}>
-                <HomeIcon className="h-4 w-4" />
-                <span>Home</span>
+    <>
+      {/* Mobile Header */}
+      <header className="md:hidden border-b bg-background sticky top-0 z-50">
+        <div className="container mx-auto px-4 py-3 flex justify-between items-center">
+          <Link href="/">
+            <div className="font-bold text-xl">
+              <span className="text-primary">MarketSim</span>
+            </div>
+          </Link>
+          <button 
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="p-2 rounded-md hover:bg-secondary"
+          >
+            <Menu className="h-6 w-6" />
+          </button>
+        </div>
+      </header>
+
+      {/* Sidebar Navigation */}
+      <aside className={`
+        fixed inset-0 z-40 bg-background border-r
+        transform transition-transform duration-200 ease-in-out
+        md:relative md:translate-x-0 md:w-64 md:shrink-0 md:block
+        ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
+      `}>
+        {/* Logo and Close button for mobile */}
+        <div className="flex items-center justify-between p-4 border-b md:border-0">
+          <Link href="/" onClick={() => setIsMobileMenuOpen(false)}>
+            <div className="font-bold text-xl">
+              <span className="text-primary">MarketSim</span>
+            </div>
+          </Link>
+          <button 
+            className="md:hidden p-2 rounded-md hover:bg-secondary"
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+
+        {/* Sidebar content */}
+        <div className="p-4 h-[calc(100vh-4rem)] overflow-y-auto">
+          <nav className="space-y-6">
+            {/* Home */}
+            <div>
+              <Link href="/" onClick={() => setIsMobileMenuOpen(false)}>
+                <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
+                  ${isActive('/') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
+                  <HomeIcon className="h-5 w-5" />
+                  <span>Home</span>
+                </div>
+              </Link>
+            </div>
+
+            {/* Dashboard */}
+            <div>
+              <Link href="/dashboard" onClick={() => setIsMobileMenuOpen(false)}>
+                <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
+                  ${isActive('/dashboard') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
+                  <BarChart2 className="h-5 w-5" />
+                  <span>Dashboard</span>
+                </div>
+              </Link>
+            </div>
+
+            {/* Learn Section */}
+            <div className="space-y-2">
+              <div className="text-xs uppercase text-muted-foreground font-semibold tracking-wider pl-2">
+                LEARN
               </div>
-            </Link>
-            <Link href="/persona-builder">
-              <div className={`flex items-center gap-1 text-sm cursor-pointer ${location === '/persona-builder' ? 'text-primary font-medium' : 'text-muted-foreground'}`}>
-                <Target className="h-4 w-4" />
-                <span>Personas</span>
+              <div className="space-y-1 pl-2">
+                <Link href="/tutorials" onClick={() => setIsMobileMenuOpen(false)}>
+                  <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
+                    ${isActive('/tutorials') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
+                    <GraduationCap className="h-5 w-5" />
+                    <span>Tutorials</span>
+                  </div>
+                </Link>
+                <Link href="/seo-quiz" onClick={() => setIsMobileMenuOpen(false)}>
+                  <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
+                    ${isActive('/seo-quiz') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
+                    <BookOpen className="h-5 w-5" />
+                    <span>SEO Quiz</span>
+                  </div>
+                </Link>
               </div>
-            </Link>
-            <Link href="/persona-builder-template">
-              <div className={`flex items-center gap-1 text-sm cursor-pointer ${location === '/persona-builder-template' ? 'text-primary font-medium' : 'text-muted-foreground'}`}>
-                <Users className="h-4 w-4" />
-                <span>Persona Template</span>
+            </div>
+
+            {/* Practice Section */}
+            <div className="space-y-2">
+              <div className="text-xs uppercase text-muted-foreground font-semibold tracking-wider pl-2">
+                PRACTICE
               </div>
-            </Link>
-            <Link href="/campaign-creator">
-              <div className={`flex items-center gap-1 text-sm cursor-pointer ${location === '/campaign-creator' ? 'text-primary font-medium' : 'text-muted-foreground'}`}>
-                <BarChart2 className="h-4 w-4" />
-                <span>Campaigns</span>
+              <div className="space-y-1 pl-2">
+                <Link href="/seo-simulations" onClick={() => setIsMobileMenuOpen(false)}>
+                  <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
+                    ${isActive('/seo-simulation') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
+                    <Search className="h-5 w-5" />
+                    <span>SEO Practice</span>
+                  </div>
+                </Link>
+                <Link href="/ad-simulations" onClick={() => setIsMobileMenuOpen(false)}>
+                  <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
+                    ${isActive('/ad-simulation') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
+                    <MousePointer className="h-5 w-5" />
+                    <span>Ad Platforms</span>
+                  </div>
+                </Link>
+                <Link href="/data-visualization" onClick={() => setIsMobileMenuOpen(false)}>
+                  <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
+                    ${isActive('/data-visualization') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
+                    <LineChart className="h-5 w-5" />
+                    <span>Data Visualization</span>
+                  </div>
+                </Link>
               </div>
-            </Link>
-            <Link href="/dashboard">
-              <div className={`flex items-center gap-1 text-sm cursor-pointer ${location === '/dashboard' ? 'text-primary font-medium' : 'text-muted-foreground'}`}>
-                <BarChart2 className="h-4 w-4" />
-                <span>Dashboard</span>
+            </div>
+
+            {/* Create Section */}
+            <div className="space-y-2">
+              <div className="text-xs uppercase text-muted-foreground font-semibold tracking-wider pl-2">
+                CREATE
               </div>
-            </Link>
-            <Link href="/network">
-              <div className={`flex items-center gap-1 text-sm cursor-pointer ${location === '/network' ? 'text-primary font-medium' : 'text-muted-foreground'}`}>
-                <Users className="h-4 w-4" />
-                <span>Network</span>
+              <div className="space-y-1 pl-2">
+                <Link href="/persona-builder" onClick={() => setIsMobileMenuOpen(false)}>
+                  <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
+                    ${isActive('/persona-builder') && !isActive('/persona-builder-template') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
+                    <Target className="h-5 w-5" />
+                    <span>Personas</span>
+                  </div>
+                </Link>
+                <Link href="/persona-builder-template" onClick={() => setIsMobileMenuOpen(false)}>
+                  <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
+                    ${isActive('/persona-builder-template') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
+                    <Users className="h-5 w-5" />
+                    <span>Persona Templates</span>
+                  </div>
+                </Link>
+                <Link href="/campaign-creator" onClick={() => setIsMobileMenuOpen(false)}>
+                  <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
+                    ${isActive('/campaign-creator') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
+                    <Activity className="h-5 w-5" />
+                    <span>Campaigns</span>
+                  </div>
+                </Link>
               </div>
-            </Link>
-            <Link href="/community">
-              <div className={`flex items-center gap-1 text-sm cursor-pointer ${location === '/community' ? 'text-primary font-medium' : 'text-muted-foreground'}`}>
-                <MessageSquare className="h-4 w-4" />
-                <span>Community</span>
+            </div>
+
+            {/* Community Section */}
+            <div className="space-y-2">
+              <div className="text-xs uppercase text-muted-foreground font-semibold tracking-wider pl-2">
+                COMMUNITY
               </div>
-            </Link>
-            <Link href="/achievements">
-              <div className={`flex items-center gap-1 text-sm cursor-pointer ${location === '/achievements' ? 'text-primary font-medium' : 'text-muted-foreground'}`}>
-                <Award className="h-4 w-4" />
-                <span>Achievements</span>
+              <div className="space-y-1 pl-2">
+                <Link href="/network" onClick={() => setIsMobileMenuOpen(false)}>
+                  <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
+                    ${isActive('/network') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
+                    <Users className="h-5 w-5" />
+                    <span>Network</span>
+                  </div>
+                </Link>
+                <Link href="/community" onClick={() => setIsMobileMenuOpen(false)}>
+                  <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
+                    ${isActive('/community') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
+                    <MessageSquare className="h-5 w-5" />
+                    <span>Community</span>
+                  </div>
+                </Link>
+                <Link href="/achievements" onClick={() => setIsMobileMenuOpen(false)}>
+                  <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
+                    ${isActive('/achievements') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
+                    <Award className="h-5 w-5" />
+                    <span>Achievements</span>
+                  </div>
+                </Link>
               </div>
-            </Link>
-            <Link href="/seo-simulations">
-              <div className={`flex items-center gap-1 text-sm cursor-pointer ${location === '/seo-simulations' ? 'text-primary font-medium' : 'text-muted-foreground'}`}>
-                <Search className="h-4 w-4" />
-                <span>SEO Practice</span>
+            </div>
+
+            {/* Account Section */}
+            <div className="space-y-2">
+              <div className="text-xs uppercase text-muted-foreground font-semibold tracking-wider pl-2">
+                ACCOUNT
               </div>
-            </Link>
-            <Link href="/ad-simulations">
-              <div className={`flex items-center gap-1 text-sm cursor-pointer ${location === '/ad-simulations' ? 'text-primary font-medium' : 'text-muted-foreground'}`}>
-                <MousePointer className="h-4 w-4" />
-                <span>Ad Platforms</span>
+              <div className="space-y-1 pl-2">
+                <Link href="/subscription" onClick={() => setIsMobileMenuOpen(false)}>
+                  <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
+                    ${isActive('/subscription') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
+                    <CreditCard className="h-5 w-5" />
+                    <span>Subscription</span>
+                  </div>
+                </Link>
+                <Link href="/api-settings" onClick={() => setIsMobileMenuOpen(false)}>
+                  <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
+                    ${isActive('/api-settings') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
+                    <Settings className="h-5 w-5" />
+                    <span>Settings</span>
+                  </div>
+                </Link>
               </div>
-            </Link>
-            <Link href="/seo-quiz">
-              <div className={`flex items-center gap-1 text-sm cursor-pointer ${location === '/seo-quiz' ? 'text-primary font-medium' : 'text-muted-foreground'}`}>
-                <BookOpen className="h-4 w-4" />
-                <span>SEO Quiz</span>
-              </div>
-            </Link>
-            <Link href="/data-visualization">
-              <div className={`flex items-center gap-1 text-sm cursor-pointer ${location === '/data-visualization' ? 'text-primary font-medium' : 'text-muted-foreground'}`}>
-                <LineChart className="h-4 w-4" />
-                <span>Data Visualization</span>
-              </div>
-            </Link>
-            <Link href="/tutorials">
-              <div className={`flex items-center gap-1 text-sm cursor-pointer ${location === '/tutorials' ? 'text-primary font-medium' : 'text-muted-foreground'}`}>
-                <GraduationCap className="h-4 w-4" />
-                <span>Tutorials</span>
-              </div>
-            </Link>
-            <Link href="/subscription">
-              <div className={`flex items-center gap-1 text-sm cursor-pointer ${location === '/subscription' ? 'text-primary font-medium' : 'text-muted-foreground'}`}>
-                <CreditCard className="h-4 w-4" />
-                <span>Subscription</span>
-              </div>
-            </Link>
-            <Link href="/api-settings">
-              <div className={`flex items-center gap-1 text-sm cursor-pointer ${location === '/api-settings' ? 'text-primary font-medium' : 'text-muted-foreground'}`}>
-                <Settings className="h-4 w-4" />
-                <span>Settings</span>
-              </div>
-            </Link>
+            </div>
           </nav>
         </div>
-      </div>
-    </header>
+      </aside>
+    </>
   );
 }
 
 function Router() {
+  const [sidebarVisible, setSidebarVisible] = useState(true);
+
+  const toggleSidebar = () => {
+    setSidebarVisible(!sidebarVisible);
+  };
+
   return (
-    <div className="flex flex-col min-h-screen">
-      <NavBar />
-      <main className="flex-1">
-        <Switch>
-          <Route path="/" component={Home} />
-          <Route path="/persona-builder" component={PersonaBuilder} />
-          <Route path="/persona-builder-template" component={PersonaBuilderTemplate} />
-          <Route path="/campaign-creator" component={CampaignCreator} />
-          <Route path="/dashboard" component={Dashboard} />
-          <Route path="/api-settings" component={ApiSettings} />
-          <Route path="/network" component={NetworkPage} />
-          <Route path="/community" component={Posts} />
-          <Route path="/achievements" component={Achievements} />
-          <Route path="/seo-simulations" component={SeoSimulationsPage} />
-          <Route path="/seo-simulation/:id" component={SeoSimulationPage} />
-          <Route path="/ad-simulations" component={AdSimulationsPage} />
-          <Route path="/ad-simulation/:id" component={AdSimulationPage} />
-          <Route path="/seo-quiz" component={SeoQuizPage} />
-          <Route path="/data-visualization" component={DataVisualizationPage} />
-          <Route path="/tutorials" component={TutorialsPage} />
-          <Route path="/subscription" component={SubscriptionPage} />
-          <Route path="/subscription/success" component={SubscriptionSuccessPage} />
-          <Route path="/subscription/cancel" component={SubscriptionCancelPage} />
-          <Route component={NotFound} />
-        </Switch>
-      </main>
-      <footer className="py-6 border-t">
-        <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
-          © 2025 MarketSim. All rights reserved.
+    <div className="flex min-h-screen bg-background">
+      {/* Sidebar */}
+      <div className={`fixed md:relative transition-all duration-300 ease-in-out h-full z-40 
+        ${sidebarVisible ? 'translate-x-0' : '-translate-x-full md:w-0'}`}>
+        <SideNav />
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col w-full">
+        {/* Mobile Top Bar */}
+        <div className="md:hidden flex items-center justify-between p-4 border-b bg-background sticky top-0 z-30">
+          <div className="flex items-center">
+            <button onClick={toggleSidebar} className="p-2 mr-2 rounded-md hover:bg-secondary">
+              <Menu className="h-5 w-5" />
+            </button>
+            <Link href="/">
+              <span className="font-bold text-xl text-primary">MarketSim</span>
+            </Link>
+          </div>
         </div>
-      </footer>
+
+        {/* Desktop Top Bar */}
+        <div className="hidden md:flex items-center justify-between p-4 border-b bg-background sticky top-0 z-30">
+          <div className="flex items-center">
+            <button onClick={toggleSidebar} className="p-2 mr-2 rounded-md hover:bg-secondary">
+              <Menu className="h-5 w-5" />
+            </button>
+            <Link href="/">
+              <span className="font-bold text-xl text-primary">MarketSim</span>
+            </Link>
+          </div>
+        </div>
+
+        {/* Content Area */}
+        <main className="flex-1 p-4 md:p-6 overflow-auto">
+          <Switch>
+            <Route path="/" component={Home} />
+            <Route path="/persona-builder" component={PersonaBuilder} />
+            <Route path="/persona-builder-template" component={PersonaBuilderTemplate} />
+            <Route path="/campaign-creator" component={CampaignCreator} />
+            <Route path="/dashboard" component={Dashboard} />
+            <Route path="/api-settings" component={ApiSettings} />
+            <Route path="/network" component={NetworkPage} />
+            <Route path="/community" component={Posts} />
+            <Route path="/achievements" component={Achievements} />
+            <Route path="/seo-simulations" component={SeoSimulationsPage} />
+            <Route path="/seo-simulation/:id" component={SeoSimulationPage} />
+            <Route path="/ad-simulations" component={AdSimulationsPage} />
+            <Route path="/ad-simulation/:id" component={AdSimulationPage} />
+            <Route path="/seo-quiz" component={SeoQuizPage} />
+            <Route path="/data-visualization" component={DataVisualizationPage} />
+            <Route path="/tutorials" component={TutorialsPage} />
+            <Route path="/subscription" component={SubscriptionPage} />
+            <Route path="/subscription/success" component={SubscriptionSuccessPage} />
+            <Route path="/subscription/cancel" component={SubscriptionCancelPage} />
+            <Route component={NotFound} />
+          </Switch>
+        </main>
+
+        {/* Footer */}
+        <footer className="py-4 border-t">
+          <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
+            © 2025 MarketSim. All rights reserved.
+          </div>
+        </footer>
+      </div>
     </div>
   );
 }
