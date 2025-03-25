@@ -2,12 +2,16 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import { log, setupVite, serveStatic } from './vite';
 import { registerRoutes } from './routes';
+import { mockAuthMiddleware } from './auth/middleware';
 
 async function main() {
   const app = express();
   const port = 5000; // Always serve on port 5000
 
   app.use(bodyParser.json());
+  
+  // Use mock authentication middleware for development
+  app.use(mockAuthMiddleware);
 
   // Register API routes
   const server = await registerRoutes(app);
