@@ -464,6 +464,12 @@ export async function registerRoutes(app: Express) {
   app.get("/api/seo-simulations/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
+      
+      if (isNaN(id)) {
+        return res.status(400).json({ error: "Invalid simulation ID format" });
+      }
+      
+      console.log(`API request to get SEO simulation ID: ${id}`);
       const simulation = await seoSimulationService.getSimulation(id);
       
       if (!simulation) {
@@ -472,7 +478,11 @@ export async function registerRoutes(app: Express) {
       
       res.json(simulation);
     } catch (error) {
-      res.status(500).json({ error: "Failed to retrieve SEO simulation" });
+      console.error(`Error retrieving SEO simulation ID ${req.params.id}:`, error);
+      res.status(500).json({ 
+        error: "Failed to retrieve SEO simulation", 
+        details: error instanceof Error ? error.message : String(error) 
+      });
     }
   });
 
@@ -483,24 +493,42 @@ export async function registerRoutes(app: Express) {
       }
       
       const simulationId = parseInt(req.params.id);
+      
+      if (isNaN(simulationId)) {
+        return res.status(400).json({ error: "Invalid simulation ID format" });
+      }
+      
       const { modifiedContent } = req.body;
       
       if (!modifiedContent) {
         return res.status(400).json({ error: "Modified content is required" });
       }
       
-      const attempt = await seoSimulationService.submitAttempt({
-        simulationId,
-        userId: req.user.id,
-        modifiedContent,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      });
+      console.log(`API request to submit SEO simulation attempt for simulation ID ${simulationId} by user ID ${req.user.id}`);
       
-      res.json(attempt);
+      try {
+        const attempt = await seoSimulationService.submitAttempt({
+          simulationId,
+          userId: req.user.id,
+          modifiedContent,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        });
+        
+        res.json(attempt);
+      } catch (serviceError) {
+        console.error(`Error in SEO simulation service while submitting attempt:`, serviceError);
+        return res.status(500).json({ 
+          error: "Failed to process simulation attempt", 
+          details: serviceError instanceof Error ? serviceError.message : String(serviceError) 
+        });
+      }
     } catch (error) {
       console.error('SEO simulation attempt submission error:', error);
-      res.status(500).json({ error: "Failed to submit SEO simulation attempt" });
+      res.status(500).json({ 
+        error: "Failed to submit SEO simulation attempt",
+        details: error instanceof Error ? error.message : String(error)
+      });
     }
   });
 
@@ -511,11 +539,29 @@ export async function registerRoutes(app: Express) {
       }
       
       const simulationId = parseInt(req.params.id);
-      const attempts = await seoSimulationService.getUserAttempts(req.user.id, simulationId);
       
-      res.json(attempts);
+      if (isNaN(simulationId)) {
+        return res.status(400).json({ error: "Invalid simulation ID format" });
+      }
+      
+      console.log(`API request to get SEO simulation attempts for simulation ID ${simulationId} by user ID ${req.user.id}`);
+      
+      try {
+        const attempts = await seoSimulationService.getUserAttempts(req.user.id, simulationId);
+        res.json(attempts);
+      } catch (serviceError) {
+        console.error(`Error retrieving SEO simulation attempts:`, serviceError);
+        return res.status(500).json({ 
+          error: "Failed to retrieve SEO simulation attempts from service", 
+          details: serviceError instanceof Error ? serviceError.message : String(serviceError) 
+        });
+      }
     } catch (error) {
-      res.status(500).json({ error: "Failed to retrieve SEO simulation attempts" });
+      console.error(`Error handling SEO simulation attempts request:`, error);
+      res.status(500).json({ 
+        error: "Failed to retrieve SEO simulation attempts", 
+        details: error instanceof Error ? error.message : String(error) 
+      });
     }
   });
 
@@ -582,35 +628,47 @@ export async function registerRoutes(app: Express) {
       
       // User ID is already validated at this point
       const userId = req.user.id;
+      console.log(`API request to complete quiz ${quizId} for user ${userId} with score ${score}/${maxScore}`);
       
       // Calculate if the user passed based on a threshold (e.g., 70%)
       const passThreshold = 0.7;
       const passed = (score / maxScore) >= passThreshold;
       
-      // 1. Save the user's quiz results to the database
-      const quizResult = await storage.createQuizResult({
-        userId,
-        quizId,
-        score,
-        maxScore,
-        passed,
-        answers: answers || [],
-        lastAttemptAt: new Date()
-      });
-      
-      // 2. Get updated completion stats
-      const quizCompletion = await storage.getQuizCompletion(userId);
-      
-      // 3. Return the updated progress
-      res.json({ 
-        success: true,
-        message: "Quiz completed successfully",
-        result: quizResult,
-        completion: quizCompletion
-      });
+      try {
+        // 1. Save the user's quiz results to the database
+        const quizResult = await storage.createQuizResult({
+          userId,
+          quizId,
+          score,
+          maxScore,
+          passed,
+          answers: answers || [],
+          lastAttemptAt: new Date()
+        });
+        
+        // 2. Get updated completion stats
+        const quizCompletion = await storage.getQuizCompletion(userId);
+        
+        // 3. Return the updated progress
+        res.json({ 
+          success: true,
+          message: "Quiz completed successfully",
+          result: quizResult,
+          completion: quizCompletion
+        });
+      } catch (storageError) {
+        console.error('Database error when saving quiz result:', storageError);
+        return res.status(500).json({ 
+          error: "Failed to save quiz result to database", 
+          details: storageError instanceof Error ? storageError.message : String(storageError) 
+        });
+      }
     } catch (error) {
       console.error('Failed to complete quiz:', error);
-      res.status(500).json({ error: "Failed to complete quiz" });
+      res.status(500).json({ 
+        error: "Failed to complete quiz", 
+        details: error instanceof Error ? error.message : String(error) 
+      });
     }
   });
 
