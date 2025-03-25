@@ -77,10 +77,10 @@ The title tag is like the sign outside your coffee shop. It's the first thing pe
 ### Title Tag Anatomy: Breaking Down the Perfect Title
 
 A great title tag structure follows this pattern:
-`Primary Keyword - Secondary Keyword | Brand Name`
+"Primary Keyword - Secondary Keyword | Brand Name"
 
 For our coffee example:
-`Premium Arabica Coffee Beans | Fresh Roasted Specialty Coffee`
+"Premium Arabica Coffee Beans | Fresh Roasted Specialty Coffee"
 
 This structure:
 1. Puts the most important keywords first
@@ -267,25 +267,39 @@ All orders over $30 ship free, and we roast and ship every Monday to ensure you 
 
 Great product images sell coffee beans - but they need proper optimization to help with SEO too!
 
-> **Image Challenge**: Which alt text is best for SEO?
-> - alt="coffee"
-> - alt="beans"
-> - alt="product image"
-> - alt="Freshly roasted organic Arabica coffee beans from Ethiopia"
+![SEO Image Optimization](/images/seo-image-optimization.png)
 
-**Image Optimization Best Practices:**
-1. **Descriptive, keyword-rich file names:** 
+> **Image Challenge**: Which alt text is best for SEO?
+> <div class="challenge-container">
+>   <button class="challenge-option" onclick="selectChallengeOption(this)">alt="coffee"</button>
+>   <button class="challenge-option" onclick="selectChallengeOption(this)">alt="beans"</button>
+>   <button class="challenge-option" onclick="selectChallengeOption(this)">alt="product image"</button>
+>   <button class="challenge-option" onclick="selectChallengeOption(this)">alt="Freshly roasted organic Arabica coffee beans from Ethiopia"</button>
+> </div>
+
+### The Three Pillars of Image SEO
+
+**1. Descriptive, keyword-rich file names:** 
    - Bad: IMG_12345.jpg
    - Good: organic-arabica-coffee-beans-ethiopia.jpg
 
-2. **Alt text that describes the image AND includes keywords:**
+**2. Alt text that describes the image AND includes keywords:**
    - Bad: alt="coffee" or alt="product photo"
    - Good: alt="Freshly roasted organic Arabica coffee beans from Ethiopia"
 
-3. **Optimized file sizes for faster loading:**
+**3. Optimized file sizes for faster loading:**
    - Compress images without losing quality
    - Consider modern formats like WebP for better compression
    - Specify dimensions in HTML to prevent layout shifts
+
+### How Image Optimization Affects Page Speed and SEO
+
+Did you know that images typically account for 50-90% of a webpage's total size? Slow-loading images can dramatically impact your SEO in two ways:
+
+1. **Direct Impact**: Google uses page speed as a ranking factor - slow pages rank lower
+2. **Indirect Impact**: Users abandon slow-loading pages, increasing bounce rates (another negative signal to search engines)
+
+### Complete Image Optimization Example
 
 **Example Implementation:**
 \`\`\`html
@@ -298,23 +312,55 @@ Great product images sell coffee beans - but they need proper optimization to he
 >
 \`\`\`
 
+**Additional Image SEO Techniques:**
+
+- **Use structured data markup for product images** to enhance visibility in Google Image Search and product carousels
+- **Create an image sitemap** to help search engines discover and index your images
+- **Use descriptive captions** under important images to provide additional context
+- **Consider accessibility** - images that help users with disabilities also help search engines understand your content
+
+> **Case Study**: Coffee Connoisseur optimized their product images by:
+> 1. Renaming all product image files with descriptive, keyword-rich names
+> 2. Adding detailed, unique alt text to every product image
+> 3. Compressing images and converting to WebP format
+> 
+> Results: Page load time decreased by 42%, and organic traffic to product pages increased by 24% within three months.
+
 **Pro Tip:** Take your own high-quality product photos from multiple angles! Unique images are better for SEO than stock photos that might appear on multiple websites.
 
 ## 6. Internal Linking: Creating Pathways for Exploration
 
 Internal links help search engines understand your site structure AND help customers discover more of your products!
 
+![Internal Linking Structure](/images/internal-linking-structure.png)
+
 > **Quick Quiz**: Which internal link is most effective?
-> - "To buy our coffee beans, <a href="/buy">click here</a>."
-> - "Explore our <a href="/coffee/ethiopian-yirgacheffe">Ethiopian Yirgacheffe coffee selection</a> for similar flavor profiles."
-> - "More <a href="/products">products</a> are available."
-> - "<a href="/shop">Shop now</a>."
+> <div class="quiz-container">
+>   <button class="quiz-option" onclick="selectQuizOption(this)">"To buy our coffee beans, <a href="/buy">click here</a>."</button>
+>   <button class="quiz-option" onclick="selectQuizOption(this)">"Explore our <a href="/coffee/ethiopian-yirgacheffe">Ethiopian Yirgacheffe coffee selection</a> for similar flavor profiles."</button>
+>   <button class="quiz-option" onclick="selectQuizOption(this)">"More <a href="/products">products</a> are available."</button>
+>   <button class="quiz-option" onclick="selectQuizOption(this)">"<a href="/shop">Shop now</a>."</button>
+> </div>
+
+### Why Good Internal Links Matter
 
 **Why the second option wins:**
 - Uses descriptive, keyword-rich anchor text
 - Links to a specific, relevant page
 - Provides context about what the user will find
 - Creates a logical connection between related products
+
+### The SEO Power of Strategic Internal Linking
+
+Internal links do much more than just help users navigate your site:
+
+1. **They distribute page authority** throughout your site
+2. **They establish information hierarchy** that helps search engines understand what's most important
+3. **They increase time on site** by encouraging users to explore more pages
+4. **They reduce bounce rates** by offering relevant additional content
+5. **They help search engines discover** new or updated content on your site
+
+### Building an Effective Internal Linking Strategy
 
 **Internal Linking Strategy:**
 1. Link to your most important pages more frequently
@@ -323,11 +369,23 @@ Internal links help search engines understand your site structure AND help custo
 4. Create a logical structure that helps users navigate your site
 5. Don't overdo it - only include links that add value
 
+**Examples of Smart Internal Links for a Coffee Product Page:**
+
+- "Pair these Ethiopian beans with our [handcrafted ceramic pour-over set](/brewing-equipment/pour-over) for the optimal brewing experience."
+- "Not sure about Ethiopian coffee? Read our guide to [understanding coffee flavor profiles](/guides/coffee-flavors) to find your perfect match."
+- "Join our [Coffee Subscription](/subscriptions) to receive freshly roasted beans every month."
+
+> **Case Study**: Bean Box improved their internal linking structure by adding 3-4 contextual internal links to each product page. The result was a 32% increase in pages per session and a 17% reduction in bounce rate.
+
 **Pro Tip:** Think about the customer journey. What might someone want to explore after viewing these coffee beans? Other Ethiopian coffees? Brewing equipment? Gift sets? Create logical pathways between related products.
 
 ## Put It All Together: Your SEO Transformation Challenge
 
 You've learned all the key elements of on-page SEO for a product page. Now it's time to apply these skills to transform a basic coffee shop product page into an SEO powerhouse!
+
+![SEO Transformation Challenge](/images/seo-transformation-challenge.png)
+
+### Your SEO Optimization Checklist
 
 In the Level 1 SEO Simulation, you'll take a basic product page for coffee beans and optimize:
 - The title tag to make it more compelling and keyword-rich
@@ -337,11 +395,26 @@ In the Level 1 SEO Simulation, you'll take a basic product page for coffee beans
 - The image alt text to be descriptive and optimized
 - The internal links to create helpful pathways for users
 
+### Measuring SEO Success
+
+After implementing good on-page SEO, you should track these key metrics:
+1. **Organic search traffic** to the optimized page
+2. **Click-through rate** from search results
+3. **Bounce rate** and **time on page**
+4. **Conversion rate** for visitors from organic search
+5. **Keyword rankings** for your target terms
+
 > **Real-World Impact**: Good on-page SEO can increase organic traffic by 50-100% for product pages! Imagine getting twice as many potential customers viewing your coffee beans without spending a cent on advertising.
+
+### Ready for the Challenge?
+
+The knowledge you've gained in this tutorial gives you a solid foundation for effective SEO. The skills you're learning here are the exact same techniques used by professional SEO specialists charging thousands of dollars for website optimization.
 
 Are you ready to show off your new on-page SEO skills? Let's transform that coffee shop product page!
 
-[Start the Level 1 SEO Simulation](/seo-simulation/3)
+<div class="cta-button">
+  <a href="/seo-simulation/3" class="primary-button">Start the Level 1 SEO Simulation</a>
+</div>
 
 Remember, the best SEO doesn't feel like SEO at all. It's about creating a better, more informative, more user-friendly page that naturally ranks well because it genuinely answers people's questions better than the competition. Good luck!
 `
