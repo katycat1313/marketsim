@@ -12,10 +12,25 @@ import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { useToast } from '@/hooks/use-toast';
-import { Info, AlertCircle, Check, X, Edit, Save } from 'lucide-react';
+import { Info, AlertCircle, Check, X, Edit, Save, Bookmark } from 'lucide-react';
 import WordPressEditor from '@/components/WordPressEditor';
 import WebsitePreview from '@/components/WebsitePreview';
 import '@/components/WebsitePreview.css';
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogDescription, 
+  DialogFooter, 
+  DialogHeader, 
+  DialogTitle 
+} from '@/components/ui/dialog';
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
 
 interface SeoPageContent {
   title: string;
