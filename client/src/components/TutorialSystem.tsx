@@ -52,6 +52,14 @@ export function TutorialSystem() {
   const [slides, setSlides] = useState<Slide[]>([]);
   const [slideAnimation, setSlideAnimation] = useState('');
   const contentRef = useRef<HTMLDivElement>(null);
+  const [currentSwipeIndex, setCurrentSwipeIndex] = useState(0);
+  
+  // Track the current slide ID to reset swipe index when it changes
+  useEffect(() => {
+    if (slides.length > 0 && currentSlideIndex >= 0 && currentSlideIndex < slides.length) {
+      setCurrentSwipeIndex(0);
+    }
+  }, [currentSlideIndex, slides]);
 
   // Sample learning path visual
   const learningPathSteps = [
@@ -296,9 +304,9 @@ export function TutorialSystem() {
     }
   };
   
-  // Define state for expandable items and swipeable slides
-  const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({});
-  const [currentSwipeIndex, setCurrentSwipeIndex] = useState(0);
+  // Define state for expandable items
+  const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({}); 
+  // currentSwipeIndex is already defined at the component level
 
   // Toggle expandable item
   const toggleExpandItem = (itemId: string) => {
@@ -394,12 +402,10 @@ export function TutorialSystem() {
     );
   };
 
-  const renderSlideContent = (slide: Slide) => {
-    // Reset current swipe index when slide changes
-    React.useEffect(() => {
-      setCurrentSwipeIndex(0);
-    }, [slide.id]);
+  // We already added the effect at the component level above
+  // No need for this duplicate useEffect
 
+  const renderSlideContent = (slide: Slide) => {
     if (slide.contentType === 'expandable' && slide.items) {
       return renderExpandableItems(slide.items);
     }

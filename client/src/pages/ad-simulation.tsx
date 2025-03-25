@@ -1881,9 +1881,9 @@ export default function AdSimulationPage() {
               
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <Label htmlFor="insightTag">LinkedIn Insight Tag</Label>
+                  <Label htmlFor="linkedin-insightTag">LinkedIn Insight Tag</Label>
                   <Switch 
-                    id="insightTag" 
+                    id="linkedin-insightTag" 
                     checked={linkedinForm.insightTagEnabled}
                     onCheckedChange={(checked) => setLinkedinForm(prev => ({...prev, insightTagEnabled: checked}))}
                   />
@@ -1896,9 +1896,9 @@ export default function AdSimulationPage() {
               {linkedinForm.campaignObjective === "lead_generation" && (
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="leadGenForms">Lead Gen Forms</Label>
+                    <Label htmlFor="linkedin-leadGenForms">Lead Gen Forms</Label>
                     <Switch 
-                      id="leadGenForms" 
+                      id="linkedin-leadGenForms" 
                       checked={linkedinForm.leadGenEnabled}
                       onCheckedChange={(checked) => setLinkedinForm(prev => ({...prev, leadGenEnabled: checked}))}
                     />
