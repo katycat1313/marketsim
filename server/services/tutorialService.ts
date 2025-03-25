@@ -51,6 +51,222 @@ export class TutorialService {
       skillsLearned: ["Google Ads Fundamentals", "Account Setup", "Campaign Structure Basics"]
     },
     {
+      id: 14,
+      title: "SEO Foundations: The Art of On-Page Optimization",
+      level: "Beginner",
+      content: this.loadTutorialContent('seoFoundations-new.ts'),
+      tasks: [
+        {
+          id: 1401,
+          description: "Optimize a web page for target keywords",
+          type: "practical",
+          requirements: ["Access to webpage HTML", "Target keyword list"],
+          verificationCriteria: ["Title tags optimized", "Meta descriptions added", "Heading structure implemented"]
+        },
+        {
+          id: 1402,
+          description: "Implement basic on-page SEO best practices",
+          type: "practical",
+          requirements: ["Website access"],
+          verificationCriteria: ["Image alt text added", "Internal linking improved", "Content optimized for keywords"]
+        }
+      ],
+      estimatedTime: 60,
+      skillsLearned: ["On-page SEO", "Keyword Optimization", "Content Structure", "Meta Tag Implementation"]
+    },
+    {
+      id: 15,
+      title: "Social Media Marketing: Strategy, Execution & Analytics",
+      level: "Intermediate",
+      content: this.loadTutorialContent('socialMediaMarketing.ts'),
+      tasks: [
+        {
+          id: 1501,
+          description: "Create a comprehensive social media strategy",
+          type: "practical",
+          requirements: ["Business goals", "Target audience information"],
+          verificationCriteria: ["Platform selection justified", "Content calendar created", "KPIs defined"]
+        },
+        {
+          id: 1502,
+          description: "Implement social media analytics tracking",
+          type: "practical",
+          requirements: ["Social media accounts", "Analytics access"],
+          verificationCriteria: ["Tracking implemented", "Baseline metrics recorded", "Reporting template created"]
+        }
+      ],
+      estimatedTime: 90,
+      skillsLearned: ["Social Media Strategy", "Content Planning", "Audience Targeting", "Analytics & Measurement"]
+    },
+    {
+      id: 16,
+      title: "Email Marketing Automation: Best Practices and Implementation Strategies",
+      level: "Intermediate",
+      content: this.loadTutorialContent('emailMarketingAutomation.ts'),
+      tasks: [
+        {
+          id: 1601,
+          description: "Set up an email automation workflow",
+          type: "practical",
+          requirements: ["Email marketing platform", "Customer segments", "Content assets"],
+          verificationCriteria: ["Workflow created", "Triggers defined", "Content personalized"]
+        },
+        {
+          id: 1602,
+          description: "Implement A/B testing for email campaigns",
+          type: "practical",
+          requirements: ["Email marketing platform", "Testing hypothesis"],
+          verificationCriteria: ["Test variables defined", "Control group established", "Success metrics selected"]
+        }
+      ],
+      estimatedTime: 75,
+      skillsLearned: ["Email Automation", "Segmentation Strategy", "A/B Testing", "Conversion Optimization"]
+    },
+    {
+      id: 17,
+      title: "Analytics Foundations: Understanding Marketing Performance Metrics",
+      level: "Beginner",
+      content: this.loadTutorialContent('analyticsFoundations.ts'),
+      tasks: [
+        {
+          id: 1701,
+          description: "Set up a marketing dashboard",
+          type: "practical",
+          requirements: ["Analytics access", "Key business metrics"],
+          verificationCriteria: ["Dashboard created", "KPIs displayed", "Data visualized effectively"]
+        },
+        {
+          id: 1702,
+          description: "Create a regular reporting framework",
+          type: "practical",
+          requirements: ["Analytics data", "Stakeholder requirements"],
+          verificationCriteria: ["Report template created", "Insights highlighted", "Action recommendations included"]
+        }
+      ],
+      estimatedTime: 60,
+      skillsLearned: ["Data Analysis", "Marketing Metrics", "KPI Setting", "Performance Reporting"]
+    },
+    {
+      id: 18,
+      title: "Search Campaign Fundamentals",
+      level: "Intermediate",
+      content: this.loadTutorialContent('searchCampaignFundamentals.ts'),
+      tasks: [
+        {
+          id: 1801,
+          description: "Structure an effective search campaign",
+          type: "practical",
+          requirements: ["Google Ads account", "Keyword research"],
+          verificationCriteria: ["Campaign structure created", "Ad groups organized by theme", "Match types diversified"]
+        },
+        {
+          id: 1802,
+          description: "Write high-performing ad copy",
+          type: "practical",
+          requirements: ["Target keywords", "USPs identified"],
+          verificationCriteria: ["Multiple ad variations created", "Best practices implemented", "CTAs optimized"]
+        }
+      ],
+      estimatedTime: 70,
+      skillsLearned: ["Search Campaign Structure", "Keyword Research", "Ad Copywriting", "Quality Score Optimization"]
+    },
+    {
+      id: 19,
+      title: "Google Ads Account Architecture",
+      level: "Advanced",
+      content: this.loadTutorialContent('googleAdsAccountArchitecture.ts'),
+      tasks: [
+        {
+          id: 1901,
+          description: "Create a scalable account structure",
+          type: "practical",
+          requirements: ["Google Ads account", "Business objectives", "Product/service categories"],
+          verificationCriteria: ["Logical hierarchy implemented", "Naming conventions used", "Budget allocation defined"]
+        },
+        {
+          id: 1902,
+          description: "Set up conversion tracking and attribution",
+          type: "practical",
+          requirements: ["Google Ads access", "Website access", "Defined conversion actions"],
+          verificationCriteria: ["Conversion tracking implemented", "Attribution model selected", "Value tracking configured"]
+        }
+      ],
+      estimatedTime: 90,
+      skillsLearned: ["Account Structure", "Campaign Organization", "Conversion Tracking", "Attribution Modeling"]
+    },
+    {
+      id: 20,
+      title: "Google Ads Troubleshooting & Best Practices",
+      level: "Advanced",
+      content: this.loadTutorialContent('troubleshootingBestPractices.ts'),
+      tasks: [
+        {
+          id: 2001,
+          description: "Diagnose and fix common account issues",
+          type: "practical",
+          requirements: ["Google Ads account", "Performance data"],
+          verificationCriteria: ["Problems identified", "Solutions implemented", "Performance improved"]
+        },
+        {
+          id: 2002,
+          description: "Implement advanced optimization techniques",
+          type: "practical",
+          requirements: ["Active campaigns", "Historical data"],
+          verificationCriteria: ["Bid adjustments made", "Ad schedule optimized", "Audience targeting refined"]
+        }
+      ],
+      estimatedTime: 80,
+      skillsLearned: ["Troubleshooting Process", "Performance Analysis", "Optimization Strategy", "Advanced Settings"]
+    },
+    {
+      id: 21,
+      title: "Audience Targeting Strategies",
+      level: "Intermediate",
+      content: this.loadTutorialContent('audienceTargetingStrategies.ts'),
+      tasks: [
+        {
+          id: 2101,
+          description: "Create effective audience segments",
+          type: "practical",
+          requirements: ["Customer data", "Campaign objectives"],
+          verificationCriteria: ["Segments created", "Targeting parameters defined", "Audience sizes evaluated"]
+        },
+        {
+          id: 2102,
+          description: "Implement audience-based bid adjustments",
+          type: "practical",
+          requirements: ["Active campaigns", "Audience segments"],
+          verificationCriteria: ["Bid adjustments applied", "Performance monitored", "ROI analyzed by segment"]
+        }
+      ],
+      estimatedTime: 65,
+      skillsLearned: ["Audience Segmentation", "Demographic Targeting", "Interest-based Targeting", "Remarketing Strategy"]
+    },
+    {
+      id: 22,
+      title: "Shopping Campaigns",
+      level: "Advanced",
+      content: this.loadTutorialContent('shoppingCampaigns.ts'),
+      tasks: [
+        {
+          id: 2201,
+          description: "Set up and optimize a product feed",
+          type: "practical",
+          requirements: ["Merchant Center account", "Product data"],
+          verificationCriteria: ["Feed created", "Required attributes populated", "Supplemental attributes added"]
+        },
+        {
+          id: 2202,
+          description: "Structure and manage shopping campaigns",
+          type: "practical",
+          requirements: ["Google Ads account", "Merchant Center feed"],
+          verificationCriteria: ["Campaign structure created", "Priority levels set", "Negative keywords implemented"]
+        }
+      ],
+      estimatedTime: 85,
+      skillsLearned: ["Product Feed Optimization", "Shopping Campaign Structure", "Bidding Strategies", "Performance Analysis"]
+    },
+    {
       id: 11,
       title: "SEO Foundations: Basic On-Page Optimization",
       level: "Beginner",
