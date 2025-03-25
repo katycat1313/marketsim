@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Switch, Route, Link, useLocation } from "wouter";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/queryClient";
@@ -21,6 +22,7 @@ import SubscriptionSuccessPage from "@/pages/subscription/success";
 import SubscriptionCancelPage from "@/pages/subscription/cancel";
 import Achievements from "@/components/Achievements";
 import Posts from "@/components/Posts";
+import AIAssistant from "@/components/AIAssistant";
 import { 
   Home as HomeIcon, 
   Users, 
@@ -179,9 +181,19 @@ function Router() {
 }
 
 function App() {
+  const [isAIAssistantExpanded, setIsAIAssistantExpanded] = useState(false);
+  
+  const toggleAIAssistant = () => {
+    setIsAIAssistantExpanded(prev => !prev);
+  };
+
   return (
     <QueryClientProvider client={queryClient}>
       <Router />
+      <AIAssistant 
+        isExpanded={isAIAssistantExpanded} 
+        onToggleExpand={toggleAIAssistant}
+      />
       <Toaster />
     </QueryClientProvider>
   );
