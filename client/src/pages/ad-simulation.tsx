@@ -363,9 +363,9 @@ export default function AdSimulationPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="campaignName">Campaign Name</Label>
+                <Label htmlFor="google-campaignName">Campaign Name</Label>
                 <Input 
-                  id="campaignName" 
+                  id="google-campaignName" 
                   value={googleForm.campaignName} 
                   onChange={(e) => setGoogleForm(prev => ({...prev, campaignName: e.target.value}))}
                   placeholder="Enter a name for your campaign"
@@ -904,9 +904,9 @@ export default function AdSimulationPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="campaignName">Campaign Name</Label>
+                <Label htmlFor="meta-campaignName">Campaign Name</Label>
                 <Input 
-                  id="campaignName" 
+                  id="meta-campaignName" 
                   value={metaForm.campaignName} 
                   onChange={(e) => setMetaForm(prev => ({...prev, campaignName: e.target.value}))}
                   placeholder="Enter a name for your campaign"
@@ -1368,9 +1368,9 @@ export default function AdSimulationPage() {
               
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <Label htmlFor="pixel">Meta Pixel</Label>
+                  <Label htmlFor="meta-pixel">Meta Pixel</Label>
                   <Switch 
-                    id="pixel" 
+                    id="meta-pixel" 
                     checked={metaForm.pixelEnabled}
                     onCheckedChange={(checked) => setMetaForm(prev => ({...prev, pixelEnabled: checked}))}
                   />
@@ -1404,9 +1404,9 @@ export default function AdSimulationPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="campaignName">Campaign Name</Label>
+                <Label htmlFor="linkedin-campaignName">Campaign Name</Label>
                 <Input 
-                  id="campaignName" 
+                  id="linkedin-campaignName" 
                   value={linkedinForm.campaignName} 
                   onChange={(e) => setLinkedinForm(prev => ({...prev, campaignName: e.target.value}))}
                   placeholder="Enter a name for your campaign"
