@@ -14,6 +14,7 @@ import SeoSimulationPage from "@/pages/seo-simulation";
 import SeoQuizPage from "@/pages/seo-quiz";
 import AdSimulationsPage from "@/pages/ad-simulations";
 import AdSimulationPage from "@/pages/ad-simulation";
+import DataVisualizationPage from "@/pages/data-visualization";
 import TutorialsPage from "@/pages/tutorials";
 import SubscriptionPage from "@/pages/subscription";
 import SubscriptionSuccessPage from "@/pages/subscription/success";
@@ -33,7 +34,9 @@ import {
   CreditCard,
   GraduationCap,
   MousePointer,
-  Monitor
+  Monitor,
+  LineChart,
+  PieChart
 } from "lucide-react";
 
 function NavBar() {
@@ -108,6 +111,12 @@ function NavBar() {
                 <span>SEO Quiz</span>
               </div>
             </Link>
+            <Link href="/data-visualization">
+              <div className={`flex items-center gap-1 text-sm cursor-pointer ${location === '/data-visualization' ? 'text-primary font-medium' : 'text-muted-foreground'}`}>
+                <LineChart className="h-4 w-4" />
+                <span>Data Visualization</span>
+              </div>
+            </Link>
             <Link href="/tutorials">
               <div className={`flex items-center gap-1 text-sm cursor-pointer ${location === '/tutorials' ? 'text-primary font-medium' : 'text-muted-foreground'}`}>
                 <GraduationCap className="h-4 w-4" />
@@ -152,6 +161,7 @@ function Router() {
           <Route path="/ad-simulations" component={AdSimulationsPage} />
           <Route path="/ad-simulation/:id" component={AdSimulationPage} />
           <Route path="/seo-quiz" component={SeoQuizPage} />
+          <Route path="/data-visualization" component={DataVisualizationPage} />
           <Route path="/tutorials" component={TutorialsPage} />
           <Route path="/subscription" component={SubscriptionPage} />
           <Route path="/subscription/success" component={SubscriptionSuccessPage} />
