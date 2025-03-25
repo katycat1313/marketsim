@@ -311,20 +311,20 @@ export function TutorialSystem() {
   // Basic markdown to HTML formatter
   const formatMarkdown = (markdown: string): string => {
     // Remove markdown headers (we'll handle them separately)
-    let html = markdown.replace(/^#+\s+(.+)$/gm, '<h3 class="text-xl font-semibold mb-4">$1</h3>');
+    let html = markdown.replace(/^#+\s+(.+)$/gm, '<h3 class="text-xl font-semibold mb-4 text-blue-800">$1</h3>');
     
     // Convert bold
-    html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    html = html.replace(/\*\*(.+?)\*\*/g, '<strong class="text-blue-700">$1</strong>');
     
     // Convert italic
-    html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
+    html = html.replace(/\*(.+?)\*/g, '<em class="text-blue-600">$1</em>');
     
     // Convert lists
-    html = html.replace(/^\s*-\s+(.+)$/gm, '<li>$1</li>');
-    html = html.replace(/(<li>.*<\/li>\n)+/g, '<ul class="list-disc pl-5 mb-4">$&</ul>');
+    html = html.replace(/^\s*-\s+(.+)$/gm, '<li class="text-gray-700">$1</li>');
+    html = html.replace(/(<li.*<\/li>\n)+/g, '<ul class="list-disc pl-5 mb-4">$&</ul>');
     
     // Convert paragraphs
-    html = html.replace(/^(?!<[uh]|<li|<ul|<ol)(.+)$/gm, '<p class="mb-4">$1</p>');
+    html = html.replace(/^(?!<[uh]|<li|<ul|<ol)(.+)$/gm, '<p class="mb-4 text-gray-700 leading-relaxed">$1</p>');
     
     // Fix line breaks
     html = html.replace(/\n\n/g, '<br/>');
@@ -673,21 +673,7 @@ export function TutorialSystem() {
         </div>
       )}
       
-      <style jsx>{`
-        .tutorial-slide {
-          transition: all 0.3s ease-in-out;
-        }
-        
-        .slide-left {
-          transform: translateX(-10px);
-          opacity: 0;
-        }
-        
-        .slide-right {
-          transform: translateX(10px);
-          opacity: 0;
-        }
-      `}</style>
+      {/* CSS styles applied using className instead of inline jsx */}
     </div>
   );
 }
