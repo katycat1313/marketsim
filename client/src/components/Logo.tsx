@@ -30,8 +30,8 @@ export const Logo: React.FC<{ className?: string }> = ({ className = "" }) => {
         />
       </svg>
       <div>
-        <div className="font-bold text-navy-800 text-xl tracking-tight">DIGITAL ZOOM</div>
-        <div className="text-xs text-matte-blue-500">Marketing Mastery Platform</div>
+        <div className="font-bold text-primary text-xl tracking-tight">DIGITAL ZOOM</div>
+        <div className="text-xs text-muted-foreground">Marketing Mastery Platform</div>
       </div>
     </div>
   );

@@ -24,6 +24,7 @@ import SubscriptionCancelPage from "@/pages/subscription/cancel";
 import Achievements from "@/components/Achievements";
 import Posts from "@/components/Posts";
 import AIAssistant from "@/components/AIAssistant";
+import Logo from "@/components/Logo";
 
 import {
   DropdownMenu,
@@ -102,11 +103,9 @@ function SideNav() {
         ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
         {/* Logo and Close button for mobile */}
-        <div className="flex items-center justify-between p-4 border-b md:border-0">
+        <div className="flex items-center justify-between p-4 border-b md:border-b">
           <Link href="/" onClick={() => setIsMobileMenuOpen(false)}>
-            <div className="font-bold text-xl">
-              <span className="text-primary">MarketSim</span>
-            </div>
+            <Logo className="scale-90" />
           </Link>
           <button 
             className="md:hidden p-2 rounded-md hover:bg-secondary"
@@ -380,25 +379,25 @@ function Router() {
       {/* Main Content */}
       <div className="flex-1 flex flex-col w-full">
         {/* Mobile Top Bar */}
-        <div className="md:hidden flex items-center justify-between p-4 border-b bg-background sticky top-0 z-30">
+        <div className="md:hidden flex items-center justify-between p-2 border-b bg-background sticky top-0 z-30">
           <div className="flex items-center">
             <button onClick={toggleSidebar} className="p-2 mr-2 rounded-md hover:bg-secondary">
               <Menu className="h-5 w-5" />
             </button>
             <Link href="/">
-              <span className="font-bold text-xl text-primary">MarketSim</span>
+              <Logo className="scale-75" />
             </Link>
           </div>
         </div>
 
         {/* Desktop Top Bar */}
-        <div className="hidden md:flex items-center justify-between p-4 border-b bg-background sticky top-0 z-30">
+        <div className="hidden md:flex items-center justify-between p-2 border-b bg-background sticky top-0 z-30">
           <div className="flex items-center">
             <button onClick={toggleSidebar} className="p-2 mr-2 rounded-md hover:bg-secondary">
               <Menu className="h-5 w-5" />
             </button>
             <Link href="/">
-              <span className="font-bold text-xl text-primary">MarketSim</span>
+              <Logo className="scale-75" />
             </Link>
           </div>
         </div>
@@ -415,6 +414,8 @@ function Router() {
             <Route path="/network" component={NetworkPage} />
             <Route path="/community" component={Posts} />
             <Route path="/achievements" component={Achievements} />
+            <Route path="/level" component={Dashboard} /> {/* Temporary using Dashboard, will create dedicated Level page */}
+            <Route path="/portfolio" component={DataVisualizationPage} /> {/* Temporary using DataViz, will create dedicated Portfolio page */}
             <Route path="/seo-simulations" component={SeoSimulationsPage} />
             <Route path="/seo-simulation/:id" component={SeoSimulationPage} />
             <Route path="/ad-simulations" component={AdSimulationsPage} />
@@ -431,8 +432,16 @@ function Router() {
 
         {/* Footer */}
         <footer className="py-4 border-t">
-          <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
-            © 2025 MarketSim. All rights reserved.
+          <div className="container mx-auto px-4 text-center">
+            <div className="flex justify-center mb-2">
+              <Logo className="scale-75" />
+            </div>
+            <div className="text-sm text-muted-foreground">
+              © 2025 Digital Zoom Marketing Mastery Platform. All rights reserved.
+            </div>
+            <div className="text-xs text-muted-foreground mt-1">
+              Empowering marketers with intelligent simulations and skill development
+            </div>
           </div>
         </footer>
       </div>
