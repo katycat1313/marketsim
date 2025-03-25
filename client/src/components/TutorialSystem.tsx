@@ -420,44 +420,71 @@ export function TutorialSystem() {
           <div className="md:w-1/2">
             <div className="prose prose-blue max-w-none" dangerouslySetInnerHTML={{ __html: formatMarkdown(slide.content) }}></div>
           </div>
-          <div className="md:w-1/2 rounded-lg overflow-hidden shadow-lg">
+          <div className="md:w-1/2 rounded-lg overflow-hidden shadow-lg border border-[#ffd700]/30">
             <img src={slide.image} alt={slide.title} className="w-full h-auto object-cover" />
           </div>
         </div>
       );
     } else if (slide.contentType === 'interactive') {
-      // Create a demo expandable content based on the tutorial content
+      // Create a demo expandable content based on the tutorial content with visual icons
       const demoItems = [
         {
           id: 1,
           title: "1. Key Concepts",
-          content: "<p>To implement effective digital marketing analytics, businesses should focus on setting clear goals and KPIs.</p>"
+          content: "<div class='flex items-start'><span class='text-[#ffd700] mr-2 text-xl'>🔑</span><p>To implement effective digital marketing analytics, businesses should focus on setting clear goals and KPIs.</p></div>"
         },
         {
           id: 2,
           title: "2. Best Practices",
-          content: "<p>Regularly reviewing and adjusting strategies based on data insights is crucial for success.</p>"
+          content: "<div class='flex items-start'><span class='text-[#ffd700] mr-2 text-xl'>⭐</span><p>Regularly reviewing and adjusting strategies based on data insights is crucial for success.</p></div>"
         },
         {
           id: 3,
           title: "3. Implementation Tips",
-          content: "<p>Investing in the right tools and technologies can enhance data collection and analysis.</p>"
+          content: "<div class='flex items-start'><span class='text-[#ffd700] mr-2 text-xl'>💡</span><p>Investing in the right tools and technologies can enhance data collection and analysis.</p></div>"
         }
       ];
       
+      // Add Google Ads visual icons based on the slide content
+      const hasGoogleAdsContent = slide.content.toLowerCase().includes('google ads');
+      const hasAnalyticsContent = slide.content.toLowerCase().includes('analytics');
+      const hasSEOContent = slide.content.toLowerCase().includes('seo');
+      
       return (
         <div className="space-y-6">
-          <div className="bg-blue-50 p-6 rounded-lg border border-blue-200 mb-4" dangerouslySetInnerHTML={{ __html: slide.content }}></div>
+          {/* Visual task header with icon */}
+          <div className="flex items-center mb-2">
+            {hasGoogleAdsContent && <div className="mr-3 text-2xl">📊</div>}
+            {hasAnalyticsContent && <div className="mr-3 text-2xl">📈</div>}
+            {hasSEOContent && <div className="mr-3 text-2xl">🔍</div>}
+            {!hasGoogleAdsContent && !hasAnalyticsContent && !hasSEOContent && <div className="mr-3 text-2xl">📚</div>}
+            <h3 className="text-xl font-semibold text-[#ffd700]">Task Overview</h3>
+          </div>
+          
+          <div className="bg-blue-50 p-6 rounded-lg border border-[#ffd700]/30 mb-4 shadow-lg" dangerouslySetInnerHTML={{ __html: slide.content }}></div>
           
           <div className="mt-6">
-            <h3 className="text-xl font-semibold mb-4 text-center">Conclusion and Best Practices</h3>
+            <div className="flex items-center justify-center mb-4">
+              <div className="w-8 h-1 bg-[#ffd700]/30"></div>
+              <h3 className="text-xl font-semibold mx-3 text-[#ffd700]">Conclusion and Best Practices</h3>
+              <div className="w-8 h-1 bg-[#ffd700]/30"></div>
+            </div>
             {renderExpandableItems(demoItems)}
           </div>
         </div>
       );
     } else {
+      // Add visual elements to regular content
       return (
-        <div className="prose prose-blue max-w-none" dangerouslySetInnerHTML={{ __html: formatMarkdown(slide.content) }}></div>
+        <div>
+          {/* Add a decorative graphic element */}
+          <div className="w-full h-1 bg-gradient-to-r from-transparent via-[#ffd700]/30 to-transparent mb-6"></div>
+          
+          <div className="prose prose-blue max-w-none" dangerouslySetInnerHTML={{ __html: formatMarkdown(slide.content) }}></div>
+          
+          {/* Add a decorative graphic element at the bottom */}
+          <div className="w-full h-1 bg-gradient-to-r from-transparent via-[#ffd700]/30 to-transparent mt-6"></div>
+        </div>
       );
     }
   };
@@ -489,23 +516,54 @@ export function TutorialSystem() {
   const renderLearningPath = () => {
     return (
       <div className="mt-8">
-        <h3 className="text-lg font-semibold mb-4">Your Learning Path</h3>
-        <div className="flex flex-wrap gap-2">
-          {learningPathSteps.map((step, index) => (
-            <div key={step.id} className="flex items-center">
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${step.completed ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-600'}`}>
-                {step.completed ? '✓' : step.id}
+        <div className="flex items-center mb-4">
+          <div className="w-1 h-6 bg-[#ffd700] rounded mr-2"></div>
+          <h3 className="text-lg font-semibold text-[#ffd700]">Your Learning Journey</h3>
+        </div>
+        
+        <div className="p-5 rounded-lg border border-[#ffd700]/20 bg-[#111]/60 shadow-lg">
+          <div className="flex flex-wrap gap-2 relative">
+            {/* Add decorative path connector */}
+            <div className="absolute top-4 left-4 right-4 h-1 bg-gradient-to-r from-[#ffd700]/20 via-[#ffd700]/40 to-[#ffd700]/10"></div>
+            
+            {learningPathSteps.map((step, index) => (
+              <div key={step.id} className="flex flex-col items-center relative z-10 bg-[#111]/90 p-2 rounded-lg border border-[#ffd700]/20">
+                <div className={`w-9 h-9 rounded-full flex items-center justify-center shadow-lg ${
+                  step.completed 
+                    ? 'bg-gradient-to-r from-[#ffd700] to-[#e6c200] text-black' 
+                    : 'bg-[#333] text-[#f5f5f5] border border-[#ffd700]/30'
+                }`}>
+                  {step.completed ? '✓' : step.id}
+                </div>
+                <div className="mt-2 text-center">
+                  <span className={`text-sm font-medium ${
+                    step.completed 
+                      ? 'text-[#ffd700]' 
+                      : 'text-[#f5f5f5]'
+                  }`}>
+                    {step.title}
+                  </span>
+                  
+                  {/* Add status indicator */}
+                  <div className="mt-1 text-xs text-center">
+                    {step.completed ? (
+                      <span className="text-green-400">Completed</span>
+                    ) : index === 0 || learningPathSteps[index-1]?.completed ? (
+                      <span className="text-blue-400">In Progress</span>
+                    ) : (
+                      <span className="text-gray-400">Locked</span>
+                    )}
+                  </div>
+                </div>
+                
+                {index < learningPathSteps.length - 1 && (
+                  <div className="hidden md:block absolute right-[-16px] top-[19px] transform rotate-[-45deg]">
+                    <span className="text-[#ffd700]/50">→</span>
+                  </div>
+                )}
               </div>
-              <div className="ml-2 mr-4">
-                <span className={`text-sm ${step.completed ? 'text-green-700 font-medium' : 'text-gray-600'}`}>
-                  {step.title}
-                </span>
-              </div>
-              {index < learningPathSteps.length - 1 && (
-                <div className={`w-8 h-1 ${index < 2 ? 'bg-green-300' : 'bg-gray-200'}`}></div>
-              )}
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     );
@@ -580,13 +638,37 @@ export function TutorialSystem() {
     
     return `Lesson ${mainNumber}-${subNumber}`;
   };
+  
+  // Get an appropriate icon for each tutorial category
+  const getCategoryIcon = (title: string): string => {
+    const lowerTitle = title.toLowerCase();
+    
+    if (lowerTitle.includes('google ads') || lowerTitle.includes('ads')) {
+      return '📊';
+    } else if (lowerTitle.includes('seo')) {
+      return '🔍';
+    } else if (lowerTitle.includes('analytics')) {
+      return '📈';
+    } else if (lowerTitle.includes('social') || lowerTitle.includes('facebook')) {
+      return '📱';
+    } else if (lowerTitle.includes('content')) {
+      return '📝';
+    } else if (lowerTitle.includes('email')) {
+      return '📧';
+    } else {
+      return '📚';
+    }
+  };
 
-  // Render a tutorial card with consistent styling
+  // Render a tutorial card with consistent styling and gold accents
   const renderTutorialCard = (tutorial: Tutorial) => (
-    <Card key={tutorial.id} className="tutorial-card transition-all duration-300 hover:shadow-lg border-l-4 border-l-blue-500">
+    <Card 
+      key={tutorial.id} 
+      className="tutorial-card transition-all duration-300 hover:shadow-lg border-l-4 border-l-[#ffd700]"
+    >
       <CardHeader className="pb-2">
         <div className="flex justify-between items-start">
-          <div>
+          <div className="flex-1">
             <div className="flex items-center mb-1">
               <span className="bg-blue-100 text-blue-800 px-2 py-1 text-xs rounded-md font-medium mr-2">
                 {formatLessonNumber(tutorial)}
@@ -597,12 +679,18 @@ export function TutorialSystem() {
                 </span>
               )}
             </div>
-            <h3 className="text-lg font-semibold text-blue-800">{tutorial.title}</h3>
-            <p className="text-sm text-gray-500">Level: {tutorial.level}</p>
+            <div className="flex items-center">
+              <span className="text-2xl mr-2">{getCategoryIcon(tutorial.title)}</span>
+              <h3 className="text-lg font-semibold">{tutorial.title}</h3>
+            </div>
+            <p className="text-sm text-gray-500 mt-1">Level: {tutorial.level}</p>
           </div>
         </div>
       </CardHeader>
       <CardContent className="pb-2">
+        {/* Add decorative gold accent line */}
+        <div className="w-full h-px bg-[#ffd700]/30 my-2"></div>
+        
         <div className="flex flex-wrap gap-2 mb-3">
           {tutorial.skillsLearned && tutorial.skillsLearned.slice(0, 3).map((skill, i) => (
             <span key={i} className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
@@ -615,23 +703,33 @@ export function TutorialSystem() {
             </span>
           )}
         </div>
+        
         <p className="text-xs text-gray-500 mb-3 flex items-center">
           <span className="mr-1">⏱️</span> Estimated time: {tutorial.estimatedTime || 60} minutes
         </p>
-        <div className="mt-4">
+        
+        {/* Visual progress indicator */}
+        <div className="relative mt-4">
           <Progress 
             value={progress.includes(tutorial.id) ? 100 : 0} 
             className={progress.includes(tutorial.id) ? "bg-green-100" : "bg-gray-100"}
           />
+          {progress.includes(tutorial.id) && (
+            <span className="absolute right-0 -top-1 text-xs text-green-600">✓ Completed</span>
+          )}
         </div>
       </CardContent>
       <CardFooter>
         <Button
           onClick={() => startTutorial(tutorial)}
-          className="w-full"
+          className="w-full relative overflow-hidden group"
           variant={progress.includes(tutorial.id) ? "outline" : "default"}
         >
-          {progress.includes(tutorial.id) ? 'Review Lesson' : 'Start Lesson'}
+          {/* Add gold shimmer effect on hover */}
+          <span className="absolute inset-0 w-0 bg-[#ffd700]/10 transition-all duration-300 group-hover:w-full"></span>
+          <span className="relative">
+            {progress.includes(tutorial.id) ? 'Review Lesson' : 'Start Lesson'}
+          </span>
         </Button>
       </CardFooter>
     </Card>
@@ -639,35 +737,61 @@ export function TutorialSystem() {
 
   return (
     <div className="p-4">
-      <h2 className="text-2xl font-bold mb-4 text-blue-900">Digital Marketing Learning Center</h2>
+      <div className="py-3 px-1 mb-6 border-b border-[#ffd700]/30">
+        <h2 className="text-2xl font-bold text-[#ffd700] flex items-center">
+          <span className="w-8 h-8 rounded-full bg-[#ffd700] text-black flex items-center justify-center mr-3 text-sm">DZ</span>
+          DIGITAL ZOOM Marketing Academy
+        </h2>
+      </div>
       
       {!currentTutorial ? (
         <div>
           {renderLearningPath()}
           
           <div className="mt-8 mb-6">
-            <Tabs defaultValue="learning-path">
-              <TabsList className="mb-6">
-                <TabsTrigger value="learning-path">Learning Path</TabsTrigger>
-                <TabsTrigger value="categories">By Category</TabsTrigger>
-                <TabsTrigger value="levels">By Level</TabsTrigger>
+            <Tabs defaultValue="learning-path" className="mb-6 pb-6 border-b border-[#ffd700]/20">
+              <TabsList className="w-full p-1 bg-[#333] rounded-lg mb-6 border border-[#ffd700]/20">
+                <TabsTrigger 
+                  value="learning-path" 
+                  className="flex-1 data-[state=active]:bg-[#ffd700]/20 data-[state=active]:text-[#ffd700] data-[state=active]:shadow-[0_0_10px_rgba(255,215,0,0.3)]"
+                >
+                  <span className="mr-2">🛣️</span> Learning Path
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="categories" 
+                  className="flex-1 data-[state=active]:bg-[#ffd700]/20 data-[state=active]:text-[#ffd700] data-[state=active]:shadow-[0_0_10px_rgba(255,215,0,0.3)]"
+                >
+                  <span className="mr-2">📊</span> By Category
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="levels" 
+                  className="flex-1 data-[state=active]:bg-[#ffd700]/20 data-[state=active]:text-[#ffd700] data-[state=active]:shadow-[0_0_10px_rgba(255,215,0,0.3)]"
+                >
+                  <span className="mr-2">🏆</span> By Level
+                </TabsTrigger>
               </TabsList>
               
               {/* Learning Path Tab */}
               <TabsContent value="learning-path">
                 <div className="space-y-6">
-                  <div className="bg-blue-50 p-4 rounded-lg border border-blue-100 mb-6">
-                    <h3 className="text-lg font-medium text-blue-800 mb-2">Recommended Learning Path</h3>
-                    <p className="text-gray-700">Follow this structured learning path for the best results. Start with the foundations and work your way up to advanced topics.</p>
+                  <div className="bg-[#111]/80 p-6 rounded-lg border border-[#ffd700]/20 mb-6 shadow-lg">
+                    <div className="flex items-center mb-2">
+                      <div className="w-1 h-6 bg-[#ffd700] rounded mr-2"></div>
+                      <h3 className="text-lg font-medium text-[#ffd700]">Recommended Learning Path</h3>
+                    </div>
+                    <p className="text-[#f5f5f5]">Follow this structured learning path for the best results. Start with the foundations and work your way up to advanced topics.</p>
                   </div>
                   
                   {/* Foundation */}
-                  <div>
-                    <h3 className="text-xl font-bold text-blue-900 mb-4 flex items-center">
-                      <span className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center mr-2">1</span>
-                      Foundations
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div className="p-2 rounded-lg bg-[#111]/40 shadow-md border border-[#ffd700]/10">
+                    <div className="mb-4 pl-2 border-l-4 border-[#ffd700]">
+                      <h3 className="text-xl font-bold text-[#ffd700] flex items-center">
+                        <span className="w-8 h-8 bg-gradient-to-br from-[#ffd700] to-[#e6c200] text-black rounded-full flex items-center justify-center mr-2 shadow-lg">1</span>
+                        Foundations
+                      </h3>
+                      <p className="ml-10 text-[#f5f5f5]/70 text-sm">Begin your marketing journey with essential concepts</p>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-2">
                       {tutorials
                         .filter(t => t.level.toLowerCase().includes('beginner') || t.title.toLowerCase().includes('foundation'))
                         .slice(0, 3)
@@ -676,12 +800,15 @@ export function TutorialSystem() {
                   </div>
                   
                   {/* Core Skills */}
-                  <div className="mt-8">
-                    <h3 className="text-xl font-bold text-blue-900 mb-4 flex items-center">
-                      <span className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center mr-2">2</span>
-                      Core Skills
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div className="mt-8 p-2 rounded-lg bg-[#111]/40 shadow-md border border-[#ffd700]/10">
+                    <div className="mb-4 pl-2 border-l-4 border-[#ffd700]">
+                      <h3 className="text-xl font-bold text-[#ffd700] flex items-center">
+                        <span className="w-8 h-8 bg-gradient-to-br from-[#ffd700] to-[#e6c200] text-black rounded-full flex items-center justify-center mr-2 shadow-lg">2</span>
+                        Core Skills
+                      </h3>
+                      <p className="ml-10 text-[#f5f5f5]/70 text-sm">Build your expertise with intermediate concepts and techniques</p>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-2">
                       {tutorials
                         .filter(t => !t.level.toLowerCase().includes('beginner') && !t.level.toLowerCase().includes('advanced'))
                         .slice(0, 3)
@@ -690,12 +817,15 @@ export function TutorialSystem() {
                   </div>
                   
                   {/* Advanced Techniques */}
-                  <div className="mt-8">
-                    <h3 className="text-xl font-bold text-blue-900 mb-4 flex items-center">
-                      <span className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center mr-2">3</span>
-                      Advanced Techniques
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div className="mt-8 p-2 rounded-lg bg-[#111]/40 shadow-md border border-[#ffd700]/10">
+                    <div className="mb-4 pl-2 border-l-4 border-[#ffd700]">
+                      <h3 className="text-xl font-bold text-[#ffd700] flex items-center">
+                        <span className="w-8 h-8 bg-gradient-to-br from-[#ffd700] to-[#e6c200] text-black rounded-full flex items-center justify-center mr-2 shadow-lg">3</span>
+                        Advanced Techniques
+                      </h3>
+                      <p className="ml-10 text-[#f5f5f5]/70 text-sm">Master complex strategies and optimization methods</p>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-2">
                       {tutorials
                         .filter(t => t.level.toLowerCase().includes('advanced'))
                         .slice(0, 3)
@@ -710,11 +840,28 @@ export function TutorialSystem() {
                 <div className="space-y-10">
                   {Object.entries(categorizedTutorials).map(([category, tutorialsInCategory]) => 
                     tutorialsInCategory.length > 0 ? (
-                      <div key={category} className="mb-8">
-                        <h3 className="text-xl font-bold text-blue-900 mb-4 pb-2 border-b">
-                          {category}
-                        </h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      <div key={category} className="mb-8 p-2 rounded-lg bg-[#111]/40 shadow-md border border-[#ffd700]/10">
+                        <div className="mb-4 pl-2 border-l-4 border-[#ffd700]">
+                          <h3 className="text-xl font-bold text-[#ffd700] flex items-center">
+                            <span className="text-2xl mr-3">{
+                              category === 'Google Ads' ? '📊' :
+                              category === 'SEO' ? '🔍' :
+                              category === 'Analytics' ? '📈' :
+                              category === 'Social Media' ? '📱' :
+                              category === 'Content Marketing' ? '📝' : '📚'
+                            }</span>
+                            {category}
+                          </h3>
+                          <p className="ml-10 text-[#f5f5f5]/70 text-sm">{
+                            category === 'Google Ads' ? 'Master paid search marketing and audience targeting' :
+                            category === 'SEO' ? 'Learn the art of organic search optimization' :
+                            category === 'Analytics' ? 'Harness the power of data-driven decisions' :
+                            category === 'Social Media' ? 'Engage audiences across social platforms' :
+                            category === 'Content Marketing' ? 'Create compelling content that converts' : 
+                            'Expand your knowledge with specialized topics'
+                          }</p>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-2">
                           {tutorialsInCategory.map(renderTutorialCard)}
                         </div>
                       </div>
@@ -727,12 +874,15 @@ export function TutorialSystem() {
               <TabsContent value="levels">
                 <div className="space-y-10">
                   {/* Beginner Tutorials */}
-                  <div className="mb-8">
-                    <h3 className="text-xl font-bold text-blue-900 mb-4 pb-2 border-b flex items-center">
-                      <span className="bg-green-100 text-green-800 text-xs font-medium px-3 py-1 rounded-full mr-2">Beginner</span>
-                      Start Here
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div className="mb-8 p-2 rounded-lg bg-[#111]/40 shadow-md border border-[#ffd700]/10">
+                    <div className="mb-4 pl-2 border-l-4 border-green-500">
+                      <h3 className="text-xl font-bold text-[#ffd700] flex items-center">
+                        <span className="bg-[#111] text-green-400 text-sm font-medium px-3 py-1 rounded-full mr-2 border border-green-500/30">Beginner</span>
+                        Start Here
+                      </h3>
+                      <p className="ml-10 text-[#f5f5f5]/70 text-sm">Perfect for newcomers to digital marketing - no prior experience required</p>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-2">
                       {tutorials
                         .filter(t => t.level.toLowerCase().includes('beginner'))
                         .map(renderTutorialCard)}
@@ -740,12 +890,15 @@ export function TutorialSystem() {
                   </div>
                   
                   {/* Intermediate Tutorials */}
-                  <div className="mb-8">
-                    <h3 className="text-xl font-bold text-blue-900 mb-4 pb-2 border-b flex items-center">
-                      <span className="bg-blue-100 text-blue-800 text-xs font-medium px-3 py-1 rounded-full mr-2">Intermediate</span>
-                      Build Your Skills
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div className="mb-8 p-2 rounded-lg bg-[#111]/40 shadow-md border border-[#ffd700]/10">
+                    <div className="mb-4 pl-2 border-l-4 border-blue-500">
+                      <h3 className="text-xl font-bold text-[#ffd700] flex items-center">
+                        <span className="bg-[#111] text-blue-400 text-sm font-medium px-3 py-1 rounded-full mr-2 border border-blue-500/30">Intermediate</span>
+                        Build Your Skills
+                      </h3>
+                      <p className="ml-10 text-[#f5f5f5]/70 text-sm">For marketers with basic knowledge ready to enhance their capabilities</p>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-2">
                       {tutorials
                         .filter(t => t.level.toLowerCase().includes('intermediate'))
                         .map(renderTutorialCard)}
@@ -753,12 +906,15 @@ export function TutorialSystem() {
                   </div>
                   
                   {/* Advanced Tutorials */}
-                  <div className="mb-8">
-                    <h3 className="text-xl font-bold text-blue-900 mb-4 pb-2 border-b flex items-center">
-                      <span className="bg-purple-100 text-purple-800 text-xs font-medium px-3 py-1 rounded-full mr-2">Advanced</span>
-                      Master Your Craft
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div className="mb-8 p-2 rounded-lg bg-[#111]/40 shadow-md border border-[#ffd700]/10">
+                    <div className="mb-4 pl-2 border-l-4 border-purple-500">
+                      <h3 className="text-xl font-bold text-[#ffd700] flex items-center">
+                        <span className="bg-[#111] text-purple-400 text-sm font-medium px-3 py-1 rounded-full mr-2 border border-purple-500/30">Advanced</span>
+                        Master Your Craft
+                      </h3>
+                      <p className="ml-10 text-[#f5f5f5]/70 text-sm">Advanced strategies for experienced marketers ready to maximize results</p>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-2">
                       {tutorials
                         .filter(t => t.level.toLowerCase().includes('advanced'))
                         .map(renderTutorialCard)}
@@ -780,10 +936,13 @@ export function TutorialSystem() {
             </div>
           </div>
           
-          <Card className="mb-6">
-            <CardHeader className="pb-2 border-b">
+          <Card className="mb-6 tutorial-card shadow-lg">
+            <CardHeader className="pb-2 border-b border-[#ffd700]/30">
               <div className="flex justify-between items-center">
-                <h3 className="text-xl font-bold">{currentTutorial.title}</h3>
+                <div className="flex items-center">
+                  <span className="text-2xl mr-3">{getCategoryIcon(currentTutorial.title)}</span>
+                  <h3 className="text-xl font-bold">{currentTutorial.title}</h3>
+                </div>
                 <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
                   {currentTutorial.level}
                 </span>
@@ -791,12 +950,18 @@ export function TutorialSystem() {
             </CardHeader>
             
             <CardContent className="pt-6">
+              {/* Gold accent divider */}
+              <div className="w-full h-1 bg-gradient-to-r from-transparent via-[#ffd700]/30 to-transparent mb-6"></div>
+              
               <div className={`tutorial-slide ${slideAnimation}`}>
                 {slides.length > 0 && (
                   <>
                     <div className="mb-4">
-                      <h4 className="text-lg font-semibold mb-2">{slides[currentSlideIndex].title}</h4>
-                      <Separator className="mb-4" />
+                      <div className="flex items-center">
+                        <div className="w-1 h-6 bg-[#ffd700] rounded mr-2"></div>
+                        <h4 className="text-lg font-semibold mb-2">{slides[currentSlideIndex].title}</h4>
+                      </div>
+                      <Separator className="mb-4 mt-2" />
                     </div>
                     
                     <div className="min-h-[400px]">
@@ -807,22 +972,26 @@ export function TutorialSystem() {
               </div>
             </CardContent>
             
-            <CardFooter className="pt-4 border-t flex justify-between">
+            <CardFooter className="pt-4 border-t border-[#ffd700]/30 flex justify-between">
               <Button 
                 onClick={prevSlide} 
                 disabled={currentSlideIndex === 0}
                 variant="outline"
+                className="border-[#ffd700]/50 hover:bg-[#ffd700]/10"
               >
-                Previous
+                ← Previous
               </Button>
               
-              <div className="flex space-x-1">
+              <div className="flex space-x-2 items-center">
                 {slides.map((_, index) => (
                   <div 
                     key={index}
-                    className={`w-2 h-2 rounded-full ${index === currentSlideIndex ? 'bg-blue-500' : 'bg-gray-300'}`}
+                    className={`w-2 h-2 rounded-full cursor-pointer transition-all duration-200 ${
+                      index === currentSlideIndex 
+                        ? 'bg-[#ffd700] w-3 h-3' 
+                        : 'bg-gray-300 hover:bg-[#ffd700]/50'
+                    }`}
                     onClick={() => setCurrentSlideIndex(index)}
-                    style={{ cursor: 'pointer' }}
                   />
                 ))}
               </div>
@@ -831,12 +1000,22 @@ export function TutorialSystem() {
                 <Button 
                   onClick={() => completeTutorial(currentTutorial.id)}
                   disabled={isCompleting}
+                  className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 relative overflow-hidden group"
                 >
-                  {isCompleting ? 'Completing...' : 'Complete Tutorial'}
+                  {/* Add gold shimmer effect on hover */}
+                  <span className="absolute inset-0 w-0 bg-[#ffd700]/10 transition-all duration-300 group-hover:w-full"></span>
+                  <span className="relative flex items-center">
+                    {isCompleting ? 'Completing...' : 'Complete Tutorial ✓'}
+                  </span>
                 </Button>
               ) : (
-                <Button onClick={nextSlide}>
-                  Next
+                <Button 
+                  onClick={nextSlide}
+                  className="relative overflow-hidden group"
+                >
+                  {/* Add gold shimmer effect on hover */}
+                  <span className="absolute inset-0 w-0 bg-[#ffd700]/10 transition-all duration-300 group-hover:w-full"></span>
+                  <span className="relative">Next →</span>
                 </Button>
               )}
             </CardFooter>
@@ -849,32 +1028,37 @@ export function TutorialSystem() {
           )}
           
           <div className="mb-6">
-            <Accordion type="single" collapsible>
-              <AccordionItem value="resources">
-                <AccordionTrigger>Additional Resources</AccordionTrigger>
-                <AccordionContent>
-                  <ul className="space-y-2">
-                    <li className="flex items-center">
-                      <span className="w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mr-2">
+            <Accordion type="single" collapsible className="border border-[#ffd700]/30 rounded-lg overflow-hidden">
+              <AccordionItem value="resources" className="border-b-[#ffd700]/30">
+                <AccordionTrigger className="hover:bg-[#ffd700]/5 py-4 px-2">
+                  <div className="flex items-center">
+                    <span className="text-xl mr-2">📚</span>
+                    <span className="text-[#ffd700] font-medium">Additional Resources</span>
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="bg-[#111]/80 p-4">
+                  <ul className="space-y-3">
+                    <li className="flex items-center p-2 hover:bg-[#222] rounded transition-all">
+                      <span className="w-8 h-8 bg-[#333] text-[#ffd700] rounded-full flex items-center justify-center mr-3 shadow-inner">
                         📄
                       </span>
-                      <a href="#" className="text-blue-600 hover:underline">
+                      <a href="#" className="text-[#f5f5f5] hover:text-[#ffd700] transition-colors">
                         Downloadable PDF Guide
                       </a>
                     </li>
-                    <li className="flex items-center">
-                      <span className="w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mr-2">
+                    <li className="flex items-center p-2 hover:bg-[#222] rounded transition-all">
+                      <span className="w-8 h-8 bg-[#333] text-[#ffd700] rounded-full flex items-center justify-center mr-3 shadow-inner">
                         🎬
                       </span>
-                      <a href="#" className="text-blue-600 hover:underline">
+                      <a href="#" className="text-[#f5f5f5] hover:text-[#ffd700] transition-colors">
                         Supplementary Video Tutorial
                       </a>
                     </li>
-                    <li className="flex items-center">
-                      <span className="w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mr-2">
+                    <li className="flex items-center p-2 hover:bg-[#222] rounded transition-all">
+                      <span className="w-8 h-8 bg-[#333] text-[#ffd700] rounded-full flex items-center justify-center mr-3 shadow-inner">
                         🔗
                       </span>
-                      <a href="#" className="text-blue-600 hover:underline">
+                      <a href="#" className="text-[#f5f5f5] hover:text-[#ffd700] transition-colors">
                         Google Documentation Reference
                       </a>
                     </li>
@@ -883,20 +1067,40 @@ export function TutorialSystem() {
               </AccordionItem>
               
               <AccordionItem value="tasks">
-                <AccordionTrigger>Tutorial Tasks</AccordionTrigger>
-                <AccordionContent>
+                <AccordionTrigger className="hover:bg-[#ffd700]/5 py-4 px-2">
+                  <div className="flex items-center">
+                    <span className="text-xl mr-2">✓</span>
+                    <span className="text-[#ffd700] font-medium">Tutorial Tasks</span>
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent className="bg-[#111]/80 p-4">
                   {currentTutorial.tasks.map((task, index) => (
-                    <div key={task.id} className="mb-4 last:mb-0 p-3 bg-gray-50 rounded-md">
-                      <h5 className="font-medium">Task {index + 1}: {task.description}</h5>
-                      <p className="text-sm text-gray-600 mt-1">Type: {task.type}</p>
-                      
-                      <div className="mt-2">
-                        <h6 className="text-sm font-medium">Requirements:</h6>
-                        <ul className="list-disc ml-5 text-sm">
-                          {task.requirements.map((req, i) => (
-                            <li key={i}>{req}</li>
-                          ))}
-                        </ul>
+                    <div 
+                      key={task.id} 
+                      className="mb-4 last:mb-0 p-4 bg-[#222] rounded-md border border-[#ffd700]/20 hover:border-[#ffd700]/30 transition-all"
+                    >
+                      <div className="flex items-start">
+                        <div className="w-6 h-6 rounded-full bg-[#333] flex items-center justify-center text-[#ffd700] mr-3 mt-1 text-sm">
+                          {index + 1}
+                        </div>
+                        <div className="flex-1">
+                          <h5 className="font-medium text-[#ffd700]">{task.description}</h5>
+                          <div className="inline-block px-2 py-1 bg-[#333] text-[#f5f5f5] rounded text-xs mt-2 mb-3">
+                            {task.type}
+                          </div>
+                          
+                          <div className="mt-3 border-t border-[#ffd700]/10 pt-3">
+                            <h6 className="text-sm font-medium text-[#ffd700]/80 mb-2">Requirements:</h6>
+                            <ul className="space-y-2 text-sm text-[#f5f5f5]">
+                              {task.requirements.map((req, i) => (
+                                <li key={i} className="flex items-start">
+                                  <span className="text-[#ffd700] mr-2">•</span>
+                                  <span>{req}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   ))}

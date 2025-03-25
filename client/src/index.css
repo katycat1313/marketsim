@@ -160,3 +160,122 @@
 .swipe-nav-button.next {
   right: 10px;
 }
+
+/* Enhanced styling with gold accents and reduced whitespace */
+.prose p {
+  margin-bottom: 1rem;
+  line-height: 1.6;
+  color: #f5f5f5;
+}
+
+.prose h1, .prose h2, .prose h3, .prose h4, .prose h5 {
+  font-weight: 600;
+  line-height: 1.3;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+  color: #ffd700; /* Gold color for headings */
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+.prose ul, .prose ol {
+  padding-left: 1.5rem;
+  margin-bottom: 1rem;
+  color: #f5f5f5;
+}
+
+/* Enhanced Card styles with gold accents */
+.tutorial-card {
+  background-color: rgba(30, 30, 30, 0.8);
+  border: 1px solid rgba(255, 215, 0, 0.3); /* Gold border */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.tutorial-card h3 {
+  color: #ffd700 !important; /* Gold color for card titles */
+}
+
+/* Fix for the white task box */
+.bg-blue-50 {
+  background-color: rgba(30, 30, 30, 0.9) !important;
+  border: 1px solid rgba(255, 215, 0, 0.3) !important;
+  padding: 1.5rem !important;
+  color: #f5f5f5 !important;
+}
+
+/* Fix for the excessive whitespace */
+.space-y-6 > div {
+  padding: 0.75rem !important;
+  margin-bottom: 0.75rem !important;
+}
+
+/* Style the expandable sections */
+.expandable-item-header {
+  background-color: #333333 !important;
+  border-left: 3px solid #ffd700; /* Gold accent */
+  color: #ffffff !important;
+}
+
+.expandable-item-content {
+  background-color: #1e1e1e !important;
+  color: #f5f5f5 !important;
+}
+
+.swipeable-container {
+  background-color: #1e1e1e !important;
+  border: 1px solid rgba(255, 215, 0, 0.3); /* Gold border */
+}
+
+.swipe-dot.active {
+  background-color: #ffd700 !important; /* Gold active dot */
+}
+
+.swipe-instruction {
+  color: #ffd700 !important; /* Gold instruction text */
+}
+
+/* Make text in tutorial content more visible */
+.text-gray-700, .text-gray-600 {
+  color: #f5f5f5 !important;
+}
+
+/* Highlight important content */
+strong, b {
+  color: #ffd700 !important;
+  font-weight: 600;
+}
+
+/* Add gold accents to the UI */
+.font-semibold {
+  color: #ffd700 !important;
+}
+
+/* Make tutorial card titles more visible */
+.tutorial-card .text-blue-800 {
+  color: #ffd700 !important;
+}
+
+/* Add styling to the beginner badge */
+.bg-blue-100 {
+  background-color: rgba(20, 20, 20, 0.7) !important;
+  border: 1px solid #ffd700 !important;
+}
+
+.text-blue-800 {
+  color: #ffd700 !important;
+}
+
+/* Add visual highlights */
+h1, h2, h3 {
+  position: relative;
+  padding-left: 0.5rem;
+}
+
+h1::before, h2::before, h3::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 3px;
+  background-color: #ffd700;
+}
