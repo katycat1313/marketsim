@@ -62,7 +62,8 @@ export default function AIAssistant({
         timestamp: new Date(),
       },
     ]);
-  }, [initialContext]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only run on mount
 
   // Auto-scroll to bottom when messages change
   useEffect(() => {

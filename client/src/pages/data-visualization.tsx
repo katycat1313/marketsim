@@ -60,6 +60,16 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
+import { Share2, Download, Bookmark, Award, FileText, BarChart2, Star } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+} from "@/components/ui/dialog";
 
 // Mock data sets - these would be fetched from the server in production
 const SAMPLE_DATASETS = {
@@ -284,6 +294,18 @@ interface SimulationAttempt {
   score?: number;
   feedback?: string[];
   completedAt?: string;
+  addedToPortfolio?: boolean;
+}
+
+interface PortfolioEntry {
+  id: string;
+  title: string;
+  description: string;
+  charts: ChartConfig[];
+  recommendations: Recommendation[];
+  createdAt: string;
+  skillsShown: string[];
+  visibility: 'private' | 'public';
 }
 
 export default function DataVisualizationPage() {
@@ -293,6 +315,13 @@ export default function DataVisualizationPage() {
   const [recommendations, setRecommendations] = useState<Recommendation[]>([{ title: "", description: "", expectedImpact: "" }]);
   const [currentDataset, setCurrentDataset] = useState<string>("ecommerce");
   const [attemptResult, setAttemptResult] = useState<{score: number, feedback: string[]}>({ score: 0, feedback: [] });
+  const [showPortfolioDialog, setShowPortfolioDialog] = useState(false);
+  const [portfolioEntry, setPortfolioEntry] = useState<Partial<PortfolioEntry>>({
+    title: "",
+    description: "",
+    skillsShown: [],
+    visibility: "private"
+  });
   const { toast } = useToast();
 
   // Fetch challenges
@@ -456,6 +485,49 @@ export default function DataVisualizationPage() {
     setCurrentStep("instructions");
     setCharts([]);
     setRecommendations([{ title: "", description: "", expectedImpact: "" }]);
+  };
+  
+  const handleOpenPortfolioDialog = () => {
+    if (currentChallenge) {
+      setPortfolioEntry({
+        ...portfolioEntry,
+        title: `${currentChallenge.title} Analysis`,
+        description: `My data visualization analysis of ${currentChallenge.title.toLowerCase()}`
+      });
+    }
+    setShowPortfolioDialog(true);
+  };
+  
+  const handleSaveToPortfolio = async () => {
+    if (!portfolioEntry.title) {
+      toast({
+        title: "Missing information",
+        description: "Please provide a title for your portfolio entry",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    // In a real implementation, this would be sent to the server
+    const newPortfolioEntry: PortfolioEntry = {
+      id: `portfolio-${Date.now()}`,
+      title: portfolioEntry.title || "",
+      description: portfolioEntry.description || "",
+      charts: charts,
+      recommendations: recommendations,
+      createdAt: new Date().toISOString(),
+      skillsShown: portfolioEntry.skillsShown || [],
+      visibility: portfolioEntry.visibility as 'private' | 'public'
+    };
+    
+    // Here we would save to the server API
+    // For now, we'll just show success toast
+    toast({
+      title: "Added to portfolio!",
+      description: "Your analysis has been saved to your portfolio and can be shared with potential employers.",
+    });
+    
+    setShowPortfolioDialog(false);
   };
 
   const currentChallenge = activeChallenge ? challenges.find(c => c.id === activeChallenge) : null;
