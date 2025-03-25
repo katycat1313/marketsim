@@ -34,7 +34,19 @@ export function TutorialSystem() {
 
   const fetchTutorials = async () => {
     try {
-      const response = await fetch('/api/tutorials');
+      const response = await fetch('/api/tutorials', {
+        credentials: 'include', // Include cookies for session authentication
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (!response.ok) {
+        console.log(`Server responded with status: ${response.status}`);
+        setTutorials([]);
+        return;
+      }
+      
       const data = await response.json();
       
       // Check if data is an array before setting it
@@ -53,7 +65,23 @@ export function TutorialSystem() {
 
   const fetchProgress = async () => {
     try {
-      const response = await fetch('/api/tutorials/progress');
+      const response = await fetch('/api/tutorials/progress', {
+        credentials: 'include', // Include cookies for session authentication
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (response.status === 401) {
+        console.log('User not authenticated. Can\'t fetch tutorial progress.');
+        setProgress([]);
+        return;
+      }
+      
+      if (!response.ok) {
+        throw new Error(`Server responded with status: ${response.status}`);
+      }
+      
       const data = await response.json();
       
       // Check if data is an array before setting it
@@ -86,8 +114,14 @@ export function TutorialSystem() {
       const response = await fetch('/api/tutorials/complete', {
         method: 'POST',
         body: JSON.stringify({ tutorialId }),
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include' // Include cookies for session authentication
       });
+      
+      if (response.status === 401) {
+        setCompletionError('Authentication required. Please log in to complete tutorials.');
+        return;
+      }
       
       if (!response.ok) {
         const errorData = await response.json();
