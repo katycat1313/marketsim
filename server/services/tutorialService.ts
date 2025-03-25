@@ -568,11 +568,15 @@ export class TutorialService {
         return []; // No tutorials completed yet
       }
       
-      // Query for completed tutorials - safer approach, directly casting the userId value
-      const result = await db.execute(`
-        SELECT tutorial_id FROM user_completed_tutorials
-        WHERE user_id = ${userId};
-      `);
+      // Use parameterized query to prevent SQL injection and ensure correct type handling
+      const result = await db.execute({
+        text: `SELECT tutorial_id FROM user_completed_tutorials
+               WHERE user_id = $1;`,
+        values: [userId]
+      });
+      
+      console.log(`Retrieved ${result.rows.length} completed tutorials for user ${userId}:`, 
+                  result.rows.map(row => row.tutorial_id));
       
       // Extract tutorial IDs from the result
       return result.rows.map(row => parseInt(row.tutorial_id));
@@ -599,12 +603,13 @@ export class TutorialService {
         );
       `);
       
-      // Insert the completed tutorial record - using direct values instead of parameters
-      await db.execute(`
-        INSERT INTO user_completed_tutorials (user_id, tutorial_id)
-        VALUES (${userId}, ${tutorialId})
-        ON CONFLICT (user_id, tutorial_id) DO NOTHING;
-      `);
+      // Use parameterized query to prevent SQL injection and ensure correct type handling
+      await db.execute({
+        text: `INSERT INTO user_completed_tutorials (user_id, tutorial_id)
+               VALUES ($1, $2)
+               ON CONFLICT (user_id, tutorial_id) DO NOTHING;`,
+        values: [userId, tutorialId]
+      });
       
       console.log(`User ${userId} completed tutorial ${tutorialId}`);
       
