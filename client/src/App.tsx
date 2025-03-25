@@ -6,6 +6,7 @@ import { Toaster } from "@/components/ui/toaster";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/home";
 import PersonaBuilder from "@/pages/persona-builder";
+import PersonaBuilderTemplate from "@/pages/persona-builder-template";
 import CampaignCreator from "@/pages/campaign-creator";
 import Dashboard from "@/pages/dashboard";
 import ApiSettings from "@/pages/api-settings";
@@ -63,6 +64,12 @@ function NavBar() {
               <div className={`flex items-center gap-1 text-sm cursor-pointer ${location === '/persona-builder' ? 'text-primary font-medium' : 'text-muted-foreground'}`}>
                 <Target className="h-4 w-4" />
                 <span>Personas</span>
+              </div>
+            </Link>
+            <Link href="/persona-builder-template">
+              <div className={`flex items-center gap-1 text-sm cursor-pointer ${location === '/persona-builder-template' ? 'text-primary font-medium' : 'text-muted-foreground'}`}>
+                <Users className="h-4 w-4" />
+                <span>Persona Template</span>
               </div>
             </Link>
             <Link href="/campaign-creator">
@@ -152,6 +159,7 @@ function Router() {
         <Switch>
           <Route path="/" component={Home} />
           <Route path="/persona-builder" component={PersonaBuilder} />
+          <Route path="/persona-builder-template" component={PersonaBuilderTemplate} />
           <Route path="/campaign-creator" component={CampaignCreator} />
           <Route path="/dashboard" component={Dashboard} />
           <Route path="/api-settings" component={ApiSettings} />
