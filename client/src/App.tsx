@@ -63,11 +63,16 @@ import {
 function SideNav() {
   const [location] = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
 
   const isActive = (path: string) => {
     if (path === '/' && location === '/') return true;
     if (path !== '/' && location.startsWith(path)) return true;
     return false;
+  };
+
+  const toggleDropdown = (dropdown: string) => {
+    setActiveDropdown(activeDropdown === dropdown ? null : dropdown);
   };
 
   return (
@@ -144,51 +149,102 @@ function SideNav() {
               <div className="text-xs uppercase text-muted-foreground font-semibold tracking-wider pl-2">
                 LEARN
               </div>
-              <div className="space-y-1 pl-2">
-                <Link href="/tutorials" onClick={() => setIsMobileMenuOpen(false)}>
-                  <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
-                    ${isActive('/tutorials') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
+              
+              {/* Tutorials with dropdown */}
+              <div className="pl-2">
+                <button 
+                  onClick={() => toggleDropdown('tutorials')}
+                  className={`w-full flex items-center justify-between gap-3 p-2 rounded-md transition-colors
+                    ${isActive('/tutorials') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}
+                >
+                  <div className="flex items-center gap-3">
                     <GraduationCap className="h-5 w-5" />
                     <span>Tutorials</span>
                   </div>
-                </Link>
+                  <ChevronDown className={`h-4 w-4 transition-transform ${activeDropdown === 'tutorials' ? 'rotate-180' : ''}`} />
+                </button>
+                
+                {activeDropdown === 'tutorials' && (
+                  <div className="ml-7 mt-1 space-y-1 border-l pl-3">
+                    <Link href="/tutorials?topic=google-ads" onClick={() => setIsMobileMenuOpen(false)}>
+                      <div className={`flex items-center gap-2 p-1.5 rounded-md transition-colors text-sm
+                        ${isActive('/tutorials') && location.includes('google-ads') ? 'text-primary font-medium' : 'text-muted-foreground hover:text-foreground'}`}>
+                        <span>Google Ads</span>
+                      </div>
+                    </Link>
+                    <Link href="/tutorials?topic=seo" onClick={() => setIsMobileMenuOpen(false)}>
+                      <div className={`flex items-center gap-2 p-1.5 rounded-md transition-colors text-sm
+                        ${isActive('/tutorials') && location.includes('seo') ? 'text-primary font-medium' : 'text-muted-foreground hover:text-foreground'}`}>
+                        <span>SEO</span>
+                      </div>
+                    </Link>
+                    <Link href="/tutorials?topic=analytics" onClick={() => setIsMobileMenuOpen(false)}>
+                      <div className={`flex items-center gap-2 p-1.5 rounded-md transition-colors text-sm
+                        ${isActive('/tutorials') && location.includes('analytics') ? 'text-primary font-medium' : 'text-muted-foreground hover:text-foreground'}`}>
+                        <span>Analytics</span>
+                      </div>
+                    </Link>
+                  </div>
+                )}
+              </div>
+              
+              {/* Quiz */}
+              <div className="pl-2">
                 <Link href="/seo-quiz" onClick={() => setIsMobileMenuOpen(false)}>
                   <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
                     ${isActive('/seo-quiz') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
                     <BookOpen className="h-5 w-5" />
-                    <span>SEO Quiz</span>
+                    <span>Quizzes</span>
                   </div>
                 </Link>
               </div>
             </div>
 
-            {/* Practice Section */}
+            {/* Simulations Section */}
             <div className="space-y-2">
               <div className="text-xs uppercase text-muted-foreground font-semibold tracking-wider pl-2">
-                PRACTICE
+                SIMULATIONS
               </div>
-              <div className="space-y-1 pl-2">
-                <Link href="/seo-simulations" onClick={() => setIsMobileMenuOpen(false)}>
-                  <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
-                    ${isActive('/seo-simulation') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
-                    <Search className="h-5 w-5" />
-                    <span>SEO Practice</span>
+
+              {/* Simulations with dropdown */}
+              <div className="pl-2">
+                <button 
+                  onClick={() => toggleDropdown('simulations')}
+                  className={`w-full flex items-center justify-between gap-3 p-2 rounded-md transition-colors
+                    ${(isActive('/seo-simulation') || isActive('/ad-simulation') || isActive('/data-visualization')) ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}
+                >
+                  <div className="flex items-center gap-3">
+                    <Monitor className="h-5 w-5" />
+                    <span>All Simulations</span>
                   </div>
-                </Link>
-                <Link href="/ad-simulations" onClick={() => setIsMobileMenuOpen(false)}>
-                  <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
-                    ${isActive('/ad-simulation') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
-                    <MousePointer className="h-5 w-5" />
-                    <span>Ad Platforms</span>
+                  <ChevronDown className={`h-4 w-4 transition-transform ${activeDropdown === 'simulations' ? 'rotate-180' : ''}`} />
+                </button>
+                
+                {activeDropdown === 'simulations' && (
+                  <div className="ml-7 mt-1 space-y-1 border-l pl-3">
+                    <Link href="/seo-simulations" onClick={() => setIsMobileMenuOpen(false)}>
+                      <div className={`flex items-center gap-2 p-1.5 rounded-md transition-colors text-sm
+                        ${isActive('/seo-simulation') ? 'text-primary font-medium' : 'text-muted-foreground hover:text-foreground'}`}>
+                        <Search className="h-4 w-4" />
+                        <span>SEO Simulations</span>
+                      </div>
+                    </Link>
+                    <Link href="/ad-simulations" onClick={() => setIsMobileMenuOpen(false)}>
+                      <div className={`flex items-center gap-2 p-1.5 rounded-md transition-colors text-sm
+                        ${isActive('/ad-simulation') ? 'text-primary font-medium' : 'text-muted-foreground hover:text-foreground'}`}>
+                        <MousePointer className="h-4 w-4" />
+                        <span>Ad Platforms</span>
+                      </div>
+                    </Link>
+                    <Link href="/data-visualization" onClick={() => setIsMobileMenuOpen(false)}>
+                      <div className={`flex items-center gap-2 p-1.5 rounded-md transition-colors text-sm
+                        ${isActive('/data-visualization') ? 'text-primary font-medium' : 'text-muted-foreground hover:text-foreground'}`}>
+                        <LineChart className="h-4 w-4" />
+                        <span>Data Visualization</span>
+                      </div>
+                    </Link>
                   </div>
-                </Link>
-                <Link href="/data-visualization" onClick={() => setIsMobileMenuOpen(false)}>
-                  <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
-                    ${isActive('/data-visualization') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
-                    <LineChart className="h-5 w-5" />
-                    <span>Data Visualization</span>
-                  </div>
-                </Link>
+                )}
               </div>
             </div>
 
@@ -198,18 +254,11 @@ function SideNav() {
                 CREATE
               </div>
               <div className="space-y-1 pl-2">
-                <Link href="/persona-builder" onClick={() => setIsMobileMenuOpen(false)}>
-                  <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
-                    ${isActive('/persona-builder') && !isActive('/persona-builder-template') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
-                    <Target className="h-5 w-5" />
-                    <span>Personas</span>
-                  </div>
-                </Link>
                 <Link href="/persona-builder-template" onClick={() => setIsMobileMenuOpen(false)}>
                   <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
                     ${isActive('/persona-builder-template') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
                     <Users className="h-5 w-5" />
-                    <span>Persona Templates</span>
+                    <span>Customer Personas</span>
                   </div>
                 </Link>
                 <Link href="/campaign-creator" onClick={() => setIsMobileMenuOpen(false)}>
@@ -217,6 +266,22 @@ function SideNav() {
                     ${isActive('/campaign-creator') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
                     <Activity className="h-5 w-5" />
                     <span>Campaigns</span>
+                  </div>
+                </Link>
+              </div>
+            </div>
+
+            {/* Portfolio Section */}
+            <div className="space-y-2">
+              <div className="text-xs uppercase text-muted-foreground font-semibold tracking-wider pl-2">
+                PORTFOLIO
+              </div>
+              <div className="space-y-1 pl-2">
+                <Link href="/portfolio" onClick={() => setIsMobileMenuOpen(false)}>
+                  <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
+                    ${isActive('/portfolio') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
+                    <Layers className="h-5 w-5" />
+                    <span>Portfolio Management</span>
                   </div>
                 </Link>
               </div>
@@ -240,6 +305,22 @@ function SideNav() {
                     ${isActive('/community') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
                     <MessageSquare className="h-5 w-5" />
                     <span>Community</span>
+                  </div>
+                </Link>
+              </div>
+            </div>
+
+            {/* Level & Achievements */}
+            <div className="space-y-2">
+              <div className="text-xs uppercase text-muted-foreground font-semibold tracking-wider pl-2">
+                PROGRESS
+              </div>
+              <div className="space-y-1 pl-2">
+                <Link href="/level" onClick={() => setIsMobileMenuOpen(false)}>
+                  <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
+                    ${isActive('/level') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
+                    <BarChart2 className="h-5 w-5" />
+                    <span>Level & Skills</span>
                   </div>
                 </Link>
                 <Link href="/achievements" onClick={() => setIsMobileMenuOpen(false)}>
@@ -369,10 +450,25 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <Router />
+      
+      {/* AI Assistant */}
       <AIAssistant 
         isExpanded={isAIAssistantExpanded} 
         onToggleExpand={toggleAIAssistant}
       />
+      
+      {/* Floating AI Assistant Button */}
+      <button
+        className="fixed bottom-6 right-6 p-3 rounded-full shadow-lg bg-primary text-white z-50 flex items-center justify-center hover:bg-primary/90 transition-all duration-300 transform hover:scale-105"
+        onClick={toggleAIAssistant}
+      >
+        {isAIAssistantExpanded ? (
+          <X className="h-6 w-6" />
+        ) : (
+          <MessageSquare className="h-6 w-6" />
+        )}
+      </button>
+      
       <Toaster />
     </QueryClientProvider>
   );
