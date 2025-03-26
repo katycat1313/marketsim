@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import ErrorBoundary from '../components/ErrorBoundary';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
+import TutorialContentRenderer from '../components/TutorialContentRenderer';
 
 // Tutorial interface
 interface Tutorial {
@@ -549,7 +550,7 @@ export default function TutorialsPage() {
                 </span>
               </div>
               <div className="prose prose-invert max-w-none mt-6">
-                <div dangerouslySetInnerHTML={{ __html: currentTutorial.content.replace(/\n/g, '<br />') }} />
+                <TutorialContentRenderer content={currentTutorial.content} />
               </div>
               
               {currentTutorial.tasks && currentTutorial.tasks.length > 0 && (
