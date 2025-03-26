@@ -59,6 +59,8 @@ export default function TutorialsPage() {
   const fetchTutorials = async () => {
     try {
       setLoading(true);
+      console.log('Fetching tutorials...');
+      
       const response = await fetch('/api/tutorials', {
         credentials: 'include',
         headers: {
@@ -66,22 +68,42 @@ export default function TutorialsPage() {
         }
       });
       
+      console.log('Tutorial API response status:', response.status);
+      
       if (!response.ok) {
         throw new Error(`Server responded with status: ${response.status}`);
       }
       
       const data = await response.json();
+      console.log(`Retrieved ${data.length} tutorials from API`);
       
       if (Array.isArray(data)) {
+        // Make sure we have at least some tutorials
+        if (data.length === 0) {
+          console.warn('No tutorials were returned from the API');
+          setError('No tutorials found. Please check back later.');
+          setTutorials([]);
+          return;
+        }
+        
         // Sort tutorials by chapter number and subchapter number
         const sortedTutorials = sortTutorialsByChapter(data);
+        console.log(`Sorted ${sortedTutorials.length} tutorials by chapter`);
+        
+        // Log first few tutorials for debugging
+        sortedTutorials.slice(0, 3).forEach((t, i) => {
+          console.log(`Tutorial ${i + 1}:`, t.id, t.title);
+        });
+        
         setTutorials(sortedTutorials);
       } else {
+        console.error('API response is not an array:', data);
         throw new Error('Tutorials API did not return an array');
       }
     } catch (error) {
       console.error('Error fetching tutorials:', error);
       setError(error instanceof Error ? error.message : 'Failed to load tutorials');
+      setTutorials([]); // Set empty array to avoid undefined errors
     } finally {
       setLoading(false);
     }
@@ -120,53 +142,103 @@ export default function TutorialsPage() {
     }
   };
 
+  // Helper function to extract a chapter number from a tutorial
+  const extractChapterNumber = (tutorial: Tutorial): number => {
+    const titleLower = tutorial.title.toLowerCase();
+    const contentLower = tutorial.content.toLowerCase();
+    
+    // Try to extract chapter numbers from tutorial titles or content
+    const titleMatch = titleLower.match(/chapter\s*(\d+)[\-\.]?(\d+)?/i);
+    const contentMatch = contentLower.match(/chapter\s*(\d+)[\-\.]?(\d+)?/i);
+    
+    if (titleMatch) {
+      return parseInt(titleMatch[1]);
+    }
+    
+    if (contentMatch) {
+      return parseInt(contentMatch[1]);
+    }
+    
+    // If no explicit chapter number, use content-based heuristics to assign chapters
+    if (titleLower.includes('seo') || contentLower.includes('search engine optimization')) {
+      return 7; // SEO belongs to Chapter 7
+    } else if (titleLower.includes('troubleshoot') || contentLower.includes('troubleshoot')) {
+      return 8; // Troubleshooting to Chapter 8
+    } else if (titleLower.includes('analytics') || 
+               titleLower.includes('data') || 
+               contentLower.includes('analytics') || 
+               contentLower.includes('measurement')) {
+      return 5; // Analytics to Chapter 5
+    } else if (titleLower.includes('email') || 
+               titleLower.includes('social media') || 
+               contentLower.includes('email marketing') || 
+               contentLower.includes('social media')) {
+      return 6; // Marketing Channels to Chapter 6
+    } else if (titleLower.includes('advanced') && 
+              (titleLower.includes('google ads') || titleLower.includes('campaign'))) {
+      return 3; // Advanced Google Ads to Chapter 3
+    } else if (titleLower.includes('google ads') || 
+               titleLower.includes('campaign') || 
+               contentLower.includes('google ads')) {
+      return 2; // Google Ads Fundamentals to Chapter 2
+    } else if (titleLower.includes('goal') || 
+               titleLower.includes('testing') || 
+               contentLower.includes('goal setting') || 
+               contentLower.includes('testing methodologies')) {
+      return 4; // Marketing Objectives to Chapter 4
+    }
+    
+    // Default to Introduction chapter if no specific category is found
+    return 1;
+  };
+
   // Function to sort tutorials by chapter and subchapter
   const sortTutorialsByChapter = (tutorials: Tutorial[]): Tutorial[] => {
     return tutorials.sort((a, b) => {
-      // Extract chapter numbers from titles
+      // First sort by chapter number
+      const aChapter = extractChapterNumber(a);
+      const bChapter = extractChapterNumber(b);
+      
+      if (aChapter !== bChapter) {
+        return aChapter - bChapter;
+      }
+      
+      // If same chapter, try to extract subchapter numbers
       const aTitle = a.title.toLowerCase();
       const bTitle = b.title.toLowerCase();
       
-      // Try to extract chapter numbers from tutorial titles
-      const aMatch = aTitle.match(/chapter\s*(\d+)[\-\.]?(\d+)?/i) || 
-                     a.content.toLowerCase().match(/chapter\s*(\d+)[\-\.]?(\d+)?/i);
-      const bMatch = bTitle.match(/chapter\s*(\d+)[\-\.]?(\d+)?/i) ||
-                     b.content.toLowerCase().match(/chapter\s*(\d+)[\-\.]?(\d+)?/i);
+      const aMatch = aTitle.match(/chapter\s*\d+[\-\.](\d+)/i) || 
+                     a.content.toLowerCase().match(/chapter\s*\d+[\-\.](\d+)/i);
+      const bMatch = bTitle.match(/chapter\s*\d+[\-\.](\d+)/i) ||
+                     b.content.toLowerCase().match(/chapter\s*\d+[\-\.](\d+)/i);
       
-      // If both have chapter numbers, compare them
+      // If both have subchapter numbers, compare them
       if (aMatch && bMatch) {
-        const aChapter = parseInt(aMatch[1]);
-        const bChapter = parseInt(bMatch[1]);
-        
-        if (aChapter !== bChapter) {
-          return aChapter - bChapter;
-        }
-        
-        // If same chapter, compare subchapter
-        const aSubChapter = aMatch[2] ? parseInt(aMatch[2]) : 0;
-        const bSubChapter = bMatch[2] ? parseInt(bMatch[2]) : 0;
-        
+        const aSubChapter = parseInt(aMatch[1]);
+        const bSubChapter = parseInt(bMatch[1]);
         return aSubChapter - bSubChapter;
       }
       
-      // If one has chapter number and the other doesn't, prioritize the one with chapter number
+      // If one has subchapter number and the other doesn't, prioritize the one with subchapter number
       if (aMatch) return -1;
       if (bMatch) return 1;
       
-      // If neither has chapter number, sort by ID
+      // If neither has subchapter number, sort by ID
       return a.id - b.id;
     });
   };
 
   // Organize tutorials into structured chapters
   const getChapters = (): Chapter[] => {
+    console.log('Generating chapters structure...');
+    
     // Define chapter structure with consistent images and descriptions
     const chapterStructure: Chapter[] = [
       {
         number: 1,
         title: "Introduction to Digital Marketing",
         description: "Basic concepts and fundamentals of digital marketing for beginners",
-        image: "/images/smallbusinessspelled.jpeg",
+        image: "attached_assets/smallbusinessspelled.jpeg",
         icon: <BookOpen className="h-6 w-6 text-blue-500" />,
         tutorials: []
       },
@@ -174,7 +246,7 @@ export default function TutorialsPage() {
         number: 2,
         title: "Google Ads Fundamentals",
         description: "Core concepts of Google Ads platform and campaign types",
-        image: "/images/ad-image.jpeg",
+        image: "attached_assets/ad-image.jpeg",
         icon: <Megaphone className="h-6 w-6 text-red-500" />,
         tutorials: []
       },
@@ -182,7 +254,7 @@ export default function TutorialsPage() {
         number: 3,
         title: "Advanced Google Ads",
         description: "Advanced strategies and optimization techniques for Google Ads",
-        image: "/images/womanwork.jpeg",
+        image: "attached_assets/womanwork.jpeg",
         icon: <Globe className="h-6 w-6 text-green-500" />,
         tutorials: []
       },
@@ -190,7 +262,7 @@ export default function TutorialsPage() {
         number: 4,
         title: "Marketing Objectives & Testing",
         description: "Setting goals, testing methodologies, and strategic planning",
-        image: "/images/small-business.jpeg",
+        image: "attached_assets/small business.jpeg",
         icon: <FileText className="h-6 w-6 text-purple-500" />,
         tutorials: []
       },
@@ -198,7 +270,7 @@ export default function TutorialsPage() {
         number: 5,
         title: "Analytics & Measurement",
         description: "Data analytics, performance tracking, and insights interpretation",
-        image: "/images/group-thinking.jpeg",
+        image: "attached_assets/group-thinking.jpeg",
         icon: <BarChart3 className="h-6 w-6 text-yellow-500" />,
         tutorials: []
       },
@@ -206,7 +278,7 @@ export default function TutorialsPage() {
         number: 6,
         title: "Marketing Channels & Strategies",
         description: "Email marketing, social media, and channel integration",
-        image: "/images/wiered-headshot.jpeg",
+        image: "attached_assets/wiered-headshot.jpeg",
         icon: <Megaphone className="h-6 w-6 text-indigo-500" />,
         tutorials: []
       },
@@ -214,7 +286,7 @@ export default function TutorialsPage() {
         number: 7,
         title: "SEO Mastery",
         description: "Search engine optimization from basic to advanced techniques",
-        image: "/images/seo-visual.jpeg",
+        image: "attached_assets/seo-visual.jpeg", 
         icon: <Search className="h-6 w-6 text-teal-500" />,
         tutorials: []
       },
@@ -222,41 +294,61 @@ export default function TutorialsPage() {
         number: 8,
         title: "Troubleshooting & Best Practices",
         description: "Problem-solving techniques and industry best practices",
-        image: "/images/cart-with-packages.jpeg",
+        image: "attached_assets/cart-with-packages.jpeg",
         icon: <HelpCircle className="h-6 w-6 text-orange-500" />,
         tutorials: []
       }
     ];
     
-    // Sort tutorials into relevant chapters
+    // Sort all tutorials first by matching chapter number and title patterns
     tutorials.forEach(tutorial => {
-      // Try to extract chapter number
-      const match = tutorial.title.toLowerCase().match(/chapter\s*(\d+)/i) || 
-                   tutorial.content.toLowerCase().match(/chapter\s*(\d+)/i);
+      // Try different pattern matches to categorize tutorials
+      const titleLower = tutorial.title.toLowerCase();
+      const contentLower = tutorial.content.toLowerCase();
       
-      if (match) {
-        const chapterNum = parseInt(match[1]);
+      // First try to match chapter patterns in title or content
+      const chapterMatch = titleLower.match(/chapter\s*(\d+)[\-\.]?(\d+)?/i) || 
+                         contentLower.match(/chapter\s*(\d+)[\-\.]?(\d+)?/i);
+      
+      if (chapterMatch) {
+        const chapterNum = parseInt(chapterMatch[1]);
         const chapter = chapterStructure.find(c => c.number === chapterNum);
         if (chapter) {
           chapter.tutorials.push(tutorial);
-        } else {
-          // If chapter not defined in structure, put in "Other"
-          chapterStructure[0].tutorials.push(tutorial);
-        }
-      } else {
-        // Category without explicit chapter number
-        if (tutorial.title.toLowerCase().includes('seo')) {
-          chapterStructure[6].tutorials.push(tutorial); // SEO
-        } else if (tutorial.title.toLowerCase().includes('google ads') || tutorial.title.toLowerCase().includes('campaign')) {
-          chapterStructure[1].tutorials.push(tutorial); // Google Ads
-        } else if (tutorial.title.toLowerCase().includes('analytics') || tutorial.title.toLowerCase().includes('data')) {
-          chapterStructure[4].tutorials.push(tutorial); // Analytics
-        } else if (tutorial.title.toLowerCase().includes('troubleshoot')) {
-          chapterStructure[7].tutorials.push(tutorial); // Troubleshooting
-        } else {
-          chapterStructure[0].tutorials.push(tutorial); // Default to Introduction
+          return; // Skip further checks after assigning to chapter
         }
       }
+      
+      // If no chapter explicit match, use content-based heuristics
+      if (titleLower.includes('seo') || contentLower.includes('search engine optimization')) {
+        chapterStructure[6].tutorials.push(tutorial); // SEO - Chapter 7
+      } else if (titleLower.includes('troubleshoot') || contentLower.includes('troubleshoot')) {
+        chapterStructure[7].tutorials.push(tutorial); // Troubleshooting - Chapter 8
+      } else if (titleLower.includes('analytics') || titleLower.includes('data') || 
+                 contentLower.includes('analytics') || contentLower.includes('measurement')) {
+        chapterStructure[4].tutorials.push(tutorial); // Analytics - Chapter 5
+      } else if (titleLower.includes('email') || titleLower.includes('social media') || 
+                 contentLower.includes('email marketing') || contentLower.includes('social media')) {
+        chapterStructure[5].tutorials.push(tutorial); // Marketing Channels - Chapter 6
+      } else if (titleLower.includes('advanced') && 
+                (titleLower.includes('google ads') || titleLower.includes('campaign'))) {
+        chapterStructure[2].tutorials.push(tutorial); // Advanced Google Ads - Chapter 3
+      } else if (titleLower.includes('google ads') || titleLower.includes('campaign') || 
+                 contentLower.includes('google ads')) {
+        chapterStructure[1].tutorials.push(tutorial); // Google Ads Fundamentals - Chapter 2
+      } else if (titleLower.includes('goal') || titleLower.includes('testing') || 
+                 contentLower.includes('goal setting') || contentLower.includes('testing methodologies')) {
+        chapterStructure[3].tutorials.push(tutorial); // Marketing Objectives - Chapter 4
+      } else {
+        // Default to Introduction chapter for unmatched content
+        chapterStructure[0].tutorials.push(tutorial);
+      }
+    });
+    
+    // Add console debug to check tutorial distribution
+    console.log('Tutorial distribution by chapter:');
+    chapterStructure.forEach(chapter => {
+      console.log(`Chapter ${chapter.number}: ${chapter.tutorials.length} tutorials`);
     });
     
     // Filter out empty chapters and sort tutorials within each chapter
