@@ -1,6 +1,4 @@
-export const content = `# Welcome to Google Ads Mastery: From Setup to Success!
-
-## Course Introduction: Your Path to Digital Advertising Excellence
+export const content = `### Course Introduction: Your Path to Digital Advertising Excellence
 
 Welcome to this comprehensive Google Ads course designed specifically for small business owners and digital marketers. In today's competitive online landscape, mastering Google Ads isn't just a nice-to-have skill—it's essential for businesses wanting to grow their digital presence effectively and efficiently.
 
