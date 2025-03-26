@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <!-- Outer circle with more elaborate design -->
+  <circle cx="60" cy="60" r="55" fill="#111111" stroke="#ffd700" stroke-width="3"/>
+  
+  <!-- Multiple inner rings for expert level -->
+  <circle cx="60" cy="60" r="48" fill="none" stroke="#ffd700" stroke-width="1" stroke-opacity="0.8"/>
+  <circle cx="60" cy="60" r="42" fill="none" stroke="#ffd700" stroke-width="0.7" stroke-opacity="0.6"/>
+  <circle cx="60" cy="60" r="36" fill="none" stroke="#ffd700" stroke-width="0.5" stroke-opacity="0.4"/>
+  
+  <!-- Four stars for expert level, arranged in a diamond pattern -->
+  <path d="M60 25 L63 35 L74 35 L65 41 L68 51 L60 45 L52 51 L55 41 L46 35 L57 35 Z" fill="#ffd700"/>
+  <path d="M35 50 L38 60 L49 60 L40 66 L43 76 L35 70 L27 76 L30 66 L21 60 L32 60 Z" fill="#ffd700"/>
+  <path d="M85 50 L88 60 L99 60 L90 66 L93 76 L85 70 L77 76 L80 66 L71 60 L82 60 Z" fill="#ffd700"/>
+  <path d="M60 75 L63 85 L74 85 L65 91 L68 101 L60 95 L52 101 L55 91 L46 85 L57 85 Z" fill="#ffd700"/>
+  
+  <!-- Text with gold gradient -->
+  <defs>
+    <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#ffd700;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#f5f5f5;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ffd700;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <text x="60" y="62" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="url(#goldGradient)">EXPERT</text>
+  
+  <!-- Decorative elements -->
+  <path d="M20,60 Q40,20 60,60 T100,60" fill="none" stroke="#ffd700" stroke-width="0.5" stroke-opacity="0.5"/>
+  <path d="M20,60 Q40,100 60,60 T100,60" fill="none" stroke="#ffd700" stroke-width="0.5" stroke-opacity="0.5"/>
+</svg>
