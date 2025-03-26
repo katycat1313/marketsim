@@ -51,7 +51,7 @@ export class TutorialService {
       skillsLearned: ["Google Ads Fundamentals", "Account Setup", "Campaign Structure Basics"]
     },
     {
-      id: 14,
+      id: 25,
       title: "SEO Foundations: The Art of On-Page Optimization",
       level: "Beginner",
       content: this.loadTutorialContent('seoFoundations-new.ts'),
@@ -597,7 +597,7 @@ export class TutorialService {
       skillsLearned: ["Advanced Metrics Analysis", "Data Visualization", "Segmentation Strategy", "Attribution Modeling", "Performance Optimization"]
     },
     {
-      id: 11,
+      id: 26,
       title: "Course Summary and Next Steps",
       level: "Expert",
       content: this.loadTutorialContent('chapter6-1.ts'),
@@ -628,7 +628,7 @@ export class TutorialService {
       skillsLearned: ["Strategic Planning", "Performance Measurement", "Campaign Optimization", "ROI Maximization", "Continuous Improvement"]
     },
     {
-      id: 14,
+      id: 27,
       title: "Analytics Foundations: Understanding Marketing Performance Metrics",
       level: "Beginner",
       content: this.loadTutorialContent('analyticsFoundations.ts'),
