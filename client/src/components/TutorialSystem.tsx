@@ -961,7 +961,7 @@ export function TutorialSystem() {
                           <div className="ml-10 mt-3">
                             <Button 
                               className={`bg-${lessonGroup.color} hover:bg-${lessonGroup.color}/90 text-white`}
-                              onClick={() => tutorials.length > 0 ? startTutorial(tutorials[0]) : null}
+                              onClick={() => tutorials.length > 0 ? showLessonPlan(lessonName, tutorials) : null}
                             >
                               {lessonGroup.ctaText} →
                             </Button>
@@ -1055,11 +1055,11 @@ export function TutorialSystem() {
             <CardHeader className="pb-2 border-b border-[#ffd700]/30">
               <div className="flex justify-between items-center">
                 <div className="flex items-center">
-                  <span className="text-2xl mr-3">{getCategoryIcon(currentTutorial.title)}</span>
-                  <h3 className="text-xl font-bold">{currentTutorial.title}</h3>
+                  <span className="text-2xl mr-3">{getCategoryIcon(currentTutorial!.title)}</span>
+                  <h3 className="text-xl font-bold">{currentTutorial!.title}</h3>
                 </div>
                 <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
-                  {currentTutorial.level}
+                  {currentTutorial!.level}
                 </span>
               </div>
             </CardHeader>
@@ -1113,7 +1113,7 @@ export function TutorialSystem() {
               
               {currentSlideIndex === slides.length - 1 ? (
                 <Button 
-                  onClick={() => completeTutorial(currentTutorial.id)}
+                  onClick={() => completeTutorial(currentTutorial!.id)}
                   disabled={isCompleting}
                   className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 relative overflow-hidden group"
                 >
@@ -1189,7 +1189,7 @@ export function TutorialSystem() {
                   </div>
                 </AccordionTrigger>
                 <AccordionContent className="bg-[#111]/80 p-4">
-                  {currentTutorial.tasks.map((task, index) => (
+                  {currentTutorial!.tasks.map((task, index) => (
                     <div 
                       key={task.id} 
                       className="mb-4 last:mb-0 p-4 bg-[#222] rounded-md border border-[#ffd700]/20 hover:border-[#ffd700]/30 transition-all"
