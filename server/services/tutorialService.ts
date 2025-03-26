@@ -25,31 +25,83 @@ interface TutorialTask {
 }
 
 export class TutorialService {
-  private tutorials: Tutorial[] = [
-    {
-      id: 1,
-      title: "Google Ads Mastery: From Setup to Success",
-      level: "Beginner",
-      content: this.loadTutorialContent('chapter1-1-Introduction.ts'),
-      tasks: [
-        {
-          id: 101,
-          description: "Set up your first Google Ads account",
-          type: "practical",
-          requirements: ["Google account", "Website URL"],
-          verificationCriteria: ["Account created", "Billing information added"]
-        },
-        {
-          id: 102,
-          description: "Create your first campaign structure",
-          type: "practical",
-          requirements: ["Google Ads account"],
-          verificationCriteria: ["Campaign created", "Ad groups defined", "Keywords selected"]
+  private tutorials: Tutorial[] = [];
+  
+  constructor() {
+    this.loadAllTutorials();
+  }
+  
+  private loadAllTutorials() {
+    try {
+      // Using fileURLToPath for ESM compatibility to get correct file paths
+      const currentFilePath = fileURLToPath(import.meta.url);
+      const currentDir = path.dirname(currentFilePath);
+      
+      // Navigate to the tutorials directory
+      const tutorialsDir = path.join(currentDir, '..', 'data', 'tutorials');
+      
+      // Get all tutorial files with proper naming convention
+      const files = fs.readdirSync(tutorialsDir).filter(file => 
+        file.startsWith('chapter') && file.endsWith('.ts') && !file.includes('storage.ts')
+      );
+      
+      console.log(`Found ${files.length} tutorial files`);
+      
+      // Process each file to extract chapter and subchapter
+      const tutorialFiles = files.map(file => {
+        const match = file.match(/chapter(\d+)-(\d+)/i);
+        let chapter = 1, subchapter = 0;
+        
+        if (match) {
+          chapter = parseInt(match[1]);
+          subchapter = parseInt(match[2]);
         }
-      ],
-      estimatedTime: 60, // minutes
-      skillsLearned: ["Google Ads Fundamentals", "Account Setup", "Campaign Structure Basics"]
-    },
+        
+        return {
+          filename: file,
+          chapter,
+          subchapter
+        };
+      });
+      
+      // Sort tutorial files by chapter and subchapter
+      tutorialFiles.sort((a, b) => {
+        if (a.chapter !== b.chapter) {
+          return a.chapter - b.chapter;
+        }
+        return a.subchapter - b.subchapter;
+      });
+      
+      console.log('Tutorial files sorted by chapter:', 
+        tutorialFiles.map(f => `Chapter ${f.chapter}-${f.subchapter}: ${f.filename}`).join('\n')
+      );
+      
+      // Create the base tutorials array from the hardcoded first tutorial
+      this.tutorials = [
+        {
+          id: 1,
+          title: "Google Ads Mastery: From Setup to Success",
+          level: "Beginner",
+          content: this.loadTutorialContent('chapter1-1-Introduction.ts'),
+          tasks: [
+            {
+              id: 101,
+              description: "Set up your first Google Ads account",
+              type: "practical",
+              requirements: ["Google account", "Website URL"],
+              verificationCriteria: ["Account created", "Billing information added"]
+            },
+            {
+              id: 102,
+              description: "Create your first campaign structure",
+              type: "practical",
+              requirements: ["Google Ads account"],
+              verificationCriteria: ["Campaign created", "Ad groups defined", "Keywords selected"]
+            }
+          ],
+          estimatedTime: 60, // minutes
+          skillsLearned: ["Google Ads Fundamentals", "Account Setup", "Campaign Structure Basics"]
+        },
     {
       id: 25,
       title: "SEO Foundations: The Art of On-Page Optimization",
