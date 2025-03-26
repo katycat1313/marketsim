@@ -891,30 +891,93 @@ export class TutorialService {
       return "Tutorial content unavailable. Please try again later.";
     }
   }
+  
+  // Extract chapter number from filename
+  private extractChapterNumber(filename: string): number | null {
+    // Try to match chapter pattern in filename (e.g., chapter1-2, chapter7-3)
+    const chapterMatch = filename.match(/chapter(\d+)-(\d+)/i);
+    if (chapterMatch) {
+      return parseInt(chapterMatch[1]);
+    }
+    return null;
+  }
 
   async getTutorials(userLevel: string): Promise<Tutorial[]> {
+    console.log(`Getting tutorials for user level: ${userLevel}`);
+    
     // Get tutorials appropriate for the user's level
     const levels = ['Beginner', 'Intermediate', 'Advanced', 'Expert'];
     const userLevelIndex = levels.indexOf(userLevel);
     
     if (userLevelIndex === -1) {
       // If level is not recognized, return beginner tutorials
-      return this.tutorials.filter(t => t.level === 'Beginner');
+      return this.sortTutorialsByChapter(this.tutorials.filter(t => t.level === 'Beginner'));
     }
     
     // Return tutorials at the user's level and below
     const availableLevels = levels.slice(0, userLevelIndex + 1);
     const filteredTutorials = [...this.tutorials].filter(t => availableLevels.includes(t.level));
     
+    console.log(`Found ${filteredTutorials.length} tutorials for user level: ${userLevel}`);
+    
     // Mark tutorials that have simulations available
     const challenges = await tutorialSimulationService.getAllChallenges();
     const tutorialIdsWithSimulations = challenges.map(c => c.tutorialId);
     
-    return filteredTutorials.map(tutorial => {
+    // Process tutorials to add chapter information and sort them
+    const processedTutorials = filteredTutorials.map(tutorial => {
+      // Determine the chapter number for each tutorial
+      let chapterNumber = 1; // Default to chapter 1
+      
+      // Try to extract from content first
+      const contentLower = tutorial.content.toLowerCase();
+      const titleLower = tutorial.title.toLowerCase();
+      
+      const contentMatch = contentLower.match(/chapter\s*(\d+)[\-\.]/i);
+      if (contentMatch) {
+        chapterNumber = parseInt(contentMatch[1]);
+      } else if (titleLower.includes('seo')) {
+        chapterNumber = 7; // SEO content goes to chapter 7
+      } else if (titleLower.includes('troubleshoot')) {
+        chapterNumber = 8; // Troubleshooting goes to chapter 8
+      } else if (titleLower.includes('analytics') || titleLower.includes('data')) {
+        chapterNumber = 5; // Analytics goes to chapter 5
+      } else if (titleLower.includes('email') || titleLower.includes('social media')) {
+        chapterNumber = 6; // Email and social media go to chapter 6
+      } else if (titleLower.includes('advanced') && 
+                (titleLower.includes('google ads') || titleLower.includes('campaign'))) {
+        chapterNumber = 3; // Advanced Google Ads goes to chapter 3
+      } else if (titleLower.includes('google ads') || titleLower.includes('campaign')) {
+        chapterNumber = 2; // Google Ads basics go to chapter 2
+      } else if (titleLower.includes('goal') || titleLower.includes('testing')) {
+        chapterNumber = 4; // Goals and testing go to chapter 4
+      }
+      
+      // Add chapter number and simulation flag to the tutorial
       return {
         ...tutorial,
-        hasSimulation: tutorialIdsWithSimulations.includes(tutorial.id)
+        hasSimulation: tutorialIdsWithSimulations.includes(tutorial.id),
+        chapterNumber: chapterNumber
       };
+    });
+    
+    // Sort by chapter number
+    return this.sortTutorialsByChapter(processedTutorials);
+  }
+  
+  // Sort tutorials by chapter and subchapter
+  private sortTutorialsByChapter(tutorials: Tutorial[]): Tutorial[] {
+    return tutorials.sort((a, b) => {
+      // First sort by chapter number
+      const aChapter = (a as any).chapterNumber || 1;
+      const bChapter = (b as any).chapterNumber || 1;
+      
+      if (aChapter !== bChapter) {
+        return aChapter - bChapter;
+      }
+      
+      // If same chapter, sort by ID as fallback
+      return a.id - b.id;
     });
   }
 
