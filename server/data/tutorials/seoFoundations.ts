@@ -587,4 +587,6 @@ Google now uses the mobile version of your website for indexing and ranking. Thi
 **Pro Tip:** Don't create a separate mobile site. Instead, use responsive design so the same URL works well on all devices.
 
 By combining effective on-page SEO with these advanced techniques, you'll create a comprehensive SEO strategy that drives significant organic traffic growth. Start with the basics, then gradually implement these more advanced approaches as you build your SEO expertise.
-`
+`;
+
+export default content;

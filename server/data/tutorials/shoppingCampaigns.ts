@@ -367,3 +367,5 @@ Your next steps should include:
 
 Continue building your Google Ads expertise by exploring how shopping campaigns integrate with your overall marketing strategy and other campaign types.
 `;
+
+export default content;

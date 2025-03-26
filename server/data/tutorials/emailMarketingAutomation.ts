@@ -451,4 +451,6 @@ Are you ready to show off your new email automation skills? Let's transform your
 </div>
 
 Remember, the best email automation doesn't feel automated at all. It delivers the right message to the right person at exactly the right time, creating experiences that feel personal despite being powered by technology. Good luck!
-`
+`;
+
+export default content;
