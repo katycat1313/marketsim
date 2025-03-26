@@ -853,7 +853,7 @@ export function TutorialSystem() {
         </h2>
       </div>
       
-      {!currentTutorial ? (
+      {!currentTutorial && !currentLessonPlan ? (
         <div>
           {renderLearningPath()}
           
@@ -1030,6 +1030,15 @@ export function TutorialSystem() {
               </TabsContent>
             </Tabs>
           </div>
+        </div>
+      ) : currentLessonPlan ? (
+        <div className="max-w-4xl mx-auto">
+          <LessonPlanView 
+            lessonTitle={currentLessonPlan.title}
+            tutorials={currentLessonPlan.tutorials}
+            onSelectTutorial={startTutorial}
+            onBack={() => setCurrentLessonPlan(null)}
+          />
         </div>
       ) : (
         <div className="max-w-4xl mx-auto" ref={contentRef}>
