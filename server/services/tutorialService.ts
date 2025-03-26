@@ -75,7 +75,7 @@ export class TutorialService {
       skillsLearned: ["On-page SEO", "Keyword Optimization", "Content Structure", "Meta Tag Implementation"]
     },
     {
-      id: 15,
+      id: 31,
       title: "Social Media Marketing: Strategy, Execution & Analytics",
       level: "Intermediate",
       content: this.loadTutorialContent('socialMediaMarketing.ts'),
@@ -99,20 +99,20 @@ export class TutorialService {
       skillsLearned: ["Social Media Strategy", "Content Planning", "Audience Targeting", "Analytics & Measurement"]
     },
     {
-      id: 16,
-      title: "Email Marketing Automation: Best Practices and Implementation Strategies",
+      id: 29,
+      title: "Email Marketing Automation Basics",
       level: "Intermediate",
       content: this.loadTutorialContent('emailMarketingAutomation.ts'),
       tasks: [
         {
-          id: 1601,
+          id: 2901,
           description: "Set up an email automation workflow",
           type: "practical",
           requirements: ["Email marketing platform", "Customer segments", "Content assets"],
           verificationCriteria: ["Workflow created", "Triggers defined", "Content personalized"]
         },
         {
-          id: 1602,
+          id: 2902,
           description: "Implement A/B testing for email campaigns",
           type: "practical",
           requirements: ["Email marketing platform", "Testing hypothesis"],
@@ -659,7 +659,7 @@ export class TutorialService {
       skillsLearned: ["Data Analysis", "KPI Identification", "Performance Measurement", "Dashboard Creation", "Analytics Implementation"]
     },
     {
-      id: 15,
+      id: 28,
       title: "Site Analytics: Visualizing and Interpreting Website Performance",
       level: "Intermediate",
       content: this.loadTutorialContent('siteAnalytics.ts'),
@@ -697,7 +697,7 @@ export class TutorialService {
       skillsLearned: ["Data Visualization", "User Journey Mapping", "Conversion Funnel Analysis", "Behavior Pattern Recognition", "Actionable Insight Development"]
     },
     {
-      id: 16,
+      id: 30,
       title: "Email Marketing Automation: Best Practices and Implementation Strategies",
       level: "Intermediate",
       content: this.loadTutorialContent('emailMarketingAutomation.ts'),
