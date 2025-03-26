@@ -6,6 +6,7 @@ import { Progress } from './ui/progress';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Separator } from '@/components/ui/separator';
+import LessonPlanView from './LessonPlanView';
 
 // Define the Tutorial interface directly in the component
 interface Tutorial {
@@ -47,6 +48,10 @@ interface Slide {
 export function TutorialSystem() {
   const [tutorials, setTutorials] = useState<Tutorial[]>([]);
   const [currentTutorial, setCurrentTutorial] = useState<Tutorial | null>(null);
+  const [currentLessonPlan, setCurrentLessonPlan] = useState<{
+    title: string;
+    tutorials: Tutorial[];
+  } | null>(null);
   const [progress, setProgress] = useState<number[]>([]);
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const [slides, setSlides] = useState<Slide[]>([]);
@@ -242,8 +247,19 @@ export function TutorialSystem() {
     }
   };
 
+  // Show a specific tutorial
   const startTutorial = (tutorial: Tutorial) => {
+    setCurrentLessonPlan(null);
     setCurrentTutorial(tutorial);
+  };
+  
+  // Show the lesson plan view for a group of tutorials
+  const showLessonPlan = (lessonTitle: string, tutorials: Tutorial[]) => {
+    setCurrentTutorial(null);
+    setCurrentLessonPlan({
+      title: lessonTitle,
+      tutorials: tutorials
+    });
   };
 
   const [isCompleting, setIsCompleting] = useState(false);
