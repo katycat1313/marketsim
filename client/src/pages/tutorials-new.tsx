@@ -300,18 +300,36 @@ export default function TutorialsPage() {
       }
     ];
     
-    // Sort all tutorials first by matching chapter number and title patterns
+    // Log each tutorial for debugging
+    tutorials.forEach((tutorial, idx) => {
+      console.log(`DEBUG - Tutorial ${idx+1}:`, {
+        id: tutorial.id,
+        title: tutorial.title,
+        chapterNumber: (tutorial as any).chapterNumber,
+      });
+    });
+    
+    // Sort all tutorials using their chapter classification from backend
     tutorials.forEach(tutorial => {
-      // Try different pattern matches to categorize tutorials
-      const titleLower = tutorial.title.toLowerCase();
-      const contentLower = tutorial.content.toLowerCase();
+      // Try to use the chapterNumber property first (added by backend)
+      let chapterNum = (tutorial as any).chapterNumber;
       
-      // First try to match chapter patterns in title or content
-      const chapterMatch = titleLower.match(/chapter\s*(\d+)[\-\.]?(\d+)?/i) || 
-                         contentLower.match(/chapter\s*(\d+)[\-\.]?(\d+)?/i);
+      // If no chapterNumber from backend, extract from content
+      if (!chapterNum) {
+        const titleLower = tutorial.title.toLowerCase();
+        const contentLower = tutorial.content.toLowerCase();
+        
+        // Try to match chapter patterns in title or content
+        const chapterMatch = titleLower.match(/chapter\s*(\d+)[\-\.]?(\d+)?/i) || 
+                           contentLower.match(/chapter\s*(\d+)[\-\.]?(\d+)?/i);
+        
+        if (chapterMatch) {
+          chapterNum = parseInt(chapterMatch[1]);
+        }
+      }
       
-      if (chapterMatch) {
-        const chapterNum = parseInt(chapterMatch[1]);
+      // If we have a chapter number, try to place in matching chapter
+      if (chapterNum) {
         const chapter = chapterStructure.find(c => c.number === chapterNum);
         if (chapter) {
           chapter.tutorials.push(tutorial);
@@ -319,7 +337,10 @@ export default function TutorialsPage() {
         }
       }
       
-      // If no chapter explicit match, use content-based heuristics
+      // If no chapter number found or matching chapter, use content-based heuristics
+      const titleLower = tutorial.title.toLowerCase();
+      const contentLower = tutorial.content.toLowerCase();
+      
       if (titleLower.includes('seo') || contentLower.includes('search engine optimization')) {
         chapterStructure[6].tutorials.push(tutorial); // SEO - Chapter 7
       } else if (titleLower.includes('troubleshoot') || contentLower.includes('troubleshoot')) {
