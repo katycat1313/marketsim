@@ -151,12 +151,12 @@ function SideNav() {
               
               {/* Tutorials - simplified link without dropdown */}
               <div className="pl-2">
-                <Link href="/tutorials" onClick={() => setIsMobileMenuOpen(false)}>
+                <Link href="/tutorials-new" onClick={() => setIsMobileMenuOpen(false)}>
                   <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
-                    ${isActive('/tutorials') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}
+                    ${isActive('/tutorials-new') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}
                   >
                     <GraduationCap className="h-5 w-5" />
-                    <span>Tutorials</span>
+                    <span>Tutorials (Enhanced)</span>
                   </div>
                 </Link>
               </div>
@@ -397,6 +397,7 @@ function Router() {
             <Route path="/seo-quiz" component={SeoQuizPage} />
             <Route path="/data-visualization" component={DataVisualizationPage} />
             <Route path="/tutorials" component={TutorialsPage} />
+            <Route path="/tutorials-new" component={TutorialsPage} />
             <Route path="/subscription" component={SubscriptionPage} />
             <Route path="/subscription/success" component={SubscriptionSuccessPage} />
             <Route path="/subscription/cancel" component={SubscriptionCancelPage} />
