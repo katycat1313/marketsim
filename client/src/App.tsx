@@ -17,7 +17,7 @@ import SeoQuizPage from "@/pages/seo-quiz";
 import AdSimulationsPage from "@/pages/ad-simulations";
 import AdSimulationPage from "@/pages/ad-simulation";
 import DataVisualizationPage from "@/pages/data-visualization";
-import TutorialsPage from "@/pages/tutorials";
+import TutorialsPage from "@/pages/tutorials-new";
 import SubscriptionPage from "@/pages/subscription";
 import SubscriptionSuccessPage from "@/pages/subscription/success";
 import SubscriptionCancelPage from "@/pages/subscription/cancel";
