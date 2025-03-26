@@ -733,6 +733,54 @@ export class TutorialService {
       ],
       estimatedTime: 120,
       skillsLearned: ["Email Automation Workflow Design", "Behavioral Targeting", "Advanced Personalization", "A/B Testing Strategy", "Automation Performance Measurement"]
+    },
+    {
+      id: 23,
+      title: "SEO Expert: Comprehensive Site Audit & Technical Troubleshooting",
+      level: "Expert",
+      content: this.loadTutorialContent('seoExpert.ts'),
+      tasks: [
+        {
+          id: 2301,
+          description: "Conduct comprehensive SEO audit",
+          type: "practical",
+          requirements: ["Access to site analytics", "Technical SEO knowledge"],
+          verificationCriteria: ["Audit framework created", "Issues documented by priority", "Technical recommendations provided"]
+        },
+        {
+          id: 2302,
+          description: "Implement technical SEO fixes",
+          type: "practical",
+          requirements: ["Site access", "Developer resources"],
+          verificationCriteria: ["Critical issues resolved", "Performance improvements measured", "Documentation updated"]
+        }
+      ],
+      estimatedTime: 120,
+      skillsLearned: ["Technical SEO Auditing", "Site Performance Optimization", "Structured Data Implementation", "Core Web Vitals", "SEO Troubleshooting"]
+    },
+    {
+      id: 24,
+      title: "SEO Master: Comprehensive Strategy for Business Websites",
+      level: "Expert",
+      content: this.loadTutorialContent('seoMaster.ts'),
+      tasks: [
+        {
+          id: 2401,
+          description: "Develop enterprise SEO strategy",
+          type: "practical",
+          requirements: ["Business objectives", "Competitive analysis", "Resource assessment"],
+          verificationCriteria: ["Strategy document created", "KPIs established", "Implementation roadmap defined"]
+        },
+        {
+          id: 2402,
+          description: "Create content strategy aligned with SEO goals",
+          type: "practical",
+          requirements: ["Keyword research", "Content audit", "User journey mapping"],
+          verificationCriteria: ["Content calendar created", "Topic clusters defined", "Quality guidelines established"]
+        }
+      ],
+      estimatedTime: 150,
+      skillsLearned: ["Enterprise SEO Strategy", "Content Strategy Development", "SEO ROI Analysis", "Team Structure & Workflow", "Scalable SEO Solutions"]
     }
   ];
 
