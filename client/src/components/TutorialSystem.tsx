@@ -610,31 +610,87 @@ export function TutorialSystem() {
     );
   };
 
-  // Group tutorials by category
+  // Define lesson interface
+  interface LessonGroup {
+    description: string;
+    tutorials: Tutorial[];
+    icon: string;
+    color: string;
+    ctaText: string;
+  }
+
+  // Group tutorials by lessons with clear progression
   const categorizedTutorials = React.useMemo(() => {
-    const categories = {
-      'Google Ads': tutorials.filter(t => t.title.toLowerCase().includes('google') || t.title.toLowerCase().includes('ads')),
-      'SEO': tutorials.filter(t => t.title.toLowerCase().includes('seo')),
-      'Analytics': tutorials.filter(t => t.title.toLowerCase().includes('analytics')),
-      'Social Media': tutorials.filter(t => t.title.toLowerCase().includes('social') || t.title.toLowerCase().includes('facebook') || t.title.toLowerCase().includes('instagram')),
-      'Content Marketing': tutorials.filter(t => t.title.toLowerCase().includes('content')),
-      'Other': [] as Tutorial[]
+    // Define lessons with clear progression instead of just categories
+    const lessons: Record<string, LessonGroup> = {
+      'Lesson 1: Getting Started with Digital Marketing': {
+        description: 'Learn the fundamentals of digital marketing, including Google Ads setup, SEO foundations, and basic analytics. After completing this lesson, you will have confidence in your ability to understand the basic principles of digital marketing campaigns.',
+        tutorials: tutorials.filter(t => 
+          t.title.toLowerCase().includes('foundation') || 
+          t.title.toLowerCase().includes('mastery') || 
+          t.title.toLowerCase().includes('beginner') ||
+          t.title.toLowerCase().includes('setup')
+        ),
+        icon: '🚀',
+        color: 'green-500',
+        ctaText: 'Start Your Digital Marketing Journey'
+      },
+      'Lesson 2: Building Effective Campaigns': {
+        description: 'Discover how to create effective marketing campaigns across multiple platforms. Learn about search campaign fundamentals, audience targeting, and content optimization strategies.',
+        tutorials: tutorials.filter(t => 
+          t.title.toLowerCase().includes('campaign') ||
+          t.title.toLowerCase().includes('audience') ||
+          t.title.toLowerCase().includes('targeting') ||
+          t.title.toLowerCase().includes('strategy')
+        ),
+        icon: '📊',
+        color: 'blue-500',
+        ctaText: 'Master Campaign Creation'
+      },
+      'Lesson 3: Platform-Specific Marketing': {
+        description: 'Dive deeper into specific marketing platforms including Google Ads, SEO, social media, and email marketing. Learn advanced techniques for each platform.',
+        tutorials: tutorials.filter(t => 
+          (t.title.toLowerCase().includes('google') && !t.title.toLowerCase().includes('foundation')) ||
+          (t.title.toLowerCase().includes('seo') && !t.title.toLowerCase().includes('foundation')) ||
+          t.title.toLowerCase().includes('email') ||
+          t.title.toLowerCase().includes('social')
+        ),
+        icon: '🔍',
+        color: 'purple-500',
+        ctaText: 'Explore Platform Specialization'
+      },
+      'Lesson 4: Advanced Optimization & Analytics': {
+        description: 'Take your marketing skills to the next level with advanced optimization techniques, troubleshooting strategies, and data-driven decision making.',
+        tutorials: tutorials.filter(t => 
+          t.title.toLowerCase().includes('advanced') ||
+          t.title.toLowerCase().includes('analytics') ||
+          t.title.toLowerCase().includes('troubleshooting') ||
+          t.title.toLowerCase().includes('expert')
+        ),
+        icon: '📈',
+        color: 'yellow-500',
+        ctaText: 'Elevate Your Marketing Skills'
+      }
     };
     
-    // Add any tutorials that don't fit specific categories to 'Other'
-    tutorials.forEach(tutorial => {
-      const inSpecificCategory = Object.entries(categories)
-        .filter(([key]) => key !== 'Other')
-        .some(([_, tutorialsInCategory]) => 
-          tutorialsInCategory.some(t => t.id === tutorial.id)
-        );
-      
-      if (!inSpecificCategory) {
-        categories['Other'].push(tutorial);
-      }
+    // Assign any remaining tutorials to an additional lesson
+    const otherTutorials = tutorials.filter(tutorial => {
+      return !Object.values(lessons).some(lesson => 
+        lesson.tutorials.some(t => t.id === tutorial.id)
+      );
     });
     
-    return categories;
+    if (otherTutorials.length > 0) {
+      lessons['Lesson 5: Specialized Marketing Topics'] = {
+        description: 'Explore specialized marketing topics and niche strategies to round out your digital marketing expertise.',
+        tutorials: otherTutorials,
+        icon: '🔎',
+        color: 'pink-500',
+        ctaText: 'Explore Specialized Topics'
+      };
+    }
+    
+    return lessons;
   }, [tutorials]);
   
   // Assign lesson numbers to tutorials for consistent numbering
@@ -869,38 +925,38 @@ export function TutorialSystem() {
                 </div>
               </TabsContent>
               
-              {/* Categories Tab */}
+              {/* Lessons Tab */}
               <TabsContent value="categories">
                 <div className="space-y-10">
-                  {Object.entries(categorizedTutorials).map(([category, tutorialsInCategory]) => 
-                    tutorialsInCategory.length > 0 ? (
-                      <div key={category} className="mb-8 p-2 rounded-lg bg-[#111]/40 shadow-md border border-[#ffd700]/10">
+                  {Object.entries(categorizedTutorials).map(([lessonName, lessonGroup]) => {
+                    // Safely access the tutorials array with type checking
+                    const tutorials = lessonGroup.tutorials || [];
+                    
+                    return tutorials.length > 0 ? (
+                      <div key={lessonName} className="mb-8 p-2 rounded-lg bg-[#111]/40 shadow-md border border-[#ffd700]/10">
                         <div className="mb-4 pl-2 border-l-4 border-[#ffd700]">
                           <h3 className="text-xl font-bold text-[#ffd700] flex items-center">
-                            <span className="text-2xl mr-3">{
-                              category === 'Google Ads' ? '📊' :
-                              category === 'SEO' ? '🔍' :
-                              category === 'Analytics' ? '📈' :
-                              category === 'Social Media' ? '📱' :
-                              category === 'Content Marketing' ? '📝' : '📚'
-                            }</span>
-                            {category}
+                            <span className="text-2xl mr-3">{lessonGroup.icon}</span>
+                            {lessonName}
                           </h3>
-                          <p className="ml-10 text-[#f5f5f5]/70 text-sm">{
-                            category === 'Google Ads' ? 'Master paid search marketing and audience targeting' :
-                            category === 'SEO' ? 'Learn the art of organic search optimization' :
-                            category === 'Analytics' ? 'Harness the power of data-driven decisions' :
-                            category === 'Social Media' ? 'Engage audiences across social platforms' :
-                            category === 'Content Marketing' ? 'Create compelling content that converts' : 
-                            'Expand your knowledge with specialized topics'
-                          }</p>
+                          <p className="ml-10 text-[#f5f5f5]/70 text-sm">{lessonGroup.description}</p>
+                          
+                          {/* Call to action button */}
+                          <div className="ml-10 mt-3">
+                            <Button 
+                              className={`bg-${lessonGroup.color} hover:bg-${lessonGroup.color}/90 text-white`}
+                              onClick={() => tutorials.length > 0 ? startTutorial(tutorials[0]) : null}
+                            >
+                              {lessonGroup.ctaText} →
+                            </Button>
+                          </div>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-2">
-                          {tutorialsInCategory.map(renderTutorialCard)}
+                          {tutorials.map(renderTutorialCard)}
                         </div>
                       </div>
-                    ) : null
-                  )}
+                    ) : null;
+                  })}
                 </div>
               </TabsContent>
               
