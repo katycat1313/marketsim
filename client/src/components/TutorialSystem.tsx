@@ -733,16 +733,12 @@ export function TutorialSystem() {
         <div className="w-full h-px bg-[#ffd700]/30 my-2"></div>
         
         <div className="flex flex-wrap gap-2 mb-3">
-          {tutorial.skillsLearned && tutorial.skillsLearned.slice(0, 3).map((skill, i) => (
+          {tutorial.skillsLearned && tutorial.skillsLearned.map((skill, i) => (
             <span key={i} className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
               {skill}
             </span>
           ))}
-          {tutorial.skillsLearned && tutorial.skillsLearned.length > 3 && (
-            <span className="px-2 py-1 bg-gray-100 text-gray-800 rounded-full text-xs">
-              +{tutorial.skillsLearned.length - 3} more
-            </span>
-          )}
+          
         </div>
         
         <p className="text-xs text-gray-500 mb-3 flex items-center">
@@ -835,7 +831,6 @@ export function TutorialSystem() {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-2">
                       {tutorials
                         .filter(t => t.level.toLowerCase().includes('beginner') || t.title.toLowerCase().includes('foundation'))
-                        .slice(0, 3)
                         .map(renderTutorialCard)}
                     </div>
                   </div>
@@ -852,7 +847,6 @@ export function TutorialSystem() {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-2">
                       {tutorials
                         .filter(t => !t.level.toLowerCase().includes('beginner') && !t.level.toLowerCase().includes('advanced'))
-                        .slice(0, 3)
                         .map(renderTutorialCard)}
                     </div>
                   </div>
@@ -869,7 +863,6 @@ export function TutorialSystem() {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-2">
                       {tutorials
                         .filter(t => t.level.toLowerCase().includes('advanced'))
-                        .slice(0, 3)
                         .map(renderTutorialCard)}
                     </div>
                   </div>
