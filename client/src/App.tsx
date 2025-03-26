@@ -149,42 +149,16 @@ function SideNav() {
                 LEARN
               </div>
               
-              {/* Tutorials with dropdown */}
+              {/* Tutorials - simplified link without dropdown */}
               <div className="pl-2">
-                <button 
-                  onClick={() => toggleDropdown('tutorials')}
-                  className={`w-full flex items-center justify-between gap-3 p-2 rounded-md transition-colors
+                <Link href="/tutorials" onClick={() => setIsMobileMenuOpen(false)}>
+                  <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
                     ${isActive('/tutorials') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}
-                >
-                  <div className="flex items-center gap-3">
+                  >
                     <GraduationCap className="h-5 w-5" />
                     <span>Tutorials</span>
                   </div>
-                  <ChevronDown className={`h-4 w-4 transition-transform ${activeDropdown === 'tutorials' ? 'rotate-180' : ''}`} />
-                </button>
-                
-                {activeDropdown === 'tutorials' && (
-                  <div className="ml-7 mt-1 space-y-1 border-l pl-3">
-                    <Link href="/tutorials?topic=google-ads" onClick={() => setIsMobileMenuOpen(false)}>
-                      <div className={`flex items-center gap-2 p-1.5 rounded-md transition-colors text-sm
-                        ${isActive('/tutorials') && location.includes('google-ads') ? 'text-primary font-medium' : 'text-muted-foreground hover:text-foreground'}`}>
-                        <span>Google Ads</span>
-                      </div>
-                    </Link>
-                    <Link href="/tutorials?topic=seo" onClick={() => setIsMobileMenuOpen(false)}>
-                      <div className={`flex items-center gap-2 p-1.5 rounded-md transition-colors text-sm
-                        ${isActive('/tutorials') && location.includes('seo') ? 'text-primary font-medium' : 'text-muted-foreground hover:text-foreground'}`}>
-                        <span>SEO</span>
-                      </div>
-                    </Link>
-                    <Link href="/tutorials?topic=analytics" onClick={() => setIsMobileMenuOpen(false)}>
-                      <div className={`flex items-center gap-2 p-1.5 rounded-md transition-colors text-sm
-                        ${isActive('/tutorials') && location.includes('analytics') ? 'text-primary font-medium' : 'text-muted-foreground hover:text-foreground'}`}>
-                        <span>Analytics</span>
-                      </div>
-                    </Link>
-                  </div>
-                )}
+                </Link>
               </div>
               
               {/* Quiz */}
