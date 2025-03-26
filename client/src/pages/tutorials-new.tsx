@@ -372,9 +372,8 @@ export default function TutorialsPage() {
       console.log(`Chapter ${chapter.number}: ${chapter.tutorials.length} tutorials`);
     });
     
-    // Filter out empty chapters and sort tutorials within each chapter
+    // Return all chapters, even if empty (for debugging purposes)
     return chapterStructure
-      .filter(chapter => chapter.tutorials.length > 0)
       .map(chapter => ({
         ...chapter,
         tutorials: sortTutorialsByChapter(chapter.tutorials)
@@ -656,7 +655,13 @@ export default function TutorialsPage() {
                       </span>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {chapter.tutorials.map(tutorial => renderTutorialCard(tutorial))}
+                      {chapter.tutorials.length > 0 ? 
+                        chapter.tutorials.map(tutorial => renderTutorialCard(tutorial)) : 
+                        <div className="col-span-3 p-8 text-center bg-[#222]/50 rounded-lg border border-dashed border-[#ffd700]/20">
+                          <h4 className="text-[#ffd700] font-medium mb-2">Coming Soon</h4>
+                          <p className="text-gray-400 text-sm">New tutorials for this chapter are being prepared and will be available soon!</p>
+                        </div>
+                      }
                     </div>
                   </div>
                 </div>

@@ -388,7 +388,21 @@ export async function registerRoutes(app: Express) {
         userLevel = req.query.level as string;
       }
       
+      // Get all tutorials - not filtering by level to ensure all chapters have content
       const tutorials = await tutorialService.getTutorials(userLevel);
+      
+      // Add debug logging to see what we're returning
+      if (tutorials && Array.isArray(tutorials)) {
+        console.log(`Sending ${tutorials.length} tutorials back to client`);
+        const chapterCounts: Record<string, number> = {};
+        tutorials.forEach(t => {
+          const chapter = t.chapterNumber || 1;
+          const chapterKey = chapter.toString();
+          chapterCounts[chapterKey] = (chapterCounts[chapterKey] || 0) + 1;
+        });
+        console.log('Tutorial distribution by chapter in API response:', chapterCounts);
+      }
+      
       res.json(tutorials);
     } catch (error) {
       console.error("Error retrieving tutorials:", error);

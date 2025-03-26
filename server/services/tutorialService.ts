@@ -722,25 +722,13 @@ export class TutorialService {
     
     console.log(`Found ${sortedTutorials.length} tutorials for user level: ${userLevel}`);
     
-    // Filter tutorials based on user level
-    return sortedTutorials.filter(tutorial => {
-      const tutorialLevel = tutorial.level.toLowerCase();
-      const userLevelLower = userLevel.toLowerCase();
-      
-      // Log each tutorial we're checking for debugging
+    // Log each tutorial we're checking for debugging
+    sortedTutorials.forEach(tutorial => {
       console.log(`Tutorial ${tutorial.id}: ${tutorial.chapterNumber} ${tutorial.title}`);
-      
-      // Map user levels to tutorial levels they should see
-      if (userLevelLower === 'beginner') {
-        return tutorialLevel === 'beginner';
-      } else if (userLevelLower === 'intermediate') {
-        return tutorialLevel === 'beginner' || tutorialLevel === 'intermediate';
-      } else if (userLevelLower.includes('advanced')) {
-        return true; // Advanced users see all tutorials
-      }
-      
-      return true; // Default: show all tutorials
     });
+    
+    // Return all tutorials regardless of level for now to fix chapter display
+    return sortedTutorials;
   }
   
   private sortTutorialsByChapter(tutorials: Tutorial[]): Tutorial[] {
