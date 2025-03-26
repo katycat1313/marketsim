@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <!-- Outer circle -->
+  <circle cx="60" cy="60" r="55" fill="#111111" stroke="#ffd700" stroke-width="2"/>
+  
+  <!-- Inner design -->
+  <circle cx="60" cy="60" r="45" fill="none" stroke="#ffd700" stroke-width="1.5" stroke-opacity="0.6"/>
+  
+  <!-- Level stars - two stars for intermediate -->
+  <path d="M45 30 L48.5 42.5 L60 42.5 L50.5 50 L54 62.5 L45 55 L36 62.5 L39.5 50 L30 42.5 L41.5 42.5 Z" fill="#ffd700"/>
+  <path d="M75 30 L78.5 42.5 L90 42.5 L80.5 50 L84 62.5 L75 55 L66 62.5 L69.5 50 L60 42.5 L71.5 42.5 Z" fill="#ffd700"/>
+  
+  <!-- Text -->
+  <text x="60" y="80" font-family="Arial, sans-serif" font-size="12" font-weight="bold" text-anchor="middle" fill="#f5f5f5">INTERMEDIATE</text>
+  
+  <!-- Small decorative dots -->
+  <circle cx="30" cy="60" r="2" fill="#ffd700"/>
+  <circle cx="90" cy="60" r="2" fill="#ffd700"/>
+  <circle cx="60" cy="30" r="2" fill="#ffd700"/>
+  <circle cx="60" cy="90" r="2" fill="#ffd700"/>
+</svg>

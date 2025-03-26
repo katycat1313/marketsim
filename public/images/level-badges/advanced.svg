@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <!-- Outer circle -->
+  <circle cx="60" cy="60" r="55" fill="#111111" stroke="#ffd700" stroke-width="2"/>
+  
+  <!-- Inner design - more complex for advanced level -->
+  <circle cx="60" cy="60" r="45" fill="none" stroke="#ffd700" stroke-width="1.5" stroke-opacity="0.7"/>
+  <circle cx="60" cy="60" r="40" fill="none" stroke="#ffd700" stroke-width="1" stroke-opacity="0.5"/>
+  
+  <!-- Level stars - three stars for advanced -->
+  <path d="M40 30 L43 40 L54 40 L45 46 L48 56 L40 50 L32 56 L35 46 L26 40 L37 40 Z" fill="#ffd700"/>
+  <path d="M60 30 L63 40 L74 40 L65 46 L68 56 L60 50 L52 56 L55 46 L46 40 L57 40 Z" fill="#ffd700"/>
+  <path d="M80 30 L83 40 L94 40 L85 46 L88 56 L80 50 L72 56 L75 46 L66 40 L77 40 Z" fill="#ffd700"/>
+  
+  <!-- Text -->
+  <text x="60" y="80" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#f5f5f5">ADVANCED</text>
+  
+  <!-- Small decorative dots/elements -->
+  <circle cx="30" cy="60" r="2" fill="#ffd700"/>
+  <circle cx="90" cy="60" r="2" fill="#ffd700"/>
+  <circle cx="60" cy="30" r="2" fill="#ffd700"/>
+  <circle cx="60" cy="90" r="2" fill="#ffd700"/>
+  
+  <!-- Extra decorative elements -->
+  <path d="M60 18 L62 22 L67 22 L63 25 L65 29 L60 27 L55 29 L57 25 L53 22 L58 22 Z" fill="#ffd700" opacity="0.7"/>
+</svg>
