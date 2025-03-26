@@ -30,7 +30,7 @@ export class TutorialService {
       id: 1,
       title: "Google Ads Mastery: From Setup to Success",
       level: "Beginner",
-      content: this.loadTutorialContent('chapter1-1.ts'),
+      content: this.loadTutorialContent('chapter1-1-Introduction.ts'),
       tasks: [
         {
           id: 101,
@@ -54,7 +54,7 @@ export class TutorialService {
       id: 25,
       title: "SEO Foundations: The Art of On-Page Optimization",
       level: "Beginner",
-      content: this.loadTutorialContent('seoFoundations-enhanced.ts'),
+      content: this.loadTutorialContent('chapter7-2-seoFoundations-enhanced.ts'),
       tasks: [
         {
           id: 1401,
@@ -826,22 +826,64 @@ export class TutorialService {
       const currentDir = path.dirname(currentFilePath);
       
       // Navigate to the tutorials directory
-      const tutorialPath = path.join(currentDir, '..', 'data', 'tutorials', filename);
+      const tutorialsDir = path.join(currentDir, '..', 'data', 'tutorials');
+      
+      // First try to load the exact filename
+      let tutorialPath = path.join(tutorialsDir, filename);
       
       try {
-        // Read the file directly and extract the content
-        const fileContent = fs.readFileSync(tutorialPath, 'utf8');
+        // Try to read the file directly
+        let fileContent = '';
+        
+        try {
+          fileContent = fs.readFileSync(tutorialPath, 'utf8');
+        } catch (exactPathError) {
+          // If exact path fails, try to find a matching file with the new naming convention
+          console.log(`Couldn't find exact file ${filename}, trying to find matching files...`);
+          
+          // For chapter files with pattern like 'chapter1-2.ts', try 'chapter1-2-*.ts'
+          const match = filename.match(/^(chapter\d+-\d+)(\.ts)$/);
+          if (match) {
+            const prefix = match[1];
+            const files = fs.readdirSync(tutorialsDir);
+            const matchingFile = files.find(file => file.startsWith(prefix + '-') || file === prefix + '.ts');
+            
+            if (matchingFile) {
+              console.log(`Found matching file: ${matchingFile}`);
+              tutorialPath = path.join(tutorialsDir, matchingFile);
+              fileContent = fs.readFileSync(tutorialPath, 'utf8');
+            } else {
+              throw new Error(`No matching file found for ${filename}`);
+            }
+          } else {
+            // For non-chapter files, try to find files with matching content
+            const baseName = path.basename(filename, '.ts');
+            const files = fs.readdirSync(tutorialsDir);
+            const matchingFile = files.find(file => 
+              file.includes(baseName) || 
+              file.toLowerCase().includes(baseName.toLowerCase())
+            );
+            
+            if (matchingFile) {
+              console.log(`Found matching file: ${matchingFile}`);
+              tutorialPath = path.join(tutorialsDir, matchingFile);
+              fileContent = fs.readFileSync(tutorialPath, 'utf8');
+            } else {
+              throw exactPathError;
+            }
+          }
+        }
         
         // Parse the content to extract the exported content string
         const contentMatch = fileContent.match(/export const content = `([\s\S]*?)`/);
         if (contentMatch && contentMatch[1]) {
           return contentMatch[1];
         } else {
-          console.error(`Could not parse content from ${filename}`);
+          console.error(`Could not parse content from ${tutorialPath}`);
           return "Tutorial content structure is invalid.";
         }
       } catch (importError) {
-        console.error(`Could not import tutorial from ${filename}:`, importError);
+        console.error(`Could not import tutorial from ${tutorialPath}:`, importError);
         return "Tutorial content not found.";
       }
     } catch (error) {
