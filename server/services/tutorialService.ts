@@ -54,7 +54,7 @@ export class TutorialService {
       id: 25,
       title: "SEO Foundations: The Art of On-Page Optimization",
       level: "Beginner",
-      content: this.loadTutorialContent('seoFoundations-new.ts'),
+      content: this.loadTutorialContent('seoFoundations-enhanced.ts'),
       tasks: [
         {
           id: 1401,
@@ -69,10 +69,17 @@ export class TutorialService {
           type: "practical",
           requirements: ["Website access"],
           verificationCriteria: ["Image alt text added", "Internal linking improved", "Content optimized for keywords"]
+        },
+        {
+          id: 1403,
+          description: "Complete the SEO implementation checklist",
+          type: "practical",
+          requirements: ["Website access", "SEO audit tools"],
+          verificationCriteria: ["Checklist fully completed", "Performance improvements documented"]
         }
       ],
-      estimatedTime: 60,
-      skillsLearned: ["On-page SEO", "Keyword Optimization", "Content Structure", "Meta Tag Implementation"]
+      estimatedTime: 90,
+      skillsLearned: ["On-page SEO", "Keyword Optimization", "Content Structure", "Meta Tag Implementation", "Technical SEO", "SEO Analytics"]
     },
     {
       id: 31,
@@ -124,16 +131,16 @@ export class TutorialService {
     },
     {
       id: 17,
-      title: "Analytics Foundations: Understanding Marketing Performance Metrics",
-      level: "Beginner",
-      content: this.loadTutorialContent('analyticsFoundations.ts'),
+      title: "Data-Driven Marketing: Analytics & Measurement",
+      level: "Intermediate",
+      content: this.loadTutorialContent('analyticsDataDriven.ts'),
       tasks: [
         {
           id: 1701,
-          description: "Set up a marketing dashboard",
+          description: "Set up a comprehensive marketing dashboard",
           type: "practical",
           requirements: ["Analytics access", "Key business metrics"],
-          verificationCriteria: ["Dashboard created", "KPIs displayed", "Data visualized effectively"]
+          verificationCriteria: ["Dashboard created", "KPIs displayed", "Data visualized effectively", "Automated updates configured"]
         },
         {
           id: 1702,
@@ -141,10 +148,24 @@ export class TutorialService {
           type: "practical",
           requirements: ["Analytics data", "Stakeholder requirements"],
           verificationCriteria: ["Report template created", "Insights highlighted", "Action recommendations included"]
+        },
+        {
+          id: 1703,
+          description: "Implement attribution modeling",
+          type: "practical",
+          requirements: ["Analytics access", "Conversion data", "Multi-channel customer journeys"],
+          verificationCriteria: ["Attribution model configured", "Comparison of models documented", "Marketing insights derived"]
+        },
+        {
+          id: 1704,
+          description: "Create a segmentation analysis",
+          type: "practical",
+          requirements: ["User data", "Analytics platform"],
+          verificationCriteria: ["Meaningful segments created", "Segment performance analyzed", "Strategic recommendations made"]
         }
       ],
-      estimatedTime: 60,
-      skillsLearned: ["Data Analysis", "Marketing Metrics", "KPI Setting", "Performance Reporting"]
+      estimatedTime: 120,
+      skillsLearned: ["Data Analysis", "Marketing Metrics", "KPI Setting", "Performance Reporting", "Attribution Modeling", "Customer Journey Analytics", "Data Visualization", "Segmentation Analysis"]
     },
     {
       id: 18,
@@ -198,7 +219,7 @@ export class TutorialService {
       id: 20,
       title: "Google Ads Troubleshooting & Best Practices",
       level: "Advanced",
-      content: this.loadTutorialContent('troubleshootingBestPractices.ts'),
+      content: this.loadTutorialContent('googleAdsTroubleshooting.ts'),
       tasks: [
         {
           id: 2001,
@@ -213,10 +234,24 @@ export class TutorialService {
           type: "practical",
           requirements: ["Active campaigns", "Historical data"],
           verificationCriteria: ["Bid adjustments made", "Ad schedule optimized", "Audience targeting refined"]
+        },
+        {
+          id: 2003,
+          description: "Create a troubleshooting framework document",
+          type: "practical",
+          requirements: ["Google Ads knowledge", "Common issue awareness"],
+          verificationCriteria: ["Problem categories defined", "Diagnostic steps documented", "Solution strategies outlined"]
+        },
+        {
+          id: 2004,
+          description: "Implement an early warning system for campaign performance",
+          type: "practical",
+          requirements: ["Google Ads access", "Performance thresholds"],
+          verificationCriteria: ["Alerts configured", "Monitoring system implemented", "Documentation created"]
         }
       ],
-      estimatedTime: 80,
-      skillsLearned: ["Troubleshooting Process", "Performance Analysis", "Optimization Strategy", "Advanced Settings"]
+      estimatedTime: 120,
+      skillsLearned: ["Troubleshooting Process", "Performance Analysis", "Optimization Strategy", "Advanced Settings", "Early Warning Systems", "Systematic Problem-Solving"]
     },
     {
       id: 21,

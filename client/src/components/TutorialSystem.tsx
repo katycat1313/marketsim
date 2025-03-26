@@ -637,59 +637,88 @@ export function TutorialSystem() {
 
   // Group tutorials by lessons with clear progression
   const categorizedTutorials = React.useMemo(() => {
-    // Define lessons with clear progression instead of just categories
+    // Define both subject tracks and skill-based categories
     const lessons: Record<string, LessonGroup> = {
-      'Lesson 1: Getting Started with Digital Marketing': {
-        description: 'Learn the fundamentals of digital marketing, including Google Ads setup, SEO foundations, and basic analytics. After completing this lesson, you will have confidence in your ability to understand the basic principles of digital marketing campaigns.',
+      // SUBJECT TRACKS - Specialized subject areas
+      'Google Ads Mastery Track': {
+        description: 'Complete learning path for Google Ads - from account setup to advanced campaign optimization and troubleshooting.',
         tutorials: tutorials.filter(t => 
-          t.title.toLowerCase().includes('foundation') || 
-          t.title.toLowerCase().includes('mastery') || 
-          t.title.toLowerCase().includes('beginner') ||
-          t.title.toLowerCase().includes('setup')
-        ),
-        icon: '🚀',
-        color: 'green-500',
-        ctaText: 'Start Your Digital Marketing Journey'
-      },
-      'Lesson 2: Building Effective Campaigns': {
-        description: 'Discover how to create effective marketing campaigns across multiple platforms. Learn about search campaign fundamentals, audience targeting, and content optimization strategies.',
-        tutorials: tutorials.filter(t => 
+          t.title.toLowerCase().includes('google ads') || 
           t.title.toLowerCase().includes('campaign') ||
-          t.title.toLowerCase().includes('audience') ||
-          t.title.toLowerCase().includes('targeting') ||
-          t.title.toLowerCase().includes('strategy')
+          t.title.toLowerCase().includes('search campaign') ||
+          t.title.toLowerCase().includes('shopping campaign') ||
+          t.title.toLowerCase().includes('audience target') ||
+          t.title.toLowerCase().includes('troubleshooting')
         ),
-        icon: '📊',
-        color: 'blue-500',
-        ctaText: 'Master Campaign Creation'
+        icon: '🎯',
+        color: 'blue-600',
+        ctaText: 'Master Google Ads'
       },
-      'Lesson 3: Platform-Specific Marketing': {
-        description: 'Dive deeper into specific marketing platforms including Google Ads, SEO, social media, and email marketing. Learn advanced techniques for each platform.',
+      
+      'SEO Specialist Track': {
+        description: 'Comprehensive SEO learning path from foundations to technical mastery. Learn proven techniques to improve search visibility and rank higher.',
         tutorials: tutorials.filter(t => 
-          (t.title.toLowerCase().includes('google') && !t.title.toLowerCase().includes('foundation')) ||
-          (t.title.toLowerCase().includes('seo') && !t.title.toLowerCase().includes('foundation')) ||
-          t.title.toLowerCase().includes('email') ||
-          t.title.toLowerCase().includes('social')
+          t.title.toLowerCase().includes('seo') || 
+          t.title.toLowerCase().includes('search engine')
         ),
         icon: '🔍',
-        color: 'purple-500',
-        ctaText: 'Explore Platform Specialization'
+        color: 'purple-600',
+        ctaText: 'Become an SEO Expert'
       },
-      'Lesson 4: Advanced Optimization & Analytics': {
-        description: 'Take your marketing skills to the next level with advanced optimization techniques, troubleshooting strategies, and data-driven decision making.',
+      
+      'Analytics & Data Track': {
+        description: 'Learn to leverage analytics to make data-driven marketing decisions. From basic metrics to advanced analysis techniques.',
         tutorials: tutorials.filter(t => 
-          t.title.toLowerCase().includes('advanced') ||
-          t.title.toLowerCase().includes('analytics') ||
-          t.title.toLowerCase().includes('troubleshooting') ||
-          t.title.toLowerCase().includes('expert')
+          t.title.toLowerCase().includes('analytics') || 
+          t.title.toLowerCase().includes('data') ||
+          t.title.toLowerCase().includes('measuring')
         ),
-        icon: '📈',
-        color: 'yellow-500',
-        ctaText: 'Elevate Your Marketing Skills'
+        icon: '📊',
+        color: 'indigo-600',
+        ctaText: 'Master Marketing Analytics'
+      },
+      
+      'Content & Social Media': {
+        description: 'Create compelling content that engages audiences and drives conversions across multiple platforms.',
+        tutorials: tutorials.filter(t => 
+          t.title.toLowerCase().includes('content') || 
+          t.title.toLowerCase().includes('social media') ||
+          t.title.toLowerCase().includes('email')
+        ),
+        icon: '📱',
+        color: 'pink-600',
+        ctaText: 'Create Engaging Content'
+      },
+      
+      // SKILL LEVEL PROGRESSIONS - Cross-disciplinary learning paths
+      'Newcomer Essentials': {
+        description: 'Essential knowledge for beginners. Learn fundamental concepts, terminology, and get a broad overview of the digital marketing landscape.',
+        tutorials: tutorials.filter(t => 
+          (t.level.toLowerCase().includes('beginner') || 
+           t.level.toLowerCase().includes('newcomer') ||
+           t.title.toLowerCase().includes('foundation')) &&
+          !t.title.toLowerCase().includes('advanced')
+        ),
+        icon: '🚀',
+        color: 'green-600',
+        ctaText: 'Start Your Journey'
+      },
+      
+      'Advanced Strategies': {
+        description: 'Take your marketing to the next level with advanced techniques, cross-channel integration, and optimization strategies.',
+        tutorials: tutorials.filter(t => 
+          t.level.toLowerCase().includes('advanced') || 
+          t.level.toLowerCase().includes('expert') ||
+          t.level.toLowerCase().includes('master') ||
+          t.title.toLowerCase().includes('advanced')
+        ),
+        icon: '🔥',
+        color: 'orange-600',
+        ctaText: 'Master Advanced Skills'
       }
     };
     
-    // Assign any remaining tutorials to an additional lesson
+    // Assign any tutorials that weren't categorized to an "Explore More" category
     const otherTutorials = tutorials.filter(tutorial => {
       return !Object.values(lessons).some(lesson => 
         lesson.tutorials.some(t => t.id === tutorial.id)
@@ -697,12 +726,12 @@ export function TutorialSystem() {
     });
     
     if (otherTutorials.length > 0) {
-      lessons['Lesson 5: Specialized Marketing Topics'] = {
-        description: 'Explore specialized marketing topics and niche strategies to round out your digital marketing expertise.',
+      lessons['Explore More Marketing Topics'] = {
+        description: 'Discover additional specialized marketing topics and strategies to expand your digital marketing expertise.',
         tutorials: otherTutorials,
         icon: '🔎',
-        color: 'pink-500',
-        ctaText: 'Explore Specialized Topics'
+        color: 'amber-500',
+        ctaText: 'Explore Additional Topics'
       };
     }
     

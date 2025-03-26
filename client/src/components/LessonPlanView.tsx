@@ -1,8 +1,25 @@
 import React from 'react';
-import { Tutorial } from '../../../server/services/tutorialService';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+
+// Define the Tutorial interface directly in the component to avoid import issues
+interface Tutorial {
+  id: number;
+  title: string;
+  level: string;
+  content: string;
+  tasks: {
+    id: number;
+    description: string;
+    type: 'quiz' | 'practical' | 'simulation';
+    requirements: string[];
+    verificationCriteria: string[];
+  }[];
+  estimatedTime: number;
+  skillsLearned: string[];
+  hasSimulation?: boolean;
+}
 
 interface LessonPlanViewProps {
   lessonTitle: string;
