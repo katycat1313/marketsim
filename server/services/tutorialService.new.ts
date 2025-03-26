@@ -643,46 +643,42 @@ export class TutorialService {
       
       // Navigate to the tutorials directory
       const tutorialsDir = path.join(currentDir, '..', 'data', 'tutorials');
+      const tutorialPath = path.join(tutorialsDir, filename);
       
-      // Simplified content loading approach - read file contents directly
-      const findAndReadFile = (searchName: string): string => {
+      // First try direct file access
+      if (fs.existsSync(tutorialPath)) {
+        // Load and execute the tutorial module to get the content
         try {
-          // Get all files in the tutorial directory
-          const files = fs.readdirSync(tutorialsDir);
-          
-          // First try for exact match
-          let targetFile = files.find(f => f === searchName);
-          
-          // If not found, try for partial match
-          if (!targetFile) {
-            targetFile = files.find(f => 
-              f.includes(searchName.replace('.ts', '')) || 
-              searchName.includes(f.replace('.ts', ''))
-            );
-          }
-          
-          if (targetFile) {
-            // Read the file directly as string
-            const filePath = path.join(tutorialsDir, targetFile);
-            const fileContent = fs.readFileSync(filePath, 'utf8');
-            
-            // Extract content by finding export const content = ` and matching backticks
-            const contentMatch = fileContent.match(/export\s+const\s+content\s*=\s*`([\s\S]*)`/);
-            if (contentMatch && contentMatch[1]) {
-              return contentMatch[1];
-            }
-            
-            return 'Content extraction failed. Please check tutorial file format.';
-          }
-          
-          return 'Tutorial file not found';
-        } catch (err) {
-          console.error(`Error reading file ${searchName}:`, err);
-          return 'Error reading tutorial file';
+          // Dynamic require equivalent for ESM
+          const tutorialModule = require(tutorialPath);
+          return tutorialModule.content || 'Content not available';
+        } catch (importError) {
+          console.error(`Could not import tutorial from ${tutorialPath}:`, importError);
+          return 'Error loading tutorial content';
         }
-      };
+      }
       
-      return findAndReadFile(filename);
+      // If direct file not found, try to find matching file
+      console.log(`Couldn't find exact file ${filename}, trying to find matching files...`);
+      const files = fs.readdirSync(tutorialsDir);
+      const matchingFile = files.find(file => file.includes(filename) || 
+                                           file.includes(filename.replace('.ts', '')) ||
+                                           filename.includes(file.replace('.ts', '')));
+      
+      if (matchingFile) {
+        console.log(`Found matching file: ${matchingFile}`);
+        const matchingPath = path.join(tutorialsDir, matchingFile);
+        try {
+          // Dynamic require equivalent for ESM
+          const tutorialModule = require(matchingPath);
+          return tutorialModule.content || 'Content not available';
+        } catch (importError) {
+          console.error(`Could not import tutorial from ${matchingPath}:`, importError);
+          return 'Error loading tutorial content';
+        }
+      }
+      
+      return 'Tutorial content not found';
     } catch (error) {
       console.error('Error loading tutorial content:', error);
       return 'Error loading tutorial content';
@@ -772,7 +768,7 @@ export class TutorialService {
   async getUserProgress(userId: number): Promise<number[]> {
     try {
       // Query database for completed tutorials
-      const result = await pool.query(
+      const result = await db.execute(
         `SELECT tutorial_id FROM user_tutorial_progress WHERE user_id = $1 AND status = 'completed'`,
         [userId]
       );
@@ -790,27 +786,27 @@ export class TutorialService {
   async markTutorialComplete(userId: number, tutorialId: number): Promise<void> {
     try {
       // Check if progress entry exists
-      const exists = await pool.query(
+      const exists = await db.execute(
         `SELECT * FROM user_tutorial_progress WHERE user_id = $1 AND tutorial_id = $2`,
         [userId, tutorialId]
       );
       
-      if (exists.rowCount && exists.rowCount > 0) {
+      if (exists.rowCount > 0) {
         // Update existing record
-        await pool.query(
+        await db.execute(
           `UPDATE user_tutorial_progress SET status = 'completed', completed_at = NOW(), progress = 100 WHERE user_id = $1 AND tutorial_id = $2`,
           [userId, tutorialId]
         );
       } else {
         // Create new record
-        await pool.query(
+        await db.execute(
           `INSERT INTO user_tutorial_progress (user_id, tutorial_id, status, started_at, completed_at, progress) VALUES ($1, $2, 'completed', NOW(), NOW(), 100)`,
           [userId, tutorialId]
         );
       }
       
       // Update user experience
-      await pool.query(
+      await db.execute(
         `UPDATE user_profiles SET experience_points = experience_points + 50 WHERE id = $1`,
         [userId]
       );
