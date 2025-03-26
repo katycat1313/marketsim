@@ -13,9 +13,8 @@ This platform has evolved dramatically since its launch in 2000, transforming fr
 At the heart of Google Ads is a real-time auction system that determines which ads appear and in what position:
 
 1. **Ad Rank Calculation**: Google calculates an Ad Rank for each eligible ad using the formula:
-   ```
-   Ad Rank = Bid Amount × Quality Score × Expected Impact of Extensions and Formats
-   ```
+   
+   **Ad Rank = Bid Amount × Quality Score × Expected Impact of Extensions and Formats**
 
 2. **Quality Score Components**:
    - Expected click-through rate (CTR)
@@ -24,9 +23,8 @@ At the heart of Google Ads is a real-time auction system that determines which a
    - Historical account performance
 
 3. **Actual Cost Per Click (CPC)**:
-   ```
-   Actual CPC = (Ad Rank of competitor below you ÷ Your Quality Score) + $0.01
-   ```
+   
+   **Actual CPC = (Ad Rank of competitor below you ÷ Your Quality Score) + $0.01**
 
 This system means advertisers with more relevant, high-quality ads can achieve better positions at lower costs than competitors with higher bids but lower quality ads.
 
@@ -178,21 +176,20 @@ Proper Google Ads account structure is crucial for long-term performance:
 
 ### The Hierarchical Framework
 
-```
-Account
-├── Campaign 1 (e.g., Brand Terms)
-│   ├── Ad Group 1.1 (e.g., Product Name Terms)
-│   │   ├── Keywords
-│   │   ├── Ads
-│   │   └── Extensions
-│   ├── Ad Group 1.2 (e.g., Company Name Terms)
-│   │   ├── Keywords
-│   │   ├── Ads
-│   │   └── Extensions
-├── Campaign 2 (e.g., Non-Brand Terms)
-│   ├── Ad Group 2.1 (e.g., Product Category)
-...
-```
+**Account Structure:**
+- Account
+  - Campaign 1 (e.g., Brand Terms)
+    - Ad Group 1.1 (e.g., Product Name Terms)
+      - Keywords
+      - Ads
+      - Extensions
+    - Ad Group 1.2 (e.g., Company Name Terms)
+      - Keywords
+      - Ads
+      - Extensions
+  - Campaign 2 (e.g., Non-Brand Terms)
+    - Ad Group 2.1 (e.g., Product Category)
+    - And so on...
 
 ### Best Practices for Account Structure
 
