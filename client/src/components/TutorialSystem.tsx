@@ -876,7 +876,7 @@ export function TutorialSystem() {
                   value="levels" 
                   className="flex-1 data-[state=active]:bg-[#ffd700]/20 data-[state=active]:text-[#ffd700] data-[state=active]:shadow-[0_0_10px_rgba(255,215,0,0.3)]"
                 >
-                  <span className="mr-2">🏆</span> By Level
+                  <span className="mr-2">🏆</span> By Skill Level
                 </TabsTrigger>
               </TabsList>
               
@@ -976,21 +976,37 @@ export function TutorialSystem() {
                 </div>
               </TabsContent>
               
-              {/* Levels Tab */}
+              {/* Skill Levels Tab */}
               <TabsContent value="levels">
                 <div className="space-y-10">
-                  {/* Beginner Tutorials */}
+                  {/* Newcomer Tutorials */}
                   <div className="mb-8 p-2 rounded-lg bg-[#111]/40 shadow-md border border-[#ffd700]/10">
                     <div className="mb-4 pl-2 border-l-4 border-green-500">
                       <h3 className="text-xl font-bold text-[#ffd700] flex items-center">
-                        <span className="bg-[#111] text-green-400 text-sm font-medium px-3 py-1 rounded-full mr-2 border border-green-500/30">Beginner</span>
+                        <span className="bg-[#111] text-green-400 text-sm font-medium px-3 py-1 rounded-full mr-2 border border-green-500/30">Newcomer</span>
                         Start Here
                       </h3>
-                      <p className="ml-10 text-[#f5f5f5]/70 text-sm">Perfect for newcomers to digital marketing - no prior experience required</p>
+                      <p className="ml-10 text-[#f5f5f5]/70 text-sm">Perfect for complete beginners - no prior experience required</p>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-2">
                       {tutorials
-                        .filter(t => t.level.toLowerCase().includes('beginner'))
+                        .filter(t => t.level.toLowerCase().includes('beginner') || t.level.toLowerCase().includes('newcomer'))
+                        .map(renderTutorialCard)}
+                    </div>
+                  </div>
+                  
+                  {/* Associate Tutorials */}
+                  <div className="mb-8 p-2 rounded-lg bg-[#111]/40 shadow-md border border-[#ffd700]/10">
+                    <div className="mb-4 pl-2 border-l-4 border-teal-500">
+                      <h3 className="text-xl font-bold text-[#ffd700] flex items-center">
+                        <span className="bg-[#111] text-teal-400 text-sm font-medium px-3 py-1 rounded-full mr-2 border border-teal-500/30">Associate</span>
+                        Foundation Builder
+                      </h3>
+                      <p className="ml-10 text-[#f5f5f5]/70 text-sm">For those with basic familiarity looking to build solid marketing foundations</p>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-2">
+                      {tutorials
+                        .filter(t => t.level.toLowerCase().includes('associate'))
                         .map(renderTutorialCard)}
                     </div>
                   </div>
@@ -1000,9 +1016,9 @@ export function TutorialSystem() {
                     <div className="mb-4 pl-2 border-l-4 border-blue-500">
                       <h3 className="text-xl font-bold text-[#ffd700] flex items-center">
                         <span className="bg-[#111] text-blue-400 text-sm font-medium px-3 py-1 rounded-full mr-2 border border-blue-500/30">Intermediate</span>
-                        Build Your Skills
+                        Practical Applications
                       </h3>
-                      <p className="ml-10 text-[#f5f5f5]/70 text-sm">For marketers with basic knowledge ready to enhance their capabilities</p>
+                      <p className="ml-10 text-[#f5f5f5]/70 text-sm">For marketers with working knowledge ready to implement effective strategies</p>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-2">
                       {tutorials
@@ -1016,13 +1032,45 @@ export function TutorialSystem() {
                     <div className="mb-4 pl-2 border-l-4 border-purple-500">
                       <h3 className="text-xl font-bold text-[#ffd700] flex items-center">
                         <span className="bg-[#111] text-purple-400 text-sm font-medium px-3 py-1 rounded-full mr-2 border border-purple-500/30">Advanced</span>
-                        Master Your Craft
+                        Strategic Implementation
                       </h3>
                       <p className="ml-10 text-[#f5f5f5]/70 text-sm">Advanced strategies for experienced marketers ready to maximize results</p>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-2">
                       {tutorials
                         .filter(t => t.level.toLowerCase().includes('advanced'))
+                        .map(renderTutorialCard)}
+                    </div>
+                  </div>
+                  
+                  {/* Expert Tutorials */}
+                  <div className="mb-8 p-2 rounded-lg bg-[#111]/40 shadow-md border border-[#ffd700]/10">
+                    <div className="mb-4 pl-2 border-l-4 border-orange-500">
+                      <h3 className="text-xl font-bold text-[#ffd700] flex items-center">
+                        <span className="bg-[#111] text-orange-400 text-sm font-medium px-3 py-1 rounded-full mr-2 border border-orange-500/30">Expert</span>
+                        Optimization Specialist
+                      </h3>
+                      <p className="ml-10 text-[#f5f5f5]/70 text-sm">For professionals seeking mastery in analytics and campaign optimization</p>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-2">
+                      {tutorials
+                        .filter(t => t.level.toLowerCase().includes('expert'))
+                        .map(renderTutorialCard)}
+                    </div>
+                  </div>
+                  
+                  {/* Master Marketer Tutorials */}
+                  <div className="mb-8 p-2 rounded-lg bg-[#111]/40 shadow-md border border-[#ffd700]/10">
+                    <div className="mb-4 pl-2 border-l-4 border-red-500">
+                      <h3 className="text-xl font-bold text-[#ffd700] flex items-center">
+                        <span className="bg-[#111] text-red-400 text-sm font-medium px-3 py-1 rounded-full mr-2 border border-red-500/30">Master Marketer</span>
+                        Complete Mastery
+                      </h3>
+                      <p className="ml-10 text-[#f5f5f5]/70 text-sm">Elite content for comprehensive mastery across all marketing disciplines</p>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-2">
+                      {tutorials
+                        .filter(t => t.level.toLowerCase().includes('master'))
                         .map(renderTutorialCard)}
                     </div>
                   </div>
