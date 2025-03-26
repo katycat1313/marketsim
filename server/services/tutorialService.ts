@@ -759,9 +759,9 @@ export class TutorialService {
 
   async getUserProgress(userId: number): Promise<number[]> {
     try {
-      // Query database for completed tutorials
+      // Query the correct table that has tutorial_id
       const result = await pool.query(
-        `SELECT tutorial_id FROM user_tutorial_progress WHERE user_id = $1 AND status = 'completed'`,
+        `SELECT tutorial_id FROM user_completed_tutorials WHERE user_id = $1`,
         [userId]
       );
       
@@ -777,36 +777,24 @@ export class TutorialService {
 
   async markTutorialComplete(userId: number, tutorialId: number): Promise<void> {
     try {
-      // Check if progress entry exists
+      // Check if already completed to avoid duplicates
       const exists = await pool.query(
-        `SELECT * FROM user_tutorial_progress WHERE user_id = $1 AND tutorial_id = $2`,
+        `SELECT * FROM user_completed_tutorials WHERE user_id = $1 AND tutorial_id = $2`,
         [userId, tutorialId]
       );
       
-      if (exists.rowCount && exists.rowCount > 0) {
-        // Update existing record
+      if (exists.rowCount === 0) {
+        // Create new record in the correct table
         await pool.query(
-          `UPDATE user_tutorial_progress SET status = 'completed', completed_at = NOW(), progress = 100 WHERE user_id = $1 AND tutorial_id = $2`,
-          [userId, tutorialId]
-        );
-      } else {
-        // Create new record
-        await pool.query(
-          `INSERT INTO user_tutorial_progress (user_id, tutorial_id, status, started_at, completed_at, progress) VALUES ($1, $2, 'completed', NOW(), NOW(), 100)`,
+          `INSERT INTO user_completed_tutorials (user_id, tutorial_id, completed_at) 
+           VALUES ($1, $2, NOW())`,
           [userId, tutorialId]
         );
       }
       
-      // Update user experience
-      await pool.query(
-        `UPDATE user_profiles SET experience_points = experience_points + 50 WHERE id = $1`,
-        [userId]
-      );
-      
       console.log(`Marked tutorial ${tutorialId} as complete for user ${userId}`);
     } catch (error) {
       console.error('Error marking tutorial as complete:', error);
-      throw new Error('Failed to update tutorial progress');
     }
   }
 }
