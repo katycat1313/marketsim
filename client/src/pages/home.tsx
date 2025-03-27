@@ -29,12 +29,6 @@ export default function Home() {
               with confidence.
             </p>
             <div className="flex gap-4">
-              <Link href="/tutorials">
-                <Button className="bg-primary hover:bg-primary/90">
-                  Start Learning
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </Link>
               <Link href="/api-settings">
                 <Button variant="outline" className="flex items-center gap-2">
                   <Settings className="h-5 w-5" />

@@ -271,13 +271,24 @@ const TutorialContentRenderer: React.FC<TutorialContentRendererProps> = ({ conte
     else if (contentLower.includes('advanced')) initialImage = 'advanced_strategies';
     else if (contentLower.includes('digital marketing')) initialImage = 'digital_marketing_intro';
     
+    // Use a direct image path for testing to ensure images are working properly
+    const imagePath = getImagePath(initialImage);
+    const fallbackImage = '/images/level-badges/expert.png'; // A known working image as fallback
+    
     enhancedContent.push(
-      <div key="auto-image" className="my-4 rounded-lg overflow-hidden shadow-md">
-        <img 
-          src={getImagePath(initialImage)} 
-          alt="Tutorial illustration" 
-          className="w-full object-cover max-h-64"
-        />
+      <div key="auto-image" className="my-4 rounded-lg overflow-hidden border-2 border-[#ffd700]/20 bg-gradient-to-r from-yellow-900/30 to-gray-900/50">
+        <div className="relative w-full h-64 flex items-center justify-center">
+          <img 
+            src={imagePath} 
+            alt="Tutorial illustration" 
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              console.log('Image failed to load:', imagePath);
+              e.currentTarget.src = fallbackImage;
+              e.currentTarget.className = "w-1/2 h-auto object-contain my-4";
+            }}
+          />
+        </div>
       </div>
     );
     
@@ -285,12 +296,12 @@ const TutorialContentRenderer: React.FC<TutorialContentRendererProps> = ({ conte
     enhancedContent.push(
       <div key="main-content" dangerouslySetInnerHTML={{ 
         __html: content
-          .replace(/\n\n/g, '</p><p class="text-gray-100 mb-4">')
+          .replace(/\n\n/g, '</p><p class="text-white text-lg mb-4">')
           .replace(/\n/g, '<br />')
-          .replace(/^/, '<p class="text-gray-100 mb-4">')
+          .replace(/^/, '<p class="text-white text-lg mb-4">')
           .replace(/$/, '</p>')
-          .replace(/## (.*?)$/gm, (_, heading) => `</p><h2 class="text-xl font-bold text-[#ffd700] mt-6 mb-3">${heading}</h2><p class="text-gray-100 mb-4">`)
-          .replace(/### (.*?)$/gm, (_, heading) => `</p><h3 class="text-lg font-semibold text-[#ffd700] mt-5 mb-2">${heading}</h3><p class="text-gray-100 mb-4">`)
+          .replace(/## (.*?)$/gm, (_, heading) => `</p><h2 class="text-2xl font-bold text-[#ffd700] mt-8 mb-4">${heading}</h2><p class="text-white text-lg mb-4">`)
+          .replace(/### (.*?)$/gm, (_, heading) => `</p><h3 class="text-xl font-semibold text-[#ffd700] mt-6 mb-3">${heading}</h3><p class="text-white text-lg mb-4">`)
       }} />
     );
     
@@ -311,7 +322,7 @@ const TutorialContentRenderer: React.FC<TutorialContentRendererProps> = ({ conte
                 <AccordionTrigger className="px-4 text-[#ffd700] hover:text-[#ffd700]/80 hover:no-underline">
                   {item.question}
                 </AccordionTrigger>
-                <AccordionContent className="px-4 pt-2 text-gray-300">
+                <AccordionContent className="px-4 pt-2 text-white text-base">
                   {item.answer}
                 </AccordionContent>
               </AccordionItem>
@@ -330,7 +341,7 @@ const TutorialContentRenderer: React.FC<TutorialContentRendererProps> = ({ conte
         <Alert key="auto-tip" className="my-6 bg-yellow-950/30 border-yellow-500/30">
           <LightbulbIcon className="h-5 w-5 text-yellow-500" />
           <AlertTitle className="text-yellow-400">Pro Tip</AlertTitle>
-          <AlertDescription className="text-gray-300">
+          <AlertDescription className="text-white text-base">
             Start with small tests before scaling up your marketing efforts. This approach allows you to refine your strategy based on real data while minimizing risk.
           </AlertDescription>
         </Alert>

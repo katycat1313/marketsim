@@ -156,7 +156,7 @@ function SideNav() {
                     ${isActive('/tutorials-new') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}
                   >
                     <GraduationCap className="h-5 w-5" />
-                    <span>Tutorials (Enhanced)</span>
+                    <span>Tutorials</span>
                   </div>
                 </Link>
               </div>
