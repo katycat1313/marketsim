@@ -49,6 +49,17 @@ const imageMetadata: ImageMetadata[] = [
     path: '/images/seo-visual.jpeg',
     topics: ['seo', 'search engine', 'website optimization', 'organic traffic', 'digital visibility'],
     description: 'SEO and search engine optimization visualization'
+  },
+  // Adding alternate versions with correct naming that exist in the filesystem
+  {
+    path: '/images/small-business-alt.jpeg',
+    topics: ['small business', 'entrepreneurship', 'business planning', 'marketing basics', 'digital strategy'],
+    description: 'Small business owner working at a desk (alt)'
+  },
+  {
+    path: '/images/smallbusinessspelled.jpeg',
+    topics: ['small business', 'entrepreneurship', 'business strategy', 'startup'],
+    description: 'Small business planning and strategy'
   }
 ];
 
@@ -67,26 +78,26 @@ const chapterTopics: Record<number, string[]> = {
 // Specific tutorial-to-image mappings for perfect content alignment
 // Key format: "chapter-tutorialIndex" (e.g., "1-2" = Chapter 1, second tutorial)
 const tutorialImageMappings: Record<string, string> = {
-  "1-1": '/images/small-business.jpeg', // Digital Marketing Foundations
+  "1-1": '/images/small-business-alt.jpeg', // Digital Marketing Foundations
   "1-2": '/images/group-thinking.jpeg', // Marketing Strategy Essentials
-  "1-3": '/images/womanwork.jpeg',      // Brand Building Online
+  "1-3": '/images/smallbusinessspelled.jpeg', // Brand Building Online
   
   "2-1": '/images/ad-image.jpeg',       // Google Ads Platform Intro
-  "2-2": '/images/small-business.jpeg', // Google Ads Account Structure
+  "2-2": '/images/small-business-alt.jpeg', // Google Ads Account Structure
   "2-3": '/images/group-thinking.jpeg', // Campaign Types Overview
   "2-4": '/images/ad-image.jpeg',       // Keyword Research Mastery
   "2-5": '/images/wiered-headshot.jpeg', // Ad Writing Best Practices
   
-  "3-1": '/images/womanwork.jpeg',      // Campaign Setup Guide
+  "3-1": '/images/cart-with-packages.jpeg', // Campaign Setup Guide
   "3-2": '/images/group-thinking.jpeg', // Budget Optimization
   "3-3": '/images/ad-image.jpeg',       // Performance Monitoring
   
   "4-1": '/images/wiered-headshot.jpeg', // Audience Targeting Guide
   
-  "5-1": '/images/womanwork.jpeg',      // Analytics Fundamentals
+  "5-1": '/images/seo-visual.jpeg',     // Analytics Fundamentals
   "5-2": '/images/group-thinking.jpeg', // A/B Testing Framework
   "5-3": '/images/ad-image.jpeg',       // Conversion Tracking Setup
-  "5-4": '/images/small-business.jpeg', // Data-Driven Decision Making
+  "5-4": '/images/small-business-alt.jpeg', // Data-Driven Decision Making
   "5-5": '/images/wiered-headshot.jpeg', // Marketing Measurement Models
   
   "6-1": '/images/ad-image.jpeg',       // Advanced Google Ads Tactics
@@ -95,15 +106,15 @@ const tutorialImageMappings: Record<string, string> = {
   "6-4": '/images/group-thinking.jpeg', // International Marketing
   
   "7-1": '/images/seo-visual.jpeg',     // SEO Fundamentals
-  "7-2": '/images/small-business.jpeg', // On-Page Optimization
-  "7-3": '/images/womanwork.jpeg',      // Content Strategy for SEO
+  "7-2": '/images/smallbusinessspelled.jpeg', // On-Page Optimization
+  "7-3": '/images/cart-with-packages.jpeg', // Content Strategy for SEO
   "7-4": '/images/seo-visual.jpeg',     // Technical SEO Guide
   "7-5": '/images/group-thinking.jpeg', // Local SEO Strategies
   "7-6": '/images/ad-image.jpeg',       // SEO & PPC Integration
   
   "8-1": '/images/cart-with-packages.jpeg', // Troubleshooting Google Ads
   "8-2": '/images/wiered-headshot.jpeg', // Recovery Strategies for Declining Campaigns
-  "8-3": '/images/small-business.jpeg'   // Competitive Analysis Framework
+  "8-3": '/images/small-business-alt.jpeg'   // Competitive Analysis Framework
 };
 
 // Helper function to get image path based on chapter, tutorial, and context
@@ -144,7 +155,7 @@ const getImagePath = (imageKey: string, chapterNumber?: number, tutorialIndex?: 
   }
   
   // Final fallback: Use a default image
-  return '/images/small-business.jpeg';
+  return '/images/small-business-alt.jpeg';
 };
 
 interface TutorialContentRendererProps {
@@ -443,6 +454,8 @@ const TutorialContentRenderer: React.FC<TutorialContentRendererProps> = ({
     // Use a direct image path based on chapter and tutorial index if available
     const imagePath = getImagePath(initialImage, chapterNumber, tutorialIndex);
     const fallbackImage = '/images/level-badges/expert.png'; // A known working image as fallback
+    
+    console.log('Selected image path:', imagePath, 'for chapter:', chapterNumber, 'tutorial:', tutorialIndex);
     
     enhancedContent.push(
       <div key="auto-image" className="my-4 rounded-lg overflow-hidden border-2 border-[#ffd700]/20 bg-gradient-to-r from-yellow-900/30 to-gray-900/50 relative z-10">
