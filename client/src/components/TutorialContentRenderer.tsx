@@ -453,7 +453,7 @@ const TutorialContentRenderer: React.FC<TutorialContentRendererProps> = ({
     
     // Use a direct image path based on chapter and tutorial index if available
     const imagePath = getImagePath(initialImage, chapterNumber, tutorialIndex);
-    const fallbackImage = '/images/level-badges/expert.png'; // A known working image as fallback
+    const fallbackImage = '/images/smallbusinessspelled.jpeg'; // A reliable fallback image
     
     console.log('Selected image path:', imagePath, 'for chapter:', chapterNumber, 'tutorial:', tutorialIndex);
     
