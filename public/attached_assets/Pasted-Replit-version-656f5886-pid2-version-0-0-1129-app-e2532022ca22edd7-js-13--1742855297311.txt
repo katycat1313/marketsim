@@ -1,0 +1,743 @@
+Replit version 656f5886, pid2 version 0.0.1129
+_app-e2532022ca22edd7.js:13 
+      /////////////////////
+   ///////////////////////////
+  ////////@@@@@@@//////////////
+  ////////@@@@@@@//////////////
+  ////////@@@@@@@//////////////        Curious and driven?
+  ///////////////@@@@@@@///////        Work with us!
+  ///////////////@@@@@@@///////
+  ///////////////@@@@@@@///////        https://join.replit.com/hack.with.us
+  ////////@@@@@@@//////////////
+  ////////@@@@@@@//////////////
+  ////////@@@@@@#//////////////
+   ///////////////////////////
+      /////////////////////
+      
+MarketSimulator:1 [Intervention] Slow network is detected. See https://www.chromestatus.com/feature/5636954674692096 for more details. Fallback font will be used while loading: chrome-extension://okfkdaglfjjjfefdcppliegebpoegaii/assets/PublicSans-VariableFont_wght.ttf
+_app-e2532022ca22edd7.js:13 [LaunchDarkly] LaunchDarkly client initialized
+stallwart.build.js:1 stallwart: failed ping 1
+stallwart.build.js:1 stallwart: failed ping 1
+framework-5bca45c978b2927e.js:1 Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+_ @ framework-5bca45c978b2927e.js:1Understand this errorAI
+framework-5bca45c978b2927e.js:1 Unrecognized feature: 'ambient-light-sensor'.
+_ @ framework-5bca45c978b2927e.js:1Understand this warningAI
+framework-5bca45c978b2927e.js:1 Unrecognized feature: 'battery'.
+_ @ framework-5bca45c978b2927e.js:1Understand this warningAI
+framework-5bca45c978b2927e.js:1 Unrecognized feature: 'execution-while-not-rendered'.
+_ @ framework-5bca45c978b2927e.js:1Understand this warningAI
+framework-5bca45c978b2927e.js:1 Unrecognized feature: 'execution-while-out-of-viewport'.
+_ @ framework-5bca45c978b2927e.js:1Understand this warningAI
+framework-5bca45c978b2927e.js:1 Unrecognized feature: 'layout-animations'.
+_ @ framework-5bca45c978b2927e.js:1Understand this warningAI
+framework-5bca45c978b2927e.js:1 Unrecognized feature: 'legacy-image-formats'.
+_ @ framework-5bca45c978b2927e.js:1Understand this warningAI
+framework-5bca45c978b2927e.js:1 Unrecognized feature: 'navigation-override'.
+_ @ framework-5bca45c978b2927e.js:1Understand this warningAI
+framework-5bca45c978b2927e.js:1 Unrecognized feature: 'oversized-images'.
+_ @ framework-5bca45c978b2927e.js:1Understand this warningAI
+framework-5bca45c978b2927e.js:1 Unrecognized feature: 'publickey-credentials'.
+_ @ framework-5bca45c978b2927e.js:1Understand this warningAI
+framework-5bca45c978b2927e.js:1 Unrecognized feature: 'speaker-selection'.
+_ @ framework-5bca45c978b2927e.js:1Understand this warningAI
+framework-5bca45c978b2927e.js:1 Unrecognized feature: 'unoptimized-images'.
+_ @ framework-5bca45c978b2927e.js:1Understand this warningAI
+framework-5bca45c978b2927e.js:1 Unrecognized feature: 'unsized-media'.
+_ @ framework-5bca45c978b2927e.js:1Understand this warningAI
+framework-5bca45c978b2927e.js:1 Unrecognized feature: 'pointer-lock'.
+_ @ framework-5bca45c978b2927e.js:1Understand this warningAI
+framework-5bca45c978b2927e.js:1 Allow attribute will take precedence over 'allowfullscreen'.
+_ @ framework-5bca45c978b2927e.js:1Understand this warningAI
+framework-5bca45c978b2927e.js:1 Allow attribute will take precedence over 'allowpaymentrequest'.
+_ @ framework-5bca45c978b2927e.js:1Understand this warningAI
+MarketSimulator:1 Blocked aria-hidden on an element because its descendant retained focus. The focus must not be hidden from assistive technology users. Avoid using aria-hidden on a focused element or its ancestor. Consider using the inert attribute instead, which will also prevent focus. For more details, see the aria-hidden section of the WAI-ARIA specification at https://w3c.github.io/aria/#aria-hidden.
+Element with focus: div
+Ancestor with aria-hidden:  <div class=​" useView_view__C2mnv css-1gdmsm6 Surface_surfaceDefault__TcNI5" aria-hidden=​"true" style=​"--useView--gap:​ 4px;​ --borderColor:​ var(--outline-dimmer)​;​ --focusedBorderColor:​ var(--accent-primary-default)​;​ --hoverBorderColor:​ var(--accent-primary-default)​;​">​…​</div>​flexUnderstand this errorAI
+MarketSimulator:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+stallwart.build.js:1 stallwart: failed ping 1
+framework-5bca45c978b2927e.js:1 Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+_ @ framework-5bca45c978b2927e.js:1Understand this errorAI
+hook.js:608 Invalid href 'https://8a18e115-fe70-4b75-91e5-2b2ead766cf9-00-2wto2la5y1pzf.worf.replit.dev//' passed to next/router in page: '/replEnvironmentDesktop'. Repeated forward-slashes (//) or backslashes \ are not valid in the href.
+overrideMethod @ hook.js:608Understand this errorAI
+stallwart.build.js:1 stallwart: failed ping 1
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+1025-25412707794bc605.js:1 Uncaught (in promise) ChatError: Unexpected missing event in store
+    at aM (1025-25412707794bc605.js:1:197081)
+    at t.error (1025-25412707794bc605.js:1:242457)
+    at 1025-25412707794bc605.js:1:249851
+    at main-f8329f46b1fd2668.js:1:180591
+    at Object.next (main-f8329f46b1fd2668.js:1:180696)
+    at n (main-f8329f46b1fd2668.js:1:99052)
+    at u (main-f8329f46b1fd2668.js:1:99249)Understand this errorAI
+1025-25412707794bc605.js:1 Uncaught (in promise) ChatError: Unexpected missing event in store
+    at aM (1025-25412707794bc605.js:1:197081)
+    at t.error (1025-25412707794bc605.js:1:242457)
+    at 1025-25412707794bc605.js:1:249851
+    at main-f8329f46b1fd2668.js:1:180591
+    at Object.next (main-f8329f46b1fd2668.js:1:180696)
+    at n (main-f8329f46b1fd2668.js:1:99052)
+    at u (main-f8329f46b1fd2668.js:1:99249)Understand this errorAI
+1025-25412707794bc605.js:1 Uncaught (in promise) ChatError: Unexpected missing event in store
+    at aM (1025-25412707794bc605.js:1:197081)
+    at t.error (1025-25412707794bc605.js:1:242457)
+    at 1025-25412707794bc605.js:1:249851
+    at main-f8329f46b1fd2668.js:1:180591
+    at Object.next (main-f8329f46b1fd2668.js:1:180696)
+    at n (main-f8329f46b1fd2668.js:1:99052)
+    at u (main-f8329f46b1fd2668.js:1:99249)Understand this errorAI
+logs.browser-intake-us5-datadoghq.com/api/v2/logs?ddsource=browser&ddtags=sdk_version%3A4.46.0%2Capi%3Afetch%2Cenv%3Aproduction%2Cservice%3Awebsite%2Cversion%3A656f5886&dd-api-key=pub31a5047a3a4692afb84a423db984dc57&dd-evp-origin-version=4.46.0&dd-evp-origin=browser&dd-request-id=78775b24-9ceb-4119-8f8e-2f9e4c91ec7a:1 
+            
+            
+           Failed to load resource: net::ERR_INTERNET_DISCONNECTEDUnderstand this errorAI
+/data/repls/8a18e115-fe70-4b75-91e5-2b2ead766cf9/get_connection_metadata:1 
+            
+            
+           Failed to load resource: net::ERR_INTERNET_DISCONNECTEDUnderstand this errorAI
+1025-25412707794bc605.js:1 WebSocket connection to 'wss://production-ai-chat.replit.com/river?auth_token=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjM5MTY4ODY4LCJ1c2VyVGltZUNyZWF0ZWQiOiIyMDI1LTAxLTI3VDE2OjAzOjI2LjkyOVoiLCJyZXBsSWQiOiI4YTE4ZTExNS1mZTcwLTRiNzUtOTFlNS0yYjJlYWQ3NjZjZjkiLCJtZW1iZXJzaGlwIjoiY29yZSIsImlzc3VlciI6Imh0dHBzOi8vcmVwbGl0LmNvbSIsInJvbGVzIjpbImV4cGxvcmVyIiwib25ib2FyZGluZ19leHBlcmllbmNlX25vbmUiLCJpbnRlbnRfcGVyc29uYWwiXSwiY2FuV3JpdGUiOnRydWUsImhhc1JlcGxpdEFpUHJvIjp0cnVlLCJpYXQiOjE3NDI4NTIwMDEsImV4cCI6MTc0Mjg1NTYwMX0.C74YjL56tjLSNGnW6ybykiohDw4FE_O_dpfbx2aUR9mfD8LMsioDmuPr_oljtTZ21paUe_mHZYYvNlHt2yuvScFVP5LLeb_my0tQ3IT9u1ZAarrsLtQrhhGDQmludO9oqcVG0aph66N9FjVgInXXFpGnNuu5iK85IL8P_afdWcRYTv-IWU4GDMGcUeX4N9g3Jhj_f3kVNQIp8L1HqzpRlsNqWffJlItHB7e6mDMTo4wfS08VHnXzqsl7xmaGsa1frQ4wv7Xzv5QBS2LkIx4D3HQ5jFxehDWNZYhR0_laM3M-UFxWv1Q72zYEcvLuD1pkSfIvl5RnvCqc7X60-9aqzg' failed: 
+(anonymous) @ 1025-25412707794bc605.js:1Understand this errorAI
+www.google-analytics.com/collect?v=1&_v=j101&aip=1&a=1852235171&t=event&ni=0&_s=22&dl=https%3A%2F%2Freplit.com%2F%40upscaleyourbusi%2FMarketSimulator&dp=%2F%40upscaleyourbusi%2FMarketSimulator&ul=en-us&de=UTF-8&dt=replEnvironmentDesktop&sd=24-bit&sr=1024x768&vp=1024x633&je=0&ec=All&ea=File%20reconnected%20status%20two&ev=0&_u=SCCAgEAjQAAAgGgCIAD~&jid=&gjid=&cid=620187947.1741544149&tid=UA-25629695-1&_gid=856400493.1742600308&z=654774572:1 
+            
+            
+           Failed to load resource: net::ERR_NETWORK_IO_SUSPENDEDUnderstand this errorAI
+www.google-analytics.com/collect?v=1&_v=j101&aip=1&a=1852235171&t=event&ni=0&_s=23&dl=https%3A%2F%2Freplit.com%2F%40upscaleyourbusi%2FMarketSimulator&dp=%2F%40upscaleyourbusi%2FMarketSimulator&ul=en-us&de=UTF-8&dt=replEnvironmentDesktop&sd=24-bit&sr=1024x768&vp=1024x633&je=0&ec=All&ea=File%20reconnected%20status%20two&ev=0&_u=SCCAgEAjQAAAgGgCIAD~&jid=&gjid=&cid=620187947.1741544149&tid=UA-25629695-1&_gid=856400493.1742600308&z=1605417426:1 
+            
+            
+           Failed to load resource: net::ERR_NETWORK_IO_SUSPENDEDUnderstand this errorAI
+www.google-analytics.com/collect?v=1&_v=j101&aip=1&a=1852235171&t=event&ni=0&_s=24&dl=https%3A%2F%2Freplit.com%2F%40upscaleyourbusi%2FMarketSimulator&dp=%2F%40upscaleyourbusi%2FMarketSimulator&ul=en-us&de=UTF-8&dt=replEnvironmentDesktop&sd=24-bit&sr=1024x768&vp=1024x633&je=0&ec=All&ea=File%20reconnected%20status%20two&ev=0&_u=SCCAgEAjQAAAgGgCIAD~&jid=&gjid=&cid=620187947.1741544149&tid=UA-25629695-1&_gid=856400493.1742600308&z=345886819:1 
+            
+            
+           Failed to load resource: net::ERR_NETWORK_IO_SUSPENDEDUnderstand this errorAI
+www.google-analytics.com/collect?v=1&_v=j101&aip=1&a=1852235171&t=event&ni=0&_s=25&dl=https%3A%2F%2Freplit.com%2F%40upscaleyourbusi%2FMarketSimulator&dp=%2F%40upscaleyourbusi%2FMarketSimulator&ul=en-us&de=UTF-8&dt=replEnvironmentDesktop&sd=24-bit&sr=1024x768&vp=1024x633&je=0&ec=All&ea=File%20reconnected%20status%20two&ev=0&_u=SCCAgEAjQAAAgGgCIAD~&jid=&gjid=&cid=620187947.1741544149&tid=UA-25629695-1&_gid=856400493.1742600308&z=964425639:1 
+            
+            
+           Failed to load resource: net::ERR_NETWORK_IO_SUSPENDEDUnderstand this errorAI
+www.google-analytics.com/collect?v=1&_v=j101&aip=1&a=1852235171&t=event&ni=0&_s=26&dl=https%3A%2F%2Freplit.com%2F%40upscaleyourbusi%2FMarketSimulator&dp=%2F%40upscaleyourbusi%2FMarketSimulator&ul=en-us&de=UTF-8&dt=replEnvironmentDesktop&sd=24-bit&sr=1024x768&vp=1024x633&je=0&ec=All&ea=File%20reconnected%20status%20two&ev=0&_u=SCCAgEAjQAAAgGgCIAD~&jid=&gjid=&cid=620187947.1741544149&tid=UA-25629695-1&_gid=856400493.1742600308&z=557398013:1 
+            
+            
+           Failed to load resource: net::ERR_NETWORK_IO_SUSPENDEDUnderstand this errorAI
+www.google-analytics.com/collect?v=1&_v=j101&aip=1&a=1852235171&t=event&ni=0&_s=27&dl=https%3A%2F%2Freplit.com%2F%40upscaleyourbusi%2FMarketSimulator&dp=%2F%40upscaleyourbusi%2FMarketSimulator&ul=en-us&de=UTF-8&dt=replEnvironmentDesktop&sd=24-bit&sr=1024x768&vp=1024x633&je=0&ec=All&ea=File%20reconnected%20status%20two&ev=0&_u=SCCAgEAjQAAAgGgCIAD~&jid=&gjid=&cid=620187947.1741544149&tid=UA-25629695-1&_gid=856400493.1742600308&z=17204201:1 
+            
+            
+           Failed to load resource: net::ERR_NETWORK_IO_SUSPENDEDUnderstand this errorAI
+www.google-analytics.com/collect?v=1&_v=j101&aip=1&a=1852235171&t=event&ni=0&_s=28&dl=https%3A%2F%2Freplit.com%2F%40upscaleyourbusi%2FMarketSimulator&dp=%2F%40upscaleyourbusi%2FMarketSimulator&ul=en-us&de=UTF-8&dt=replEnvironmentDesktop&sd=24-bit&sr=1024x768&vp=1024x633&je=0&ec=All&ea=File%20reconnected%20status%20two&ev=0&_u=SCCAgEAjQAAAgGgCIAD~&jid=&gjid=&cid=620187947.1741544149&tid=UA-25629695-1&_gid=856400493.1742600308&z=1573036297:1 
+            
+            
+           Failed to load resource: net::ERR_NETWORK_IO_SUSPENDEDUnderstand this errorAI
+www.google-analytics.com/collect?v=1&_v=j101&aip=1&a=1852235171&t=event&ni=0&_s=29&dl=https%3A%2F%2Freplit.com%2F%40upscaleyourbusi%2FMarketSimulator&dp=%2F%40upscaleyourbusi%2FMarketSimulator&ul=en-us&de=UTF-8&dt=replEnvironmentDesktop&sd=24-bit&sr=1024x768&vp=1024x633&je=0&ec=All&ea=File%20reconnected%20status%20two&ev=0&_u=SCCAgEAjQAAAgGgCIAD~&jid=&gjid=&cid=620187947.1741544149&tid=UA-25629695-1&_gid=856400493.1742600308&z=437084586:1 
+            
+            
+           Failed to load resource: net::ERR_NETWORK_IO_SUSPENDEDUnderstand this errorAI
+www.google-analytics.com/collect?v=1&_v=j101&aip=1&a=1852235171&t=event&ni=0&_s=30&dl=https%3A%2F%2Freplit.com%2F%40upscaleyourbusi%2FMarketSimulator&dp=%2F%40upscaleyourbusi%2FMarketSimulator&ul=en-us&de=UTF-8&dt=replEnvironmentDesktop&sd=24-bit&sr=1024x768&vp=1024x633&je=0&ec=All&ea=File%20reconnected%20status%20two&ev=0&_u=SCCAgEAjQAAAgGgCIAD~&jid=&gjid=&cid=620187947.1741544149&tid=UA-25629695-1&_gid=856400493.1742600308&z=1482871981:1 
+            
+            
+           Failed to load resource: net::ERR_NETWORK_IO_SUSPENDEDUnderstand this errorAI
+www.google-analytics.com/collect?v=1&_v=j101&aip=1&a=1852235171&t=event&ni=0&_s=31&dl=https%3A%2F%2Freplit.com%2F%40upscaleyourbusi%2FMarketSimulator&dp=%2F%40upscaleyourbusi%2FMarketSimulator&ul=en-us&de=UTF-8&dt=replEnvironmentDesktop&sd=24-bit&sr=1024x768&vp=1024x633&je=0&ec=All&ea=File%20reconnected%20status%20two&ev=0&_u=SCCAgEAjQAAAgGgCIAD~&jid=&gjid=&cid=620187947.1741544149&tid=UA-25629695-1&_gid=856400493.1742600308&z=1754849944:1 
+            
+            
+           Failed to load resource: net::ERR_NETWORK_IO_SUSPENDEDUnderstand this errorAI
+www.google-analytics.com/collect?v=1&_v=j101&aip=1&a=1852235171&t=event&ni=0&_s=32&dl=https%3A%2F%2Freplit.com%2F%40upscaleyourbusi%2FMarketSimulator&dp=%2F%40upscaleyourbusi%2FMarketSimulator&ul=en-us&de=UTF-8&dt=replEnvironmentDesktop&sd=24-bit&sr=1024x768&vp=1024x633&je=0&ec=All&ea=File%20reconnected%20status%20two&ev=0&_u=SCCAgEAjQAAAgGgCIAD~&jid=&gjid=&cid=620187947.1741544149&tid=UA-25629695-1&_gid=856400493.1742600308&z=1504719850:1 
+            
+            
+           Failed to load resource: net::ERR_NETWORK_IO_SUSPENDEDUnderstand this errorAI
+www.google-analytics.com/collect?v=1&_v=j101&aip=1&a=1852235171&t=event&ni=0&_s=33&dl=https%3A%2F%2Freplit.com%2F%40upscaleyourbusi%2FMarketSimulator&dp=%2F%40upscaleyourbusi%2FMarketSimulator&ul=en-us&de=UTF-8&dt=replEnvironmentDesktop&sd=24-bit&sr=1024x768&vp=1024x633&je=0&ec=All&ea=File%20reconnected%20status%20two&ev=0&_u=SCCAgEAjQAAAgGgCIAD~&jid=&gjid=&cid=620187947.1741544149&tid=UA-25629695-1&_gid=856400493.1742600308&z=2103786636:1 
+            
+            
+           Failed to load resource: net::ERR_NETWORK_IO_SUSPENDEDUnderstand this errorAI
+stallwart.build.js:1 stallwart: failed ping 1
+stallwart.build.js:1 stallwart: failed ping 2
+stallwart.build.js:1 stallwart: failed ping 3
+stallwart.build.js:1 stallwart: failed ping 4
+/data/repls/8a18e115-fe70-4b75-91e5-2b2ead766cf9/get_connection_metadata:1 
+            
+            
+           Failed to load resource: net::ERR_NETWORK_IO_SUSPENDEDUnderstand this errorAI
+t:1 
+            
+            
+           Failed to load resource: net::ERR_NETWORK_IO_SUSPENDEDUnderstand this errorAI
+t:1 
+            
+            
+           Failed to load resource: net::ERR_NETWORK_IO_SUSPENDEDUnderstand this errorAI
+t:1 
+            
+            
+           Failed to load resource: net::ERR_NETWORK_IO_SUSPENDEDUnderstand this errorAI
+t:1 
+            
+            
+           Failed to load resource: net::ERR_NETWORK_IO_SUSPENDEDUnderstand this errorAI
+t:1 
+            
+            
+           Failed to load resource: net::ERR_NETWORK_IO_SUSPENDEDUnderstand this errorAI
+t:1 
+            
+            
+           Failed to load resource: net::ERR_NETWORK_IO_SUSPENDEDUnderstand this errorAI
+t:1 
+            
+            
+           Failed to load resource: net::ERR_NETWORK_IO_SUSPENDEDUnderstand this errorAI
+t:1 
+            
+            
+           Failed to load resource: net::ERR_NETWORK_IO_SUSPENDEDUnderstand this errorAI
+t:1 
+            
+            
+           Failed to load resource: net::ERR_NETWORK_IO_SUSPENDEDUnderstand this errorAI
+t:1 
+            
+            
+           Failed to load resource: net::ERR_NETWORK_IO_SUSPENDEDUnderstand this errorAI
+t:1 
+            
+            
+           Failed to load resource: net::ERR_NETWORK_IO_SUSPENDEDUnderstand this errorAI
+t:1 
+            
+            
+           Failed to load resource: net::ERR_NETWORK_IO_SUSPENDEDUnderstand this errorAI
+t:1 
+            
+            
+           Failed to load resource: net::ERR_NETWORK_IO_SUSPENDEDUnderstand this errorAI
+logs.browser-intake-us5-datadoghq.com/api/v2/logs?ddsource=browser&ddtags=sdk_version%3A4.46.0%2Capi%3Abeacon%2Cenv%3Aproduction%2Cservice%3Awebsite%2Cversion%3A656f5886&dd-api-key=pub31a5047a3a4692afb84a423db984dc57&dd-evp-origin-version=4.46.0&dd-evp-origin=browser&dd-request-id=5644d6d0-9faf-433d-8904-c18ba1dd9bda:1 
+            
+            
+           Failed to load resource: net::ERR_NETWORK_IO_SUSPENDEDUnderstand this errorAI
+envelope/:1 
+            
+            
+           Failed to load resource: net::ERR_NETWORK_IO_SUSPENDEDUnderstand this errorAI
+3922-3058bfb559c69b38.js:1 WebSocket connection to 'wss://eval2.worf.platform.replit.com/wsv2/v2.public.Q2dZSXc2R0h2d1lTQmdqaXZZZS9CaUlFZDI5eVpqQUFPdmNCQ2lRNFlURTRaVEV4TlMxbVpUY3dMVFJpTnpVdE9URmxOUzB5WWpKbFlXUTNOalpqWmprU0EyNXBlQm9XY21Wd2JHbDBMWEpsY0d3dFptbHNaWE10ZDI5eVppSVBUV0Z5YTJWMFUybHRkV3hoZEc5eUtnOTFjSE5qWVd4bGVXOTFjbUoxYzJsQ1Rnb1hjbVZ3YkdsMExYSmxjR3d0WW14dlkydHpMWGR2Y21ZU0ZYSmxjR3hwZEMxeVpYQnNMVzFsZEdFdGQyOXlaaG9jY21Wd2JHbDBMVzFoY21kaGNtbHVaUzFpYkc5amEzTXRkMjl5WmtvSENPVFcxaElRQVZBQVdnaGxlSEJzYjNKbGNsb2FiMjVpYjJGeVpHbHVaMTlsZUhCbGNtbGxibU5sWDI1dmJtVmFEMmx1ZEdWdWRGOXdaWEp6YjI1aGJGSWxDQUVRZ0lDQWdBZ1pBQUFBQUFBQThEOGhBQUFBQUFBQThEOG9nSUNBZ01nQk1BRTRBR0FBYWhZSTVOYldFaElQZFhCelkyRnNaWGx2ZFhKaWRYTnBjaGwxYzJVdGJHRjFibU5vWkdGeWEyeDVMV1JwY21WamRHeDVnZ0VDS2dDS0FTTUlBUkNBZ0lDQUlCa0FBQUFBQUFBUVFDRUFBQUFBQUFBUVFDaUFnSUNBeUFFd0FKb0JDZ29JTUM0d0xqRXhNam1nQVFFPV8q11GOLtbjkkXr0Qzqar4WZAAlolKbRz60NKrvPJJj5Vn6WKpuHt9slmrww4qkdI0trM6ntmtMb0IYEmoasQw.Q2dad2NtOWtPak1pQ25KbGNHeHBkQzVqYjIwPQ' failed: 
+connect @ 3922-3058bfb559c69b38.js:1Understand this errorAI
+1025-25412707794bc605.js:1 Uncaught (in promise) ChatError: Unexpected missing event in store
+    at aM (1025-25412707794bc605.js:1:197081)
+    at t.error (1025-25412707794bc605.js:1:242457)
+    at 1025-25412707794bc605.js:1:249851
+    at main-f8329f46b1fd2668.js:1:180591
+    at Object.next (main-f8329f46b1fd2668.js:1:180696)
+    at n (main-f8329f46b1fd2668.js:1:99052)
+    at u (main-f8329f46b1fd2668.js:1:99249)Understand this errorAI
+framework-5bca45c978b2927e.js:1 Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+_ @ framework-5bca45c978b2927e.js:1Understand this errorAI
+hook.js:608 Invalid href 'https://8a18e115-fe70-4b75-91e5-2b2ead766cf9-00-2wto2la5y1pzf.worf.replit.dev//' passed to next/router in page: '/replEnvironmentDesktop'. Repeated forward-slashes (//) or backslashes \ are not valid in the href.
+overrideMethod @ hook.js:608Understand this errorAI
+stallwart.build.js:1 stallwart: failed ping 1
+stallwart.build.js:1 stallwart: failed ping 1
+stallwart.build.js:1 stallwart: failed ping 1
+stallwart.build.js:1 stallwart: failed ping 1
+stallwart.build.js:1 stallwart: failed ping 1
+stallwart.build.js:1 stallwart: failed ping 1
+MarketSimulator:1 Blocked aria-hidden on an element because its descendant retained focus. The focus must not be hidden from assistive technology users. Avoid using aria-hidden on a focused element or its ancestor. Consider using the inert attribute instead, which will also prevent focus. For more details, see the aria-hidden section of the WAI-ARIA specification at https://w3c.github.io/aria/#aria-hidden.
+Element with focus: button
+Ancestor with aria-hidden:  <div id=​"__next">​…​</div>​Understand this errorAI
+stallwart.build.js:1 stallwart: failed ping 1
+stallwart.build.js:1 stallwart: failed ping 1
+stallwart.build.js:1 stallwart: failed ping 1
+stallwart.build.js:1 stallwart: failed ping 1
+framework-5bca45c978b2927e.js:1 Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+_ @ framework-5bca45c978b2927e.js:1Understand this errorAI
+hook.js:608 Invalid href 'https://8a18e115-fe70-4b75-91e5-2b2ead766cf9-00-2wto2la5y1pzf.worf.replit.dev//' passed to next/router in page: '/replEnvironmentDesktop'. Repeated forward-slashes (//) or backslashes \ are not valid in the href.
+overrideMethod @ hook.js:608Understand this errorAI
+hook.js:608 Invalid href 'https://8a18e115-fe70-4b75-91e5-2b2ead766cf9-00-2wto2la5y1pzf.worf.replit.dev//dashboard' passed to next/router in page: '/replEnvironmentDesktop'. Repeated forward-slashes (//) or backslashes \ are not valid in the href.
+overrideMethod @ hook.js:608Understand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+framework-5bca45c978b2927e.js:1 Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+_ @ framework-5bca45c978b2927e.js:1Understand this errorAI
+hook.js:608 Invalid href 'https://8a18e115-fe70-4b75-91e5-2b2ead766cf9-00-2wto2la5y1pzf.worf.replit.dev//' passed to next/router in page: '/replEnvironmentDesktop'. Repeated forward-slashes (//) or backslashes \ are not valid in the href.
+overrideMethod @ hook.js:608Understand this errorAI
+hook.js:608 Invalid href 'https://8a18e115-fe70-4b75-91e5-2b2ead766cf9-00-2wto2la5y1pzf.worf.replit.dev//ad-simulations' passed to next/router in page: '/replEnvironmentDesktop'. Repeated forward-slashes (//) or backslashes \ are not valid in the href.
+overrideMethod @ hook.js:608Understand this errorAI
+1025-25412707794bc605.js:1 Uncaught (in promise) ChatError: Unexpected missing event in store
+    at aM (1025-25412707794bc605.js:1:197081)
+    at t.error (1025-25412707794bc605.js:1:242457)
+    at 1025-25412707794bc605.js:1:249851
+    at main-f8329f46b1fd2668.js:1:180591
+    at Object.next (main-f8329f46b1fd2668.js:1:180696)
+    at n (main-f8329f46b1fd2668.js:1:99052)
+    at u (main-f8329f46b1fd2668.js:1:99249)Understand this errorAI
+framework-5bca45c978b2927e.js:1 Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+_ @ framework-5bca45c978b2927e.js:1Understand this errorAI
+hook.js:608 Invalid href 'https://8a18e115-fe70-4b75-91e5-2b2ead766cf9-00-2wto2la5y1pzf.worf.replit.dev//' passed to next/router in page: '/replEnvironmentDesktop'. Repeated forward-slashes (//) or backslashes \ are not valid in the href.
+overrideMethod @ hook.js:608Understand this errorAI
+framework-5bca45c978b2927e.js:1 Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+_ @ framework-5bca45c978b2927e.js:1Understand this errorAI
+hook.js:608 Invalid href 'https://8a18e115-fe70-4b75-91e5-2b2ead766cf9-00-2wto2la5y1pzf.worf.replit.dev//' passed to next/router in page: '/replEnvironmentDesktop'. Repeated forward-slashes (//) or backslashes \ are not valid in the href.
+overrideMethod @ hook.js:608Understand this errorAI
+framework-5bca45c978b2927e.js:1 Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+_ @ framework-5bca45c978b2927e.js:1Understand this errorAI
+hook.js:608 Invalid href 'https://8a18e115-fe70-4b75-91e5-2b2ead766cf9-00-2wto2la5y1pzf.worf.replit.dev//' passed to next/router in page: '/replEnvironmentDesktop'. Repeated forward-slashes (//) or backslashes \ are not valid in the href.
+overrideMethod @ hook.js:608Understand this errorAI
+hook.js:608 Invalid href 'https://8a18e115-fe70-4b75-91e5-2b2ead766cf9-00-2wto2la5y1pzf.worf.replit.dev//ad-simulations' passed to next/router in page: '/replEnvironmentDesktop'. Repeated forward-slashes (//) or backslashes \ are not valid in the href.
+overrideMethod @ hook.js:608Understand this errorAI
+hook.js:608 Invalid href 'https://8a18e115-fe70-4b75-91e5-2b2ead766cf9-00-2wto2la5y1pzf.worf.replit.dev//ad-simulation/1' passed to next/router in page: '/replEnvironmentDesktop'. Repeated forward-slashes (//) or backslashes \ are not valid in the href.
+overrideMethod @ hook.js:608Understand this errorAI
+hook.js:608 Invalid href 'https://8a18e115-fe70-4b75-91e5-2b2ead766cf9-00-2wto2la5y1pzf.worf.replit.dev//ad-simulations' passed to next/router in page: '/replEnvironmentDesktop'. Repeated forward-slashes (//) or backslashes \ are not valid in the href.
+overrideMethod @ hook.js:608Understand this errorAI
+hook.js:608 Invalid href 'https://8a18e115-fe70-4b75-91e5-2b2ead766cf9-00-2wto2la5y1pzf.worf.replit.dev//ad-simulation/3' passed to next/router in page: '/replEnvironmentDesktop'. Repeated forward-slashes (//) or backslashes \ are not valid in the href.
+overrideMethod @ hook.js:608Understand this errorAI
+hook.js:608 Invalid href 'https://8a18e115-fe70-4b75-91e5-2b2ead766cf9-00-2wto2la5y1pzf.worf.replit.dev//ad-simulations' passed to next/router in page: '/replEnvironmentDesktop'. Repeated forward-slashes (//) or backslashes \ are not valid in the href.
+overrideMethod @ hook.js:608Understand this errorAI
+hook.js:608 Invalid href 'https://8a18e115-fe70-4b75-91e5-2b2ead766cf9-00-2wto2la5y1pzf.worf.replit.dev//ad-simulation/9' passed to next/router in page: '/replEnvironmentDesktop'. Repeated forward-slashes (//) or backslashes \ are not valid in the href.
+overrideMethod @ hook.js:608Understand this errorAI
+1025-25412707794bc605.js:1 Uncaught (in promise) ChatError: Unexpected missing event in store
+    at aM (1025-25412707794bc605.js:1:197081)
+    at t.error (1025-25412707794bc605.js:1:242457)
+    at 1025-25412707794bc605.js:1:249851
+    at main-f8329f46b1fd2668.js:1:180591
+    at Object.next (main-f8329f46b1fd2668.js:1:180696)
+    at n (main-f8329f46b1fd2668.js:1:99052)
+    at u (main-f8329f46b1fd2668.js:1:99249)Understand this errorAI
+1025-25412707794bc605.js:1 Uncaught (in promise) ChatError: Unexpected missing event in store
+    at aM (1025-25412707794bc605.js:1:197081)
+    at t.error (1025-25412707794bc605.js:1:242457)
+    at 1025-25412707794bc605.js:1:249851
+    at main-f8329f46b1fd2668.js:1:180591
+    at Object.next (main-f8329f46b1fd2668.js:1:180696)
+    at n (main-f8329f46b1fd2668.js:1:99052)
+    at u (main-f8329f46b1fd2668.js:1:99249)Understand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+1025-25412707794bc605.js:1 Uncaught (in promise) ChatError: Unexpected missing event in store
+    at aM (1025-25412707794bc605.js:1:197081)
+    at t.error (1025-25412707794bc605.js:1:242457)
+    at 1025-25412707794bc605.js:1:249851
+    at main-f8329f46b1fd2668.js:1:180591
+    at Object.next (main-f8329f46b1fd2668.js:1:180696)
+    at n (main-f8329f46b1fd2668.js:1:99052)
+    at u (main-f8329f46b1fd2668.js:1:99249)Understand this errorAI
+framework-5bca45c978b2927e.js:1 Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+_ @ framework-5bca45c978b2927e.js:1Understand this errorAI
+hook.js:608 Invalid href 'https://8a18e115-fe70-4b75-91e5-2b2ead766cf9-00-2wto2la5y1pzf.worf.replit.dev//' passed to next/router in page: '/replEnvironmentDesktop'. Repeated forward-slashes (//) or backslashes \ are not valid in the href.
+overrideMethod @ hook.js:608Understand this errorAI
+hook.js:608 Invalid href 'https://8a18e115-fe70-4b75-91e5-2b2ead766cf9-00-2wto2la5y1pzf.worf.replit.dev//tutorials' passed to next/router in page: '/replEnvironmentDesktop'. Repeated forward-slashes (//) or backslashes \ are not valid in the href.
+overrideMethod @ hook.js:608Understand this errorAI
+framework-5bca45c978b2927e.js:1 Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+_ @ framework-5bca45c978b2927e.js:1Understand this errorAI
+hook.js:608 Invalid href 'https://8a18e115-fe70-4b75-91e5-2b2ead766cf9-00-2wto2la5y1pzf.worf.replit.dev//' passed to next/router in page: '/replEnvironmentDesktop'. Repeated forward-slashes (//) or backslashes \ are not valid in the href.
+overrideMethod @ hook.js:608Understand this errorAI
+framework-5bca45c978b2927e.js:1 Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+_ @ framework-5bca45c978b2927e.js:1Understand this errorAI
+hook.js:608 Invalid href 'https://8a18e115-fe70-4b75-91e5-2b2ead766cf9-00-2wto2la5y1pzf.worf.replit.dev//' passed to next/router in page: '/replEnvironmentDesktop'. Repeated forward-slashes (//) or backslashes \ are not valid in the href.
+overrideMethod @ hook.js:608Understand this errorAI
+hook.js:608 Invalid href 'https://8a18e115-fe70-4b75-91e5-2b2ead766cf9-00-2wto2la5y1pzf.worf.replit.dev//community' passed to next/router in page: '/replEnvironmentDesktop'. Repeated forward-slashes (//) or backslashes \ are not valid in the href.
+overrideMethod @ hook.js:608Understand this errorAI
+hook.js:608 Invalid href 'https://8a18e115-fe70-4b75-91e5-2b2ead766cf9-00-2wto2la5y1pzf.worf.replit.dev//dashboard' passed to next/router in page: '/replEnvironmentDesktop'. Repeated forward-slashes (//) or backslashes \ are not valid in the href.
+overrideMethod @ hook.js:608Understand this errorAI
+hook.js:608 Invalid href 'https://8a18e115-fe70-4b75-91e5-2b2ead766cf9-00-2wto2la5y1pzf.worf.replit.dev//campaign-creator' passed to next/router in page: '/replEnvironmentDesktop'. Repeated forward-slashes (//) or backslashes \ are not valid in the href.
+overrideMethod @ hook.js:608Understand this errorAI
+hook.js:608 Invalid href 'https://8a18e115-fe70-4b75-91e5-2b2ead766cf9-00-2wto2la5y1pzf.worf.replit.dev//dashboard' passed to next/router in page: '/replEnvironmentDesktop'. Repeated forward-slashes (//) or backslashes \ are not valid in the href.
+overrideMethod @ hook.js:608Understand this errorAI
+stallwart.build.js:1 stallwart: failed ping 1
+stallwart.build.js:1 stallwart: failed ping 1
+stallwart.build.js:1 stallwart: failed ping 1
+stallwart.build.js:1 stallwart: failed ping 1
+stallwart.build.js:1 stallwart: failed ping 1
+stallwart.build.js:1 stallwart: failed ping 1
+hook.js:608 Invalid href 'https://8a18e115-fe70-4b75-91e5-2b2ead766cf9-00-2wto2la5y1pzf.worf.replit.dev//tutorials' passed to next/router in page: '/replEnvironmentDesktop'. Repeated forward-slashes (//) or backslashes \ are not valid in the href.
+overrideMethod @ hook.js:608Understand this errorAI
+stallwart.build.js:1 stallwart: failed ping 1
+1025-25412707794bc605.js:1 Uncaught (in promise) ChatError: Unexpected missing event in store
+    at aM (1025-25412707794bc605.js:1:197081)
+    at t.error (1025-25412707794bc605.js:1:242457)
+    at 1025-25412707794bc605.js:1:249851
+    at main-f8329f46b1fd2668.js:1:180591
+    at Object.next (main-f8329f46b1fd2668.js:1:180696)
+    at n (main-f8329f46b1fd2668.js:1:99052)
+    at u (main-f8329f46b1fd2668.js:1:99249)Understand this errorAI
+1025-25412707794bc605.js:1 Uncaught (in promise) ChatError: Unexpected missing event in store
+    at aM (1025-25412707794bc605.js:1:197081)
+    at t.error (1025-25412707794bc605.js:1:242457)
+    at 1025-25412707794bc605.js:1:249851
+    at main-f8329f46b1fd2668.js:1:180591
+    at Object.next (main-f8329f46b1fd2668.js:1:180696)
+    at n (main-f8329f46b1fd2668.js:1:99052)
+    at u (main-f8329f46b1fd2668.js:1:99249)Understand this errorAI
+hook.js:608 Invalid href 'https://8a18e115-fe70-4b75-91e5-2b2ead766cf9-00-2wto2la5y1pzf.worf.replit.dev//dashboard' passed to next/router in page: '/replEnvironmentDesktop'. Repeated forward-slashes (//) or backslashes \ are not valid in the href.
+overrideMethod @ hook.js:608Understand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+framework-5bca45c978b2927e.js:1 Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+_ @ framework-5bca45c978b2927e.js:1Understand this errorAI
+hook.js:608 Invalid href 'https://8a18e115-fe70-4b75-91e5-2b2ead766cf9-00-2wto2la5y1pzf.worf.replit.dev//' passed to next/router in page: '/replEnvironmentDesktop'. Repeated forward-slashes (//) or backslashes \ are not valid in the href.
+overrideMethod @ hook.js:608Understand this errorAI
+hook.js:608 Invalid href 'https://8a18e115-fe70-4b75-91e5-2b2ead766cf9-00-2wto2la5y1pzf.worf.replit.dev//tutorials' passed to next/router in page: '/replEnvironmentDesktop'. Repeated forward-slashes (//) or backslashes \ are not valid in the href.
+overrideMethod @ hook.js:608Understand this errorAI
+framework-5bca45c978b2927e.js:1 Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+_ @ framework-5bca45c978b2927e.js:1Understand this errorAI
+hook.js:608 Invalid href 'https://8a18e115-fe70-4b75-91e5-2b2ead766cf9-00-2wto2la5y1pzf.worf.replit.dev//tutorials' passed to next/router in page: '/replEnvironmentDesktop'. Repeated forward-slashes (//) or backslashes \ are not valid in the href.
+overrideMethod @ hook.js:608Understand this errorAI
+1025-25412707794bc605.js:1 Uncaught (in promise) ChatError: Unexpected missing event in store
+    at aM (1025-25412707794bc605.js:1:197081)
+    at t.error (1025-25412707794bc605.js:1:242457)
+    at 1025-25412707794bc605.js:1:249851
+    at main-f8329f46b1fd2668.js:1:180591
+    at Object.next (main-f8329f46b1fd2668.js:1:180696)
+    at n (main-f8329f46b1fd2668.js:1:99052)
+    at u (main-f8329f46b1fd2668.js:1:99249)Understand this errorAI
+framework-5bca45c978b2927e.js:1 Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+_ @ framework-5bca45c978b2927e.js:1Understand this errorAI
+hook.js:608 Invalid href 'https://8a18e115-fe70-4b75-91e5-2b2ead766cf9-00-2wto2la5y1pzf.worf.replit.dev//' passed to next/router in page: '/replEnvironmentDesktop'. Repeated forward-slashes (//) or backslashes \ are not valid in the href.
+overrideMethod @ hook.js:608Understand this errorAI
+framework-5bca45c978b2927e.js:1 Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+_ @ framework-5bca45c978b2927e.js:1Understand this errorAI
+hook.js:608 Invalid href 'https://8a18e115-fe70-4b75-91e5-2b2ead766cf9-00-2wto2la5y1pzf.worf.replit.dev//' passed to next/router in page: '/replEnvironmentDesktop'. Repeated forward-slashes (//) or backslashes \ are not valid in the href.
+overrideMethod @ hook.js:608Understand this errorAI
+hook.js:608 Invalid href 'https://8a18e115-fe70-4b75-91e5-2b2ead766cf9-00-2wto2la5y1pzf.worf.replit.dev//tutorials' passed to next/router in page: '/replEnvironmentDesktop'. Repeated forward-slashes (//) or backslashes \ are not valid in the href.
+overrideMethod @ hook.js:608Understand this errorAI
+framework-5bca45c978b2927e.js:1 Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+_ @ framework-5bca45c978b2927e.js:1Understand this errorAI
+hook.js:608 Invalid href 'https://8a18e115-fe70-4b75-91e5-2b2ead766cf9-00-2wto2la5y1pzf.worf.replit.dev//tutorials' passed to next/router in page: '/replEnvironmentDesktop'. Repeated forward-slashes (//) or backslashes \ are not valid in the href.
+overrideMethod @ hook.js:608Understand this errorAI
+stallwart.build.js:1 stallwart: failed ping 1
+stallwart.build.js:1 stallwart: failed ping 2
+stallwart.build.js:1 stallwart: failed ping 3
+stallwart.build.js:1 stallwart: failed ping 4
+1025-25412707794bc605.js:1 Uncaught (in promise) ChatError: Unexpected missing event in store
+    at aM (1025-25412707794bc605.js:1:197081)
+    at t.error (1025-25412707794bc605.js:1:242457)
+    at 1025-25412707794bc605.js:1:249851
+    at main-f8329f46b1fd2668.js:1:180591
+    at Object.next (main-f8329f46b1fd2668.js:1:180696)
+    at n (main-f8329f46b1fd2668.js:1:99052)
+    at u (main-f8329f46b1fd2668.js:1:99249)
+aM @ 1025-25412707794bc605.js:1
+t.error @ 1025-25412707794bc605.js:1
+(anonymous) @ 1025-25412707794bc605.js:1
+(anonymous) @ main-f8329f46b1fd2668.js:1
+(anonymous) @ main-f8329f46b1fd2668.js:1
+n @ main-f8329f46b1fd2668.js:1
+u @ main-f8329f46b1fd2668.js:1Understand this errorAI
+1025-25412707794bc605.js:1 Uncaught (in promise) ChatError: Unexpected missing event in store
+    at aM (1025-25412707794bc605.js:1:197081)
+    at t.error (1025-25412707794bc605.js:1:242457)
+    at 1025-25412707794bc605.js:1:249851
+    at main-f8329f46b1fd2668.js:1:180591
+    at Object.next (main-f8329f46b1fd2668.js:1:180696)
+    at n (main-f8329f46b1fd2668.js:1:99052)
+    at u (main-f8329f46b1fd2668.js:1:99249)
+aM @ 1025-25412707794bc605.js:1
+t.error @ 1025-25412707794bc605.js:1
+(anonymous) @ 1025-25412707794bc605.js:1
+(anonymous) @ main-f8329f46b1fd2668.js:1
+(anonymous) @ main-f8329f46b1fd2668.js:1
+n @ main-f8329f46b1fd2668.js:1
+u @ main-f8329f46b1fd2668.js:1Understand this errorAI
+1025-25412707794bc605.js:1 Uncaught (in promise) ChatError: Unexpected missing event in store
+    at aM (1025-25412707794bc605.js:1:197081)
+    at t.error (1025-25412707794bc605.js:1:242457)
+    at 1025-25412707794bc605.js:1:249851
+    at main-f8329f46b1fd2668.js:1:180591
+    at Object.next (main-f8329f46b1fd2668.js:1:180696)
+    at n (main-f8329f46b1fd2668.js:1:99052)
+    at u (main-f8329f46b1fd2668.js:1:99249)
+aM @ 1025-25412707794bc605.js:1
+t.error @ 1025-25412707794bc605.js:1
+(anonymous) @ 1025-25412707794bc605.js:1
+(anonymous) @ main-f8329f46b1fd2668.js:1
+(anonymous) @ main-f8329f46b1fd2668.js:1
+n @ main-f8329f46b1fd2668.js:1
+u @ main-f8329f46b1fd2668.js:1Understand this errorAI
+stallwart.build.js:1 stallwart: failed ping 1
+framework-5bca45c978b2927e.js:1 Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+_ @ framework-5bca45c978b2927e.js:1Understand this errorAI
+hook.js:608 Invalid href 'https://8a18e115-fe70-4b75-91e5-2b2ead766cf9-00-2wto2la5y1pzf.worf.replit.dev//' passed to next/router in page: '/replEnvironmentDesktop'. Repeated forward-slashes (//) or backslashes \ are not valid in the href.
+overrideMethod @ hook.js:608Understand this errorAI
+framework-5bca45c978b2927e.js:1 Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+_ @ framework-5bca45c978b2927e.js:1Understand this errorAI
+hook.js:608 Invalid href 'https://8a18e115-fe70-4b75-91e5-2b2ead766cf9-00-2wto2la5y1pzf.worf.replit.dev//tutorials' passed to next/router in page: '/replEnvironmentDesktop'. Repeated forward-slashes (//) or backslashes \ are not valid in the href.
+overrideMethod @ hook.js:608Understand this errorAI
+hook.js:608 Invalid href 'https://8a18e115-fe70-4b75-91e5-2b2ead766cf9-00-2wto2la5y1pzf.worf.replit.dev//tutorials' passed to next/router in page: '/replEnvironmentDesktop'. Repeated forward-slashes (//) or backslashes \ are not valid in the href.
+overrideMethod @ hook.js:608Understand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+MarketSimulator:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was receivedUnderstand this errorAI
+1025-25412707794bc605.js:1 Uncaught (in promise) ChatError: Unexpected missing event in store
+    at aM (1025-25412707794bc605.js:1:197081)
+    at t.error (1025-25412707794bc605.js:1:242457)
+    at 1025-25412707794bc605.js:1:249851
+    at main-f8329f46b1fd2668.js:1:180591
+    at Object.next (main-f8329f46b1fd2668.js:1:180696)
+    at n (main-f8329f46b1fd2668.js:1:99052)
+    at u (main-f8329f46b1fd2668.js:1:99249)Understand this errorAI
+1025-25412707794bc605.js:1 Uncaught (in promise) ChatError: Unexpected missing event in store
+    at aM (1025-25412707794bc605.js:1:197081)
+    at t.error (1025-25412707794bc605.js:1:242457)
+    at 1025-25412707794bc605.js:1:249851
+    at main-f8329f46b1fd2668.js:1:180591
+    at Object.next (main-f8329f46b1fd2668.js:1:180696)
+    at n (main-f8329f46b1fd2668.js:1:99052)
+    at u (main-f8329f46b1fd2668.js:1:99249)Understand this errorAI
+framework-5bca45c978b2927e.js:1 Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+_ @ framework-5bca45c978b2927e.js:1Understand this errorAI
+hook.js:608 Invalid href 'https://8a18e115-fe70-4b75-91e5-2b2ead766cf9-00-2wto2la5y1pzf.worf.replit.dev//' passed to next/router in page: '/replEnvironmentDesktop'. Repeated forward-slashes (//) or backslashes \ are not valid in the href.
+overrideMethod @ hook.js:608Understand this errorAI
+hook.js:608 Invalid href 'https://8a18e115-fe70-4b75-91e5-2b2ead766cf9-00-2wto2la5y1pzf.worf.replit.dev//tutorials' passed to next/router in page: '/replEnvironmentDesktop'. Repeated forward-slashes (//) or backslashes \ are not valid in the href.
+overrideMethod @ hook.js:608Understand this errorAI
+1025-25412707794bc605.js:1 Uncaught (in promise) ChatError: Unexpected missing event in store
+    at aM (1025-25412707794bc605.js:1:197081)
+    at t.error (1025-25412707794bc605.js:1:242457)
+    at 1025-25412707794bc605.js:1:249851
+    at main-f8329f46b1fd2668.js:1:180591
+    at Object.next (main-f8329f46b1fd2668.js:1:180696)
+    at n (main-f8329f46b1fd2668.js:1:99052)
+    at u (main-f8329f46b1fd2668.js:1:99249)Understand this errorAI
+framework-5bca45c978b2927e.js:1 Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+_ @ framework-5bca45c978b2927e.js:1Understand this errorAI
+8a18e115-fe70-4b75-91e5-2b2ead766cf9-00-2wto2la5y1pzf.worf.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ar6mr%3A:32 Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.Understand this errorAI
+8a18e115-fe70-4b75-91e5-2b2ead766cf9-00-2wto2la5y1pzf.worf.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ar6mr%3A:32 Unrecognized feature: 'ambient-light-sensor'.Understand this warningAI
+8a18e115-fe70-4b75-91e5-2b2ead766cf9-00-2wto2la5y1pzf.worf.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ar6mr%3A:32 Unrecognized feature: 'battery'.Understand this warningAI
+8a18e115-fe70-4b75-91e5-2b2ead766cf9-00-2wto2la5y1pzf.worf.replit.dev/__replco/workspace_iframe.html?initialPath=%2F&id=%3Ar6mr%3A:32 Unrecognized feature: 'execution-while-not-rendered'.Understand this warningAI
+workspace_iframe.html:32 Unrecognized feature: 'execution-while-out-of-viewport'.Understand this warningAI
+workspace_iframe.html:32 Unrecognized feature: 'layout-animations'.Understand this warningAI
+workspace_iframe.html:32 Unrecognized feature: 'legacy-image-formats'.Understand this warningAI
+workspace_iframe.html:32 Unrecognized feature: 'navigation-override'.Understand this warningAI
+workspace_iframe.html:32 Unrecognized feature: 'oversized-images'.Understand this warningAI
+workspace_iframe.html:32 Unrecognized feature: 'publickey-credentials'.Understand this warningAI
+workspace_iframe.html:32 Unrecognized feature: 'speaker-selection'.Understand this warningAI
+workspace_iframe.html:32 Unrecognized feature: 'unoptimized-images'.Understand this warningAI
+workspace_iframe.html:32 Unrecognized feature: 'unsized-media'.Understand this warningAI
+workspace_iframe.html:32 Allow attribute will take precedence over 'allowfullscreen'.Understand this warningAI
+workspace_iframe.html:32 Allow attribute will take precedence over 'allowpaymentrequest'.Understand this warningAI
+hook.js:608 Invalid href 'https://8a18e115-fe70-4b75-91e5-2b2ead766cf9-00-2wto2la5y1pzf.worf.replit.dev//' passed to next/router in page: '/replEnvironmentDesktop'. Repeated forward-slashes (//) or backslashes \ are not valid in the href.
+overrideMethod @ hook.js:608Understand this errorAI
+hook.js:608 Invalid href 'https://8a18e115-fe70-4b75-91e5-2b2ead766cf9-00-2wto2la5y1pzf.worf.replit.dev//tutorials' passed to next/router in page: '/replEnvironmentDesktop'. Repeated forward-slashes (//) or backslashes \ are not valid in the href.
+overrideMethod @ hook.js:608Understand this errorAI
+8a18e115-fe70-4b75-91e5-2b2ead766cf9-00-2wto2la5y1pzf.worf.replit.dev/api/tutorials/complete:1 
+            
+            
+           Failed to load resource: the server responded with a status of 500 (Internal Server Error)Understand this errorAI
+eruda.js:2 Error completing tutorial: Error: Failed to mark tutorial as complete
+    at completeTutorial (TutorialSystem.tsx:57:15)
+Mt.forEach.n.<computed> @ VM44 eruda.js:2Understand this errorAI
+1025-25412707794bc605.js:1 Uncaught (in promise) ChatError: Unexpected missing event in store
+    at aM (1025-25412707794bc605.js:1:197081)
+    at t.error (1025-25412707794bc605.js:1:242457)
+    at 1025-25412707794bc605.js:1:249851
+    at main-f8329f46b1fd2668.js:1:180591
+    at Object.next (main-f8329f46b1fd2668.js:1:180696)
+    at n (main-f8329f46b1fd2668.js:1:99052)
+    at u (main-f8329f46b1fd2668.js:1:99249)Understand this errorAI
+
+                
+          
+          
+          
+         Chrome is moving towards a new experience that allows users to choose to browse without third-party cookies.Understand this warningAI
+stallwart.build.js:1 stallwart: failed ping 1
+stallwart.build.js:1 stallwart: failed ping 2
+stallwart.build.js:1 stallwart: failed ping 1
+
+                
+          
+          
+          
+         Chrome is moving towards a new experience that allows users to choose to browse without third-party cookies.Understand this warningAI
+eruda.js:2 [vite] server connection lost. Polling for restart...
+framework-5bca45c978b2927e.js:1 Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+_ @ framework-5bca45c978b2927e.js:1
+(anonymous) @ framework-5bca45c978b2927e.js:1
+uD @ framework-5bca45c978b2927e.js:1
+uI @ framework-5bca45c978b2927e.js:1
+(anonymous) @ framework-5bca45c978b2927e.js:1
+uM @ framework-5bca45c978b2927e.js:1
+uS @ framework-5bca45c978b2927e.js:1
+C @ framework-5bca45c978b2927e.js:1
+z @ framework-5bca45c978b2927e.js:1
+(anonymous) @ setImmediate.js:40
+y @ setImmediate.js:69
+c @ setImmediate.js:109
+postMessage
+n @ setImmediate.js:120
+push.YBdB.f.setImmediate @ setImmediate.js:27
+r @ framework-5bca45c978b2927e.js:1
+z @ framework-5bca45c978b2927e.js:1
+(anonymous) @ setImmediate.js:40
+y @ setImmediate.js:69
+c @ setImmediate.js:109
+postMessage
+n @ setImmediate.js:120
+push.YBdB.f.setImmediate @ setImmediate.js:27
+r @ framework-5bca45c978b2927e.js:1
+I @ framework-5bca45c978b2927e.js:1
+t.unstable_scheduleCallback @ framework-5bca45c978b2927e.js:1
+uw @ framework-5bca45c978b2927e.js:1
+uk @ framework-5bca45c978b2927e.js:1
+lH @ framework-5bca45c978b2927e.js:1
+(anonymous) @ 7357-852af16e4763c614.js:1
+n @ _app-e2532022ca22edd7.js:30
+update @ _app-e2532022ca22edd7.js:30
+m @ 7625-57730d299a355fc3.js:1
+(anonymous) @ 7625-57730d299a355fc3.js:1
+c.emit @ 3922-3058bfb559c69b38.js:1
+(anonymous) @ 3205-69f71ed119486995.js:1
+(anonymous) @ 3922-3058bfb559c69b38.js:1
+handleCommand @ 3922-3058bfb559c69b38.js:1
+onSocketMessage @ 3922-3058bfb559c69b38.js:1Understand this errorAI
+
+                
+          
+          
+          
+         Chrome is moving towards a new experience that allows users to choose to browse without third-party cookies.Understand this warningAI
+workspace_iframe.html:32 Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.Understand this errorAI
+workspace_iframe.html:32 Unrecognized feature: 'ambient-light-sensor'.Understand this warningAI
+workspace_iframe.html:32 Unrecognized feature: 'battery'.Understand this warningAI
+workspace_iframe.html:32 Unrecognized feature: 'execution-while-not-rendered'.Understand this warningAI
+workspace_iframe.html:32 Unrecognized feature: 'execution-while-out-of-viewport'.Understand this warningAI
+workspace_iframe.html:32 Unrecognized feature: 'layout-animations'.Understand this warningAI
+workspace_iframe.html:32 Unrecognized feature: 'legacy-image-formats'.Understand this warningAI
+workspace_iframe.html:32 Unrecognized feature: 'navigation-override'.Understand this warningAI
+workspace_iframe.html:32 Unrecognized feature: 'oversized-images'.Understand this warningAI
+workspace_iframe.html:32 Unrecognized feature: 'publickey-credentials'.Understand this warningAI
+workspace_iframe.html:32 Unrecognized feature: 'speaker-selection'.Understand this warningAI
+workspace_iframe.html:32 Unrecognized feature: 'unoptimized-images'.Understand this warningAI
+workspace_iframe.html:32 Unrecognized feature: 'unsized-media'.Understand this warningAI
+workspace_iframe.html:32 Allow attribute will take precedence over 'allowfullscreen'.Understand this warningAI
+workspace_iframe.html:32 Allow attribute will take precedence over 'allowpaymentrequest'.Understand this warningAI
+_app-e2532022ca22edd7.js:13 Invalid href 'https://8a18e115-fe70-4b75-91e5-2b2ead766cf9-00-2wto2la5y1pzf.worf.replit.dev//' passed to next/router in page: '/replEnvironmentDesktop'. Repeated forward-slashes (//) or backslashes \ are not valid in the href.
+overrideMethod @ hook.js:608
+(anonymous) @ _app-e2532022ca22edd7.js:13
+d @ main-f8329f46b1fd2668.js:1
+(anonymous) @ _app-e2532022ca22edd7.js:15
+useMemo @ framework-5bca45c978b2927e.js:1
+t.useMemo @ framework-5bca45c978b2927e.js:1
+(anonymous) @ _app-e2532022ca22edd7.js:15
+ld @ framework-5bca45c978b2927e.js:1
+ou @ framework-5bca45c978b2927e.js:1
+i @ framework-5bca45c978b2927e.js:1
+uI @ framework-5bca45c978b2927e.js:1
+(anonymous) @ framework-5bca45c978b2927e.js:1
+uM @ framework-5bca45c978b2927e.js:1
+uS @ framework-5bca45c978b2927e.js:1
+C @ framework-5bca45c978b2927e.js:1
+z @ framework-5bca45c978b2927e.js:1
+(anonymous) @ setImmediate.js:40
+y @ setImmediate.js:69
+c @ setImmediate.js:109
+postMessage
+n @ setImmediate.js:120
+push.YBdB.f.setImmediate @ setImmediate.js:27
+r @ framework-5bca45c978b2927e.js:1
+I @ framework-5bca45c978b2927e.js:1
+t.unstable_scheduleCallback @ framework-5bca45c978b2927e.js:1
+uw @ framework-5bca45c978b2927e.js:1
+uk @ framework-5bca45c978b2927e.js:1
+lH @ framework-5bca45c978b2927e.js:1
+onNewStat @ 7625-57730d299a355fc3.js:1
+(anonymous) @ 5936-f36b575a0ae7d60d.js:1
+Promise.then
+onChange @ 5936-f36b575a0ae7d60d.js:1
+(anonymous) @ 5936-f36b575a0ae7d60d.js:1
+Promise.then
+watchDir @ 5936-f36b575a0ae7d60d.js:1
+o @ 5936-f36b575a0ae7d60d.js:1
+watchPathStat @ 5936-f36b575a0ae7d60d.js:1
+(anonymous) @ 7625-57730d299a355fc3.js:1
+oO @ framework-5bca45c978b2927e.js:1
+uB @ framework-5bca45c978b2927e.js:1
+u_ @ framework-5bca45c978b2927e.js:1
+r6 @ framework-5bca45c978b2927e.js:1
+(anonymous) @ framework-5bca45c978b2927e.js:1
+uO @ framework-5bca45c978b2927e.js:1
+uS @ framework-5bca45c978b2927e.js:1
+C @ framework-5bca45c978b2927e.js:1
+z @ framework-5bca45c978b2927e.js:1
+(anonymous) @ setImmediate.js:40
+y @ setImmediate.js:69
+c @ setImmediate.js:109
+postMessage
+n @ setImmediate.js:120
+push.YBdB.f.setImmediate @ setImmediate.js:27
+r @ framework-5bca45c978b2927e.js:1
+z @ framework-5bca45c978b2927e.js:1
+(anonymous) @ setImmediate.js:40
+y @ setImmediate.js:69
+c @ setImmediate.js:109
+postMessage
+n @ setImmediate.js:120
+push.YBdB.f.setImmediate @ setImmediate.js:27
+r @ framework-5bca45c978b2927e.js:1
+I @ framework-5bca45c978b2927e.js:1
+t.unstable_scheduleCallback @ framework-5bca45c978b2927e.js:1
+uw @ framework-5bca45c978b2927e.js:1
+uk @ framework-5bca45c978b2927e.js:1
+lH @ framework-5bca45c978b2927e.js:1
+(anonymous) @ 7357-852af16e4763c614.js:1
+n @ _app-e2532022ca22edd7.js:30
+update @ _app-e2532022ca22edd7.js:30
+m @ 7625-57730d299a355fc3.js:1
+(anonymous) @ 7625-57730d299a355fc3.js:1
+c.emit @ 3922-3058bfb559c69b38.js:1
+(anonymous) @ 3205-69f71ed119486995.js:1
+(anonymous) @ 3922-3058bfb559c69b38.js:1
+handleCommand @ 3922-3058bfb559c69b38.js:1
+onSocketMessage @ 3922-3058bfb559c69b38.js:1Understand this errorAI
+eruda.js:2 [vite] server connection lost. Polling for restart...
+stallwart.build.js:1 stallwart: failed ping 1
