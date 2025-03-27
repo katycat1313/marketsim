@@ -1,0 +1,57 @@
+3. Using a Data Structure (More Organized and Scalable)
+
+Concept: Store the image paths (and potentially other chapter-specific data) in a JavaScript object or array, and then use JavaScript to dynamically load the correct image based on the chapter number. This is a more structured and scalable approach.
+
+Implementation:
+
+Data Structure: Create a JavaScript object (or array of objects) to store the chapter data:
+
+const chapterData = {
+  1: {
+    image: 'images/chapter1_header.jpg',
+    title: 'Introduction to...'
+  },
+  2: {
+    image: 'images/chapter2_header.jpg',
+    title: 'Advanced Concepts...'
+  },
+  3: {
+    image: 'images/chapter3_header.jpg',
+    title: 'Putting it All Together'
+  }
+};
+
+// Or, using an array of objects (index-based access):
+const chapterDataArray = [
+  { image: 'images/chapter1_header.jpg', title: 'Introduction to...' },
+  { image: 'images/chapter2_header.jpg', title: 'Advanced Concepts...' },
+  { image: 'images/chapter3_header.jpg', title: 'Putting it All Together' }
+];
+Use code with caution.
+JavaScript
+JavaScript to Update Image: Modify your JavaScript code to use this data structure:
+
+document.addEventListener('DOMContentLoaded', function() {
+  function getParameterByName(name, url = window.location.href) {
+    name = name.replace(/[\[\]]/g, '\\$&');
+    var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, ' '));
+  }
+
+  const chapter = getParameterByName('chapter');
+  const headerImage = document.getElementById('chapterHeaderImage');
+
+  if (chapter && chapterData[chapter]) {  // Check if chapter exists in the data
+    headerImage.src = chapterData[chapter].image;
+    // You could also update other elements (e.g., chapter title) here:
+    // document.getElementById('chapterTitle').textContent = chapterData[chapter].title;
+
+  } else {
+    headerImage.src = 'images/default_header.jpg';
+  }
+});
+Use code with caution.
+JavaScript

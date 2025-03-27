@@ -550,7 +550,10 @@ export default function TutorialsPage() {
                 </span>
               </div>
               <div className="prose prose-invert max-w-none mt-6">
-                <TutorialContentRenderer content={currentTutorial.content} />
+                <TutorialContentRenderer 
+                  content={currentTutorial.content} 
+                  chapterNumber={(currentTutorial as any).chapterNumber} 
+                />
               </div>
               
               {currentTutorial.tasks && currentTutorial.tasks.length > 0 && (

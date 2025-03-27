@@ -6,7 +6,58 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { InfoIcon, AlertTriangleIcon, CheckCircleIcon, LightbulbIcon } from 'lucide-react';
 
-// Mapping of image references to actual image paths
+// More organized chapter-based image structure
+// Each chapter has its own set of images that will be used for that chapter's tutorials
+const chapterImageMap: Record<number, string[]> = {
+  1: [ // Chapter 1: Digital Marketing Basics
+    '/images/small-business.jpeg',
+    '/images/womanwork.jpeg',
+    '/images/group-thinking.jpeg'
+  ],
+  2: [ // Chapter 2: Google Ads Fundamentals
+    '/images/ad-image.jpeg',
+    '/images/small-business.jpeg',
+    '/images/group-thinking.jpeg',
+    '/images/wiered-headshot.jpeg',
+    '/images/cart-with-packages.jpeg'
+  ],
+  3: [ // Chapter 3: Campaign Management
+    '/images/womanwork.jpeg',
+    '/images/ad-image.jpeg',
+    '/images/group-thinking.jpeg'
+  ],
+  4: [ // Chapter 4: Audience Strategies
+    '/images/wiered-headshot.jpeg',
+    '/images/small-business.jpeg',
+    '/images/womanwork.jpeg'
+  ],
+  5: [ // Chapter 5: Analytics & Testing
+    '/images/womanwork.jpeg',
+    '/images/group-thinking.jpeg',
+    '/images/small-business.jpeg',
+    '/images/ad-image.jpeg'
+  ],
+  6: [ // Chapter 6: Advanced Marketing
+    '/images/ad-image.jpeg',
+    '/images/seo-visual.jpeg',
+    '/images/wiered-headshot.jpeg',
+    '/images/group-thinking.jpeg'
+  ],
+  7: [ // Chapter 7: SEO Specialization
+    '/images/seo-visual.jpeg',
+    '/images/small-business.jpeg',
+    '/images/womanwork.jpeg',
+    '/images/group-thinking.jpeg',
+    '/images/ad-image.jpeg'
+  ],
+  8: [ // Chapter 8: Troubleshooting
+    '/images/cart-with-packages.jpeg',
+    '/images/wiered-headshot.jpeg',
+    '/images/small-business.jpeg'
+  ]
+};
+
+// Original image mapping for keyword-based selection (fallback if no chapter provided)
 const imageMap: Record<string, string> = {
   // Google Ads images
   'google_ads_overview': '/images/ad-image.jpeg',
@@ -21,72 +72,38 @@ const imageMap: Record<string, string> = {
   'marketing_team': '/images/group-thinking.jpeg',
   'shopping_cart': '/images/cart-with-packages.jpeg',
   
-  // Chapter-specific images for more variety
-  // Chapter 1: Digital Marketing Basics
-  'digital_marketing_intro': '/images/small-business.jpeg',
-  'getting_started': '/images/womanwork.jpeg',
-  'marketing_basics': '/images/group-thinking.jpeg',
-  
-  // Chapter 2: Google Ads Fundamentals
-  'google_ads_intro': '/images/ad-image.jpeg',
-  'google_ads_platform': '/images/ad-image.jpeg',
-  'google_ads_campaigns': '/images/small-business.jpeg',
-  'audience_targeting': '/images/wiered-headshot.jpeg',
-  'shopping_campaigns': '/images/cart-with-packages.jpeg',
-  'account_architecture': '/images/group-thinking.jpeg',
-  
-  // Chapter 3: Campaign Management
-  'advanced_strategies': '/images/womanwork.jpeg',
-  'campaign_management': '/images/ad-image.jpeg',
-  'goal_setting': '/images/group-thinking.jpeg',
-  
-  // Chapter 4: Audience Strategies
-  'audience_core': '/images/wiered-headshot.jpeg',
-  
-  // Chapter 5: Analytics & Testing
-  'testing_methods': '/images/womanwork.jpeg',
-  'data_analysis': '/images/group-thinking.jpeg',
-  'site_analytics': '/images/womanwork.jpeg',
-  'analytics_foundations': '/images/small-business.jpeg',
-  'data_driven': '/images/ad-image.jpeg',
-  
-  // Chapter 6: Advanced Marketing
-  'google_ads_mastery': '/images/ad-image.jpeg',
-  'advanced_seo': '/images/seo-visual.jpeg',
-  'email_automation': '/images/wiered-headshot.jpeg',
-  'social_media': '/images/group-thinking.jpeg',
-  
-  // Chapter 7: SEO Specialization
-  'seo_basics': '/images/seo-visual.jpeg',
-  'seo_enhanced': '/images/small-business.jpeg',
-  'seo_complete': '/images/womanwork.jpeg',
-  'seo_intermediate': '/images/group-thinking.jpeg',
-  'seo_expert': '/images/seo-visual.jpeg',
-  'seo_master': '/images/ad-image.jpeg',
-  
-  // Chapter 8: Troubleshooting
-  'troubleshooting_ads': '/images/cart-with-packages.jpeg',
-  'troubleshooting_best': '/images/wiered-headshot.jpeg',
-  'troubleshooting_tips': '/images/small-business.jpeg',
-  
   // Default fallback image
   'default': '/images/small-business.jpeg'
 };
 
-// Helper function to get image path
-const getImagePath = (imageKey: string): string => {
+// Helper function to get image path based on chapter number or keyword
+const getImagePath = (imageKey: string, chapterNumber?: number): string => {
+  // If we have a chapter number, randomly select an image from that chapter's images
+  if (chapterNumber && chapterImageMap[chapterNumber]) {
+    const chapterImages = chapterImageMap[chapterNumber];
+    // Generate a consistent "random" index based on the imageKey to always get same image for same key
+    const hash = imageKey.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    const index = hash % chapterImages.length;
+    return chapterImages[index];
+  }
+  
+  // Otherwise use the keyword-based mapping as fallback
   return imageMap[imageKey] || imageMap['default'];
 };
 
 interface TutorialContentRendererProps {
   content: string;
+  chapterNumber?: number; // Optional chapter number for better image selection
 }
 
 /**
  * Enhanced tutorial content renderer component that converts markdown to interactive HTML
  * with support for images, accordions, sliders, tabs, and alerts
  */
-const TutorialContentRenderer: React.FC<TutorialContentRendererProps> = ({ content }) => {
+const TutorialContentRenderer: React.FC<TutorialContentRendererProps> = ({ 
+  content, 
+  chapterNumber 
+}) => {
   const [sliderValues, setSliderValues] = useState<Record<string, number[]>>({});
   
   // Process special tags in the content
@@ -113,7 +130,7 @@ const TutorialContentRenderer: React.FC<TutorialContentRendererProps> = ({ conte
       // Process IMAGE tags
       if (part.startsWith('[IMAGE:')) {
         const imageKey = part.substring(7, part.length - 1).trim();
-        const imagePath = getImagePath(imageKey);
+        const imagePath = getImagePath(imageKey, chapterNumber);
         return (
           <div key={`image-${index}`} className="my-4 rounded-lg overflow-hidden shadow-md">
             <img 
@@ -365,8 +382,8 @@ const TutorialContentRenderer: React.FC<TutorialContentRendererProps> = ({ conte
       else initialImage = 'digital_marketing_intro';
     }
     
-    // Use a direct image path for testing to ensure images are working properly
-    const imagePath = getImagePath(initialImage);
+    // Use a direct image path based on chapter if available, otherwise use content-based selection
+    const imagePath = getImagePath(initialImage, chapterNumber);
     const fallbackImage = '/images/level-badges/expert.png'; // A known working image as fallback
     
     enhancedContent.push(
