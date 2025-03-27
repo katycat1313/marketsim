@@ -57,12 +57,12 @@ const TutorialContentRenderer: React.FC<TutorialContentRendererProps> = ({ conte
   const processContent = () => {
     // Start with basic markdown to HTML conversion for paragraphs, headings, etc.
     const processedContent = content
-      .replace(/\n\n/g, '</p><p>')
+      .replace(/\n\n/g, '</p><p class="text-gray-100 mb-4">')
       .replace(/\n/g, '<br />')
-      .replace(/^/, '<p>')
+      .replace(/^/, '<p class="text-gray-100 mb-4">')
       .replace(/$/, '</p>')
-      .replace(/## (.*?)$/gm, (_, heading) => `</p><h2 class="text-xl font-bold text-[#ffd700] mt-6 mb-3">${heading}</h2><p>`)
-      .replace(/### (.*?)$/gm, (_, heading) => `</p><h3 class="text-lg font-semibold text-[#ffd700] mt-5 mb-2">${heading}</h3><p>`);
+      .replace(/## (.*?)$/gm, (_, heading) => `</p><h2 class="text-xl font-bold text-[#ffd700] mt-6 mb-3">${heading}</h2><p class="text-gray-100 mb-4">`)
+      .replace(/### (.*?)$/gm, (_, heading) => `</p><h3 class="text-lg font-semibold text-[#ffd700] mt-5 mb-2">${heading}</h3><p class="text-gray-100 mb-4">`);
     
     // Parse special tags and return the result
     return processSpecialTags(processedContent);
