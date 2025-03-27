@@ -57,12 +57,12 @@ const TutorialContentRenderer: React.FC<TutorialContentRendererProps> = ({ conte
   const processContent = () => {
     // Start with basic markdown to HTML conversion for paragraphs, headings, etc.
     const processedContent = content
-      .replace(/\n\n/g, '</p><p class="text-gray-100 mb-4">')
+      .replace(/\n\n/g, '</p><p class="text-gray-300 mb-4">')
       .replace(/\n/g, '<br />')
-      .replace(/^/, '<p class="text-gray-100 mb-4">')
+      .replace(/^/, '<p class="text-gray-300 mb-4">')
       .replace(/$/, '</p>')
-      .replace(/## (.*?)$/gm, (_, heading) => `</p><h2 class="text-xl font-bold text-[#ffd700] mt-6 mb-3">${heading}</h2><p class="text-gray-100 mb-4">`)
-      .replace(/### (.*?)$/gm, (_, heading) => `</p><h3 class="text-lg font-semibold text-[#ffd700] mt-5 mb-2">${heading}</h3><p class="text-gray-100 mb-4">`);
+      .replace(/## (.*?)$/gm, (_, heading) => `</p><h2 class="text-xl font-bold text-[#ffd700] mt-6 mb-3">${heading}</h2><p class="text-gray-300 mb-4">`)
+      .replace(/### (.*?)$/gm, (_, heading) => `</p><h3 class="text-lg font-semibold text-[#ffd700] mt-5 mb-2">${heading}</h3><p class="text-gray-300 mb-4">`);
     
     // Parse special tags and return the result
     return processSpecialTags(processedContent);
@@ -296,12 +296,12 @@ const TutorialContentRenderer: React.FC<TutorialContentRendererProps> = ({ conte
     enhancedContent.push(
       <div key="main-content" dangerouslySetInnerHTML={{ 
         __html: content
-          .replace(/\n\n/g, '</p><p class="text-white text-lg mb-4">')
+          .replace(/\n\n/g, '</p><p class="text-gray-300 text-lg mb-4">')
           .replace(/\n/g, '<br />')
-          .replace(/^/, '<p class="text-white text-lg mb-4">')
+          .replace(/^/, '<p class="text-gray-300 text-lg mb-4">')
           .replace(/$/, '</p>')
-          .replace(/## (.*?)$/gm, (_, heading) => `</p><h2 class="text-2xl font-bold text-[#ffd700] mt-8 mb-4">${heading}</h2><p class="text-white text-lg mb-4">`)
-          .replace(/### (.*?)$/gm, (_, heading) => `</p><h3 class="text-xl font-semibold text-[#ffd700] mt-6 mb-3">${heading}</h3><p class="text-white text-lg mb-4">`)
+          .replace(/## (.*?)$/gm, (_, heading) => `</p><h2 class="text-2xl font-bold text-[#ffd700] mt-8 mb-4">${heading}</h2><p class="text-gray-300 text-lg mb-4">`)
+          .replace(/### (.*?)$/gm, (_, heading) => `</p><h3 class="text-xl font-semibold text-[#ffd700] mt-6 mb-3">${heading}</h3><p class="text-gray-300 text-lg mb-4">`)
       }} />
     );
     
@@ -322,7 +322,7 @@ const TutorialContentRenderer: React.FC<TutorialContentRendererProps> = ({ conte
                 <AccordionTrigger className="px-4 text-[#ffd700] hover:text-[#ffd700]/80 hover:no-underline">
                   {item.question}
                 </AccordionTrigger>
-                <AccordionContent className="px-4 pt-2 text-white text-base">
+                <AccordionContent className="px-4 pt-2 text-gray-300 text-base">
                   {item.answer}
                 </AccordionContent>
               </AccordionItem>
@@ -341,7 +341,7 @@ const TutorialContentRenderer: React.FC<TutorialContentRendererProps> = ({ conte
         <Alert key="auto-tip" className="my-6 bg-yellow-950/30 border-yellow-500/30">
           <LightbulbIcon className="h-5 w-5 text-yellow-500" />
           <AlertTitle className="text-yellow-400">Pro Tip</AlertTitle>
-          <AlertDescription className="text-white text-base">
+          <AlertDescription className="text-gray-300 text-base">
             Start with small tests before scaling up your marketing efforts. This approach allows you to refine your strategy based on real data while minimizing risk.
           </AlertDescription>
         </Alert>
