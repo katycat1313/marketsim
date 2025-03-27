@@ -10,7 +10,7 @@ import { InfoIcon, AlertTriangleIcon, CheckCircleIcon, LightbulbIcon } from 'luc
 const imageMap: Record<string, string> = {
   // Google Ads images
   'google_ads_overview': '/images/ad-image.jpeg',
-  'campaign_types': '/images/smallbusinessspelled.jpeg',
+  'campaign_types': '/images/small-business.jpeg',
   'search_network': '/images/seo-visual.jpeg',
   'display_network': '/images/small-business.jpeg',
   'analytics_dashboard': '/images/group-thinking.jpeg',
@@ -23,13 +23,13 @@ const imageMap: Record<string, string> = {
   
   // Chapter-specific images for more variety
   // Chapter 1: Digital Marketing Basics
-  'digital_marketing_intro': '/images/smallbusinessspelled.jpeg',
+  'digital_marketing_intro': '/images/small-business.jpeg',
   'getting_started': '/images/womanwork.jpeg',
   'marketing_basics': '/images/group-thinking.jpeg',
   
   // Chapter 2: Google Ads Fundamentals
   'google_ads_intro': '/images/ad-image.jpeg',
-  'google_ads_platform': '/images/smallbusinessspelled.jpeg',
+  'google_ads_platform': '/images/ad-image.jpeg',
   'google_ads_campaigns': '/images/small-business.jpeg',
   'audience_targeting': '/images/wiered-headshot.jpeg',
   'shopping_campaigns': '/images/cart-with-packages.jpeg',
@@ -44,7 +44,7 @@ const imageMap: Record<string, string> = {
   'audience_core': '/images/wiered-headshot.jpeg',
   
   // Chapter 5: Analytics & Testing
-  'testing_methods': '/images/smallbusinessspelled.jpeg',
+  'testing_methods': '/images/womanwork.jpeg',
   'data_analysis': '/images/group-thinking.jpeg',
   'site_analytics': '/images/womanwork.jpeg',
   'analytics_foundations': '/images/small-business.jpeg',
@@ -61,7 +61,7 @@ const imageMap: Record<string, string> = {
   'seo_enhanced': '/images/small-business.jpeg',
   'seo_complete': '/images/womanwork.jpeg',
   'seo_intermediate': '/images/group-thinking.jpeg',
-  'seo_expert': '/images/smallbusinessspelled.jpeg',
+  'seo_expert': '/images/seo-visual.jpeg',
   'seo_master': '/images/ad-image.jpeg',
   
   // Chapter 8: Troubleshooting
@@ -93,12 +93,12 @@ const TutorialContentRenderer: React.FC<TutorialContentRendererProps> = ({ conte
   const processContent = () => {
     // Start with basic markdown to HTML conversion for paragraphs, headings, etc.
     const processedContent = content
-      .replace(/\n\n/g, '</p><p class="text-gray-900 mb-4 font-medium">')
+      .replace(/\n\n/g, '</p><p class="text-black mb-4 font-medium">')
       .replace(/\n/g, '<br />')
-      .replace(/^/, '<p class="text-gray-900 mb-4 font-medium">')
+      .replace(/^/, '<p class="text-black mb-4 font-medium">')
       .replace(/$/, '</p>')
-      .replace(/## (.*?)$/gm, (_, heading) => `</p><h2 class="text-xl font-bold text-[#ffd700] mt-6 mb-3">${heading}</h2><p class="text-gray-900 mb-4 font-medium">`)
-      .replace(/### (.*?)$/gm, (_, heading) => `</p><h3 class="text-lg font-semibold text-[#ffd700] mt-5 mb-2">${heading}</h3><p class="text-gray-900 mb-4 font-medium">`);
+      .replace(/## (.*?)$/gm, (_, heading) => `</p><h2 class="text-xl font-bold text-[#ffd700] mt-6 mb-3">${heading}</h2><p class="text-black mb-4 font-medium">`)
+      .replace(/### (.*?)$/gm, (_, heading) => `</p><h3 class="text-lg font-semibold text-[#ffd700] mt-5 mb-2">${heading}</h3><p class="text-black mb-4 font-medium">`);
     
     // Parse special tags and return the result
     return processSpecialTags(processedContent);
@@ -143,7 +143,7 @@ const TutorialContentRenderer: React.FC<TutorialContentRendererProps> = ({ conte
                 <AccordionTrigger className="px-4 text-[#ffd700] hover:text-[#ffd700]/80 hover:no-underline">
                   {section.title}
                 </AccordionTrigger>
-                <AccordionContent className="px-4 pt-2 text-gray-900 font-medium">
+                <AccordionContent className="px-4 pt-2 text-black font-medium">
                   <div dangerouslySetInnerHTML={{ __html: section.content }} />
                 </AccordionContent>
               </AccordionItem>
@@ -219,7 +219,7 @@ const TutorialContentRenderer: React.FC<TutorialContentRendererProps> = ({ conte
           <Alert key={`info-${index}`} className="my-4 bg-blue-950/30 border-blue-500/30">
             <InfoIcon className="h-5 w-5 text-blue-500" />
             <AlertTitle className="text-blue-400">Information</AlertTitle>
-            <AlertDescription className="text-gray-900 font-medium">
+            <AlertDescription className="text-black font-medium">
               <div dangerouslySetInnerHTML={{ __html: infoContent }} />
             </AlertDescription>
           </Alert>
@@ -233,7 +233,7 @@ const TutorialContentRenderer: React.FC<TutorialContentRendererProps> = ({ conte
           <Alert key={`warning-${index}`} className="my-4 bg-red-950/30 border-red-500/30">
             <AlertTriangleIcon className="h-5 w-5 text-red-500" />
             <AlertTitle className="text-red-400">Warning</AlertTitle>
-            <AlertDescription className="text-gray-900 font-medium">
+            <AlertDescription className="text-black font-medium">
               <div dangerouslySetInnerHTML={{ __html: warningContent }} />
             </AlertDescription>
           </Alert>
@@ -247,7 +247,7 @@ const TutorialContentRenderer: React.FC<TutorialContentRendererProps> = ({ conte
           <Alert key={`tip-${index}`} className="my-4 bg-yellow-950/30 border-yellow-500/30">
             <LightbulbIcon className="h-5 w-5 text-yellow-500" />
             <AlertTitle className="text-yellow-400">Tip</AlertTitle>
-            <AlertDescription className="text-gray-900 font-medium">
+            <AlertDescription className="text-black font-medium">
               <div dangerouslySetInnerHTML={{ __html: tipContent }} />
             </AlertDescription>
           </Alert>
@@ -261,7 +261,7 @@ const TutorialContentRenderer: React.FC<TutorialContentRendererProps> = ({ conte
           <Alert key={`success-${index}`} className="my-4 bg-green-950/30 border-green-500/30">
             <CheckCircleIcon className="h-5 w-5 text-green-500" />
             <AlertTitle className="text-green-400">Success</AlertTitle>
-            <AlertDescription className="text-gray-900 font-medium">
+            <AlertDescription className="text-black font-medium">
               <div dangerouslySetInnerHTML={{ __html: successContent }} />
             </AlertDescription>
           </Alert>
@@ -390,12 +390,12 @@ const TutorialContentRenderer: React.FC<TutorialContentRendererProps> = ({ conte
     enhancedContent.push(
       <div key="main-content" dangerouslySetInnerHTML={{ 
         __html: content
-          .replace(/\n\n/g, '</p><p class="text-gray-900 text-lg mb-4 font-medium">')
+          .replace(/\n\n/g, '</p><p class="text-black text-lg mb-4 font-medium">')
           .replace(/\n/g, '<br />')
-          .replace(/^/, '<p class="text-gray-900 text-lg mb-4 font-medium">')
+          .replace(/^/, '<p class="text-black text-lg mb-4 font-medium">')
           .replace(/$/, '</p>')
-          .replace(/## (.*?)$/gm, (_, heading) => `</p><h2 class="text-2xl font-bold text-[#ffd700] mt-8 mb-4">${heading}</h2><p class="text-gray-900 text-lg mb-4 font-medium">`)
-          .replace(/### (.*?)$/gm, (_, heading) => `</p><h3 class="text-xl font-semibold text-[#ffd700] mt-6 mb-3">${heading}</h3><p class="text-gray-900 text-lg mb-4 font-medium">`)
+          .replace(/## (.*?)$/gm, (_, heading) => `</p><h2 class="text-2xl font-bold text-[#ffd700] mt-8 mb-4">${heading}</h2><p class="text-black text-lg mb-4 font-medium">`)
+          .replace(/### (.*?)$/gm, (_, heading) => `</p><h3 class="text-xl font-semibold text-[#ffd700] mt-6 mb-3">${heading}</h3><p class="text-black text-lg mb-4 font-medium">`)
       }} />
     );
     
@@ -416,7 +416,7 @@ const TutorialContentRenderer: React.FC<TutorialContentRendererProps> = ({ conte
                 <AccordionTrigger className="px-4 text-[#ffd700] hover:text-[#ffd700]/80 hover:no-underline">
                   {item.question}
                 </AccordionTrigger>
-                <AccordionContent className="px-4 pt-2 text-gray-900 text-base font-medium">
+                <AccordionContent className="px-4 pt-2 text-black text-base font-medium">
                   {item.answer}
                 </AccordionContent>
               </AccordionItem>
@@ -435,7 +435,7 @@ const TutorialContentRenderer: React.FC<TutorialContentRendererProps> = ({ conte
         <Alert key="auto-tip" className="my-6 bg-yellow-950/30 border-yellow-500/30">
           <LightbulbIcon className="h-5 w-5 text-yellow-500" />
           <AlertTitle className="text-yellow-400">Pro Tip</AlertTitle>
-          <AlertDescription className="text-gray-900 text-base font-medium">
+          <AlertDescription className="text-black text-base font-medium">
             Start with small tests before scaling up your marketing efforts. This approach allows you to refine your strategy based on real data while minimizing risk.
           </AlertDescription>
         </Alert>
