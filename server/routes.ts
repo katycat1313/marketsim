@@ -31,6 +31,7 @@ import { tutorialSimulationService } from "./services/tutorialSimulationService"
 import { seoSimulationService } from "./services/seoSimulationService";
 import stripeRoutes from "./routes/stripeRoutes";
 import { registerAdSimulationRoutes } from "./routes/adSimulationRoutes";
+import { registerDataVisualizationRoutes } from "./routes/dataVisualizationRoutes";
 
 export async function registerRoutes(app: Express) {
   const httpServer = createServer(app);
@@ -693,6 +694,10 @@ export async function registerRoutes(app: Express) {
   // Register Ad Simulation routes
   registerAdSimulationRoutes(app);
   console.log('Ad Simulation routes registered');
+
+  // Register Data Visualization routes
+  registerDataVisualizationRoutes(app);
+  console.log('Data Visualization routes registered');
 
   return httpServer;
 }

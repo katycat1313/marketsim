@@ -540,11 +540,14 @@ export default function SeoSimulationPage() {
                           <CardDescription>Professional view of your optimized page</CardDescription>
                         </CardHeader>
                         <CardContent className="p-0 overflow-hidden">
-                          <WebsitePreview 
-                            content={content} 
-                            industry={simulation.industry} 
-                            difficulty={simulation.difficulty} 
-                          />
+                          {/* Fix WebsitePreview rendering */}
+                          <div className="website-preview-container">
+                            <WebsitePreview 
+                              content={content} 
+                              industry={simulation.industry} 
+                              difficulty={simulation.difficulty} 
+                            />
+                          </div>
                         </CardContent>
                       </Card>
                       

@@ -23,7 +23,10 @@ import {
   insertSimulationDataSchema,
   adPlatformSimulations,
   adPlatformSimulationAttempts,
-  insertAdPlatformSimulationAttemptSchema
+  insertAdPlatformSimulationAttemptSchema,
+  dataVisualizationChallenges,
+  dataVisualizationAttempts,
+  insertDataVisualizationAttemptSchema
 } from "../shared/schema";
 
 type InsertUserProfile = z.infer<typeof insertUserProfileSchema>;
@@ -80,8 +83,14 @@ export interface IStorage {
   // Ad Platform Simulation operations
   listAdPlatformSimulations(): Promise<schema.AdPlatformSimulation[]>;
   getAdPlatformSimulation(id: number): Promise<schema.AdPlatformSimulation | undefined>;
-  createAdPlatformSimulationAttempt(attempt: any): Promise<schema.AdPlatformSimulationAttempt>;
+  createAdPlatformSimulationAttempt(attempt: schema.InsertAdPlatformSimulationAttempt): Promise<schema.AdPlatformSimulationAttempt>;
   getAdPlatformSimulationAttempts(userId: number, simulationId: number): Promise<schema.AdPlatformSimulationAttempt[]>;
+  
+  // Data Visualization operations
+  listDataVisualizationChallenges(): Promise<schema.DataVisualizationChallenge[]>;
+  getDataVisualizationChallenge(id: number): Promise<schema.DataVisualizationChallenge | undefined>;
+  createDataVisualizationAttempt(attempt: schema.InsertDataVisualizationAttempt): Promise<schema.DataVisualizationAttempt>;
+  getDataVisualizationAttempts(userId: number, challengeId: number): Promise<schema.DataVisualizationAttempt[]>;
 }
 
 export class DrizzleStorage implements IStorage {
@@ -244,6 +253,28 @@ export class DrizzleStorage implements IStorage {
       .from(adPlatformSimulationAttempts)
       .where(eq(adPlatformSimulationAttempts.userId, userId))
       .where(eq(adPlatformSimulationAttempts.simulationId, simulationId));
+  }
+  
+  // Data Visualization Challenge Operations
+  async listDataVisualizationChallenges(): Promise<schema.DataVisualizationChallenge[]> {
+    return await db.select().from(dataVisualizationChallenges);
+  }
+
+  async getDataVisualizationChallenge(id: number): Promise<schema.DataVisualizationChallenge | undefined> {
+    const result = await db.select().from(dataVisualizationChallenges).where(eq(dataVisualizationChallenges.id, id));
+    return result[0];
+  }
+
+  async createDataVisualizationAttempt(attempt: schema.InsertDataVisualizationAttempt): Promise<schema.DataVisualizationAttempt> {
+    const result = await db.insert(dataVisualizationAttempts).values(attempt).returning();
+    return result[0];
+  }
+
+  async getDataVisualizationAttempts(userId: number, challengeId: number): Promise<schema.DataVisualizationAttempt[]> {
+    return await db.select()
+      .from(dataVisualizationAttempts)
+      .where(eq(dataVisualizationAttempts.userId, userId))
+      .where(eq(dataVisualizationAttempts.challengeId, challengeId));
   }
 }
 

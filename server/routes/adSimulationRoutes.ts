@@ -2,13 +2,196 @@ import { Express, Request, Response } from "express";
 import { AdPlatformSimulation, insertAdPlatformSimulationSchema, insertAdPlatformSimulationAttemptSchema } from "@shared/schema";
 import { storage } from "../storage";
 import { z } from "zod";
+import { db } from "../db";
+
+// Sample ad platform simulations data for seeding
+const sampleAdSimulations = [
+  {
+    title: "Google Ads Search Campaign - Beginner Level",
+    platform: "google_ads",
+    type: "search",
+    industry: "E-commerce",
+    difficulty: "Beginner",
+    scenarioDescription: "Create a Google Ads search campaign for an online clothing store looking to increase sales of their summer collection.",
+    objectives: [
+      "Increase website traffic",
+      "Generate clothing sales",
+      "Improve return on ad spend (ROAS)"
+    ],
+    targetAudience: {
+      locations: ["United States", "Canada"],
+      demographics: {
+        ageRanges: ["18-24", "25-34"],
+        genders: ["all"],
+        parentalStatus: ["not_a_parent", "parent"]
+      },
+      interests: ["Fashion", "Online Shopping"]
+    },
+    budget: 50, // Daily budget
+    keywords: ["summer clothing", "summer fashion", "summer outfits"],
+    keywordMatchTypes: ["broad", "phrase", "exact"],
+    negativeKeywords: ["winter", "discount", "cheap"],
+    adCreativeSamples: ["Discover Summer Style", "Shop Our Summer Collection", "Trendy Summer Outfits"]
+  },
+  {
+    title: "Meta Ads Campaign for Local Business",
+    platform: "meta_ads",
+    type: "conversion",
+    industry: "Local Business",
+    difficulty: "Beginner",
+    scenarioDescription: "Create a Facebook and Instagram ad campaign for a local coffee shop trying to promote their new mobile ordering app.",
+    objectives: [
+      "App installs",
+      "Increase local awareness",
+      "Drive in-store visits"
+    ],
+    targetAudience: {
+      locations: ["Chicago, IL (10 mile radius)"],
+      demographics: {
+        ageRanges: ["18-65+"],
+        genders: ["all"],
+        parentalStatus: ["all"]
+      },
+      interests: ["Coffee", "Cafes", "Food & Drink", "Mobile apps"],
+      behaviors: ["Engaged shoppers", "Mobile device users"]
+    },
+    budget: 30,
+    adCreativeSamples: ["Skip the line with our new app", "Order ahead and earn points with every purchase", "Coffee on the go, ready when you are"],
+    placementOptions: ["Facebook News Feed", "Instagram Feed", "Instagram Stories"]
+  },
+  {
+    title: "LinkedIn Lead Generation Campaign",
+    platform: "linkedin_ads",
+    type: "lead_gen",
+    industry: "B2B SaaS",
+    difficulty: "Intermediate",
+    scenarioDescription: "Create a LinkedIn advertising campaign for a B2B software company offering a project management solution for enterprise clients.",
+    objectives: [
+      "Generate high-quality leads",
+      "Book demos with decision-makers",
+      "Increase brand awareness in the enterprise market"
+    ],
+    targetAudience: {
+      locations: ["United States", "United Kingdom", "Australia"],
+      demographics: {
+        ageRanges: ["25-54"],
+        genders: ["all"]
+      },
+      jobTitles: ["Project Manager", "IT Director", "CIO", "VP of Operations"],
+      companySize: ["201-500", "501-1000", "1001+"],
+      industries: ["Information Technology", "Financial Services", "Healthcare"]
+    },
+    budget: 80,
+    adCreativeSamples: ["Streamline Enterprise Project Management", "Increase Team Productivity by 35%", "Book a Demo: Enterprise Project Solution"],
+    leadGenFormFields: ["First Name", "Last Name", "Email", "Company Name", "Job Title"]
+  },
+  {
+    title: "Google Display Network Campaign",
+    platform: "google_ads",
+    type: "display",
+    industry: "Travel",
+    difficulty: "Intermediate",
+    scenarioDescription: "Create a Google Display Network campaign for a travel agency promoting all-inclusive vacation packages.",
+    objectives: [
+      "Generate leads for vacation packages",
+      "Build brand awareness",
+      "Remarket to website visitors"
+    ],
+    targetAudience: {
+      locations: ["United States"],
+      demographics: {
+        ageRanges: ["25-34", "35-44", "45-54"],
+        genders: ["all"],
+        parentalStatus: ["all"],
+        householdIncome: ["top 10%", "top 20%"]
+      },
+      interests: ["Travel", "Luxury Travel", "Beach Vacations", "All-inclusive Resorts"]
+    },
+    budget: 60,
+    targeting: {
+      placements: ["travel websites", "lifestyle blogs"],
+      topics: ["Travel", "Vacations", "Beaches"],
+      audiences: ["In-market for travel", "Travel enthusiasts"]
+    },
+    adSizes: ["300x250", "336x280", "728x90", "300x600"]
+  },
+  {
+    title: "Advanced Meta Retargeting Campaign",
+    platform: "meta_ads",
+    type: "retargeting",
+    industry: "Online Education",
+    difficulty: "Advanced",
+    scenarioDescription: "Create an advanced Meta retargeting campaign for an online learning platform to convert cart abandoners and website visitors into paying customers.",
+    objectives: [
+      "Recover abandoned carts",
+      "Re-engage past visitors",
+      "Increase course signups"
+    ],
+    targetAudience: {
+      customAudiences: [
+        "Website visitors in the last 30 days",
+        "Course page viewers in the last 14 days",
+        "Shopping cart abandoners in the last 7 days",
+        "Past purchasers (for upselling)"
+      ],
+      lookalikeAudiences: ["Similar to past purchasers (1%)", "Similar to high-value customers (5%)"],
+      exclusions: ["Existing customers (for specific campaigns)"]
+    },
+    budget: 75,
+    adCreativeSamples: ["Complete Your Course Registration", "Your Selected Course Is Waiting", "50% Off - Limited Time Offer"],
+    advancedFeatures: ["Dynamic product ads", "Conversion optimization", "Different messaging based on funnel stage"],
+    attributionSettings: ["7-day click, 1-day view"]
+  }
+];
+
+/**
+ * Seed ad platform simulations data
+ */
+const seedAdSimulations = async () => {
+  try {
+    console.log("Seeding ad platform simulations...");
+    
+    // Get existing simulations
+    console.log("Getting existing simulations...");
+    const existingSimulations = await storage.listAdPlatformSimulations();
+    console.log(`Found ${existingSimulations.length} existing ad simulations`);
+    
+    // Extract existing titles to avoid duplicates
+    const existingTitles = existingSimulations.map(sim => sim.title);
+    
+    // Insert new simulations that don't already exist
+    let newSimulationsCount = 0;
+    
+    for (const sim of sampleAdSimulations) {
+      if (!existingTitles.includes(sim.title)) {
+        await db.insert(db.schema.adPlatformSimulations).values(sim);
+        newSimulationsCount++;
+        console.log(`Added new ad simulation: ${sim.title}`);
+      } else {
+        console.log(`Simulation already exists, skipping: ${sim.title}`);
+      }
+    }
+    
+    console.log(`Added ${newSimulationsCount} new ad simulations`);
+    
+    return true;
+  } catch (error) {
+    console.error("Error seeding ad simulations:", error);
+    return false;
+  }
+};
 
 /**
  * Get all ad platform simulations
  */
 const getAdSimulations = async (req: Request, res: Response) => {
   try {
+    // Seed simulations data if needed
+    await seedAdSimulations();
+    
+    console.log("Fetching all ad platform simulations...");
     const simulations = await storage.listAdPlatformSimulations();
+    console.log(`Returning ${simulations.length} ad simulations`);
     res.json(simulations);
   } catch (error) {
     console.error("Error fetching ad simulations:", error);

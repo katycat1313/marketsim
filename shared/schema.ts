@@ -701,3 +701,45 @@ export type InsertAdPlatformSimulationAttempt = z.infer<typeof insertAdPlatformS
 export type InsertGoogleAdsSimulationDetails = z.infer<typeof insertGoogleAdsSimulationDetailsSchema>;
 export type InsertMetaAdsSimulationDetails = z.infer<typeof insertMetaAdsSimulationDetailsSchema>;
 export type InsertLinkedinAdsSimulationDetails = z.infer<typeof insertLinkedinAdsSimulationDetailsSchema>;
+
+// Data Visualization Challenges Schema
+export const dataVisualizationChallenges = pgTable("data_visualization_challenges", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  difficulty: text("difficulty").notNull(),
+  industry: text("industry").notNull(),
+  objectives: text("objectives").array().notNull(),
+  expectedTime: integer("expected_time").notNull(),
+  datasets: text("datasets").array().notNull(),
+  requiredCharts: json("required_charts").notNull(),
+  dataset: json("dataset").$type<Record<string, any>>().notNull(),
+  recommendedChartType: text("recommended_chart_type"),
+  hints: text("hints").array(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Data Visualization Attempts Schema
+export const dataVisualizationAttempts = pgTable("data_visualization_attempts", {
+  id: serial("id").primaryKey(),
+  challengeId: integer("challenge_id").references(() => dataVisualizationChallenges.id),
+  userId: integer("user_id"),
+  charts: json("charts").notNull(),
+  recommendations: json("recommendations").notNull(),
+  score: integer("score").notNull(),
+  feedback: text("feedback").array().notNull(),
+  completedAt: timestamp("completed_at").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Create insert schemas
+export const insertDataVisualizationChallengeSchema = createInsertSchema(dataVisualizationChallenges);
+export const insertDataVisualizationAttemptSchema = createInsertSchema(dataVisualizationAttempts);
+
+// Export types
+export type DataVisualizationChallenge = typeof dataVisualizationChallenges.$inferSelect;
+export type DataVisualizationAttempt = typeof dataVisualizationAttempts.$inferSelect;
+export type InsertDataVisualizationChallenge = z.infer<typeof insertDataVisualizationChallengeSchema>;
+export type InsertDataVisualizationAttempt = z.infer<typeof insertDataVisualizationAttemptSchema>;
