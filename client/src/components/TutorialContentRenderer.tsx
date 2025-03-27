@@ -57,12 +57,12 @@ const TutorialContentRenderer: React.FC<TutorialContentRendererProps> = ({ conte
   const processContent = () => {
     // Start with basic markdown to HTML conversion for paragraphs, headings, etc.
     const processedContent = content
-      .replace(/\n\n/g, '</p><p class="text-slate-100 mb-4">')
+      .replace(/\n\n/g, '</p><p class="text-slate-300 mb-4 font-medium">')
       .replace(/\n/g, '<br />')
-      .replace(/^/, '<p class="text-slate-100 mb-4">')
+      .replace(/^/, '<p class="text-slate-300 mb-4 font-medium">')
       .replace(/$/, '</p>')
-      .replace(/## (.*?)$/gm, (_, heading) => `</p><h2 class="text-xl font-bold text-[#ffd700] mt-6 mb-3">${heading}</h2><p class="text-slate-100 mb-4">`)
-      .replace(/### (.*?)$/gm, (_, heading) => `</p><h3 class="text-lg font-semibold text-[#ffd700] mt-5 mb-2">${heading}</h3><p class="text-slate-100 mb-4">`);
+      .replace(/## (.*?)$/gm, (_, heading) => `</p><h2 class="text-xl font-bold text-[#ffd700] mt-6 mb-3">${heading}</h2><p class="text-slate-300 mb-4 font-medium">`)
+      .replace(/### (.*?)$/gm, (_, heading) => `</p><h3 class="text-lg font-semibold text-[#ffd700] mt-5 mb-2">${heading}</h3><p class="text-slate-300 mb-4 font-medium">`);
     
     // Parse special tags and return the result
     return processSpecialTags(processedContent);
@@ -107,7 +107,7 @@ const TutorialContentRenderer: React.FC<TutorialContentRendererProps> = ({ conte
                 <AccordionTrigger className="px-4 text-[#ffd700] hover:text-[#ffd700]/80 hover:no-underline">
                   {section.title}
                 </AccordionTrigger>
-                <AccordionContent className="px-4 pt-2 text-slate-100">
+                <AccordionContent className="px-4 pt-2 text-slate-300 font-medium">
                   <div dangerouslySetInnerHTML={{ __html: section.content }} />
                 </AccordionContent>
               </AccordionItem>
@@ -183,7 +183,7 @@ const TutorialContentRenderer: React.FC<TutorialContentRendererProps> = ({ conte
           <Alert key={`info-${index}`} className="my-4 bg-blue-950/30 border-blue-500/30">
             <InfoIcon className="h-5 w-5 text-blue-500" />
             <AlertTitle className="text-blue-400">Information</AlertTitle>
-            <AlertDescription className="text-slate-100">
+            <AlertDescription className="text-slate-300 font-medium">
               <div dangerouslySetInnerHTML={{ __html: infoContent }} />
             </AlertDescription>
           </Alert>
@@ -197,7 +197,7 @@ const TutorialContentRenderer: React.FC<TutorialContentRendererProps> = ({ conte
           <Alert key={`warning-${index}`} className="my-4 bg-red-950/30 border-red-500/30">
             <AlertTriangleIcon className="h-5 w-5 text-red-500" />
             <AlertTitle className="text-red-400">Warning</AlertTitle>
-            <AlertDescription className="text-slate-100">
+            <AlertDescription className="text-slate-300 font-medium">
               <div dangerouslySetInnerHTML={{ __html: warningContent }} />
             </AlertDescription>
           </Alert>
@@ -211,7 +211,7 @@ const TutorialContentRenderer: React.FC<TutorialContentRendererProps> = ({ conte
           <Alert key={`tip-${index}`} className="my-4 bg-yellow-950/30 border-yellow-500/30">
             <LightbulbIcon className="h-5 w-5 text-yellow-500" />
             <AlertTitle className="text-yellow-400">Tip</AlertTitle>
-            <AlertDescription className="text-slate-100">
+            <AlertDescription className="text-slate-300 font-medium">
               <div dangerouslySetInnerHTML={{ __html: tipContent }} />
             </AlertDescription>
           </Alert>
@@ -225,7 +225,7 @@ const TutorialContentRenderer: React.FC<TutorialContentRendererProps> = ({ conte
           <Alert key={`success-${index}`} className="my-4 bg-green-950/30 border-green-500/30">
             <CheckCircleIcon className="h-5 w-5 text-green-500" />
             <AlertTitle className="text-green-400">Success</AlertTitle>
-            <AlertDescription className="text-slate-100">
+            <AlertDescription className="text-slate-300 font-medium">
               <div dangerouslySetInnerHTML={{ __html: successContent }} />
             </AlertDescription>
           </Alert>
@@ -276,16 +276,16 @@ const TutorialContentRenderer: React.FC<TutorialContentRendererProps> = ({ conte
     const fallbackImage = '/images/level-badges/expert.png'; // A known working image as fallback
     
     enhancedContent.push(
-      <div key="auto-image" className="my-4 rounded-lg overflow-hidden border-2 border-[#ffd700]/20 bg-gradient-to-r from-yellow-900/30 to-gray-900/50">
-        <div className="relative w-full h-64 flex items-center justify-center">
+      <div key="auto-image" className="my-4 rounded-lg overflow-hidden border-2 border-[#ffd700]/20 bg-gradient-to-r from-yellow-900/30 to-gray-900/50 relative z-10">
+        <div className="w-full h-48 flex items-center justify-center">
           <img 
             src={imagePath} 
             alt="Tutorial illustration" 
-            className="w-full h-full object-cover"
+            className="w-auto h-full object-contain"
             onError={(e) => {
               console.log('Image failed to load:', imagePath);
               e.currentTarget.src = fallbackImage;
-              e.currentTarget.className = "w-1/2 h-auto object-contain my-4";
+              e.currentTarget.className = "w-auto h-32 object-contain my-4";
             }}
           />
         </div>
@@ -296,12 +296,12 @@ const TutorialContentRenderer: React.FC<TutorialContentRendererProps> = ({ conte
     enhancedContent.push(
       <div key="main-content" dangerouslySetInnerHTML={{ 
         __html: content
-          .replace(/\n\n/g, '</p><p class="text-slate-100 text-lg mb-4">')
+          .replace(/\n\n/g, '</p><p class="text-slate-300 text-lg mb-4 font-medium">')
           .replace(/\n/g, '<br />')
-          .replace(/^/, '<p class="text-slate-100 text-lg mb-4">')
+          .replace(/^/, '<p class="text-slate-300 text-lg mb-4 font-medium">')
           .replace(/$/, '</p>')
-          .replace(/## (.*?)$/gm, (_, heading) => `</p><h2 class="text-2xl font-bold text-[#ffd700] mt-8 mb-4">${heading}</h2><p class="text-slate-100 text-lg mb-4">`)
-          .replace(/### (.*?)$/gm, (_, heading) => `</p><h3 class="text-xl font-semibold text-[#ffd700] mt-6 mb-3">${heading}</h3><p class="text-slate-100 text-lg mb-4">`)
+          .replace(/## (.*?)$/gm, (_, heading) => `</p><h2 class="text-2xl font-bold text-[#ffd700] mt-8 mb-4">${heading}</h2><p class="text-slate-300 text-lg mb-4 font-medium">`)
+          .replace(/### (.*?)$/gm, (_, heading) => `</p><h3 class="text-xl font-semibold text-[#ffd700] mt-6 mb-3">${heading}</h3><p class="text-slate-300 text-lg mb-4 font-medium">`)
       }} />
     );
     
@@ -322,7 +322,7 @@ const TutorialContentRenderer: React.FC<TutorialContentRendererProps> = ({ conte
                 <AccordionTrigger className="px-4 text-[#ffd700] hover:text-[#ffd700]/80 hover:no-underline">
                   {item.question}
                 </AccordionTrigger>
-                <AccordionContent className="px-4 pt-2 text-slate-100 text-base">
+                <AccordionContent className="px-4 pt-2 text-slate-300 text-base font-medium">
                   {item.answer}
                 </AccordionContent>
               </AccordionItem>
@@ -341,7 +341,7 @@ const TutorialContentRenderer: React.FC<TutorialContentRendererProps> = ({ conte
         <Alert key="auto-tip" className="my-6 bg-yellow-950/30 border-yellow-500/30">
           <LightbulbIcon className="h-5 w-5 text-yellow-500" />
           <AlertTitle className="text-yellow-400">Pro Tip</AlertTitle>
-          <AlertDescription className="text-slate-100 text-base">
+          <AlertDescription className="text-slate-300 text-base font-medium">
             Start with small tests before scaling up your marketing efforts. This approach allows you to refine your strategy based on real data while minimizing risk.
           </AlertDescription>
         </Alert>
