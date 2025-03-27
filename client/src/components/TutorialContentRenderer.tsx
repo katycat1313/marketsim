@@ -21,19 +21,55 @@ const imageMap: Record<string, string> = {
   'marketing_team': '/images/group-thinking.jpeg',
   'shopping_cart': '/images/cart-with-packages.jpeg',
   
-  // Chapter 1 specific
+  // Chapter-specific images for more variety
+  // Chapter 1: Digital Marketing Basics
   'digital_marketing_intro': '/images/smallbusinessspelled.jpeg',
+  'getting_started': '/images/womanwork.jpeg',
+  'marketing_basics': '/images/group-thinking.jpeg',
   
-  // Chapter 2 specific
+  // Chapter 2: Google Ads Fundamentals
   'google_ads_intro': '/images/ad-image.jpeg',
+  'google_ads_platform': '/images/smallbusinessspelled.jpeg',
+  'google_ads_campaigns': '/images/small-business.jpeg',
+  'audience_targeting': '/images/wiered-headshot.jpeg',
+  'shopping_campaigns': '/images/cart-with-packages.jpeg',
+  'account_architecture': '/images/group-thinking.jpeg',
   
-  // Chapter 3 specific
+  // Chapter 3: Campaign Management
   'advanced_strategies': '/images/womanwork.jpeg',
+  'campaign_management': '/images/ad-image.jpeg',
+  'goal_setting': '/images/group-thinking.jpeg',
   
-  // Chapter 7 specific
+  // Chapter 4: Audience Strategies
+  'audience_core': '/images/wiered-headshot.jpeg',
+  
+  // Chapter 5: Analytics & Testing
+  'testing_methods': '/images/smallbusinessspelled.jpeg',
+  'data_analysis': '/images/group-thinking.jpeg',
+  'site_analytics': '/images/womanwork.jpeg',
+  'analytics_foundations': '/images/small-business.jpeg',
+  'data_driven': '/images/ad-image.jpeg',
+  
+  // Chapter 6: Advanced Marketing
+  'google_ads_mastery': '/images/ad-image.jpeg',
+  'advanced_seo': '/images/seo-visual.jpeg',
+  'email_automation': '/images/wiered-headshot.jpeg',
+  'social_media': '/images/group-thinking.jpeg',
+  
+  // Chapter 7: SEO Specialization
   'seo_basics': '/images/seo-visual.jpeg',
+  'seo_enhanced': '/images/small-business.jpeg',
+  'seo_complete': '/images/womanwork.jpeg',
+  'seo_intermediate': '/images/group-thinking.jpeg',
+  'seo_expert': '/images/smallbusinessspelled.jpeg',
+  'seo_master': '/images/ad-image.jpeg',
   
-  // Default fallback images
+  // Chapter 8: Troubleshooting
+  'troubleshooting_ads': '/images/cart-with-packages.jpeg',
+  'troubleshooting_best': '/images/wiered-headshot.jpeg',
+  'troubleshooting_tips': '/images/small-business.jpeg',
+  
+  // Default fallback image
   'default': '/images/small-business.jpeg'
 };
 
@@ -57,12 +93,12 @@ const TutorialContentRenderer: React.FC<TutorialContentRendererProps> = ({ conte
   const processContent = () => {
     // Start with basic markdown to HTML conversion for paragraphs, headings, etc.
     const processedContent = content
-      .replace(/\n\n/g, '</p><p class="text-slate-300 mb-4 font-medium">')
+      .replace(/\n\n/g, '</p><p class="text-gray-900 mb-4 font-medium">')
       .replace(/\n/g, '<br />')
-      .replace(/^/, '<p class="text-slate-300 mb-4 font-medium">')
+      .replace(/^/, '<p class="text-gray-900 mb-4 font-medium">')
       .replace(/$/, '</p>')
-      .replace(/## (.*?)$/gm, (_, heading) => `</p><h2 class="text-xl font-bold text-[#ffd700] mt-6 mb-3">${heading}</h2><p class="text-slate-300 mb-4 font-medium">`)
-      .replace(/### (.*?)$/gm, (_, heading) => `</p><h3 class="text-lg font-semibold text-[#ffd700] mt-5 mb-2">${heading}</h3><p class="text-slate-300 mb-4 font-medium">`);
+      .replace(/## (.*?)$/gm, (_, heading) => `</p><h2 class="text-xl font-bold text-[#ffd700] mt-6 mb-3">${heading}</h2><p class="text-gray-900 mb-4 font-medium">`)
+      .replace(/### (.*?)$/gm, (_, heading) => `</p><h3 class="text-lg font-semibold text-[#ffd700] mt-5 mb-2">${heading}</h3><p class="text-gray-900 mb-4 font-medium">`);
     
     // Parse special tags and return the result
     return processSpecialTags(processedContent);
@@ -107,7 +143,7 @@ const TutorialContentRenderer: React.FC<TutorialContentRendererProps> = ({ conte
                 <AccordionTrigger className="px-4 text-[#ffd700] hover:text-[#ffd700]/80 hover:no-underline">
                   {section.title}
                 </AccordionTrigger>
-                <AccordionContent className="px-4 pt-2 text-gray-800 font-medium">
+                <AccordionContent className="px-4 pt-2 text-gray-900 font-medium">
                   <div dangerouslySetInnerHTML={{ __html: section.content }} />
                 </AccordionContent>
               </AccordionItem>
@@ -183,7 +219,7 @@ const TutorialContentRenderer: React.FC<TutorialContentRendererProps> = ({ conte
           <Alert key={`info-${index}`} className="my-4 bg-blue-950/30 border-blue-500/30">
             <InfoIcon className="h-5 w-5 text-blue-500" />
             <AlertTitle className="text-blue-400">Information</AlertTitle>
-            <AlertDescription className="text-gray-800 font-medium">
+            <AlertDescription className="text-gray-900 font-medium">
               <div dangerouslySetInnerHTML={{ __html: infoContent }} />
             </AlertDescription>
           </Alert>
@@ -197,7 +233,7 @@ const TutorialContentRenderer: React.FC<TutorialContentRendererProps> = ({ conte
           <Alert key={`warning-${index}`} className="my-4 bg-red-950/30 border-red-500/30">
             <AlertTriangleIcon className="h-5 w-5 text-red-500" />
             <AlertTitle className="text-red-400">Warning</AlertTitle>
-            <AlertDescription className="text-gray-800 font-medium">
+            <AlertDescription className="text-gray-900 font-medium">
               <div dangerouslySetInnerHTML={{ __html: warningContent }} />
             </AlertDescription>
           </Alert>
@@ -211,7 +247,7 @@ const TutorialContentRenderer: React.FC<TutorialContentRendererProps> = ({ conte
           <Alert key={`tip-${index}`} className="my-4 bg-yellow-950/30 border-yellow-500/30">
             <LightbulbIcon className="h-5 w-5 text-yellow-500" />
             <AlertTitle className="text-yellow-400">Tip</AlertTitle>
-            <AlertDescription className="text-gray-800 font-medium">
+            <AlertDescription className="text-gray-900 font-medium">
               <div dangerouslySetInnerHTML={{ __html: tipContent }} />
             </AlertDescription>
           </Alert>
@@ -225,7 +261,7 @@ const TutorialContentRenderer: React.FC<TutorialContentRendererProps> = ({ conte
           <Alert key={`success-${index}`} className="my-4 bg-green-950/30 border-green-500/30">
             <CheckCircleIcon className="h-5 w-5 text-green-500" />
             <AlertTitle className="text-green-400">Success</AlertTitle>
-            <AlertDescription className="text-gray-800 font-medium">
+            <AlertDescription className="text-gray-900 font-medium">
               <div dangerouslySetInnerHTML={{ __html: successContent }} />
             </AlertDescription>
           </Alert>
@@ -262,14 +298,72 @@ const TutorialContentRenderer: React.FC<TutorialContentRendererProps> = ({ conte
     // Add components based on content detection
     let enhancedContent = [];
     
-    // 1. Add initial image based on content
+    // 1. Add initial image based on content and make it more varied
     let initialImage = 'default';
-    if (contentLower.includes('google ads')) initialImage = 'google_ads_intro';
-    else if (contentLower.includes('seo')) initialImage = 'seo_basics';
-    else if (contentLower.includes('analytics')) initialImage = 'analytics_dashboard';
-    else if (contentLower.includes('email marketing')) initialImage = 'email_marketing';
-    else if (contentLower.includes('advanced')) initialImage = 'advanced_strategies';
-    else if (contentLower.includes('digital marketing')) initialImage = 'digital_marketing_intro';
+    
+    // Extract title if possible from first ## heading
+    const titleMatch = content.match(/##\s+(.*?)$/m);
+    const title = titleMatch ? titleMatch[1].toLowerCase() : '';
+    
+    // Check for specific keywords in title or content to assign more specific images
+    if (title.includes('google ads') || contentLower.includes('google ads')) {
+      if (contentLower.includes('mastery')) initialImage = 'google_ads_mastery';
+      else if (contentLower.includes('platform')) initialImage = 'google_ads_platform';
+      else if (contentLower.includes('campaign') && contentLower.includes('type')) initialImage = 'google_ads_campaigns';
+      else if (contentLower.includes('account') && contentLower.includes('architecture')) initialImage = 'account_architecture';
+      else initialImage = 'google_ads_intro';
+    } 
+    else if (title.includes('seo') || contentLower.includes('seo')) {
+      if (contentLower.includes('advanced')) initialImage = 'advanced_seo';
+      else if (contentLower.includes('intermediate')) initialImage = 'seo_intermediate';
+      else if (contentLower.includes('expert')) initialImage = 'seo_expert';
+      else if (contentLower.includes('master')) initialImage = 'seo_master';
+      else if (contentLower.includes('enhanced')) initialImage = 'seo_enhanced';
+      else if (contentLower.includes('complete')) initialImage = 'seo_complete';
+      else initialImage = 'seo_basics';
+    }
+    else if (contentLower.includes('analytics')) {
+      if (contentLower.includes('foundation')) initialImage = 'analytics_foundations';
+      else if (contentLower.includes('site')) initialImage = 'site_analytics';
+      else if (contentLower.includes('data') && contentLower.includes('analysis')) initialImage = 'data_analysis';
+      else initialImage = 'analytics_dashboard';
+    }
+    else if (contentLower.includes('email marketing') || contentLower.includes('automation')) {
+      initialImage = 'email_automation';
+    }
+    else if (contentLower.includes('audience targeting')) {
+      if (contentLower.includes('core')) initialImage = 'audience_core';
+      else initialImage = 'audience_targeting';
+    }
+    else if (contentLower.includes('troubleshooting')) {
+      if (contentLower.includes('best practices')) initialImage = 'troubleshooting_best';
+      else if (contentLower.includes('tips')) initialImage = 'troubleshooting_tips';
+      else initialImage = 'troubleshooting_ads';
+    }
+    else if (contentLower.includes('shopping')) {
+      initialImage = 'shopping_campaigns';
+    }
+    else if (contentLower.includes('social media')) {
+      initialImage = 'social_media';
+    }
+    else if (contentLower.includes('advanced')) {
+      if (contentLower.includes('campaign') && contentLower.includes('strategies')) initialImage = 'advanced_strategies';
+      else initialImage = 'advanced_strategies';
+    }
+    else if (contentLower.includes('campaign management')) {
+      initialImage = 'campaign_management';
+    }
+    else if (contentLower.includes('goal setting')) {
+      initialImage = 'goal_setting';
+    }
+    else if (contentLower.includes('testing')) {
+      initialImage = 'testing_methods';
+    }
+    else if (contentLower.includes('digital marketing')) {
+      if (contentLower.includes('getting started')) initialImage = 'getting_started';
+      else if (contentLower.includes('basics')) initialImage = 'marketing_basics';
+      else initialImage = 'digital_marketing_intro';
+    }
     
     // Use a direct image path for testing to ensure images are working properly
     const imagePath = getImagePath(initialImage);
@@ -296,12 +390,12 @@ const TutorialContentRenderer: React.FC<TutorialContentRendererProps> = ({ conte
     enhancedContent.push(
       <div key="main-content" dangerouslySetInnerHTML={{ 
         __html: content
-          .replace(/\n\n/g, '</p><p class="text-gray-800 text-lg mb-4 font-medium">')
+          .replace(/\n\n/g, '</p><p class="text-gray-900 text-lg mb-4 font-medium">')
           .replace(/\n/g, '<br />')
-          .replace(/^/, '<p class="text-gray-800 text-lg mb-4 font-medium">')
+          .replace(/^/, '<p class="text-gray-900 text-lg mb-4 font-medium">')
           .replace(/$/, '</p>')
-          .replace(/## (.*?)$/gm, (_, heading) => `</p><h2 class="text-2xl font-bold text-[#ffd700] mt-8 mb-4">${heading}</h2><p class="text-gray-800 text-lg mb-4 font-medium">`)
-          .replace(/### (.*?)$/gm, (_, heading) => `</p><h3 class="text-xl font-semibold text-[#ffd700] mt-6 mb-3">${heading}</h3><p class="text-gray-800 text-lg mb-4 font-medium">`)
+          .replace(/## (.*?)$/gm, (_, heading) => `</p><h2 class="text-2xl font-bold text-[#ffd700] mt-8 mb-4">${heading}</h2><p class="text-gray-900 text-lg mb-4 font-medium">`)
+          .replace(/### (.*?)$/gm, (_, heading) => `</p><h3 class="text-xl font-semibold text-[#ffd700] mt-6 mb-3">${heading}</h3><p class="text-gray-900 text-lg mb-4 font-medium">`)
       }} />
     );
     
@@ -322,7 +416,7 @@ const TutorialContentRenderer: React.FC<TutorialContentRendererProps> = ({ conte
                 <AccordionTrigger className="px-4 text-[#ffd700] hover:text-[#ffd700]/80 hover:no-underline">
                   {item.question}
                 </AccordionTrigger>
-                <AccordionContent className="px-4 pt-2 text-gray-800 text-base font-medium">
+                <AccordionContent className="px-4 pt-2 text-gray-900 text-base font-medium">
                   {item.answer}
                 </AccordionContent>
               </AccordionItem>
@@ -341,7 +435,7 @@ const TutorialContentRenderer: React.FC<TutorialContentRendererProps> = ({ conte
         <Alert key="auto-tip" className="my-6 bg-yellow-950/30 border-yellow-500/30">
           <LightbulbIcon className="h-5 w-5 text-yellow-500" />
           <AlertTitle className="text-yellow-400">Pro Tip</AlertTitle>
-          <AlertDescription className="text-gray-800 text-base font-medium">
+          <AlertDescription className="text-gray-900 text-base font-medium">
             Start with small tests before scaling up your marketing efforts. This approach allows you to refine your strategy based on real data while minimizing risk.
           </AlertDescription>
         </Alert>
