@@ -24,6 +24,7 @@ interface Tutorial {
   estimatedTime: number;
   skillsLearned: string[];
   hasSimulation?: boolean;
+  chapterNumber?: number; // Added to support chapter-based lesson numbering
 }
 
 interface Slide {
@@ -742,27 +743,35 @@ export function TutorialSystem() {
   const assignLessonNumbers = () => {
     const lessonMap = new Map<string, number>();
     
-    // Group by category
-    const categories = {
-      'Google Ads': tutorials.filter(t => t.title.toLowerCase().includes('google') || t.title.toLowerCase().includes('ads')),
-      'SEO': tutorials.filter(t => t.title.toLowerCase().includes('seo')),
-      'Analytics': tutorials.filter(t => t.title.toLowerCase().includes('analytics')),
-      'Social Media': tutorials.filter(t => t.title.toLowerCase().includes('social') || t.title.toLowerCase().includes('facebook') || t.title.toLowerCase().includes('instagram')),
-      'Content Marketing': tutorials.filter(t => t.title.toLowerCase().includes('content')),
-      'Other': [] as Tutorial[]
-    };
+    // Group by chapter number (if available)
+    const tutorialsByChapter: Record<number, Tutorial[]> = {};
     
-    // Assign lesson numbers
-    let lessonNumber = 1;
-    Object.entries(categories).forEach(([category, tutorialsInCategory]) => {
-      if (tutorialsInCategory.length === 0) return;
+    // Organize tutorials by chapter
+    tutorials.forEach(tutorial => {
+      // Check if tutorial has chapterNumber property
+      const chapterNumber = (tutorial as any).chapterNumber;
       
-      tutorialsInCategory.forEach((tutorial, subIndex) => {
+      if (chapterNumber) {
+        if (!tutorialsByChapter[chapterNumber]) {
+          tutorialsByChapter[chapterNumber] = [];
+        }
+        tutorialsByChapter[chapterNumber].push(tutorial);
+      }
+    });
+    
+    // Sort each chapter's tutorials by ID to maintain consistent ordering
+    Object.values(tutorialsByChapter).forEach(chapterTutorials => {
+      chapterTutorials.sort((a, b) => a.id - b.id);
+    });
+    
+    // Assign lesson numbers based on chapter and position within chapter
+    Object.entries(tutorialsByChapter).forEach(([chapter, tutorialsInChapter]) => {
+      const chapterNum = parseInt(chapter);
+      
+      tutorialsInChapter.forEach((tutorial, index) => {
         const key = `${tutorial.id}`;
-        lessonMap.set(key, lessonNumber + (subIndex + 1) / 10);
+        lessonMap.set(key, chapterNum + (index + 1) / 10);
       });
-      
-      lessonNumber++;
     });
     
     return lessonMap;
