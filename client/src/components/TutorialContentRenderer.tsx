@@ -9,32 +9,32 @@ import { InfoIcon, AlertTriangleIcon, CheckCircleIcon, LightbulbIcon } from 'luc
 // Mapping of image references to actual image paths
 const imageMap: Record<string, string> = {
   // Google Ads images
-  'google_ads_overview': '/attached_assets/ad-image.jpeg',
-  'campaign_types': '/attached_assets/smallbusinessspelled.jpeg',
-  'search_network': '/attached_assets/seo-visual.jpeg',
-  'display_network': '/attached_assets/small business.jpeg',
-  'analytics_dashboard': '/attached_assets/group-thinking.jpeg',
-  'email_marketing': '/attached_assets/wiered-headshot.jpeg',
-  'seo_optimization': '/attached_assets/seo-visual.jpeg',
-  'troubleshooting': '/attached_assets/cart-with-packages.jpeg',
-  'small_business': '/attached_assets/small business.jpeg',
-  'marketing_team': '/attached_assets/group-thinking.jpeg',
-  'shopping_cart': '/attached_assets/cart-with-packages.jpeg',
+  'google_ads_overview': '/images/ad-image.jpeg',
+  'campaign_types': '/images/smallbusinessspelled.jpeg',
+  'search_network': '/images/seo-visual.jpeg',
+  'display_network': '/images/small-business.jpeg',
+  'analytics_dashboard': '/images/group-thinking.jpeg',
+  'email_marketing': '/images/wiered-headshot.jpeg',
+  'seo_optimization': '/images/seo-visual.jpeg',
+  'troubleshooting': '/images/cart-with-packages.jpeg',
+  'small_business': '/images/small-business.jpeg',
+  'marketing_team': '/images/group-thinking.jpeg',
+  'shopping_cart': '/images/cart-with-packages.jpeg',
   
   // Chapter 1 specific
-  'digital_marketing_intro': '/attached_assets/smallbusinessspelled.jpeg',
+  'digital_marketing_intro': '/images/smallbusinessspelled.jpeg',
   
   // Chapter 2 specific
-  'google_ads_intro': '/attached_assets/ad-image.jpeg',
+  'google_ads_intro': '/images/ad-image.jpeg',
   
   // Chapter 3 specific
-  'advanced_strategies': '/attached_assets/womanwork.jpeg',
+  'advanced_strategies': '/images/womanwork.jpeg',
   
   // Chapter 7 specific
-  'seo_basics': '/attached_assets/seo-visual.jpeg',
+  'seo_basics': '/images/seo-visual.jpeg',
   
   // Default fallback images
-  'default': '/attached_assets/small business.jpeg'
+  'default': '/images/small-business.jpeg'
 };
 
 // Helper function to get image path
