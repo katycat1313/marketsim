@@ -186,11 +186,20 @@ const seedAdSimulations = async () => {
  */
 const getAdSimulations = async (req: Request, res: Response) => {
   try {
-    // Seed simulations data if needed
-    await seedAdSimulations();
-    
     console.log("Fetching all ad platform simulations...");
     const simulations = await storage.listAdPlatformSimulations();
+    console.log(`Found ${simulations.length} ad simulations`);
+    
+    // Only seed if no simulations exist
+    if (simulations.length === 0) {
+      console.log("No ad simulations found, seeding ad platform simulations...");
+      await seedAdSimulations();
+      // Get the simulations again after seeding
+      const seededSimulations = await storage.listAdPlatformSimulations();
+      console.log(`Returning ${seededSimulations.length} ad simulations after seeding`);
+      return res.json(seededSimulations);
+    }
+    
     console.log(`Returning ${simulations.length} ad simulations`);
     res.json(simulations);
   } catch (error) {

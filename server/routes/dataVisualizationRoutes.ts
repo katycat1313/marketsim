@@ -8,13 +8,20 @@ import { dataVisualizationService } from "../services/dataVisualizationService";
  */
 const getChallenges = async (req: Request, res: Response) => {
   try {
-    // Seed challenges if they don't exist
-    console.log("Seeding data visualization challenges...");
-    await dataVisualizationService.seedChallenges();
-    
     // Get all challenges
     const challenges = await storage.listDataVisualizationChallenges();
     console.log(`Retrieved ${challenges.length} data visualization challenges`);
+    
+    // Only seed if no challenges exist (this should rarely happen)
+    if (challenges.length === 0) {
+      console.log("No challenges found, seeding data visualization challenges...");
+      await dataVisualizationService.seedChallenges();
+      // Get the challenges again after seeding
+      const seededChallenges = await storage.listDataVisualizationChallenges();
+      console.log(`Retrieved ${seededChallenges.length} data visualization challenges after seeding`);
+      return res.json(seededChallenges);
+    }
+    
     res.json(challenges);
   } catch (error) {
     console.error("Error retrieving data visualization challenges:", error);

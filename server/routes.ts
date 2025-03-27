@@ -461,14 +461,21 @@ export async function registerRoutes(app: Express) {
   // SEO Simulation Routes
   app.get("/api/seo-simulations", async (req, res) => {
     try {
-      // Seed simulations if they don't exist
-      console.log("Seeding SEO simulations...");
-      await seoSimulationService.seedSimulations();
-      
       // Get all simulations
       console.log("Getting SEO simulations...");
       const simulations = await seoSimulationService.getSimulations();
       console.log("SEO simulations retrieved:", simulations.length);
+      
+      // Only seed if no simulations exist
+      if (simulations.length === 0) {
+        console.log("No simulations found, seeding SEO simulations...");
+        await seoSimulationService.seedSimulations();
+        // Get the simulations again after seeding
+        const seededSimulations = await seoSimulationService.getSimulations();
+        console.log("SEO simulations retrieved after seeding:", seededSimulations.length);
+        return res.json(seededSimulations);
+      }
+      
       res.json(simulations);
     } catch (error) {
       console.error("Error retrieving SEO simulations:", error);
