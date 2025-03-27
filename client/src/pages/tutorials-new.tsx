@@ -552,7 +552,8 @@ export default function TutorialsPage() {
               <div className="prose prose-invert max-w-none mt-6">
                 <TutorialContentRenderer 
                   content={currentTutorial.content} 
-                  chapterNumber={(currentTutorial as any).chapterNumber} 
+                  chapterNumber={(currentTutorial as any).chapterNumber}
+                  tutorialIndex={(currentTutorial as any).lessonNumber} 
                 />
               </div>
               

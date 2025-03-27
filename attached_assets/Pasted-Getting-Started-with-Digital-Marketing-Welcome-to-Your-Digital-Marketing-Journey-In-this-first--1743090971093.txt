@@ -1,4 +1,4 @@
-export const content = `# cGetting Started with Digital Marketing
+Getting Started with Digital Marketing
 
 ## Welcome to Your Digital Marketing Journey
 

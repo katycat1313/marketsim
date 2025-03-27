@@ -6,94 +6,151 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { InfoIcon, AlertTriangleIcon, CheckCircleIcon, LightbulbIcon } from 'lucide-react';
 
-// More organized chapter-based image structure
-// Each chapter has its own set of images that will be used for that chapter's tutorials
-const chapterImageMap: Record<number, string[]> = {
-  1: [ // Chapter 1: Digital Marketing Basics
-    '/images/small-business.jpeg',
-    '/images/womanwork.jpeg',
-    '/images/group-thinking.jpeg'
-  ],
-  2: [ // Chapter 2: Google Ads Fundamentals
-    '/images/ad-image.jpeg',
-    '/images/small-business.jpeg',
-    '/images/group-thinking.jpeg',
-    '/images/wiered-headshot.jpeg',
-    '/images/cart-with-packages.jpeg'
-  ],
-  3: [ // Chapter 3: Campaign Management
-    '/images/womanwork.jpeg',
-    '/images/ad-image.jpeg',
-    '/images/group-thinking.jpeg'
-  ],
-  4: [ // Chapter 4: Audience Strategies
-    '/images/wiered-headshot.jpeg',
-    '/images/small-business.jpeg',
-    '/images/womanwork.jpeg'
-  ],
-  5: [ // Chapter 5: Analytics & Testing
-    '/images/womanwork.jpeg',
-    '/images/group-thinking.jpeg',
-    '/images/small-business.jpeg',
-    '/images/ad-image.jpeg'
-  ],
-  6: [ // Chapter 6: Advanced Marketing
-    '/images/ad-image.jpeg',
-    '/images/seo-visual.jpeg',
-    '/images/wiered-headshot.jpeg',
-    '/images/group-thinking.jpeg'
-  ],
-  7: [ // Chapter 7: SEO Specialization
-    '/images/seo-visual.jpeg',
-    '/images/small-business.jpeg',
-    '/images/womanwork.jpeg',
-    '/images/group-thinking.jpeg',
-    '/images/ad-image.jpeg'
-  ],
-  8: [ // Chapter 8: Troubleshooting
-    '/images/cart-with-packages.jpeg',
-    '/images/wiered-headshot.jpeg',
-    '/images/small-business.jpeg'
-  ]
+// Define image metadata with topic tags for more intelligent content matching
+interface ImageMetadata {
+  path: string;
+  topics: string[];  // Topics this image relates to
+  description: string; // Brief description of what's in the image
+}
+
+// Comprehensive image metadata system to enable context-aware image selection
+const imageMetadata: ImageMetadata[] = [
+  {
+    path: '/images/small-business.jpeg',
+    topics: ['small business', 'entrepreneurship', 'business planning', 'marketing basics', 'digital strategy'],
+    description: 'Small business owner working at a desk'
+  },
+  {
+    path: '/images/womanwork.jpeg',
+    topics: ['professional', 'women in business', 'marketing strategy', 'campaign planning', 'analytics'],
+    description: 'Professional woman working on digital marketing'
+  },
+  {
+    path: '/images/group-thinking.jpeg',
+    topics: ['team collaboration', 'brainstorming', 'marketing team', 'strategy meeting', 'campaign planning'],
+    description: 'Marketing team collaborating on strategy'
+  },
+  {
+    path: '/images/ad-image.jpeg',
+    topics: ['google ads', 'ppc', 'advertising', 'digital ads', 'campaign management', 'display advertising'],
+    description: 'Digital advertising campaign visualization'
+  },
+  {
+    path: '/images/wiered-headshot.jpeg',
+    topics: ['networking', 'social media', 'audience targeting', 'customer persona', 'targeting'],
+    description: 'Connected network visualization representing audience targeting'
+  },
+  {
+    path: '/images/cart-with-packages.jpeg',
+    topics: ['e-commerce', 'shopping', 'conversion', 'google shopping', 'retail advertising'],
+    description: 'Shopping cart with packages representing e-commerce'
+  },
+  {
+    path: '/images/seo-visual.jpeg',
+    topics: ['seo', 'search engine', 'website optimization', 'organic traffic', 'digital visibility'],
+    description: 'SEO and search engine optimization visualization'
+  }
+];
+
+// Topic mapping for chapters to ensure contextual relevance
+const chapterTopics: Record<number, string[]> = {
+  1: ['marketing basics', 'digital strategy', 'small business', 'entrepreneurship'], // Digital Marketing Basics
+  2: ['google ads', 'ppc', 'advertising', 'digital ads'], // Google Ads Fundamentals
+  3: ['campaign management', 'strategy meeting', 'marketing team', 'campaign planning'], // Campaign Management
+  4: ['audience targeting', 'customer persona', 'targeting', 'social media'], // Audience Strategies
+  5: ['analytics', 'testing', 'optimization', 'data analysis'], // Analytics & Testing
+  6: ['advanced marketing', 'marketing strategy', 'digital visibility'], // Advanced Marketing
+  7: ['seo', 'search engine', 'website optimization', 'organic traffic'], // SEO Specialization
+  8: ['troubleshooting', 'problem solving', 'conversion optimization', 'shopping'] // Troubleshooting
 };
 
-// Original image mapping for keyword-based selection (fallback if no chapter provided)
-const imageMap: Record<string, string> = {
-  // Google Ads images
-  'google_ads_overview': '/images/ad-image.jpeg',
-  'campaign_types': '/images/small-business.jpeg',
-  'search_network': '/images/seo-visual.jpeg',
-  'display_network': '/images/small-business.jpeg',
-  'analytics_dashboard': '/images/group-thinking.jpeg',
-  'email_marketing': '/images/wiered-headshot.jpeg',
-  'seo_optimization': '/images/seo-visual.jpeg',
-  'troubleshooting': '/images/cart-with-packages.jpeg',
-  'small_business': '/images/small-business.jpeg',
-  'marketing_team': '/images/group-thinking.jpeg',
-  'shopping_cart': '/images/cart-with-packages.jpeg',
+// Specific tutorial-to-image mappings for perfect content alignment
+// Key format: "chapter-tutorialIndex" (e.g., "1-2" = Chapter 1, second tutorial)
+const tutorialImageMappings: Record<string, string> = {
+  "1-1": '/images/small-business.jpeg', // Digital Marketing Foundations
+  "1-2": '/images/group-thinking.jpeg', // Marketing Strategy Essentials
+  "1-3": '/images/womanwork.jpeg',      // Brand Building Online
   
-  // Default fallback image
-  'default': '/images/small-business.jpeg'
+  "2-1": '/images/ad-image.jpeg',       // Google Ads Platform Intro
+  "2-2": '/images/small-business.jpeg', // Google Ads Account Structure
+  "2-3": '/images/group-thinking.jpeg', // Campaign Types Overview
+  "2-4": '/images/ad-image.jpeg',       // Keyword Research Mastery
+  "2-5": '/images/wiered-headshot.jpeg', // Ad Writing Best Practices
+  
+  "3-1": '/images/womanwork.jpeg',      // Campaign Setup Guide
+  "3-2": '/images/group-thinking.jpeg', // Budget Optimization
+  "3-3": '/images/ad-image.jpeg',       // Performance Monitoring
+  
+  "4-1": '/images/wiered-headshot.jpeg', // Audience Targeting Guide
+  
+  "5-1": '/images/womanwork.jpeg',      // Analytics Fundamentals
+  "5-2": '/images/group-thinking.jpeg', // A/B Testing Framework
+  "5-3": '/images/ad-image.jpeg',       // Conversion Tracking Setup
+  "5-4": '/images/small-business.jpeg', // Data-Driven Decision Making
+  "5-5": '/images/wiered-headshot.jpeg', // Marketing Measurement Models
+  
+  "6-1": '/images/ad-image.jpeg',       // Advanced Google Ads Tactics
+  "6-2": '/images/seo-visual.jpeg',     // Cross-Channel Integration
+  "6-3": '/images/wiered-headshot.jpeg', // Automation & AI in Marketing
+  "6-4": '/images/group-thinking.jpeg', // International Marketing
+  
+  "7-1": '/images/seo-visual.jpeg',     // SEO Fundamentals
+  "7-2": '/images/small-business.jpeg', // On-Page Optimization
+  "7-3": '/images/womanwork.jpeg',      // Content Strategy for SEO
+  "7-4": '/images/seo-visual.jpeg',     // Technical SEO Guide
+  "7-5": '/images/group-thinking.jpeg', // Local SEO Strategies
+  "7-6": '/images/ad-image.jpeg',       // SEO & PPC Integration
+  
+  "8-1": '/images/cart-with-packages.jpeg', // Troubleshooting Google Ads
+  "8-2": '/images/wiered-headshot.jpeg', // Recovery Strategies for Declining Campaigns
+  "8-3": '/images/small-business.jpeg'   // Competitive Analysis Framework
 };
 
-// Helper function to get image path based on chapter number or keyword
-const getImagePath = (imageKey: string, chapterNumber?: number): string => {
-  // If we have a chapter number, randomly select an image from that chapter's images
-  if (chapterNumber && chapterImageMap[chapterNumber]) {
-    const chapterImages = chapterImageMap[chapterNumber];
-    // Generate a consistent "random" index based on the imageKey to always get same image for same key
-    const hash = imageKey.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-    const index = hash % chapterImages.length;
-    return chapterImages[index];
+// Helper function to get image path based on chapter, tutorial, and context
+const getImagePath = (imageKey: string, chapterNumber?: number, tutorialIndex?: number): string => {
+  // First priority: Check if we have an exact tutorial mapping
+  if (chapterNumber !== undefined && tutorialIndex !== undefined) {
+    const tutorialKey = `${chapterNumber}-${tutorialIndex}`;
+    if (tutorialImageMappings[tutorialKey]) {
+      return tutorialImageMappings[tutorialKey];
+    }
   }
   
-  // Otherwise use the keyword-based mapping as fallback
-  return imageMap[imageKey] || imageMap['default'];
+  // Second priority: Match image to content topic based on chapter
+  if (chapterNumber !== undefined) {
+    const relevantTopics = chapterTopics[chapterNumber] || [];
+    
+    // Find images that match the chapter topics
+    const matchingImages = imageMetadata.filter(img => 
+      img.topics.some(topic => relevantTopics.includes(topic))
+    );
+    
+    if (matchingImages.length > 0) {
+      // Generate a consistent index based on the imageKey to always get same image for same key
+      const hash = imageKey.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+      const index = hash % matchingImages.length;
+      return matchingImages[index].path;
+    }
+  }
+  
+  // Third priority: Match directly by keyword to image
+  const keywordMatches = imageMetadata.filter(img => 
+    img.topics.some(topic => imageKey.toLowerCase().includes(topic.toLowerCase())) ||
+    img.description.toLowerCase().includes(imageKey.toLowerCase())
+  );
+  
+  if (keywordMatches.length > 0) {
+    return keywordMatches[0].path;
+  }
+  
+  // Final fallback: Use a default image
+  return '/images/small-business.jpeg';
 };
 
 interface TutorialContentRendererProps {
   content: string;
   chapterNumber?: number; // Optional chapter number for better image selection
+  tutorialIndex?: number; // Optional tutorial index within chapter for precise image mapping
 }
 
 /**
@@ -102,7 +159,8 @@ interface TutorialContentRendererProps {
  */
 const TutorialContentRenderer: React.FC<TutorialContentRendererProps> = ({ 
   content, 
-  chapterNumber 
+  chapterNumber,
+  tutorialIndex
 }) => {
   const [sliderValues, setSliderValues] = useState<Record<string, number[]>>({});
   
@@ -130,7 +188,7 @@ const TutorialContentRenderer: React.FC<TutorialContentRendererProps> = ({
       // Process IMAGE tags
       if (part.startsWith('[IMAGE:')) {
         const imageKey = part.substring(7, part.length - 1).trim();
-        const imagePath = getImagePath(imageKey, chapterNumber);
+        const imagePath = getImagePath(imageKey, chapterNumber, tutorialIndex);
         return (
           <div key={`image-${index}`} className="my-4 rounded-lg overflow-hidden shadow-md">
             <img 
@@ -382,8 +440,8 @@ const TutorialContentRenderer: React.FC<TutorialContentRendererProps> = ({
       else initialImage = 'digital_marketing_intro';
     }
     
-    // Use a direct image path based on chapter if available, otherwise use content-based selection
-    const imagePath = getImagePath(initialImage, chapterNumber);
+    // Use a direct image path based on chapter and tutorial index if available
+    const imagePath = getImagePath(initialImage, chapterNumber, tutorialIndex);
     const fallbackImage = '/images/level-badges/expert.png'; // A known working image as fallback
     
     enhancedContent.push(
