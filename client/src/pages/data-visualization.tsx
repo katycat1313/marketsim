@@ -782,6 +782,42 @@ export default function DataVisualizationPage() {
       {currentStep === "build" && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="col-span-1 space-y-6">
+            {/* Assignment Details Card */}
+            <Card className="bg-[#111]/80 border border-[#ffd700]/20 shadow-lg">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-[#ffd700] flex items-center gap-2">
+                  <FileText className="h-5 w-5" />
+                  Assignment Details
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="mb-3">
+                  <h3 className="text-md font-medium text-[#ffd700]/90 mb-1">Objectives</h3>
+                  <ul className="space-y-1 text-[#f5f5f5] text-sm">
+                    {currentChallenge?.objectives.map((objective, i) => (
+                      <li key={i} className="flex items-start">
+                        <span className="text-[#ffd700] mr-2">•</span>
+                        <span>{objective}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                
+                <div className="mb-3">
+                  <h3 className="text-md font-medium text-[#ffd700]/90 mb-1">Success Criteria</h3>
+                  <ul className="space-y-1 text-[#f5f5f5] text-sm">
+                    {currentChallenge?.successCriteria.map((criteria, i) => (
+                      <li key={i} className="flex items-start">
+                        <span className="text-[#ffd700] mr-2">•</span>
+                        <span>{criteria}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Chart Creation Card */}
             <Card className="bg-[#111]/60 border border-[#ffd700]/20">
               <CardHeader>
                 <CardTitle className="text-[#ffd700]">Create Visualization</CardTitle>
