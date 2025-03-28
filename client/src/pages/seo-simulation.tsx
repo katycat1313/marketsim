@@ -453,7 +453,7 @@ export default function SeoSimulationPage() {
               </TabsContent>
               
               <TabsContent value="preview" className="space-y-6">
-                {content && (
+                {content && simulation && (
                   simulation.difficulty === 'Beginner' ? (
                     <Card>
                       <CardHeader>
@@ -541,13 +541,13 @@ export default function SeoSimulationPage() {
                         </CardHeader>
                         <CardContent className="p-0 overflow-hidden">
                           <div className="website-preview-container" style={{ width: '100%', maxWidth: '100%', overflow: 'auto', margin: '0 auto', padding: '20px' }}>
-                            {content && 
+                            {content && (
                               <WebsitePreview 
                                 content={content} 
                                 industry={simulation.industry || ''} 
                                 difficulty={simulation.difficulty || 'Beginner'} 
                               />
-                            }
+                            )}
                           </div>
                         </CardContent>
                       </Card>
@@ -562,7 +562,7 @@ export default function SeoSimulationPage() {
                             <div className="text-blue-600 text-xl hover:underline cursor-pointer">{content.title}</div>
                             <div className="text-green-700 text-sm">example.com/your-page-url</div>
                             <div className="text-gray-600">
-                              {content.metaDescription.length > 160 
+                              {content.metaDescription && content.metaDescription.length > 160 
                                 ? content.metaDescription.substring(0, 157) + '...' 
                                 : content.metaDescription}
                             </div>
