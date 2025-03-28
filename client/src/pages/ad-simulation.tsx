@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, useLocation } from "wouter";
+import { useRoute, useLocation } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -18,6 +18,24 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { CheckCircle, AlertCircle, Info, ArrowRight, Plus, Trash2 } from "lucide-react";
 import { getQueryFn, apiRequest, queryClient } from "@/lib/queryClient";
 import { AdPlatformSimulation } from "@shared/schema";
+
+// Define an interface for the simulation data
+interface AdSimulation {
+  id: number;
+  title: string;
+  scenarioDescription: string;
+  industry: string;
+  businessType: string;
+  objectives: string[];
+  targetAudience: {
+    locations: string[];
+    demographics: string[];
+    interests: string[];
+  };
+  platform: string;
+  difficulty: string;
+  successCriteria: string[];
+}
 
 // Type definitions for the form states
 interface GoogleAdForm {
@@ -96,7 +114,8 @@ interface LinkedInAdForm {
 }
 
 export default function AdSimulationPage() {
-  const { id } = useParams<{ id: string }>();
+  const { params, path } = useRoute<{ simulationId: string }>('/ad-simulation/:simulationId');
+  const simulationId = params ? parseInt(params.simulationId) : null;
   const [, setLocation] = useLocation();
   
   // State for the forms
@@ -182,9 +201,10 @@ export default function AdSimulationPage() {
   const [activeSetupTab, setActiveSetupTab] = useState<string>("campaign");
 
   // Fetch the simulation details
-  const { data: simulation, isLoading } = useQuery({
-    queryKey: [`/api/ad-simulations/${id}`],
+  const { data: simulation, isLoading } = useQuery<AdSimulation>({
+    queryKey: [`/api/ad-simulations/${simulationId}`],
     queryFn: getQueryFn({ on401: "throw" }),
+    enabled: !!simulationId
   });
 
   // Set the active platform tab based on the simulation data
@@ -234,7 +254,7 @@ export default function AdSimulationPage() {
   // Handle form submission
   const submitMutation = useMutation({
     mutationFn: async (data: any) => {
-      return apiRequest(`/api/ad-simulations/${id}/attempt`, {
+      return apiRequest(`/api/ad-simulations/${simulationId}/attempt`, {
         method: "POST",
         body: JSON.stringify(data),
       });
@@ -242,13 +262,13 @@ export default function AdSimulationPage() {
     onSuccess: (data) => {
       setSimulationResults(data);
       setActiveStep("results");
-      queryClient.invalidateQueries({ queryKey: [`/api/ad-simulations/${id}/attempts`] });
-    },
+      queryClient.invalidateQueries({ queryKey: [`/api/ad-simulations/${simulationId}/attempts`] });
+    }
   });
 
   const handleSubmitGoogle = () => {
     submitMutation.mutate({
-      simulationId: parseInt(id),
+      simulationId: simulationId,
       platform: "google_ads",
       campaignName: googleForm.campaignName,
       campaignObjective: googleForm.campaignObjective,
@@ -280,7 +300,7 @@ export default function AdSimulationPage() {
 
   const handleSubmitMeta = () => {
     submitMutation.mutate({
-      simulationId: parseInt(id),
+      simulationId: simulationId,
       platform: "meta_ads",
       campaignName: metaForm.campaignName,
       campaignObjective: metaForm.campaignObjective,
@@ -308,7 +328,7 @@ export default function AdSimulationPage() {
 
   const handleSubmitLinkedIn = () => {
     submitMutation.mutate({
-      simulationId: parseInt(id),
+      simulationId: simulationId,
       platform: "linkedin_ads",
       campaignName: linkedinForm.campaignName,
       campaignObjective: linkedinForm.campaignObjective,
