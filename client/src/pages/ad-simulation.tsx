@@ -114,8 +114,8 @@ interface LinkedInAdForm {
 }
 
 export default function AdSimulationPage() {
-  const { params, path } = useRoute<{ simulationId: string }>('/ad-simulation/:simulationId');
-  const simulationId = params ? parseInt(params.simulationId) : null;
+  const [matched, params] = useRoute<{ simulationId: string }>('/ad-simulation/:simulationId');
+  const simulationId = matched && params ? parseInt(params.simulationId) : null;
   const [, setLocation] = useLocation();
   
   // State for the forms
@@ -2064,7 +2064,7 @@ export default function AdSimulationPage() {
             <CardDescription>Learn what worked and what could be improved</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            {feedback.map((item, index) => (
+            {feedback.map((item: string, index: number) => (
               <Alert key={index} variant="default" className="bg-gray-50">
                 <div className="flex items-start">
                   <Info className="h-5 w-5 text-blue-500 mr-2 mt-0.5" />
@@ -2107,6 +2107,46 @@ export default function AdSimulationPage() {
     );
   }
 
+  // Project objectives reference card component
+  const ProjectObjectivesCard = () => {
+    if (!simulation) return null;
+    
+    return (
+      <Card className="mb-4">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-lg">Project Goals & Objectives</CardTitle>
+          <CardDescription>Reference these goals while creating your campaign</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-2 pt-0">
+          <div className="text-sm">
+            <p className="font-medium">Objectives:</p>
+            <ul className="list-disc pl-5 space-y-1 text-gray-600">
+              {simulation.objectives.map((obj: string, index: number) => (
+                <li key={index}>{obj}</li>
+              ))}
+            </ul>
+          </div>
+          <div className="text-sm">
+            <p className="font-medium">Success Criteria:</p>
+            <ul className="list-disc pl-5 space-y-1 text-gray-600">
+              {simulation.successCriteria && Array.isArray(simulation.successCriteria) ? 
+                simulation.successCriteria.map((criteria: any, index: number) => (
+                  <li key={index}>
+                    {typeof criteria === 'object' && criteria.metric ? 
+                      `${criteria.metric}: ${criteria.comparison === "greater" ? ">" : criteria.comparison === "less" ? "<" : "="} ${criteria.target}` : 
+                      String(criteria)
+                    }
+                  </li>
+                )) : 
+                <li>Please refer to the project objectives above</li>
+              }
+            </ul>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  };
+
   return (
     <div className="container mx-auto py-8">
       <div className="mb-6">
@@ -2125,28 +2165,36 @@ export default function AdSimulationPage() {
         </div>
       </div>
       
-      <div className="mb-6">
-        <div className="bg-gray-50 border rounded-lg p-4">
-          <h3 className="text-lg font-medium mb-2">Business Details</h3>
-          <p className="text-gray-600 mb-3">{simulation?.businessType}</p>
-          
-          <h3 className="text-lg font-medium mb-2">Objectives</h3>
-          <ul className="list-disc pl-5 space-y-1 mb-3">
-            {simulation?.objectives.map((obj: string, index: number) => (
-              <li key={index} className="text-gray-600">{obj}</li>
-            ))}
-          </ul>
-          
-          <h3 className="text-lg font-medium mb-2">Success Criteria</h3>
-          <ul className="list-disc pl-5 space-y-1">
-            {simulation?.successCriteria.map((criteria: any, index: number) => (
-              <li key={index} className="text-gray-600">
-                {criteria.metric}: {criteria.comparison === "greater" ? ">" : criteria.comparison === "less" ? "<" : "="} {criteria.target}
-              </li>
-            ))}
-          </ul>
+      {activeStep !== "setup" && (
+        <div className="mb-6">
+          <div className="bg-gray-50 border rounded-lg p-4">
+            <h3 className="text-lg font-medium mb-2">Business Details</h3>
+            <p className="text-gray-600 mb-3">{simulation?.businessType}</p>
+            
+            <h3 className="text-lg font-medium mb-2">Objectives</h3>
+            <ul className="list-disc pl-5 space-y-1 mb-3">
+              {simulation?.objectives.map((obj: string, index: number) => (
+                <li key={index} className="text-gray-600">{obj}</li>
+              ))}
+            </ul>
+            
+            <h3 className="text-lg font-medium mb-2">Success Criteria</h3>
+            <ul className="list-disc pl-5 space-y-1">
+              {simulation?.successCriteria && Array.isArray(simulation.successCriteria) ? 
+                simulation.successCriteria.map((criteria: any, index: number) => (
+                  <li key={index} className="text-gray-600">
+                    {typeof criteria === 'object' && criteria.metric ? 
+                      `${criteria.metric}: ${criteria.comparison === "greater" ? ">" : criteria.comparison === "less" ? "<" : "="} ${criteria.target}` : 
+                      String(criteria)
+                    }
+                  </li>
+                )) : 
+                <li className="text-gray-600">Please refer to campaign details</li>
+              }
+            </ul>
+          </div>
         </div>
-      </div>
+      )}
       
       <div className="mb-6">
         <Tabs value={activePlatformTab} onValueChange={setActivePlatformTab}>
@@ -2160,6 +2208,7 @@ export default function AdSimulationPage() {
       
       {activeStep === "setup" ? (
         <>
+          <ProjectObjectivesCard />
           {renderAdPlatformForm()}
           
           <div className="mt-6 flex justify-end">

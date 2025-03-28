@@ -764,6 +764,18 @@ export default function DataVisualizationPage() {
           >
             Start Challenge
           </Button>
+          
+          {/* Debug button */}
+          <div className="mt-4 text-xs text-gray-400">
+            If the Start Challenge button isn't working, click the debug button below:
+            <Button 
+              onClick={() => setCurrentStep("build")} 
+              className="mt-2 bg-gray-700 text-gray-200 hover:bg-gray-600 text-xs"
+              size="sm"
+            >
+              Debug: Go to Build Mode
+            </Button>
+          </div>
         </div>
       )}
       
@@ -1198,8 +1210,11 @@ export default function DataVisualizationPage() {
                 </div>
                 <Button
                   onClick={() => {
+                    // Generate a simple unique ID using timestamp and random number
+                    const generateId = () => `id-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
+                    
                     setPortfolioEntry({
-                      id: uuidv4(),
+                      id: generateId(),
                       title: 'Data Analysis Project',
                       description: '',
                       charts: charts,
