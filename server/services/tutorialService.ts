@@ -42,22 +42,42 @@ export class TutorialService {
       // Navigate to the tutorials directory
       const tutorialsDir = path.join(currentDir, '..', 'data', 'tutorials');
       
-      // Get all tutorial files with proper naming convention
-      const files = fs.readdirSync(tutorialsDir).filter(file => 
-        file.startsWith('chapter') && file.endsWith('.ts') && !file.includes('storage.ts')
-      );
+      // Check if directory exists
+      if (!fs.existsSync(tutorialsDir)) {
+        console.log('Tutorials directory does not exist, creating it...');
+        fs.mkdirSync(tutorialsDir, { recursive: true });
+        this.loadDefaultTutorials();
+        return;
+      }
       
-      console.log(`Found ${files.length} tutorial files`);
-      
-      // Process each file to extract chapter and subchapter
-      const tutorialFiles = files.map(file => {
-        // Extract chapter number from filename
-        const chapterMatch = file.match(/chapter(\d+)/i);
-        let chapterNumber = 1; // Default chapter
+      try {
+        // Get all tutorial files with proper naming convention
+        const files = fs.readdirSync(tutorialsDir).filter(file => 
+          file.startsWith('chapter') && file.endsWith('.ts') && !file.includes('storage.ts')
+        );
         
-        if (chapterMatch) {
-          chapterNumber = parseInt(chapterMatch[1]);
+        console.log(`Found ${files.length} tutorial files`);
+        
+        if (files.length === 0) {
+          // No tutorial files found, load default tutorials
+          this.loadDefaultTutorials();
+          return;
         }
+        
+        // Process each file to extract chapter and subchapter
+        const tutorialFiles = files.map(file => {
+          // Extract chapter number from filename
+          const chapterMatch = file.match(/chapter(\d+)/i);
+          let chapterNumber = 1; // Default chapter
+          
+          if (chapterMatch) {
+            chapterNumber = parseInt(chapterMatch[1]);
+          }
+      } catch (e) {
+        console.log('Error reading tutorials directory, loading default tutorials');
+        this.loadDefaultTutorials();
+        return;
+      }
         
         return {
           filename: file,
