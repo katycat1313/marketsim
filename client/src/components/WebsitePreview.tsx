@@ -136,7 +136,7 @@ const WebsitePreview: React.FC<WebsitePreviewProps> = ({ content, industry, diff
   };
 
   return (
-    <div className={`website-preview ${template.theme}`} style={{ fontFamily: template.fontFamily }}>
+    <div className={`website-preview ${template.theme}`} style={{ fontFamily: template.fontFamily, transform: 'scale(0.95)', border: '5px solid #4ADE80', borderRadius: '14px' }}>
       {/* Page title (in browser tab) */}
       <div className="browser-mockup">
         <div className="browser-controls">
@@ -245,7 +245,7 @@ const WebsitePreview: React.FC<WebsitePreviewProps> = ({ content, industry, diff
       {difficulty === "Intermediate" || difficulty === "Advanced" ? (
         <div className="seo-preview-overlay">
           <div className="seo-info-box">
-            <h4>SEO Analysis</h4>
+            <h4>SEO Analysis Tool</h4>
             <ul>
               <li>
                 <strong>Title:</strong> 
