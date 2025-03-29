@@ -104,6 +104,16 @@ export interface IStorage {
   getDataVisualizationChallenge(id: number): Promise<schema.DataVisualizationChallenge | undefined>;
   createDataVisualizationAttempt(attempt: schema.InsertDataVisualizationAttempt): Promise<schema.DataVisualizationAttempt>;
   getDataVisualizationAttempts(userId: number, challengeId: number): Promise<schema.DataVisualizationAttempt[]>;
+  
+  // Keyword Research operations
+  createKeywordResearchProject(project: schema.InsertKeywordResearchProject): Promise<schema.KeywordResearchProject>;
+  getKeywordResearchProject(id: number): Promise<schema.KeywordResearchProject | undefined>;
+  listKeywordResearchProjects(userId: number): Promise<schema.KeywordResearchProject[]>;
+  addKeywordResult(keywordResult: schema.InsertKeywordResult): Promise<schema.KeywordResult>;
+  getKeywordResults(projectId: number): Promise<schema.KeywordResult[]>;
+  createKeywordList(list: schema.InsertKeywordList): Promise<schema.KeywordList>;
+  getKeywordLists(projectId: number): Promise<schema.KeywordList[]>;
+  getKeywordListById(id: number): Promise<schema.KeywordList | undefined>;
 }
 
 export class DrizzleStorage implements IStorage {
