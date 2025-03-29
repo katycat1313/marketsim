@@ -915,8 +915,8 @@ export const abTestVariants = pgTable("ab_test_variants", {
   value: text("value").notNull(), // The actual variant value being tested
   impressions: integer("impressions").default(0).notNull(),
   clicks: integer("clicks").default(0).notNull(),
-  conversions: decimal("conversions", { precision: 8, scale: 2 }).default(0).notNull(),
-  cost: decimal("cost", { precision: 10, scale: 2 }).default(0).notNull(),
+  conversions: decimal("conversions", { precision: 8, scale: 2 }).default("0").notNull(),
+  cost: decimal("cost", { precision: 10, scale: 2 }).default("0").notNull(),
   ctr: decimal("ctr", { precision: 5, scale: 4 }),
   conversionRate: decimal("conversion_rate", { precision: 5, scale: 4 }),
   cpa: decimal("cpa", { precision: 8, scale: 2 }), 
@@ -954,7 +954,7 @@ export const marketConditions = pgTable("market_conditions", {
 export const audienceInsights = pgTable("audience_insights", {
   id: serial("id").primaryKey(),
   campaignId: integer("campaign_id").references(() => campaigns.id).notNull(),
-  date: date("date").notNull(),
+  date: timestamp("date").notNull(),
   ageRange: text("age_range"), // '18-24', '25-34', etc.
   gender: text("gender"), // 'male', 'female', 'unknown'
   location: text("location"),
@@ -999,8 +999,8 @@ export const simulationRuns = pgTable("simulation_runs", {
   id: serial("id").primaryKey(),
   campaignId: integer("campaign_id").references(() => campaigns.id).notNull(),
   simulationParametersId: integer("simulation_parameters_id").references(() => simulationParameters.id).notNull(),
-  startDate: date("start_date").notNull(),
-  endDate: date("end_date").notNull(), 
+  startDate: timestamp("start_date").notNull(),
+  endDate: timestamp("end_date").notNull(), 
   status: text("status").notNull(), // 'running', 'completed', 'failed'
   resultsData: json("results_data"), // Aggregated results of the simulation
   performanceScore: decimal("performance_score", { precision: 4, scale: 1 }), // Overall performance rating
@@ -1018,7 +1018,7 @@ export const simulationRuns = pgTable("simulation_runs", {
 export const funnelAnalytics = pgTable("funnel_analytics", {
   id: serial("id").primaryKey(),
   campaignId: integer("campaign_id").references(() => campaigns.id).notNull(),
-  date: date("date").notNull(),
+  date: timestamp("date").notNull(),
   // Funnel stages
   impressions: integer("impressions").notNull(),
   clicks: integer("clicks").notNull(), 
