@@ -522,67 +522,53 @@ const PendingConnectionRequests = ({ userId }: { userId: number }) => {
 };
 
 const NetworkEvents = () => {
-  // This would be populated from API in a real implementation
-  const upcomingEvents = [
+  // This component now displays community features rather than scheduled meetings
+  const communityFeatures = [
     {
       id: 1,
-      title: 'Digital Marketing Mastermind',
-      date: '2025-04-02T18:00:00',
-      attendees: 24,
-      type: 'Virtual Meetup'
+      title: 'Share Your Progress',
+      description: 'Share your learning achievements with other users',
+      icon: 'Star'
     },
     {
       id: 2,
-      title: 'PPC Strategy Workshop',
-      date: '2025-04-15T14:00:00',
-      attendees: 18,
-      type: 'Workshop'
+      title: 'Expert Discussions',
+      description: 'Coming soon: Join topic-based discussions with experts',
+      icon: 'MessageSquare'
     },
     {
       id: 3,
-      title: 'Social Media Trends 2025',
-      date: '2025-04-28T17:30:00',
-      attendees: 36,
-      type: 'Webinar'
+      title: 'Collaborate on Projects',
+      description: 'Coming soon: Work together on marketing campaigns',
+      icon: 'Users'
     }
   ];
 
-  const formatEventDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat('en-US', {
-      month: 'short',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: 'numeric'
-    }).format(date);
-  };
-
   return (
     <div>
-      <h2 className="text-xl font-bold mb-4">Upcoming Events</h2>
+      <h2 className="text-xl font-bold mb-4">Community Features</h2>
       <div className="space-y-3">
-        {upcomingEvents.map(event => (
-          <Card key={event.id} className="overflow-hidden">
+        {communityFeatures.map(feature => (
+          <Card key={feature.id} className="overflow-hidden">
             <div className="h-1.5 bg-indigo-500" />
             <CardHeader className="pb-2">
-              <div className="flex justify-between">
-                <CardTitle className="text-lg">{event.title}</CardTitle>
-                <Badge variant="outline">
-                  {event.type}
-                </Badge>
+              <div className="flex justify-between items-start">
+                <CardTitle className="text-lg">{feature.title}</CardTitle>
+                {feature.icon === 'Star' && <Star className="h-5 w-5 text-yellow-500" />}
+                {feature.icon === 'MessageSquare' && <MessageSquare className="h-5 w-5 text-blue-500" />}
+                {feature.icon === 'Users' && <Users className="h-5 w-5 text-green-500" />}
               </div>
-              <CardDescription className="flex items-center gap-1">
-                <Calendar className="h-3 w-3" />
-                <span>{formatEventDate(event.date)}</span>
+              <CardDescription>
+                {feature.description}
               </CardDescription>
             </CardHeader>
             <CardFooter className="pt-0 pb-3">
-              <div className="flex justify-between items-center w-full">
-                <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                  <Users className="h-4 w-4" />
-                  <span>{event.attendees} attending</span>
-                </div>
-                <Button size="sm">RSVP</Button>
+              <div className="flex justify-end w-full">
+                {feature.id === 1 ? (
+                  <Button size="sm">Share Now</Button>
+                ) : (
+                  <Button size="sm" variant="outline" disabled>Coming Soon</Button>
+                )}
               </div>
             </CardFooter>
           </Card>

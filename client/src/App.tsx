@@ -21,6 +21,8 @@ import TutorialsPage from "@/pages/tutorials-new";
 import SubscriptionPage from "@/pages/subscription";
 import SubscriptionSuccessPage from "@/pages/subscription/success";
 import SubscriptionCancelPage from "@/pages/subscription/cancel";
+import LoginPage from "@/pages/login";
+import SignupPage from "@/pages/signup";
 import Achievements from "@/components/Achievements";
 import Posts from "@/components/Posts";
 import AIAssistant from "@/components/AIAssistant";
@@ -362,6 +364,18 @@ function Router() {
               <Logo className="scale-75" />
             </Link>
           </div>
+          <div className="flex items-center space-x-2">
+            <Link href="/login">
+              <button className="px-3 py-1 text-sm rounded-md border hover:bg-secondary">
+                Login
+              </button>
+            </Link>
+            <Link href="/signup">
+              <button className="px-3 py-1 text-sm rounded-md bg-primary text-primary-foreground hover:bg-primary/90">
+                Sign up
+              </button>
+            </Link>
+          </div>
         </div>
 
         {/* Desktop Top Bar */}
@@ -374,12 +388,26 @@ function Router() {
               <Logo className="scale-75" />
             </Link>
           </div>
+          <div className="flex items-center space-x-3">
+            <Link href="/login">
+              <button className="px-4 py-1.5 text-sm rounded-md border hover:bg-secondary transition">
+                Login
+              </button>
+            </Link>
+            <Link href="/signup">
+              <button className="px-4 py-1.5 text-sm rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition">
+                Sign up
+              </button>
+            </Link>
+          </div>
         </div>
 
         {/* Content Area */}
         <main className="flex-1 p-4 md:p-6 overflow-auto">
           <Switch>
             <Route path="/" component={Home} />
+            <Route path="/login" component={LoginPage} />
+            <Route path="/signup" component={SignupPage} />
             <Route path="/persona-builder" component={PersonaBuilder} />
             <Route path="/persona-builder-template" component={PersonaBuilderTemplate} />
             <Route path="/campaign-creator" component={CampaignCreator} />
