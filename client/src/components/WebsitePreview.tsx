@@ -143,12 +143,36 @@ const WebsitePreview: React.FC<WebsitePreviewProps> = ({ content, industry, diff
           <span className="browser-dot"></span>
           <span className="browser-dot"></span>
           <span className="browser-dot"></span>
+          
+          <div className="browser-tabs">
+            <div className="browser-tab active">
+              {industry === 'e-commerce' ? 'Shop' : industry === 'healthcare' ? 'Health Info' : 'Main Page'}
+            </div>
+            <div className="browser-tab">
+              {industry === 'e-commerce' ? 'Products' : industry === 'healthcare' ? 'Services' : 'About'}
+            </div>
+            <div className="browser-tab">
+              {industry === 'e-commerce' ? 'Cart' : industry === 'healthcare' ? 'Appointments' : 'Contact'}
+            </div>
+          </div>
         </div>
+        
         <div className="browser-address-bar">
           <span className="browser-secure">🔒</span>
-          <span className="browser-url">example.com</span>
+          <span className="browser-url">
+            {industry === 'e-commerce' 
+              ? `shop.example.com/${content.title.toLowerCase().replace(/\s+/g, '-')}`
+              : industry === 'healthcare'
+                ? `health.example.com/${content.title.toLowerCase().replace(/\s+/g, '-')}`
+                : `www.example.com/${content.title.toLowerCase().replace(/\s+/g, '-')}`
+            }
+          </span>
+          
+          <div className="browser-controls-right">
+            <span className="browser-button">⟳</span>
+            <span className="browser-button">⋮</span>
+          </div>
         </div>
-        <div className="browser-title">{content.title}</div>
       </div>
 
       {/* Website header */}
@@ -221,13 +245,68 @@ const WebsitePreview: React.FC<WebsitePreviewProps> = ({ content, industry, diff
       {difficulty === "Intermediate" || difficulty === "Advanced" ? (
         <div className="seo-preview-overlay">
           <div className="seo-info-box">
-            <h4>SEO Info</h4>
+            <h4>SEO Analysis</h4>
             <ul>
-              <li><strong>Title:</strong> {content.title.length} chars</li>
-              <li><strong>Meta:</strong> {content.metaDescription.length} chars</li>
-              <li><strong>H1 Tags:</strong> {content.headings.filter((h) => h.tag === 'h1').length}</li>
-              <li><strong>Images Alt:</strong> {content.images.filter((img) => img.alt && img.alt.trim() !== '').length}/{content.images.length}</li>
-              <li><strong>Schema:</strong> {content.schemaMarkup ? "Implemented" : "Missing"}</li>
+              <li>
+                <strong>Title:</strong> 
+                <span className={
+                  content.title.length < 30 ? 'seo-error' : 
+                  content.title.length > 60 ? 'seo-warning' : 'seo-good'
+                }>
+                  {content.title.length} chars
+                  {content.title.length < 30 ? ' (too short)' : 
+                   content.title.length > 60 ? ' (too long)' : ' (optimal)'}
+                </span>
+              </li>
+              <li>
+                <strong>Meta:</strong> 
+                <span className={
+                  content.metaDescription.length < 70 ? 'seo-error' : 
+                  content.metaDescription.length > 160 ? 'seo-warning' : 'seo-good'
+                }>
+                  {content.metaDescription.length} chars
+                  {content.metaDescription.length < 70 ? ' (too short)' : 
+                   content.metaDescription.length > 160 ? ' (too long)' : ' (optimal)'}
+                </span>
+              </li>
+              <li>
+                <strong>H1 Tags:</strong> 
+                <span className={
+                  content.headings.filter(h => h.tag === 'h1').length === 0 ? 'seo-error' :
+                  content.headings.filter(h => h.tag === 'h1').length > 1 ? 'seo-warning' : 'seo-good'
+                }>
+                  {content.headings.filter(h => h.tag === 'h1').length}
+                  {content.headings.filter(h => h.tag === 'h1').length === 0 ? ' (missing)' : 
+                   content.headings.filter(h => h.tag === 'h1').length > 1 ? ' (too many)' : ' (optimal)'}
+                </span>
+              </li>
+              <li>
+                <strong>Images Alt:</strong> 
+                <span className={
+                  content.images.filter(img => img.alt && img.alt.trim() !== '').length === 0 ? 'seo-error' :
+                  content.images.filter(img => img.alt && img.alt.trim() !== '').length !== content.images.length ? 'seo-warning' : 'seo-good'
+                }>
+                  {content.images.filter(img => img.alt && img.alt.trim() !== '').length}/{content.images.length}
+                  {content.images.filter(img => img.alt && img.alt.trim() !== '').length === 0 ? ' (all missing)' : 
+                   content.images.filter(img => img.alt && img.alt.trim() !== '').length !== content.images.length ? ' (some missing)' : ' (all set)'}
+                </span>
+              </li>
+              <li>
+                <strong>Schema:</strong> 
+                <span className={content.schemaMarkup ? 'seo-good' : 'seo-error'}>
+                  {content.schemaMarkup ? "Implemented ✓" : "Missing ✗"}
+                </span>
+              </li>
+              <li>
+                <strong>Keywords:</strong> 
+                <span className={
+                  content.body.toLowerCase().includes('coffee') && 
+                  content.body.toLowerCase().includes('beans') ? 'seo-good' : 'seo-warning'
+                }>
+                  {content.body.toLowerCase().includes('coffee') && 
+                   content.body.toLowerCase().includes('beans') ? "Well placed" : "Check usage"}
+                </span>
+              </li>
             </ul>
           </div>
         </div>
