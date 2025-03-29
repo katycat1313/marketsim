@@ -138,8 +138,8 @@ export class DrizzleStorage implements IStorage {
       // Convert any complex objects to JSON strings if needed
       keywords: Array.isArray(campaign.keywords) ? campaign.keywords : [],
       targeting: campaign.targeting || {},
-      headlines: Array.isArray(campaign.headlines) ? campaign.headlines : [],
-      descriptions: Array.isArray(campaign.descriptions) ? campaign.descriptions : []
+      adHeadlines: Array.isArray(campaign.adHeadlines) ? campaign.adHeadlines : [],
+      adDescriptions: Array.isArray(campaign.adDescriptions) ? campaign.adDescriptions : []
     };
     
     const result = await db.insert(campaigns).values(campaignToInsert).returning();
@@ -336,6 +336,44 @@ export class DrizzleStorage implements IStorage {
       .from(dataVisualizationAttempts)
       .where(eq(dataVisualizationAttempts.userId, userId))
       .where(eq(dataVisualizationAttempts.challengeId, challengeId));
+  }
+
+  // Keyword Research operations
+  async createKeywordResearchProject(project: schema.InsertKeywordResearchProject): Promise<schema.KeywordResearchProject> {
+    const result = await db.insert(keywordResearchProjects).values(project).returning();
+    return result[0];
+  }
+
+  async getKeywordResearchProject(id: number): Promise<schema.KeywordResearchProject | undefined> {
+    const result = await db.select().from(keywordResearchProjects).where(eq(keywordResearchProjects.id, id));
+    return result[0];
+  }
+
+  async listKeywordResearchProjects(userId: number): Promise<schema.KeywordResearchProject[]> {
+    return await db.select().from(keywordResearchProjects).where(eq(keywordResearchProjects.userId, userId));
+  }
+
+  async addKeywordResult(keywordResult: schema.InsertKeywordResult): Promise<schema.KeywordResult> {
+    const result = await db.insert(keywordResults).values(keywordResult).returning();
+    return result[0];
+  }
+
+  async getKeywordResults(projectId: number): Promise<schema.KeywordResult[]> {
+    return await db.select().from(keywordResults).where(eq(keywordResults.projectId, projectId));
+  }
+
+  async createKeywordList(list: schema.InsertKeywordList): Promise<schema.KeywordList> {
+    const result = await db.insert(keywordLists).values(list).returning();
+    return result[0];
+  }
+
+  async getKeywordLists(projectId: number): Promise<schema.KeywordList[]> {
+    return await db.select().from(keywordLists).where(eq(keywordLists.projectId, projectId));
+  }
+
+  async getKeywordListById(id: number): Promise<schema.KeywordList | undefined> {
+    const result = await db.select().from(keywordLists).where(eq(keywordLists.id, id));
+    return result[0];
   }
 }
 
