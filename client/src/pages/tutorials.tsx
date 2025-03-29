@@ -22,6 +22,9 @@ interface Tutorial {
   estimatedTime: number;
   skillsLearned: string[];
   hasSimulation?: boolean;
+  chapterNumber?: number;
+  isPremium?: boolean; // Flag to indicate premium content
+  isLocked?: boolean; // Flag to indicate if premium content is locked (user doesn't have access)
 }
 
 export default function TutorialsPage() {
@@ -172,21 +175,67 @@ export default function TutorialsPage() {
     return chapters;
   };
 
+  // Fetch a single tutorial with detailed content
+  const fetchSingleTutorial = async (tutorialId: number) => {
+    try {
+      // Make a request to the single tutorial endpoint
+      const response = await fetch(`/api/tutorials/${tutorialId}`, {
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (!response.ok) {
+        // If the endpoint is not available or returns an error, just use the tutorial from the list
+        console.log(`Single tutorial endpoint failed, using cached tutorial data`);
+        return false;
+      }
+      
+      const tutorialData = await response.json();
+      
+      if (tutorialData) {
+        setCurrentTutorial(tutorialData);
+        return true;
+      }
+      
+      return false;
+    } catch (error) {
+      console.error('Error fetching single tutorial:', error);
+      return false;
+    }
+  };
+  
   // Start tutorial function
-  const startTutorial = (tutorial: Tutorial) => {
-    setCurrentTutorial(tutorial);
+  const startTutorial = async (tutorial: Tutorial) => {
+    // Try to fetch detailed tutorial content first
+    const success = await fetchSingleTutorial(tutorial.id);
+    
+    // If fetch fails, fall back to using the tutorial from the list
+    if (!success) {
+      setCurrentTutorial(tutorial);
+    }
   };
 
   // Render a tutorial card
   const renderTutorialCard = (tutorial: Tutorial) => {
     const isCompleted = progress.includes(tutorial.id);
+    const isPremium = tutorial.isPremium === true;
+    const isLocked = tutorial.isLocked === true;
     
     return (
-      <Card key={tutorial.id} className="flex flex-col h-full border border-[#ffd700]/20 bg-[#111]/80 shadow-md overflow-hidden relative">
+      <Card key={tutorial.id} className={`flex flex-col h-full border ${isPremium ? 'border-purple-500/40' : 'border-[#ffd700]/20'} bg-[#111]/80 shadow-md overflow-hidden relative`}>
+        {isPremium && (
+          <div className="absolute top-0 right-0">
+            <span className="inline-block bg-purple-600 text-white text-xs px-2 py-1 font-bold shadow-lg transform rotate-0 translate-x-2 -translate-y-0">
+              {isLocked ? 'PREMIUM 🔒' : 'PREMIUM'}
+            </span>
+          </div>
+        )}
         <CardHeader>
           <div className="flex items-start justify-between">
             <div>
-              <div className="mb-1">
+              <div className="mb-1 flex flex-wrap gap-2">
                 {tutorial.level && (
                   <span className={`inline-block text-xs font-medium px-2 py-1 rounded-full mb-2 ${
                     tutorial.level.toLowerCase().includes('beginner') ? 'bg-green-100 text-green-800' :
@@ -198,7 +247,7 @@ export default function TutorialsPage() {
                   </span>
                 )}
               </div>
-              <h3 className="text-lg font-semibold text-[#ffd700]">{tutorial.title}</h3>
+              <h3 className={`text-lg font-semibold ${isPremium ? 'text-purple-400' : 'text-[#ffd700]'}`}>{tutorial.title}</h3>
             </div>
           </div>
         </CardHeader>
@@ -298,13 +347,22 @@ export default function TutorialsPage() {
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           ) : currentTutorial ? (
-            <div className="bg-[#111]/80 p-6 rounded-lg border border-[#ffd700]/20 mb-6 shadow-lg">
+            <div className={`bg-[#111]/80 p-6 rounded-lg border ${currentTutorial.isPremium ? 'border-purple-500/40' : 'border-[#ffd700]/20'} mb-6 shadow-lg relative`}>
+              {currentTutorial.isPremium && (
+                <div className="absolute top-0 right-0 -mt-4 -mr-2">
+                  <span className="inline-block bg-purple-600 text-white text-xs px-3 py-1 font-bold shadow-lg">
+                    {currentTutorial.isLocked ? 'PREMIUM CONTENT (LOCKED)' : 'PREMIUM CONTENT'}
+                  </span>
+                </div>
+              )}
               <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-bold text-[#ffd700]">{currentTutorial.title}</h2>
+                <h2 className={`text-xl font-bold ${currentTutorial.isPremium ? 'text-purple-400' : 'text-[#ffd700]'}`}>
+                  {currentTutorial.title}
+                </h2>
                 <Button 
                   variant="outline" 
                   onClick={() => setCurrentTutorial(null)}
-                  className="border-[#ffd700]/40 text-[#ffd700] hover:bg-[#ffd700]/10"
+                  className={`${currentTutorial.isPremium ? 'border-purple-500/40 text-purple-400 hover:bg-purple-500/10' : 'border-[#ffd700]/40 text-[#ffd700] hover:bg-[#ffd700]/10'}`}
                 >
                   Back to Tutorials
                 </Button>
@@ -316,9 +374,29 @@ export default function TutorialsPage() {
                 <span className="text-sm px-3 py-1 bg-[#333] text-[#ffd700] rounded-full">
                   Estimated Time: {currentTutorial.estimatedTime || 60} minutes
                 </span>
+                {currentTutorial.isPremium && (
+                  <span className="text-sm px-3 py-1 bg-purple-900/50 text-purple-300 rounded-full">
+                    Premium Content
+                  </span>
+                )}
               </div>
               <div className="prose prose-invert max-w-none mt-6">
                 <div dangerouslySetInnerHTML={{ __html: currentTutorial.content.replace(/\n/g, '<br />') }} />
+                
+                {currentTutorial.isLocked && (
+                  <div className="mt-8 bg-purple-900/30 border border-purple-500/30 p-6 rounded-lg text-center">
+                    <h3 className="text-xl font-bold text-purple-400 mb-2">Unlock Premium Content</h3>
+                    <p className="text-gray-300 mb-4">
+                      Subscribe to our premium plan to access this content and all other premium features.
+                    </p>
+                    <Button 
+                      onClick={() => window.location.href = '/pricing'}
+                      className="bg-purple-600 hover:bg-purple-700 text-white font-bold"
+                    >
+                      Upgrade Subscription
+                    </Button>
+                  </div>
+                )}
               </div>
               
               {currentTutorial.tasks && currentTutorial.tasks.length > 0 && (

@@ -15,6 +15,7 @@ export interface Tutorial {
   skillsLearned: string[];
   hasSimulation?: boolean; // Flag to indicate if this tutorial has an associated simulation
   chapterNumber?: number; // Added to track chapter
+  isPremium?: boolean; // Flag to indicate if this is premium content
 }
 
 interface TutorialTask {
@@ -623,6 +624,26 @@ export class TutorialService {
           estimatedTime: 65,
           skillsLearned: ["Advanced Troubleshooting", "Performance Recovery"],
           chapterNumber: 8
+        },
+        // CHAPTER 9: AI-Powered Marketing (Premium Content)
+        {
+          id: 901,
+          title: "AI-Powered SEO Content: Rank Higher, Convert Better",
+          level: "Advanced",
+          content: this.loadTutorialContent('chapter9-0-AIPoweredSEOContent:RankHigherConvertBetter'),
+          tasks: [
+            {
+              id: 901001,
+              description: "Implement AI-driven content optimization strategy",
+              type: "practical",
+              requirements: ["Access to AI tools", "Content to optimize"],
+              verificationCriteria: ["Strategy implemented", "Content optimized with AI"]
+            }
+          ],
+          estimatedTime: 90,
+          skillsLearned: ["AI-Powered SEO", "Content Optimization", "NLP Technologies"],
+          chapterNumber: 9,
+          isPremium: true // Mark as premium content
         }
       ];
       

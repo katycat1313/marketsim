@@ -448,16 +448,28 @@ export async function registerRoutes(app: Express) {
       
       // Check user level if user is logged in, otherwise use query parameter or default to Beginner
       let userLevel = 'Beginner';
+      let hasPremiumAccess = false;
       
       if (req.user?.id) {
         try {
+          // Get user profile for level
           const userProfile = await storage.getUserProfile(req.user.id);
           if (userProfile) {
             userLevel = userProfile.level;
           }
+          
+          // Check subscription status
+          const [userWithSubscription] = await storage.getUserSubscription(req.user.id);
+          if (userWithSubscription?.subscription) {
+            // Premium or Enterprise subscribers get premium content access
+            hasPremiumAccess = ['premium', 'enterprise'].includes(userWithSubscription.subscription.tier);
+            console.log(`User has ${userWithSubscription.subscription.tier} subscription, premium access: ${hasPremiumAccess}`);
+          } else {
+            console.log('User has no active subscription, no premium access');
+          }
         } catch (error) {
-          console.error("Error fetching user profile:", error);
-          // Continue with default level if user profile can't be fetched
+          console.error("Error fetching user data:", error);
+          // Continue with default access if user data can't be fetched
         }
       } 
       
@@ -469,11 +481,29 @@ export async function registerRoutes(app: Express) {
       // Get all tutorials - not filtering by level to ensure all chapters have content
       const tutorials = await tutorialService.getTutorials(userLevel);
       
+      // Process tutorials based on user's subscription status
+      let processedTutorials = tutorials;
+      
+      if (!hasPremiumAccess) {
+        // For non-premium users, modify premium content to show locked status
+        processedTutorials = tutorials.map(tutorial => {
+          if (tutorial.isPremium) {
+            // Keep the tutorial visible but mark content as locked
+            return {
+              ...tutorial,
+              content: `# Premium Content (Subscription Required)\n\nThis advanced tutorial is available exclusively to premium subscribers. Upgrade your subscription to access this content and unlock all premium features.`,
+              isLocked: true,
+            };
+          }
+          return tutorial;
+        });
+      }
+      
       // Add debug logging to see what we're returning
-      if (tutorials && Array.isArray(tutorials)) {
-        console.log(`Sending ${tutorials.length} tutorials back to client`);
+      if (processedTutorials && Array.isArray(processedTutorials)) {
+        console.log(`Sending ${processedTutorials.length} tutorials back to client (${processedTutorials.filter(t => t.isPremium).length} premium)`);
         const chapterCounts: Record<string, number> = {};
-        tutorials.forEach(t => {
+        processedTutorials.forEach(t => {
           const chapter = t.chapterNumber || 1;
           const chapterKey = chapter.toString();
           chapterCounts[chapterKey] = (chapterCounts[chapterKey] || 0) + 1;
@@ -481,10 +511,66 @@ export async function registerRoutes(app: Express) {
         console.log('Tutorial distribution by chapter in API response:', chapterCounts);
       }
       
-      res.json(tutorials);
+      res.json(processedTutorials);
     } catch (error) {
       console.error("Error retrieving tutorials:", error);
       res.status(500).json({ error: "Failed to retrieve tutorials" });
+    }
+  });
+
+  app.get("/api/tutorials/:id", async (req, res) => {
+    try {
+      const tutorialId = parseInt(req.params.id);
+      
+      if (isNaN(tutorialId)) {
+        return res.status(400).json({ error: "Invalid tutorial ID format" });
+      }
+      
+      // Check user subscription status
+      let hasPremiumAccess = false;
+      
+      if (req.user?.id) {
+        try {
+          // Check subscription status
+          const [userWithSubscription] = await storage.getUserSubscription(req.user.id);
+          if (userWithSubscription?.subscription) {
+            // Premium or Enterprise subscribers get premium access
+            hasPremiumAccess = ['premium', 'enterprise'].includes(userWithSubscription.subscription.tier);
+            console.log(`User has ${userWithSubscription.subscription.tier} subscription, premium access: ${hasPremiumAccess}`);
+          } else {
+            console.log('User has no active subscription, no premium access');
+          }
+        } catch (error) {
+          console.error("Error fetching user subscription:", error);
+        }
+      }
+      
+      // Get tutorial
+      const tutorialService = new TutorialService();
+      const tutorials = await tutorialService.getTutorials('all'); // Get all tutorials
+      
+      // Find specific tutorial
+      const tutorial = tutorials.find(t => t.id === tutorialId);
+      
+      if (!tutorial) {
+        return res.status(404).json({ error: "Tutorial not found" });
+      }
+      
+      // Check if tutorial is premium and user doesn't have premium access
+      if (tutorial.isPremium && !hasPremiumAccess) {
+        // Return tutorial with locked content
+        return res.json({
+          ...tutorial,
+          content: `# Premium Content (Subscription Required)\n\nThis advanced tutorial is available exclusively to premium subscribers. Upgrade your subscription to access this content and unlock all premium features.`,
+          isLocked: true,
+        });
+      }
+      
+      // Return full tutorial content
+      res.json(tutorial);
+    } catch (error) {
+      console.error("Error retrieving tutorial:", error);
+      res.status(500).json({ error: "Failed to retrieve tutorial" });
     }
   });
 
