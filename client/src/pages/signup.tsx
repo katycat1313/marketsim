@@ -64,13 +64,28 @@ export default function SignupPage() {
 
   async function onSubmit(values: z.infer<typeof signupSchema>) {
     try {
-      // In a real app, this would be an API call
-      console.log("Signup values:", values);
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: values.email,
+          password: values.password,
+          firstName: values.firstName,
+          lastName: values.lastName,
+          marketingExperience: values.marketingExperience,
+        }),
+      });
       
-      // Here we'd create a Stripe customer for the new user
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Registration failed');
+      }
+      
+      // Here we'd create a Stripe customer for the new user in a production app
       // createStripeCustomer(values.email);
       
-      // Mock successful signup for now
       toast({
         title: "Account created successfully",
         description: "Welcome to MarketSim! You can now log in.",
@@ -82,7 +97,7 @@ export default function SignupPage() {
       console.error("Signup error:", error);
       toast({
         title: "Sign up failed",
-        description: "There was an error creating your account. Please try again.",
+        description: error instanceof Error ? error.message : "There was an error creating your account. Please try again.",
         variant: "destructive",
       });
     }

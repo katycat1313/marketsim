@@ -82,6 +82,12 @@ export const simulationData = pgTable("simulation_data", {
   cpc: decimal("cpc"), // Cost per click
   conversionRate: decimal("conversion_rate"),
   cpa: decimal("cpa"), // Cost per acquisition
+  // Advanced metrics from simulation algorithm 
+  impressionShare: decimal("impression_share"), // Share of available impressions
+  roi: decimal("roi"), // Return on investment percentage
+  bidCompetitiveness: decimal("bid_competitiveness"), // How competitive the bid is
+  industryCompetition: decimal("industry_competition"), // Industry competition level
+  seasonalityFactor: decimal("seasonality_factor"), // Current seasonality impact
 });
 
 // Validation schemas

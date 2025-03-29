@@ -1,4 +1,4 @@
-import type { Express, Request } from "express";
+import type { Express, Request, Response } from "express";
 
 // Extend Express Request type to include user property
 declare global {
@@ -32,9 +32,86 @@ import { seoSimulationService } from "./services/seoSimulationService";
 import stripeRoutes from "./routes/stripeRoutes";
 import { registerAdSimulationRoutes } from "./routes/adSimulationRoutes";
 import { registerDataVisualizationRoutes } from "./routes/dataVisualizationRoutes";
+import { authService } from "./services/authService";
 
 export async function registerRoutes(app: Express) {
   const httpServer = createServer(app);
+  
+  // Authentication routes
+  app.post("/api/auth/register", async (req: Request, res: Response) => {
+    try {
+      const { email, password, firstName, lastName, marketingExperience } = req.body;
+      
+      if (!email || !password || !firstName || !lastName || !marketingExperience) {
+        return res.status(400).json({ message: "All fields are required" });
+      }
+      
+      const user = await authService.registerUser(
+        email, 
+        password, 
+        firstName, 
+        lastName, 
+        marketingExperience
+      );
+      
+      // Return user without password
+      res.status(201).json(user);
+    } catch (error) {
+      console.error("Registration error:", error);
+      const message = error instanceof Error ? error.message : "Registration failed";
+      res.status(400).json({ message });
+    }
+  });
+  
+  app.post("/api/auth/login", async (req: Request, res: Response) => {
+    try {
+      const { email, password } = req.body;
+      
+      if (!email || !password) {
+        return res.status(400).json({ message: "Email and password are required" });
+      }
+      
+      const user = await authService.loginUser(email, password);
+      
+      if (!user) {
+        return res.status(401).json({ message: "Invalid email or password" });
+      }
+      
+      // In a production app, you would set up a session here
+      // using the express-session and connect-pg-simple packages
+      // For now, we'll rely on localStorage in the client
+      
+      res.json(user);
+    } catch (error) {
+      console.error("Login error:", error);
+      const message = error instanceof Error ? error.message : "Login failed";
+      res.status(500).json({ message });
+    }
+  });
+  
+  app.get("/api/auth/user", async (req: Request, res: Response) => {
+    try {
+      // In a real app with proper session management, you'd get the user ID from req.user
+      // For now, we'll use query parameters for testing
+      const userId = req.query.userId as string;
+      
+      if (!userId) {
+        return res.status(401).json({ message: "Authentication required" });
+      }
+      
+      const user = await authService.getUserById(parseInt(userId));
+      
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      res.json(user);
+    } catch (error) {
+      console.error("Error getting user:", error);
+      const message = error instanceof Error ? error.message : "Failed to retrieve user data";
+      res.status(500).json({ message });
+    }
+  });
 
   // Persona routes
   app.post("/api/personas", async (req, res) => {

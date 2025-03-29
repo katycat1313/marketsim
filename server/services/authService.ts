@@ -1,7 +1,7 @@
-import bcrypt from 'bcryptjs';
+import { randomBytes, scryptSync, timingSafeEqual } from 'crypto';
 import { db } from '../db';
 import { eq } from "drizzle-orm";
-import { users } from '../../shared/schema';
+import { users } from '../../user';
 
 /**
  * Authentication service for user registration, login, and session management
@@ -25,9 +25,9 @@ export class AuthService {
         throw new Error('User with this email already exists');
       }
       
-      // Hash the password
-      const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(password, salt);
+      // Hash the password using Node.js built-in crypto
+      const salt = randomBytes(16).toString('hex');
+      const hashedPassword = `${salt}:${scryptSync(password, salt, 64).toString('hex')}`;
       
       // Determine user level based on marketing experience
       let level = 'Beginner';
@@ -46,7 +46,10 @@ export class AuthService {
       }
       
       // Create the new user
+      const username = `${firstName.toLowerCase()}${lastName.toLowerCase().substring(0, 2)}${Math.floor(Math.random() * 1000)}`;
+      
       const result = await db.insert(users).values({
+        username,
         email,
         password: hashedPassword,
         firstName,
@@ -55,6 +58,7 @@ export class AuthService {
         createdAt: new Date(),
       }).returning({
         id: users.id,
+        username: users.username,
         email: users.email,
         firstName: users.firstName,
         lastName: users.lastName,
@@ -86,8 +90,13 @@ export class AuthService {
       
       const user = userResult[0];
       
-      // Check if the password matches
-      const isMatch = await bcrypt.compare(password, user.password);
+      // Check if the password matches using Node.js crypto
+      const [salt, storedHash] = user.password.split(':');
+      const hashedBuffer = scryptSync(password, salt, 64);
+      
+      // Use timing-safe comparison to prevent timing attacks
+      const keyBuffer = Buffer.from(storedHash, 'hex');
+      const isMatch = timingSafeEqual(hashedBuffer, keyBuffer);
       
       if (!isMatch) {
         return null;
@@ -111,11 +120,14 @@ export class AuthService {
     try {
       const result = await db.select({
         id: users.id,
+        username: users.username,
         email: users.email,
         firstName: users.firstName,
         lastName: users.lastName,
         level: users.level,
         xp: users.xp,
+        specializations: users.specializations,
+        achievements: users.achievements,
         createdAt: users.createdAt
       }).from(users).where(eq(users.id, userId)).limit(1);
       

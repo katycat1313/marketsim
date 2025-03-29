@@ -49,13 +49,30 @@ export default function LoginPage() {
 
   async function onSubmit(values: z.infer<typeof loginSchema>) {
     try {
-      // In a real app, this would be an API call
-      console.log("Login values:", values);
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: values.email,
+          password: values.password,
+        }),
+      });
       
-      // Mock successful login for now
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Login failed');
+      }
+      
+      const userData = await response.json();
+      
+      // Save user data to localStorage or context
+      localStorage.setItem('user', JSON.stringify(userData));
+      
       toast({
         title: "Login successful",
-        description: "Welcome back to MarketSim!",
+        description: `Welcome back, ${userData.firstName || 'User'}!`,
       });
       
       // Navigate to dashboard after login
@@ -64,7 +81,7 @@ export default function LoginPage() {
       console.error("Login error:", error);
       toast({
         title: "Login failed",
-        description: "Please check your credentials and try again",
+        description: error instanceof Error ? error.message : "Please check your credentials and try again",
         variant: "destructive",
       });
     }

@@ -1,10 +1,14 @@
 // user.ts
-import { pgTable, serial, text, integer, timestamp } from "some-db-lib";
+import { pgTable, serial, text, integer, timestamp } from "drizzle-orm/pg-core";
+import { db } from "./server/db";
 
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
   username: text("username").notNull(),
   email: text("email").notNull().unique(),
+  password: text("password").notNull(),
+  firstName: text("first_name"),
+  lastName: text("last_name"),
   level: text("level").notNull().default('Beginner'),
   xp: integer("xp").notNull().default(0),
   specializations: text("specializations").array(),

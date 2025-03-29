@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Switch, Route, Link, useLocation } from "wouter";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/queryClient";
 import { Toaster } from "@/components/ui/toaster";
+import { AuthProvider, useAuth } from "./context/AuthContext";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/home";
 import PersonaBuilder from "@/pages/persona-builder";
@@ -62,6 +63,28 @@ import {
   ScrollText,
   X
 } from "lucide-react";
+
+// Protected Route component
+function ProtectedRoute({ component: Component }: { component: React.ComponentType }) {
+  const [, navigate] = useLocation();
+  const { isAuthenticated, isLoading } = useAuth();
+  
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      navigate('/login');
+    }
+  }, [isAuthenticated, isLoading, navigate]);
+  
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+  
+  return isAuthenticated ? <Component /> : null;
+}
 
 function SideNav() {
   const [location] = useLocation();
@@ -408,22 +431,54 @@ function Router() {
             <Route path="/" component={Home} />
             <Route path="/login" component={LoginPage} />
             <Route path="/signup" component={SignupPage} />
-            <Route path="/persona-builder" component={PersonaBuilder} />
-            <Route path="/persona-builder-template" component={PersonaBuilderTemplate} />
-            <Route path="/campaign-creator" component={CampaignCreator} />
-            <Route path="/dashboard" component={Dashboard} />
-            <Route path="/api-settings" component={ApiSettings} />
-            <Route path="/network" component={NetworkPage} />
-            <Route path="/community" component={Posts} />
-            <Route path="/achievements" component={Achievements} />
-            <Route path="/level" component={Dashboard} /> {/* Temporary using Dashboard, will create dedicated Level page */}
-            <Route path="/portfolio" component={DataVisualizationPage} /> {/* Temporary using DataViz, will create dedicated Portfolio page */}
-            <Route path="/seo-simulations" component={SeoSimulationsPage} />
-            <Route path="/seo-simulation/:id" component={SeoSimulationPage} />
-            <Route path="/ad-simulations" component={AdSimulationsPage} />
-            <Route path="/ad-simulation/:id" component={AdSimulationPage} />
-            <Route path="/seo-quiz" component={SeoQuizPage} />
-            <Route path="/data-visualization" component={DataVisualizationPage} />
+            <Route path="/persona-builder">
+              <ProtectedRoute component={PersonaBuilder} />
+            </Route>
+            <Route path="/persona-builder-template">
+              <ProtectedRoute component={PersonaBuilderTemplate} />
+            </Route>
+            <Route path="/campaign-creator">
+              <ProtectedRoute component={CampaignCreator} />
+            </Route>
+            <Route path="/dashboard">
+              <ProtectedRoute component={Dashboard} />
+            </Route>
+            <Route path="/api-settings">
+              <ProtectedRoute component={ApiSettings} />
+            </Route>
+            <Route path="/network">
+              <ProtectedRoute component={NetworkPage} />
+            </Route>
+            <Route path="/community">
+              <ProtectedRoute component={Posts} />
+            </Route>
+            <Route path="/achievements">
+              <ProtectedRoute component={Achievements} />
+            </Route>
+            <Route path="/level">
+              <ProtectedRoute component={Dashboard} />
+            </Route> {/* Temporary using Dashboard, will create dedicated Level page */}
+            <Route path="/portfolio">
+              <ProtectedRoute component={DataVisualizationPage} />
+            </Route> {/* Temporary using DataViz, will create dedicated Portfolio page */}
+            <Route path="/seo-simulations">
+              <ProtectedRoute component={SeoSimulationsPage} />
+            </Route>
+            <Route path="/seo-simulation/:id">
+              <ProtectedRoute component={SeoSimulationPage} />
+            </Route>
+            <Route path="/ad-simulations">
+              <ProtectedRoute component={AdSimulationsPage} />
+            </Route>
+            <Route path="/ad-simulation/:id">
+              <ProtectedRoute component={AdSimulationPage} />
+            </Route>
+            <Route path="/seo-quiz">
+              <ProtectedRoute component={SeoQuizPage} />
+            </Route>
+            <Route path="/data-visualization">
+              <ProtectedRoute component={DataVisualizationPage} />
+            </Route>
             <Route path="/tutorials" component={TutorialsPage} />
             <Route path="/tutorials-new" component={TutorialsPage} />
             <Route path="/subscription" component={SubscriptionPage} />
@@ -460,29 +515,31 @@ function App() {
   };
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <Router />
+    <AuthProvider>
+      <QueryClientProvider client={queryClient}>
+        <Router />
       
-      {/* AI Assistant */}
-      <AIAssistant 
-        isExpanded={isAIAssistantExpanded} 
-        onToggleExpand={toggleAIAssistant}
-      />
-      
-      {/* Floating AI Assistant Button */}
-      <button
-        className="fixed bottom-6 right-6 p-3 rounded-full shadow-lg bg-primary text-white z-50 flex items-center justify-center hover:bg-primary/90 transition-all duration-300 transform hover:scale-105"
-        onClick={toggleAIAssistant}
-      >
-        {isAIAssistantExpanded ? (
-          <X className="h-6 w-6" />
-        ) : (
-          <MessageSquare className="h-6 w-6" />
-        )}
-      </button>
-      
-      <Toaster />
-    </QueryClientProvider>
+        {/* AI Assistant */}
+        <AIAssistant 
+          isExpanded={isAIAssistantExpanded} 
+          onToggleExpand={toggleAIAssistant}
+        />
+        
+        {/* Floating AI Assistant Button */}
+        <button
+          className="fixed bottom-6 right-6 p-3 rounded-full shadow-lg bg-primary text-white z-50 flex items-center justify-center hover:bg-primary/90 transition-all duration-300 transform hover:scale-105"
+          onClick={toggleAIAssistant}
+        >
+          {isAIAssistantExpanded ? (
+            <X className="h-6 w-6" />
+          ) : (
+            <MessageSquare className="h-6 w-6" />
+          )}
+        </button>
+        
+        <Toaster />
+      </QueryClientProvider>
+    </AuthProvider>
   );
 }
 
