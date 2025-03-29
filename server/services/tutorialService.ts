@@ -33,7 +33,7 @@ export class TutorialService {
    * Load default tutorial data
    */
   private loadDefaultTutorials(): void {
-    // Core marketing fundamentals tutorials - Chapter 1
+    // Chapter 1: Digital Marketing Fundamentals
     this.tutorials.push({
       id: 1,
       chapterNumber: 1,
@@ -68,7 +68,7 @@ export class TutorialService {
       }]
     });
     
-    // Google Ads tutorials - Chapter 2
+    // Chapter 2: Google Ads Fundamentals
     this.tutorials.push({
       id: 3,
       chapterNumber: 2,
@@ -104,7 +104,7 @@ export class TutorialService {
       }]
     });
     
-    // SEO fundamentals - Chapter 3
+    // Chapter 3: SEO Foundations
     this.tutorials.push({
       id: 5,
       chapterNumber: 3,
@@ -122,7 +122,7 @@ export class TutorialService {
       }]
     });
     
-    // Social Media Marketing - Chapter 4
+    // Chapter 4: Marketing Objectives & Testing
     this.tutorials.push({
       id: 6,
       chapterNumber: 4,
@@ -141,7 +141,7 @@ export class TutorialService {
       }]
     });
     
-    // Analytics and data - Chapter 5
+    // Chapter 5: Analytics & Measurement
     this.tutorials.push({
       id: 7,
       chapterNumber: 5,
@@ -160,7 +160,7 @@ export class TutorialService {
       }]
     });
     
-    // Email marketing - Chapter 6
+    // Chapter 6: Marketing Channels & Strategies
     this.tutorials.push({
       id: 8,
       chapterNumber: 6,
@@ -179,7 +179,7 @@ export class TutorialService {
       }]
     });
     
-    // A/B Testing - Chapter 7
+    // Chapter 7: SEO Mastery
     this.tutorials.push({
       id: 9,
       chapterNumber: 7,
@@ -198,7 +198,7 @@ export class TutorialService {
       }]
     });
     
-    // Paid social - Chapter 8
+    // Chapter 8: Troubleshooting & Best Practices
     this.tutorials.push({
       id: 10,
       chapterNumber: 8,
@@ -217,7 +217,7 @@ export class TutorialService {
       }]
     });
     
-    // Content marketing - Chapter 9
+    // Chapter 9: Content Marketing & Authority
     this.tutorials.push({
       id: 11,
       chapterNumber: 9,
@@ -236,7 +236,7 @@ export class TutorialService {
       }]
     });
     
-    // Conversion optimization - Chapter 10
+    // Chapter 10: Conversion Optimization
     this.tutorials.push({
       id: 12,
       chapterNumber: 10,
@@ -255,7 +255,7 @@ export class TutorialService {
       }]
     });
     
-    // Advanced analytics - Chapter 11
+    // Chapter 11: Advanced Analytics & Attribution
     this.tutorials.push({
       id: 13,
       chapterNumber: 11,
