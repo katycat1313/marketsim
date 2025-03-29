@@ -330,7 +330,37 @@ export class MarketingAI {
   }
 
   private async getGeminiEvaluation(prompt: string) {
-    throw new Error('Gemini integration coming soon');
+    if (!this.geminiKey) throw new Error('Gemini not configured');
+    
+    const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent';
+    const response = await fetch(`${url}?key=${this.geminiKey}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        contents: [{
+          parts: [{
+            text: `You are an expert marketing skills evaluator. ${prompt}
+            Respond only with JSON.`
+          }]
+        }]
+      })
+    });
+    
+    const data = await response.json();
+    if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
+      throw new Error('Invalid response from Gemini API');
+    }
+    
+    const content = data.candidates[0].content.parts[0].text;
+    // Extract valid JSON from the response, in case there's any extra text
+    const jsonMatch = content.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) {
+      throw new Error('Could not extract valid JSON from Gemini response');
+    }
+
+    return JSON.parse(jsonMatch[0]);
   }
 
   private async processEvaluation(evaluation: any, userProfile: any) {
@@ -590,13 +620,27 @@ Provide personalized recommendations considering:
   }
 
   // Add method to get appropriate AI provider based on configuration
-  private getAIProvider() {
+  private getAIProvider(preferredProvider?: 'anthropic' | 'openai' | 'gemini') {
+    if (preferredProvider === 'anthropic' && this.anthropic) return this.anthropic;
+    if (preferredProvider === 'openai' && this.openai) return this.openai;
+    if (preferredProvider === 'gemini' && this.geminiKey) {
+      throw new Error('Use getGeminiEvaluation for Gemini API calls');
+    }
+    
+    // If no preferred provider or the preferred one isn't available,
+    // use the first available
     if (this.anthropic) return this.anthropic;
     if (this.openai) return this.openai;
     throw new Error('No AI provider configured');
   }
 
-  private getModelName() {
+  private getModelName(preferredProvider?: 'anthropic' | 'openai' | 'gemini') {
+    if (preferredProvider === 'anthropic' && this.anthropic) return ANTHROPIC_MODEL;
+    if (preferredProvider === 'openai' && this.openai) return OPENAI_MODEL;
+    if (preferredProvider === 'gemini' && this.geminiKey) return 'gemini-1.5-pro';
+    
+    // If no preferred provider or the preferred one isn't available,
+    // use the first available model
     if (this.anthropic) return ANTHROPIC_MODEL;
     if (this.openai) return OPENAI_MODEL;
     throw new Error('No AI model available');
