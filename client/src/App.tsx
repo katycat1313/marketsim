@@ -362,9 +362,16 @@ function SideNav() {
 
 function Router() {
   const [sidebarVisible, setSidebarVisible] = useState(true);
+  const { isAuthenticated, user, logout } = useAuth();
+  const [, navigate] = useLocation();
 
   const toggleSidebar = () => {
     setSidebarVisible(!sidebarVisible);
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
   };
 
   return (
@@ -388,16 +395,27 @@ function Router() {
             </Link>
           </div>
           <div className="flex items-center space-x-2">
-            <Link href="/login">
-              <button className="px-3 py-1 text-sm rounded-md border hover:bg-secondary">
-                Login
+            {isAuthenticated ? (
+              <button 
+                onClick={handleLogout}
+                className="px-3 py-1 text-sm rounded-md border hover:bg-secondary"
+              >
+                Logout
               </button>
-            </Link>
-            <Link href="/signup">
-              <button className="px-3 py-1 text-sm rounded-md bg-primary text-primary-foreground hover:bg-primary/90">
-                Sign up
-              </button>
-            </Link>
+            ) : (
+              <>
+                <Link href="/login">
+                  <button className="px-3 py-1 text-sm rounded-md border hover:bg-secondary">
+                    Login
+                  </button>
+                </Link>
+                <Link href="/signup">
+                  <button className="px-3 py-1 text-sm rounded-md bg-primary text-primary-foreground hover:bg-primary/90">
+                    Sign up
+                  </button>
+                </Link>
+              </>
+            )}
           </div>
         </div>
 
@@ -412,16 +430,34 @@ function Router() {
             </Link>
           </div>
           <div className="flex items-center space-x-3">
-            <Link href="/login">
-              <button className="px-4 py-1.5 text-sm rounded-md border hover:bg-secondary transition">
-                Login
-              </button>
-            </Link>
-            <Link href="/signup">
-              <button className="px-4 py-1.5 text-sm rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition">
-                Sign up
-              </button>
-            </Link>
+            {isAuthenticated ? (
+              <div className="flex items-center space-x-3">
+                {user && (
+                  <span className="text-sm font-medium">
+                    Welcome, {user.firstName || user.username}
+                  </span>
+                )}
+                <button 
+                  onClick={handleLogout}
+                  className="px-4 py-1.5 text-sm rounded-md border hover:bg-secondary transition"
+                >
+                  Logout
+                </button>
+              </div>
+            ) : (
+              <>
+                <Link href="/login">
+                  <button className="px-4 py-1.5 text-sm rounded-md border hover:bg-secondary transition">
+                    Login
+                  </button>
+                </Link>
+                <Link href="/signup">
+                  <button className="px-4 py-1.5 text-sm rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition">
+                    Sign up
+                  </button>
+                </Link>
+              </>
+            )}
           </div>
         </div>
 
