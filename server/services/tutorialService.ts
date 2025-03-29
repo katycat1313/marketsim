@@ -29,6 +29,253 @@ interface TutorialTask {
 export class TutorialService {
   private tutorials: Tutorial[] = [];
   
+  /**
+   * Load default tutorial data
+   */
+  private loadDefaultTutorials(): void {
+    // Core marketing fundamentals tutorials - Chapter 1
+    this.tutorials.push({
+      id: 1,
+      chapterNumber: 1,
+      title: "Understanding Digital Marketing Fundamentals",
+      level: "Beginner",
+      content: "Introduction to digital marketing concepts, platforms, and key metrics.",
+      estimatedTime: 30,
+      skillsLearned: ["Digital Marketing Basics", "Marketing Terminology"],
+      tasks: [{
+        id: 1,
+        description: "Complete the digital marketing concepts quiz",
+        type: "quiz",
+        requirements: ["Review all content"],
+        verificationCriteria: ["Score at least 7/10 on the quiz"]
+      }]
+    });
+    
+    this.tutorials.push({
+      id: 2,
+      chapterNumber: 1,
+      title: "Setting Marketing Goals and KPIs",
+      level: "Beginner",
+      content: "Learn how to set SMART marketing goals and select the right KPIs to track success.",
+      estimatedTime: 45,
+      skillsLearned: ["Goal Setting", "KPI Selection", "Marketing Measurement"],
+      tasks: [{
+        id: 1,
+        description: "Create your first marketing goals document",
+        type: "practical",
+        requirements: ["Apply SMART framework to your goals"],
+        verificationCriteria: ["Document contains at least 3 SMART goals", "Each goal has associated KPIs"]
+      }]
+    });
+    
+    // Google Ads tutorials - Chapter 2
+    this.tutorials.push({
+      id: 3,
+      chapterNumber: 2,
+      title: "Google Ads Campaign Structure",
+      level: "Beginner",
+      content: "Learn how to structure effective Google Ads campaigns for optimal performance.",
+      estimatedTime: 60,
+      skillsLearned: ["Google Ads Basics", "Campaign Organization", "Account Structure"],
+      hasSimulation: true,
+      tasks: [{
+        id: 1,
+        description: "Create a mock Google Ads campaign structure",
+        type: "simulation",
+        requirements: ["Complete all sections of the simulator"],
+        verificationCriteria: ["Campaign includes at least 2 ad groups", "Each ad group has relevant keywords"]
+      }]
+    });
+    
+    this.tutorials.push({
+      id: 4,
+      chapterNumber: 2,
+      title: "Google Ads Keyword Research",
+      level: "Intermediate",
+      content: "Master the art of keyword research for Google Ads campaigns.",
+      estimatedTime: 75,
+      skillsLearned: ["Keyword Research", "Search Intent Analysis", "Competitor Analysis"],
+      tasks: [{
+        id: 1,
+        description: "Build a comprehensive keyword list for a sample business",
+        type: "practical",
+        requirements: ["Use keyword research tools", "Analyze search intent"],
+        verificationCriteria: ["List contains min. 50 keywords", "Keywords are organized by theme", "Search volume data included"]
+      }]
+    });
+    
+    // SEO fundamentals - Chapter 3
+    this.tutorials.push({
+      id: 5,
+      chapterNumber: 3,
+      title: "SEO Fundamentals: On-Page Optimization",
+      level: "Beginner",
+      content: "Learn the basics of on-page SEO to improve organic visibility.",
+      estimatedTime: 90,
+      skillsLearned: ["On-Page SEO", "Content Optimization", "HTML SEO Elements"],
+      tasks: [{
+        id: 1,
+        description: "Optimize a sample webpage for SEO",
+        type: "practical",
+        requirements: ["Apply on-page optimization techniques"],
+        verificationCriteria: ["Title tag optimized", "Meta description improved", "Header structure reorganized", "Content optimized for target keyword"]
+      }]
+    });
+    
+    // Social Media Marketing - Chapter 4
+    this.tutorials.push({
+      id: 6,
+      chapterNumber: 4,
+      title: "Social Media Strategy Development",
+      level: "Intermediate",
+      content: "Create comprehensive social media strategies for business goals.",
+      estimatedTime: 120,
+      skillsLearned: ["Social Strategy", "Platform Selection", "Content Planning"],
+      isPremium: true,
+      tasks: [{
+        id: 1,
+        description: "Develop a 30-day social media content plan",
+        type: "practical",
+        requirements: ["Create platform-specific strategies", "Develop content calendar"],
+        verificationCriteria: ["Plan includes at least 3 platforms", "Content themes identified", "Posting schedule defined"]
+      }]
+    });
+    
+    // Analytics and data - Chapter 5
+    this.tutorials.push({
+      id: 7,
+      chapterNumber: 5,
+      title: "Marketing Analytics Fundamentals",
+      level: "Intermediate",
+      content: "Learn how to analyze marketing data and extract actionable insights.",
+      estimatedTime: 150,
+      skillsLearned: ["Data Analysis", "Report Creation", "Insight Generation"],
+      hasSimulation: true,
+      tasks: [{
+        id: 1,
+        description: "Analyze a dataset and create a marketing report",
+        type: "simulation",
+        requirements: ["Work with the provided analytics dataset"],
+        verificationCriteria: ["Key trends identified", "Data visualizations created", "Actionable recommendations provided"]
+      }]
+    });
+    
+    // Email marketing - Chapter 6
+    this.tutorials.push({
+      id: 8,
+      chapterNumber: 6,
+      title: "Email Marketing Automation",
+      level: "Advanced",
+      content: "Master email marketing automation for improved customer journeys.",
+      estimatedTime: 180,
+      skillsLearned: ["Email Automation", "Segmentation", "Workflow Design"],
+      isPremium: true,
+      tasks: [{
+        id: 1,
+        description: "Build an automated email workflow",
+        type: "practical",
+        requirements: ["Design trigger-based automation", "Create email templates"],
+        verificationCriteria: ["Workflow includes at least 5 steps", "Segmentation logic defined", "Email templates created"]
+      }]
+    });
+    
+    // A/B Testing - Chapter 7
+    this.tutorials.push({
+      id: 9,
+      chapterNumber: 7,
+      title: "A/B Testing Fundamentals",
+      level: "Intermediate",
+      content: "Learn how to design, run and analyze A/B tests to optimize marketing performance.",
+      estimatedTime: 120,
+      skillsLearned: ["Test Design", "Statistical Analysis", "Conversion Optimization"],
+      hasSimulation: true,
+      tasks: [{
+        id: 1,
+        description: "Design and run an A/B test simulation",
+        type: "simulation",
+        requirements: ["Use the A/B test workshop tool"],
+        verificationCriteria: ["Test hypothesis clearly defined", "Variables identified", "Results correctly analyzed"]
+      }]
+    });
+    
+    // Paid social - Chapter 8
+    this.tutorials.push({
+      id: 10,
+      chapterNumber: 8,
+      title: "Paid Social Advertising Masterclass",
+      level: "Advanced",
+      content: "Advanced strategies for paid social media campaigns across multiple platforms.",
+      estimatedTime: 210,
+      skillsLearned: ["Paid Social", "Audience Targeting", "Cross-Platform Strategy"],
+      isPremium: true,
+      tasks: [{
+        id: 1,
+        description: "Create a multi-platform paid social strategy",
+        type: "practical",
+        requirements: ["Develop strategies for 3+ platforms", "Create targeting plans"],
+        verificationCriteria: ["Platform-specific approaches defined", "Audience segments identified", "Budget allocation justified"]
+      }]
+    });
+    
+    // Content marketing - Chapter 9
+    this.tutorials.push({
+      id: 11,
+      chapterNumber: 9,
+      title: "Content Marketing Strategy",
+      level: "Intermediate",
+      content: "Learn how to develop a comprehensive content marketing strategy.",
+      estimatedTime: 180,
+      skillsLearned: ["Content Strategy", "Editorial Planning", "Content Distribution"],
+      isPremium: true,
+      tasks: [{
+        id: 1,
+        description: "Create a 3-month content marketing plan",
+        type: "practical",
+        requirements: ["Identify target audience", "Plan content creation and distribution"],
+        verificationCriteria: ["Audience personas defined", "Content calendar created", "Distribution channels identified"]
+      }]
+    });
+    
+    // Conversion optimization - Chapter 10
+    this.tutorials.push({
+      id: 12,
+      chapterNumber: 10,
+      title: "Conversion Rate Optimization",
+      level: "Advanced",
+      content: "Advanced techniques to improve conversion rates across digital channels.",
+      estimatedTime: 240,
+      skillsLearned: ["CRO", "User Experience", "Landing Page Optimization"],
+      hasSimulation: true,
+      tasks: [{
+        id: 1,
+        description: "Optimize a landing page for conversions",
+        type: "simulation",
+        requirements: ["Identify conversion barriers", "Implement optimization techniques"],
+        verificationCriteria: ["Clear value proposition", "Optimized call to action", "Streamlined form design", "Conversion tracking implemented"]
+      }]
+    });
+    
+    // Advanced analytics - Chapter 11
+    this.tutorials.push({
+      id: 13,
+      chapterNumber: 11,
+      title: "Advanced Marketing Analytics and Attribution",
+      level: "Expert",
+      content: "Master advanced marketing analytics including multi-touch attribution models.",
+      estimatedTime: 270,
+      skillsLearned: ["Attribution Modeling", "Marketing Mix Modeling", "Customer Journey Analysis"],
+      isPremium: true,
+      tasks: [{
+        id: 1,
+        description: "Build a multi-touch attribution model",
+        type: "practical",
+        requirements: ["Work with cross-channel data", "Apply attribution methodologies"],
+        verificationCriteria: ["Attribution model defined", "Channel contributions quantified", "ROI calculations accurate"]
+      }]
+    });
+    
+    console.log(`Loaded ${this.tutorials.length} default tutorials`);
+  }
   
 
 
