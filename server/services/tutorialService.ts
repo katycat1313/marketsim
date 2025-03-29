@@ -2,6 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
 import { db, pool } from '../db';
+import { sql } from 'drizzle-orm';
 import { userProfiles } from '@shared/schema';
 
 export interface Tutorial {
@@ -35,242 +36,403 @@ export class TutorialService {
   private loadDefaultTutorials() {
     console.log('Loading default tutorials with premium content...');
     
-    // Add premium AI content (Chapter 9)
-    this.tutorials = [
-      // CHAPTER 9: AI-Powered Marketing (PREMIUM CONTENT)
-      {
-        id: 901,
-        title: "AI-Powered SEO Content: Rank Higher, Convert Better",
-        level: "Advanced",
-        content: `# AI-Powered SEO Content Creation
-
-## Introduction to ZOOMi
-Meet ZOOMi, your intelligent AI marketing assistant. ZOOMi is designed to help you create optimized content that ranks higher and converts better through advanced natural language processing and market analysis.
-
-## How ZOOMi Enhances Your SEO Strategy
-
-ZOOMi analyzes top-performing content in your niche and identifies:
-- Semantic keyword opportunities
-- Content gaps in your industry
-- User intent patterns
-- Optimal content structures for your target audience
-
-## Implementing AI-Driven SEO
-In this tutorial, you'll learn how to:
-1. Use ZOOMi to analyze your competitors' content
-2. Generate topic clusters optimized for search intent
-3. Create content briefs with semantic keyword mapping
-4. Develop a content calendar based on opportunity analysis
-5. Measure and iterate on content performance
-
-Let ZOOMi take your SEO strategy to the next level with data-driven insights and AI-powered optimization.`,
-        tasks: [
-          {
-            id: 901001,
-            description: "Conduct AI-powered competitor content analysis",
-            type: "practical",
-            requirements: ["ZOOMi access", "List of competitors"],
-            verificationCriteria: ["Analysis report generated", "Key insights identified"]
-          },
-          {
-            id: 901002,
-            description: "Create AI-optimized content brief",
-            type: "practical",
-            requirements: ["Target keywords", "User personas"],
-            verificationCriteria: ["Brief includes semantic keywords", "Addresses user intent"]
-          }
-        ],
-        estimatedTime: 90,
-        skillsLearned: ["AI-Powered Content Optimization", "Semantic SEO", "Content Intelligence"],
-        chapterNumber: 9,
-        isPremium: true
-      },
-      {
-        id: 902,
-        title: "Predictive Analytics for Campaign Performance",
-        level: "Advanced",
-        content: `# Predictive Analytics with ZOOMi
-
-## Using AI to Forecast Campaign Performance
-
-ZOOMi's predictive analytics engine helps you anticipate campaign performance before you launch. Using historical data and market trends, ZOOMi can predict:
-
-- Expected click-through rates
-- Conversion probabilities
-- Budget optimization opportunities
-- Audience segment performance
-
-## Implementing Predictive Campaign Analysis
-
-This tutorial guides you through:
-1. Setting up ZOOMi's predictive modeling for your campaigns
-2. Interpreting AI-generated performance forecasts
-3. Using prediction confidence intervals to manage expectations
-4. Applying predictive insights to campaign planning
-5. Continuously improving your forecasting accuracy
-
-Make data-driven decisions before you spend your budget, not after.`,
-        tasks: [
-          {
-            id: 902001,
-            description: "Configure ZOOMi's predictive models for your business",
-            type: "practical",
-            requirements: ["Historical campaign data", "Business KPIs"],
-            verificationCriteria: ["Models calibrated", "Baseline forecasts generated"]
-          }
-        ],
-        estimatedTime: 85,
-        skillsLearned: ["Predictive Analytics", "AI-Driven Campaign Planning", "Performance Forecasting"],
-        chapterNumber: 9,
-        isPremium: true
-      },
-      {
-        id: 903,
-        title: "Conversational Marketing with ZOOMi",
-        level: "Advanced",
-        content: `# Conversational Marketing Automation
-
-## Creating Personalized Customer Experiences
-
-ZOOMi can power your conversational marketing strategy through:
-- AI-driven chatbots that understand customer intent
-- Personalized recommendation engines
-- Automated customer journey orchestration
-- Context-aware messaging
-
-## Building Your Conversational Marketing Strategy
-
-In this premium tutorial, you'll learn to:
-1. Design conversation flows that feel natural and helpful
-2. Train ZOOMi on your brand voice and product knowledge
-3. Implement progressive profiling to gather customer data naturally
-4. Set up intelligent routing between automation and human support
-5. Analyze conversation data for continuous improvement
-
-Transform customer interactions from transactions to relationships with AI-powered conversations.`,
-        tasks: [
-          {
-            id: 903001,
-            description: "Design conversational flows with ZOOMi",
-            type: "practical",
-            requirements: ["Customer journey maps", "Common questions"],
-            verificationCriteria: ["Conversation flows created", "Intents mapped"]
-          }
-        ],
-        estimatedTime: 80,
-        skillsLearned: ["Conversational Marketing", "AI Chatbot Design", "Natural Language Processing"],
-        chapterNumber: 9,
-        isPremium: true
-      }
-    ];
+    // Initialize with empty array
+    this.tutorials = [];
     
-    // Add some standard tutorials for other chapters too
+    // CHAPTER 1: AI Marketing Fundamentals
     this.tutorials.push(
-      // CHAPTER 1 sample
       {
         id: 101,
-        title: "Getting Started with Digital Marketing",
+        title: "The New AI Marketing Landscape",
         level: "Beginner",
-        content: `# Introduction to Digital Marketing
+        content: `# The New AI Marketing Landscape
 
-Digital marketing encompasses all marketing efforts that use an electronic device or the internet. Businesses leverage digital channels such as search engines, social media, email, and websites to connect with current and prospective customers.
+## Welcome to the AI Marketing Revolution!
 
-## Why Digital Marketing Matters
+Hi there! I'm ZOOMi, your friendly AI marketing assistant. I'll be guiding you through this exciting journey into the world of AI-powered marketing. Let's get started!
 
-- Reach your audience where they spend their time
-- Cost-effective compared to traditional marketing
-- Precisely target your ideal customers
-- Measure results accurately
-- Adapt quickly based on real-time data
+## Why AI Marketing is Changing Everything
 
-## Digital Marketing Channels
+Did you know? **76% of marketing professionals believe marketing has changed more in the past two years than in the previous fifty years combined!** This incredible shift is largely driven by artificial intelligence technologies that are now accessible to businesses of all sizes.
 
-1. **Search Engine Optimization (SEO)**
-2. **Pay-Per-Click Advertising (PPC)**
-3. **Social Media Marketing**
-4. **Content Marketing**
-5. **Email Marketing**
-6. **Mobile Marketing**
+![AI Marketing Transformation](https://images.unsplash.com/photo-1581094794329-c8112a89af12)
 
-## Setting Your Digital Marketing Goals
+## The Democratization of Advanced Marketing
 
-Before diving into tactics, it's important to establish clear goals. Common digital marketing objectives include:
+> *"AI is the great equalizer in digital marketing. Small businesses can now compete with enterprise brands using the same powerful tools."* - Mark Wilson, Digital Marketing Expert
 
-- Increasing brand awareness
-- Generating leads
-- Driving sales
-- Building customer loyalty
-- Establishing thought leadership
+The most exciting part? You don't need a massive budget or technical expertise to leverage these tools. Today's AI marketing solutions are designed to be user-friendly and accessible.
 
-## Measuring Success
+## What You'll Learn in This Tutorial
 
-Digital marketing allows for precise measurement through various metrics:
+In this tutorial, we'll explore:
 
-- Website traffic
-- Conversion rate
-- Cost per lead
-- Customer acquisition cost
-- Return on investment
+1. How AI has transformed core marketing functions
+2. Real-world examples of businesses succeeding with AI marketing
+3. A simple framework for identifying where AI can help your specific business
+4. How to speak confidently about AI marketing (even if you're new to it!)
 
-This tutorial will guide you through building your first digital marketing strategy.`,
+## The Evolution of Marketing Technology
+
+AI is revolutionizing key marketing areas:
+
+- **Content Creation**: Creating engaging content in minutes instead of hours
+- **Customer Insights**: Understanding your audience better than ever before
+- **Campaign Optimization**: Getting better results without constant tweaking
+- **Personalization**: Delivering tailored experiences to each customer
+
+### Fun Fact! 
+The first AI marketing tool was developed in the 1980s for basic customer segmentation. Today's tools are over 1,000 times more powerful and can perform tasks that would have seemed like science fiction just five years ago!
+
+## Quick Success Story
+
+Sarah, the owner of a small online boutique, implemented basic AI marketing tools and saw her conversion rate increase by 34% in just 45 days. Her secret? Using AI to analyze customer browsing patterns and automatically personalize product recommendations.
+
+## Let's Assess Your AI Marketing Readiness!
+
+Ready to see where your business stands? Let's do a quick self-assessment to identify your biggest AI opportunities.
+
+Answer these questions in your marketing notebook:
+
+1. How much time do you currently spend on repetitive marketing tasks?
+2. What customer data are you collecting but not fully utilizing?
+3. Which marketing channels give you the best results?
+4. What's your biggest marketing challenge right now?
+5. How personalized are your current customer communications?
+
+In our next lesson, we'll build on these answers to create your AI marketing roadmap!
+
+## Pro Tip
+Start small with AI implementation! Choose one marketing task that's time-consuming but straightforward, and find an AI tool to help with it. This builds confidence and gives you a quick win to celebrate.`,
         tasks: [
           {
             id: 101001,
-            description: "Define your digital marketing goals",
+            description: "Complete your AI Marketing Readiness Assessment",
             type: "practical",
-            requirements: ["Business objectives"],
-            verificationCriteria: ["SMART goals documented"]
+            requirements: ["Marketing objectives list", "Current marketing challenges"],
+            verificationCriteria: ["Assessment questions answered", "Key opportunities identified"]
+          },
+          {
+            id: 101002,
+            description: "Identify one repetitive marketing task to automate",
+            type: "practical",
+            requirements: ["List of regular marketing activities"],
+            verificationCriteria: ["Task selected with clear automation potential"]
           }
         ],
         estimatedTime: 45,
-        skillsLearned: ["Digital Marketing Fundamentals", "Marketing Strategy", "Goal Setting"],
+        skillsLearned: ["AI Marketing Fundamentals", "Marketing Technology Assessment", "Strategic Implementation Planning"],
         chapterNumber: 1
       },
-      // CHAPTER 2 sample
       {
-        id: 201,
-        title: "Understanding Google Ads Platform",
+        id: 102,
+        title: "Essential AI Marketing Tools",
         level: "Beginner",
-        content: `# Google Ads Platform Overview
+        content: `# Essential AI Marketing Tools for 2025
 
-Google Ads is Google's online advertising platform that allows businesses to display ads on Google's search results and its advertising network.
+## Finding Your Perfect AI Marketing Toolkit
 
-## Key Components of Google Ads
+Hello again! ZOOMi here to guide you through the exciting world of AI marketing tools. With so many options available, finding the right tools for your specific needs can feel overwhelming. Don't worry - I'll help you navigate this landscape!
 
-- **Campaigns**: The highest level of organization
-- **Ad Groups**: Contains your ads and keywords
-- **Keywords**: Terms that trigger your ads
-- **Ads**: The actual advertisements shown to users
-- **Extensions**: Additional information that enhances your ads
+## The AI Marketing Tools Ecosystem
 
-## Campaign Types
+The AI marketing tools landscape has exploded, with over 8,000 marketing technology solutions available today. Let's break down the essential categories:
 
-1. **Search Campaigns**: Text ads on search results
-2. **Display Campaigns**: Visual ads on websites
-3. **Video Campaigns**: Video ads on YouTube
-4. **Shopping Campaigns**: Product listings
-5. **App Campaigns**: Promote mobile applications
+![AI Marketing Tools](https://images.unsplash.com/photo-1579389083078-4e7018379f7e)
 
-## Account Structure Best Practices
+### Content Creation & Optimization
+These tools help you create, edit, and optimize written content, images, and videos.
 
-- Organize campaigns by product/service lines
-- Group similar keywords together
-- Create ad groups with tight thematic focus
-- Implement proper tracking for conversion actions
+**Popular Tools:**
+- **Jasper**: AI-powered content generation for blogs, ads, and emails
+- **Writer**: Enterprise-grade content creation with brand voice controls
+- **Canva with Magic Studio**: Visual content creation with AI assistance
+- **Pictory**: Transform text into engaging video content
 
-In this tutorial, you'll learn how to set up your Google Ads account structure for optimal performance.`,
+### Customer Insights & Analytics
+These tools help you understand customer behavior and preferences at a deeper level.
+
+**Popular Tools:**
+- **Sprout Social**: Social media analytics with predictive insights
+- **Mixpanel**: Advanced user behavior analysis
+- **Oribi**: No-code customer journey visualization
+- **Monkeylearn**: Text analysis for customer feedback and messages
+
+### Campaign Automation & Optimization
+These tools automate the execution and optimization of marketing campaigns.
+
+**Popular Tools:**
+- **Seventh Sense**: Email send-time optimization based on individual behavior
+- **Phrasee**: AI-powered email subject line generation and testing
+- **Albert**: Autonomous media buying and campaign optimization
+- **Pathmatics**: Competitive ad intelligence and strategy insights
+
+### Personalization Engines
+These tools deliver tailored experiences to customers based on their data.
+
+**Popular Tools:**
+- **Dynamic Yield**: Real-time personalization across channels
+- **Optimizely**: A/B testing and personalization at scale
+- **Insider**: Cross-channel personalization platform
+- **Qubit**: Commerce-focused personalization
+
+## Success Story: Small Business, Big Results
+
+Tom runs a local fitness studio with limited marketing resources. By implementing just two AI tools - a content generator for consistent social posts and an email optimization tool for better engagement - he increased his client acquisition by 41% while cutting his marketing time in half.
+
+> *"I was skeptical about AI at first, but these tools feel like having a marketing team working for me 24/7."* - Tom K., Fitness Studio Owner
+
+## Choosing the Right Tools for Your Business
+
+### Step 1: Identify Your Biggest Marketing Pain Points
+Where do you spend the most time? What tasks do you dread? Where are your results disappointing?
+
+### Step 2: Prioritize Based on Potential Impact
+Which improvements would most directly affect your bottom line?
+
+### Step 3: Start with User-Friendly Tools
+Look for tools with:
+- Free trials or freemium options
+- Intuitive interfaces
+- Good customer support
+- Clear tutorials and documentation
+
+### Step 4: Integrate Thoughtfully
+Make sure new tools work with your existing systems and workflows.
+
+## Pro Tip
+Most AI marketing tools offer free trials. Create a "Tool Testing Tuesday" where you try a new tool each week. This structured approach helps you discover game-changers without getting overwhelmed.
+
+### Fun Fact!
+The average marketing department now uses 91 different marketing tools! Don't worry - you don't need nearly that many to see significant results. In fact, most successful small businesses find that 3-5 well-chosen AI tools deliver 80% of their potential benefits.
+
+## Interactive Exercise: Build Your AI Tool Wishlist
+
+Let's create your personalized AI tool wishlist:
+
+1. List your top three marketing activities that consume the most time
+2. For each activity, search for 2-3 AI tools that could help (use the categories above)
+3. Compare features, pricing, and reviews
+4. Select one tool to try first - preferably one with a free trial
+
+In our next lesson, we'll explore how to assess your overall AI marketing readiness and create a strategic implementation plan!`,
         tasks: [
           {
-            id: 201001,
-            description: "Set up your first campaign",
+            id: 102001,
+            description: "Create your AI marketing tools wishlist",
             type: "practical",
-            requirements: ["Google Ads account"],
-            verificationCriteria: ["Campaign created", "Ad groups structured"]
+            requirements: ["List of time-consuming marketing activities"],
+            verificationCriteria: ["Wishlist with at least 3 tools identified", "Selection criteria documented"]
+          },
+          {
+            id: 102002,
+            description: "Sign up for a free trial of one AI marketing tool",
+            type: "practical",
+            requirements: ["Selected tool from wishlist"],
+            verificationCriteria: ["Account created", "Basic features explored"]
           }
         ],
         estimatedTime: 60,
-        skillsLearned: ["Campaign Structure", "Ad Setup", "Account Organization"],
-        chapterNumber: 2
+        skillsLearned: ["AI Tool Evaluation", "Marketing Technology Selection", "Tool Integration Planning"],
+        chapterNumber: 1
+      },
+      {
+        id: 103,
+        title: "Assessing Your AI Marketing Readiness",
+        level: "Beginner",
+        content: `# Assessing Your AI Marketing Readiness
+
+## Building Your AI Implementation Roadmap
+
+Hello, marketer! ZOOMi back again to help you assess your current marketing operations and develop a clear roadmap for AI implementation. This structured approach will ensure you get maximum value from your AI marketing investments.
+
+## The AI Readiness Assessment Framework
+
+Think of this assessment as your marketing technology checkup. We'll evaluate five key areas to identify your biggest opportunities and potential challenges.
+
+![AI Readiness Assessment](https://images.unsplash.com/photo-1579389083078-4e7018379f7e)
+
+## 1. Data Readiness: The Foundation of AI Success
+
+AI tools require data to function effectively. Let's assess your data foundation:
+
+**Questions to Answer:**
+- What customer data are you currently collecting?
+- How organized and accessible is your data?
+- Do you have a CRM or customer database?
+- Are there gaps in your customer information?
+
+**Quick Score:** On a scale of 1-10, how would you rate your current data collection and organization?
+
+### Pro Tip
+Start creating a "single customer view" by consolidating data from different platforms. Even a simple spreadsheet that combines information from your email platform, website analytics, and sales data can be incredibly valuable!
+
+## 2. Process Readiness: Identifying Automation Opportunities
+
+Next, let's look at your marketing processes to find automation opportunities:
+
+**Questions to Answer:**
+- Which marketing tasks do you perform repeatedly?
+- How standardized are your marketing workflows?
+- Where do bottlenecks occur in your marketing execution?
+- Which processes consume the most time with the least strategic value?
+
+**Quick Score:** On a scale of 1-10, how systematic and documented are your marketing processes?
+
+### Fun Fact!
+Companies with well-documented marketing processes see 70% higher returns from their AI investments compared to those with ad-hoc approaches. Structure creates the perfect environment for AI to thrive!
+
+## 3. Skills Readiness: Assessing Your Team's AI Aptitude
+
+Even user-friendly AI tools require some knowledge to implement effectively:
+
+**Questions to Answer:**
+- How comfortable are you with trying new marketing technologies?
+- Have you or your team used any AI tools previously?
+- Do you have access to technical resources if needed?
+- Are there specific skills you'd like to develop?
+
+**Quick Score:** On a scale of 1-10, how would you rate your team's readiness to adopt new technologies?
+
+## 4. Strategy Readiness: Aligning AI with Business Goals
+
+AI implementation should support your larger business objectives:
+
+**Questions to Answer:**
+- What are your top 3 marketing goals for the next 6-12 months?
+- Which metrics are most important for your business?
+- Where are the biggest gaps between your goals and current performance?
+- What would success look like for your AI implementation?
+
+**Quick Score:** On a scale of 1-10, how clear are your marketing goals and metrics?
+
+## 5. Budget & Resource Readiness: Planning Your Investment
+
+Finally, let's consider the practical aspects of implementation:
+
+**Questions to Answer:**
+- What budget could you allocate to marketing technology?
+- How much time can you invest in learning and implementing new tools?
+- Do you need tools that work immediately, or can you invest in configuration?
+- What would an acceptable ROI timeframe be for your business?
+
+**Quick Score:** On a scale of 1-10, how would you rate your readiness to invest in marketing technology?
+
+## Success Story: The Power of Readiness Assessment
+
+Maria ran a small e-commerce business selling handmade jewelry. Before implementing any AI tools, she completed a thorough readiness assessment like this one. She discovered that while her product data was well-organized, she had almost no post-purchase customer data. 
+
+Instead of jumping into advanced AI tools, she first implemented a simple customer feedback system and preference center. Three months later, with better data in place, her AI product recommendation engine performed 3x better than it would have initially.
+
+> *"The assessment saved me from wasting money on advanced tools I wasn't ready for yet. By fixing my foundations first, I got much better results when I did implement AI."* - Maria L., E-commerce Entrepreneur
+
+## Creating Your AI Implementation Roadmap
+
+Now that you've assessed your readiness, let's create a prioritized roadmap:
+
+1. **Quick Wins**: Identify 1-2 high-impact, low-effort implementations to start with
+2. **Foundation Building**: Address any critical gaps in your data or processes
+3. **Capability Expansion**: Plan for more advanced implementations as you build expertise
+4. **Optimization Phase**: Enhance and refine your AI implementations over time
+
+### Pro Tip
+The most successful AI implementations start small, show clear value, and expand gradually. Resist the temptation to transform everything at once!
+
+## Interactive Exercise: Complete Your Assessment
+
+Take 15-20 minutes to complete your full assessment using the questions above. Calculate your average score across all five areas to determine your overall AI marketing readiness score:
+
+- **1-3**: Foundation Building Stage
+- **4-6**: Selective Implementation Stage
+- **7-8**: Strategic Expansion Stage
+- **9-10**: AI Optimization Stage
+
+In our next chapter, we'll dive into AI-powered content creation strategies!`,
+        tasks: [
+          {
+            id: 103001,
+            description: "Complete your full AI Marketing Readiness Assessment",
+            type: "practical",
+            requirements: ["Marketing operations overview"],
+            verificationCriteria: ["All 5 sections completed", "Overall readiness score calculated"]
+          },
+          {
+            id: 103002,
+            description: "Create your 3-month AI implementation roadmap",
+            type: "practical",
+            requirements: ["Completed assessment", "Business goals"],
+            verificationCriteria: ["Priority opportunities identified", "Timeline established"]
+          }
+        ],
+        estimatedTime: 75,
+        skillsLearned: ["Marketing Technology Assessment", "AI Implementation Planning", "Strategic Roadmapping"],
+        chapterNumber: 1,
+        hasSimulation: true
+      }
+    );
+    
+    // CHAPTER 4: Advanced AI Marketing (PREMIUM)
+    this.tutorials.push(
+      {
+        id: 401,
+        title: "Agentic AI for Marketing Automation",
+        level: "Advanced",
+        content: `# Agentic AI for Marketing Automation
+
+## The Next Evolution in Marketing Intelligence
+
+Welcome to the cutting edge of AI marketing! ZOOMi here to introduce you to the revolutionary concept of agentic AI—autonomous systems that can plan, execute, and optimize marketing activities with minimal human supervision.
+
+## Understanding Agentic AI
+
+Agentic AI represents a fundamental shift from tools that assist marketers to systems that can independently perform complex marketing functions:
+
+**Traditional AI Tools**: Respond to specific requests and instructions
+**Agentic AI Systems**: Proactively pursue marketing goals with autonomous decision-making
+
+![Agentic AI](https://images.unsplash.com/photo-1589254065878-42c9da997008)
+
+## The Core Capabilities of Marketing Agents
+
+Advanced AI marketing agents combine several sophisticated capabilities:
+
+### 1. Goal-Directed Reasoning
+The ability to understand business objectives and develop strategies to achieve them.
+
+### 2. Autonomous Planning
+Creating multi-step plans to accomplish marketing goals without step-by-step human guidance.
+
+### 3. Tool Utilization
+Using various marketing platforms, data sources, and systems to execute planned activities.
+
+### 4. Adaptive Execution
+Modifying approaches based on real-time feedback and changing conditions.
+
+### 5. Multi-Agent Collaboration
+Working with other specialized AI agents to handle complex marketing ecosystems.
+
+### Fun Fact!
+The concept of agentic AI stems from research in cognitive architecture that began in the 1950s, but only recently has computing power and algorithm development reached the level needed for practical marketing applications. What was science fiction five years ago is now being implemented by leading marketing organizations!`,
+        tasks: [
+          {
+            id: 401001,
+            description: "Complete your agentic AI opportunity assessment",
+            type: "practical",
+            requirements: ["Marketing process inventory", "Team time allocation data"],
+            verificationCriteria: ["High-value opportunities identified", "Potential ROI calculated", "Implementation risks assessed"]
+          },
+          {
+            id: 401002,
+            description: "Design your first marketing agent specification",
+            type: "practical",
+            requirements: ["Selected marketing function", "Available system integrations"],
+            verificationCriteria: ["Agent goals defined", "Decision framework established", "Implementation plan created"]
+          }
+        ],
+        estimatedTime: 90,
+        skillsLearned: ["Agentic AI Implementation", "Autonomous Marketing Systems", "Advanced Marketing Automation"],
+        chapterNumber: 4,
+        isPremium: true
       }
     );
     
@@ -364,7 +526,7 @@ In this tutorial, you'll learn how to set up your Google Ads account structure f
       // First get current XP and level
       const userResult = await db.select()
         .from(userProfiles)
-        .where(({ eq }) => eq(userProfiles.userId, userId))
+        .where(sql`${userProfiles.userId} = ${userId}`)
         .limit(1);
       
       if (userResult.length === 0) {
@@ -373,13 +535,13 @@ In this tutorial, you'll learn how to set up your Google Ads account structure f
       }
       
       const userProfile = userResult[0];
-      const currentXP = userProfile.xp || 0;
+      const currentXP = userProfile.experiencePoints || 0;
       const newXP = currentXP + xpAmount;
       
       // Update user XP
       await db.update(userProfiles)
-        .set({ xp: newXP })
-        .where(({ eq }) => eq(userProfiles.userId, userId));
+        .set({ experiencePoints: newXP })
+        .where(sql`${userProfiles.userId} = ${userId}`);
       
       console.log(`Added ${xpAmount} XP for user ${userId}. New total: ${newXP}`);
       
@@ -417,7 +579,7 @@ In this tutorial, you'll learn how to set up your Google Ads account structure f
       // Get current level
       const userResult = await db.select()
         .from(userProfiles)
-        .where(({ eq }) => eq(userProfiles.userId, userId))
+        .where(sql`${userProfiles.userId} = ${userId}`)
         .limit(1);
       
       if (userResult.length > 0) {
@@ -427,7 +589,7 @@ In this tutorial, you'll learn how to set up your Google Ads account structure f
         if (currentLevel !== newLevel) {
           await db.update(userProfiles)
             .set({ level: newLevel })
-            .where(({ eq }) => eq(userProfiles.userId, userId));
+            .where(sql`${userProfiles.userId} = ${userId}`);
           
           console.log(`User ${userId} leveled up from ${currentLevel} to ${newLevel}!`);
         }
