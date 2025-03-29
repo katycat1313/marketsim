@@ -737,9 +737,273 @@ Provide personalized recommendations considering:
       }
     }
   }
+
+  /**
+   * Analyze campaign performance data to provide insights
+   * This method uses AI to evaluate the effectiveness of a campaign based on simulation data
+   * 
+   * @param simulationData The data from campaign simulation
+   * @param provider Optional AI provider to use for analysis
+   * @returns Performance analysis with insights and recommendations
+   */
+  async analyzeCampaignPerformance(simulationData: any, provider: 'anthropic' | 'openai' | 'gemini' = 'anthropic') {
+    // Prepare the analysis prompt
+    const prompt = `As a marketing expert, analyze this campaign performance data:
+    
+    Campaign Performance Data:
+    ${JSON.stringify(simulationData, null, 2)}
+    
+    Provide detailed analysis including:
+    1. Overall performance assessment
+    2. Strengths and weaknesses
+    3. Key metrics evaluation (CTR, CPC, conversion rate, etc.)
+    4. Cost efficiency analysis
+    5. Quality score breakdown
+    
+    Format response as JSON with the following structure:
+    {
+      "overallRating": number (1-10),
+      "strengths": string[],
+      "weaknesses": string[],
+      "keyMetricsAnalysis": {
+        "impressions": string,
+        "clicks": string,
+        "conversions": string,
+        "ctr": string,
+        "cpc": string,
+        "conversionRate": string,
+        "roi": string
+      },
+      "actionableInsights": string[],
+      "summary": string
+    }`;
+    
+    // Get analysis from the specified AI provider
+    switch (provider) {
+      case 'anthropic':
+        if (!this.anthropic) throw new Error('Anthropic not configured');
+        const anthropicResponse = await this.anthropic.messages.create({
+          model: ANTHROPIC_MODEL,
+          max_tokens: 2000,
+          messages: [{
+            role: 'user',
+            content: prompt
+          }],
+          response_format: { type: "json_object" }
+        });
+        return JSON.parse(anthropicResponse.content[0].text);
+        
+      case 'openai':
+        if (!this.openai) throw new Error('OpenAI not configured');
+        const openaiResponse = await this.openai.chat.completions.create({
+          model: OPENAI_MODEL,
+          messages: [{
+            role: 'system',
+            content: 'You are an expert marketing campaign analyzer.'
+          }, {
+            role: 'user',
+            content: prompt
+          }],
+          response_format: { type: "json_object" }
+        });
+        return JSON.parse(openaiResponse.choices[0].message.content);
+        
+      case 'gemini':
+        if (!this.geminiKey) throw new Error('Gemini not configured');
+        const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent';
+        const response = await fetch(`${url}?key=${this.geminiKey}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            contents: [{
+              parts: [{
+                text: `You are an expert marketing campaign analyzer. ${prompt}
+                Respond only with JSON.`
+              }]
+            }]
+          })
+        });
+        
+        const data = await response.json();
+        if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
+          throw new Error('Invalid response from Gemini API');
+        }
+        
+        const content = data.candidates[0].content.parts[0].text;
+        // Extract valid JSON from the response
+        const jsonMatch = content.match(/\{[\s\S]*\}/);
+        if (!jsonMatch) {
+          throw new Error('Could not extract valid JSON from Gemini response');
+        }
+        
+        return JSON.parse(jsonMatch[0]);
+        
+      default:
+        throw new Error('Unsupported AI provider');
+    }
+  }
+  
+  /**
+   * Generate actionable recommendations to improve campaign performance
+   * 
+   * @param campaign The campaign configuration
+   * @param simulationData Performance data from simulations
+   * @param provider Optional AI provider to use for recommendations
+   * @returns Optimization suggestions with actionable steps
+   */
+  async generateOptimizationSuggestions(campaign: any, simulationData: any, provider: 'anthropic' | 'openai' | 'gemini' = 'anthropic') {
+    // Prepare industry benchmarks and best practices
+    const [benchmarks, bestPractices] = await Promise.all([
+      db.select().from(industryBenchmarks)
+        .where(eq => eq('industry', campaign.industry))
+        .limit(3),
+      db.select().from(marketingKnowledgeBase)
+        .where(eq => eq('topic', campaign.type))
+        .orderBy(eq => eq('effectiveness', 'desc'))
+        .limit(5)
+    ]);
+    
+    // Prepare the optimization prompt
+    const prompt = `As a marketing optimization expert, analyze this campaign and its performance data:
+    
+    Campaign Configuration:
+    ${JSON.stringify(campaign, null, 2)}
+    
+    Performance Data:
+    ${JSON.stringify(simulationData, null, 2)}
+    
+    Industry Benchmarks:
+    ${JSON.stringify(benchmarks, null, 2)}
+    
+    Best Practices:
+    ${JSON.stringify(bestPractices, null, 2)}
+    
+    Provide optimization recommendations with:
+    1. Specific actionable changes to campaign settings
+    2. Budget allocation suggestions
+    3. Targeting improvements
+    4. Creative optimizations
+    5. Bidding strategy adjustments
+    6. A/B testing recommendations
+    
+    Format response as JSON with the following structure:
+    {
+      "prioritizedRecommendations": [
+        {
+          "category": string (e.g., "Targeting", "Budget", "Creative", "Bidding"),
+          "action": string,
+          "expectedImpact": string,
+          "difficultyToImplement": string,
+          "timeFrame": string
+        }
+      ],
+      "budgetRecommendations": {
+        "optimal": number,
+        "allocation": object
+      },
+      "testingIdeas": string[],
+      "longTermStrategy": string
+    }`;
+    
+    // Get recommendations from the specified AI provider
+    switch (provider) {
+      case 'anthropic':
+        if (!this.anthropic) throw new Error('Anthropic not configured');
+        const anthropicResponse = await this.anthropic.messages.create({
+          model: ANTHROPIC_MODEL,
+          max_tokens: 2000,
+          messages: [{
+            role: 'user',
+            content: prompt
+          }],
+          response_format: { type: "json_object" }
+        });
+        return JSON.parse(anthropicResponse.content[0].text);
+        
+      case 'openai':
+        if (!this.openai) throw new Error('OpenAI not configured');
+        const openaiResponse = await this.openai.chat.completions.create({
+          model: OPENAI_MODEL,
+          messages: [{
+            role: 'system',
+            content: 'You are an expert marketing campaign optimizer.'
+          }, {
+            role: 'user',
+            content: prompt
+          }],
+          response_format: { type: "json_object" }
+        });
+        return JSON.parse(openaiResponse.choices[0].message.content);
+        
+      case 'gemini':
+        if (!this.geminiKey) throw new Error('Gemini not configured');
+        const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent';
+        const response = await fetch(`${url}?key=${this.geminiKey}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            contents: [{
+              parts: [{
+                text: `You are an expert marketing campaign optimizer. ${prompt}
+                Respond only with JSON.`
+              }]
+            }]
+          })
+        });
+        
+        const data = await response.json();
+        if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
+          throw new Error('Invalid response from Gemini API');
+        }
+        
+        const content = data.candidates[0].content.parts[0].text;
+        // Extract valid JSON from the response
+        const jsonMatch = content.match(/\{[\s\S]*\}/);
+        if (!jsonMatch) {
+          throw new Error('Could not extract valid JSON from Gemini response');
+        }
+        
+        return JSON.parse(jsonMatch[0]);
+        
+      default:
+        throw new Error('Unsupported AI provider');
+    }
+  }
+}
+
+// Helper function to safely initialize API keys from environment variables
+function getApiKeys() {
+  const anthropicKey = process.env.ANTHROPIC_API_KEY || null;
+  const openaiKey = process.env.OPENAI_API_KEY || null;
+  const geminiKey = process.env.GOOGLE_AI_API_KEY || null;
+  
+  return { anthropicKey, openaiKey, geminiKey };
 }
 
 // Create instances for different subscription tiers
-export const freeMarketingAI = new MarketingAI(SubscriptionTier.FREE);
-export const premiumMarketingAI = new MarketingAI(SubscriptionTier.PREMIUM);
-export const enterpriseMarketingAI = new MarketingAI(SubscriptionTier.ENTERPRISE);
+const { anthropicKey, openaiKey, geminiKey } = getApiKeys();
+
+export const freeMarketingAI = new MarketingAI(
+  SubscriptionTier.FREE,
+  anthropicKey,
+  openaiKey,
+  geminiKey
+);
+
+export const premiumMarketingAI = new MarketingAI(
+  SubscriptionTier.PREMIUM,
+  anthropicKey,
+  openaiKey,
+  geminiKey
+);
+
+export const enterpriseMarketingAI = new MarketingAI(
+  SubscriptionTier.ENTERPRISE,
+  anthropicKey,
+  openaiKey,
+  geminiKey
+);

@@ -15,6 +15,8 @@ import {
   insertAchievementSchema,
   userQuizResults,
   insertUserQuizResultSchema,
+  userApiSettings,
+  insertApiSettingsSchema,
   personas,
   campaigns,
   simulationData,
@@ -55,6 +57,11 @@ export interface IStorage {
   getUserSubscription(userId?: number): Promise<any[]>;
   createUserProfile(profile: InsertUserProfile): Promise<schema.UserProfile>;
   getUserProfile(userId: number): Promise<schema.UserProfile | undefined>;
+  
+  // API Settings operations
+  createUserApiSettings(settings: schema.InsertApiSettings): Promise<schema.UserApiSettings>;
+  getUserApiSettings(username: string): Promise<schema.UserApiSettings | undefined>;
+  updateUserApiSettings(username: string, provider: string, apiKey: string): Promise<schema.UserApiSettings>;
   
   // Connection operations
   createConnection(connection: InsertConnection): Promise<schema.Connection>;
@@ -153,6 +160,44 @@ export class DrizzleStorage implements IStorage {
 
   async getUserProfile(userId: number): Promise<schema.UserProfile | undefined> {
     const result = await db.select().from(userProfiles).where(eq(userProfiles.userId, userId));
+    return result[0];
+  }
+  
+  // API Settings operations
+  async createUserApiSettings(settings: schema.InsertApiSettings): Promise<schema.UserApiSettings> {
+    const result = await db.insert(userApiSettings).values(settings).returning();
+    return result[0];
+  }
+  
+  async getUserApiSettings(username: string): Promise<schema.UserApiSettings | undefined> {
+    const result = await db.select().from(userApiSettings).where(eq(userApiSettings.username, username));
+    return result[0];
+  }
+  
+  async updateUserApiSettings(username: string, provider: string, apiKey: string): Promise<schema.UserApiSettings> {
+    // Define the update fields
+    let updateFields: any = {
+      activeProvider: provider
+    };
+    
+    // Update the appropriate API key field based on the selected provider
+    if (provider === 'anthropic') {
+      updateFields.anthropicApiKey = apiKey;
+    } else if (provider === 'openai') {
+      updateFields.openaiApiKey = apiKey;
+    } else if (provider === 'gemini') {
+      updateFields.geminiApiKey = apiKey;
+    }
+    
+    // Update the timestamp
+    updateFields.updatedAt = new Date();
+    
+    // Perform the update
+    const result = await db.update(userApiSettings)
+      .set(updateFields)
+      .where(eq(userApiSettings.username, username))
+      .returning();
+    
     return result[0];
   }
 

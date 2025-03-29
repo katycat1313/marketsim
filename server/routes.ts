@@ -771,8 +771,152 @@ export async function registerRoutes(app: Express) {
     }
   });
 
+  // API Provider Settings Routes
+  app.post("/api/user/api-settings", async (req, res) => {
+    try {
+      if (!req.user?.id) {
+        return res.status(401).json({ error: "Authentication required" });
+      }
+      
+      const { provider, apiKey } = req.body;
+      
+      if (!provider || !apiKey) {
+        return res.status(400).json({ error: "Provider and API key are required" });
+      }
+      
+      if (!['anthropic', 'openai', 'gemini'].includes(provider)) {
+        return res.status(400).json({ error: "Invalid provider. Must be 'anthropic', 'openai', or 'gemini'" });
+      }
+      
+      // Get user profile to retrieve username
+      const userProfile = await storage.getUserProfile(req.user.id);
+      
+      if (!userProfile) {
+        return res.status(404).json({ error: "User profile not found" });
+      }
+      
+      // Check if user already has API settings
+      const existingSettings = await storage.getUserApiSettings(userProfile.username);
+      
+      if (existingSettings) {
+        // Update existing settings
+        const updatedSettings = await storage.updateUserApiSettings(
+          userProfile.username,
+          provider,
+          apiKey
+        );
+        
+        return res.json({
+          provider: updatedSettings.activeProvider,
+          success: true
+        });
+      } else {
+        // Create new settings
+        const newSettings = await storage.createUserApiSettings({
+          username: userProfile.username,
+          activeProvider: provider,
+          anthropicApiKey: provider === 'anthropic' ? apiKey : null,
+          openaiApiKey: provider === 'openai' ? apiKey : null,
+          geminiApiKey: provider === 'gemini' ? apiKey : null,
+        });
+        
+        return res.json({
+          provider: newSettings.activeProvider,
+          success: true
+        });
+      }
+    } catch (error) {
+      console.error("Error saving API settings:", error);
+      res.status(500).json({ error: "Failed to save API settings" });
+    }
+  });
+  
+  app.get("/api/user/api-settings", async (req, res) => {
+    try {
+      if (!req.user?.id) {
+        return res.status(401).json({ error: "Authentication required" });
+      }
+      
+      // Get user profile to retrieve username
+      const userProfile = await storage.getUserProfile(req.user.id);
+      
+      if (!userProfile) {
+        return res.status(404).json({ error: "User profile not found" });
+      }
+      
+      // Get user API settings
+      const apiSettings = await storage.getUserApiSettings(userProfile.username);
+      
+      if (!apiSettings) {
+        return res.json({
+          hasSettings: false,
+          providers: []
+        });
+      }
+      
+      // Return available providers (don't return actual API keys)
+      const providers = [];
+      
+      if (apiSettings.anthropicApiKey) providers.push('anthropic');
+      if (apiSettings.openaiApiKey) providers.push('openai');
+      if (apiSettings.geminiApiKey) providers.push('gemini');
+      
+      res.json({
+        hasSettings: providers.length > 0,
+        activeProvider: apiSettings.activeProvider,
+        providers
+      });
+    } catch (error) {
+      console.error("Error retrieving API settings:", error);
+      res.status(500).json({ error: "Failed to retrieve API settings" });
+    }
+  });
+  
+  // Test AI provider
+  app.post("/api/ai/test-provider", async (req, res) => {
+    try {
+      if (!req.user?.id) {
+        return res.status(401).json({ error: "Authentication required" });
+      }
+      
+      const { provider, apiKey } = req.body;
+      
+      if (!provider) {
+        return res.status(400).json({ error: "Provider is required" });
+      }
+      
+      // Create a temporary instance to test the API key
+      const { MarketingAI, SubscriptionTier } = require('./services/marketingAI');
+      const tempAI = new MarketingAI(
+        SubscriptionTier.FREE,
+        provider === 'anthropic' ? apiKey : null,
+        provider === 'openai' ? apiKey : null, 
+        provider === 'gemini' ? apiKey : null
+      );
+      
+      // Test the provider with a simple prompt
+      const testResult = await tempAI.testProvider(provider);
+      
+      res.json({
+        success: true,
+        provider,
+        working: testResult.working,
+        message: testResult.message
+      });
+    } catch (error) {
+      console.error("Error testing AI provider:", error);
+      const message = error instanceof Error ? error.message : "Unknown error";
+      res.status(500).json({ 
+        success: false,
+        error: message,
+        working: false
+      });
+    }
+  });
+
   // Mount Stripe routes
   app.use('/api/stripe', stripeRoutes);
+  console.log('API Settings routes registered');
   console.log('Stripe routes registered');
 
   // Register Ad Simulation routes
