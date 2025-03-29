@@ -28,7 +28,13 @@ import {
   insertAdPlatformSimulationAttemptSchema,
   dataVisualizationChallenges,
   dataVisualizationAttempts,
-  insertDataVisualizationAttemptSchema
+  insertDataVisualizationAttemptSchema,
+  keywordResearchProjects,
+  keywordResults,
+  keywordLists,
+  insertKeywordResearchProjectSchema,
+  insertKeywordResultSchema,
+  insertKeywordListSchema
 } from "../shared/schema";
 
 type InsertUserProfile = z.infer<typeof insertUserProfileSchema>;

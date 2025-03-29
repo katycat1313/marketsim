@@ -744,6 +744,58 @@ export const dataVisualizationAttempts = pgTable("data_visualization_attempts", 
 export const insertDataVisualizationChallengeSchema = createInsertSchema(dataVisualizationChallenges);
 export const insertDataVisualizationAttemptSchema = createInsertSchema(dataVisualizationAttempts);
 
+// Keyword Research Tool Tables
+export const keywordResearchProjects = pgTable("keyword_research_projects", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  name: text("name").notNull(),
+  niche: text("niche").notNull(),
+  description: text("description"),
+  seedKeywords: text("seed_keywords").array().notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const keywordResults = pgTable("keyword_results", {
+  id: serial("id").primaryKey(),
+  projectId: integer("project_id").references(() => keywordResearchProjects.id).notNull(),
+  keyword: text("keyword").notNull(),
+  searchVolume: integer("search_volume"),
+  competition: decimal("competition"), // 0-1 score
+  cpc: decimal("cpc"), // cost per click estimate
+  difficulty: integer("difficulty"), // 1-100 SEO difficulty
+  parentKeyword: text("parent_keyword"), // If this is a long-tail variation
+  intent: text("intent"), // informational, navigational, commercial, transactional
+  seasonality: json("seasonality").$type<Record<string, number>>(), // Month-to-month search volume variation
+  relatedQuestions: text("related_questions").array(),
+  notes: text("notes"),
+  starred: boolean("starred").default(false).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const keywordLists = pgTable("keyword_lists", {
+  id: serial("id").primaryKey(),
+  projectId: integer("project_id").references(() => keywordResearchProjects.id).notNull(),
+  name: text("name").notNull(),
+  description: text("description"),
+  keywordIds: integer("keyword_ids").array().notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Create insert schemas for keyword research
+export const insertKeywordResearchProjectSchema = createInsertSchema(keywordResearchProjects);
+export const insertKeywordResultSchema = createInsertSchema(keywordResults);
+export const insertKeywordListSchema = createInsertSchema(keywordLists);
+
+// Export keyword research types
+export type KeywordResearchProject = typeof keywordResearchProjects.$inferSelect;
+export type KeywordResult = typeof keywordResults.$inferSelect;
+export type KeywordList = typeof keywordLists.$inferSelect;
+export type InsertKeywordResearchProject = z.infer<typeof insertKeywordResearchProjectSchema>;
+export type InsertKeywordResult = z.infer<typeof insertKeywordResultSchema>;
+export type InsertKeywordList = z.infer<typeof insertKeywordListSchema>;
+
 // Export types
 export type DataVisualizationChallenge = typeof dataVisualizationChallenges.$inferSelect;
 export type DataVisualizationAttempt = typeof dataVisualizationAttempts.$inferSelect;
