@@ -29,9 +29,6 @@ interface TutorialTask {
 export class TutorialService {
   private tutorials: Tutorial[] = [];
   
-  constructor() {
-    this.loadDefaultTutorials();
-  }
   
 
 
