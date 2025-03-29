@@ -32,6 +32,7 @@ import { seoSimulationService } from "./services/seoSimulationService";
 import stripeRoutes from "./routes/stripeRoutes";
 import { registerAdSimulationRoutes } from "./routes/adSimulationRoutes";
 import { registerDataVisualizationRoutes } from "./routes/dataVisualizationRoutes";
+import abTestRoutes from "./routes/abTestRoutes";
 import { authService } from "./services/authService";
 
 export async function registerRoutes(app: Express) {
@@ -1012,6 +1013,10 @@ export async function registerRoutes(app: Express) {
   // Register Data Visualization routes
   registerDataVisualizationRoutes(app);
   console.log('Data Visualization routes registered');
+
+  // Register A/B Test routes
+  app.use('/api/ab-tests', abTestRoutes);
+  console.log('A/B Test routes registered');
 
   return httpServer;
 }

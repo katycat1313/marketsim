@@ -39,8 +39,8 @@ export interface ABTestResult extends ABTest {
 }
 
 // Extended variant type with calculated metrics
-export interface ABTestVariantResult extends ABTestVariant {
-  improvementPercent: number;
+export interface ABTestVariantResult extends Omit<ABTestVariant, 'improvementPercent'> {
+  improvementPercent: string; // Using string to match the decimal in database
 }
 
 // Daily performance data for charting
@@ -53,7 +53,7 @@ export interface DailyMetric {
 export interface WinningVariant {
   id: number;
   name: string;
-  improvement: number;
+  improvement: string;
   projectedAnnualSavings: number;
 }
 
@@ -83,7 +83,7 @@ export class ABTestSimulation implements ABTestSimulationService {
       const test: InsertABTest = {
         name: params.name,
         status: params.status || 'active',
-        campaignId: params.campaignId || null,
+        campaignId: params.campaignId || 0, // Use 0 instead of null for numeric field
         testVariable: params.testVariable,
         startDate: params.startDate,
         endDate: params.endDate || new Date(Date.now() + 14 * 24 * 60 * 60 * 1000), // Default to 14 days
@@ -102,12 +102,12 @@ export class ABTestSimulation implements ABTestSimulationService {
         value: params.controlVariant,
         impressions: 0,
         clicks: 0,
-        conversions: 0,
-        cost: 0,
+        conversions: "0",
+        cost: "0",
         ctr: null,
         conversionRate: null,
         cpa: null,
-        improvementPercent: 0 // Always 0 for control
+        improvementPercent: "0" // Always 0 for control
       };
       
       await this.storage.createABTestVariant(controlVariant);
@@ -121,8 +121,8 @@ export class ABTestSimulation implements ABTestSimulationService {
           value: params.testVariants[i],
           impressions: 0,
           clicks: 0,
-          conversions: 0,
-          cost: 0,
+          conversions: "0",
+          cost: "0",
           ctr: null,
           conversionRate: null,
           cpa: null,
@@ -215,11 +215,11 @@ export class ABTestSimulation implements ABTestSimulationService {
           await this.storage.updateABTestVariant(variant.id, {
             impressions: variant.impressions,
             clicks: variant.clicks,
-            conversions: variant.conversions,
-            cost: variant.cost,
-            ctr: variant.ctr,
-            conversionRate: variant.conversionRate,
-            cpa: variant.cpa,
+            conversions: variant.conversions.toString(),
+            cost: variant.cost.toString(),
+            ctr: variant.ctr ? variant.ctr.toString() : null,
+            conversionRate: variant.conversionRate ? variant.conversionRate.toString() : null,
+            cpa: variant.cpa ? variant.cpa.toString() : null,
             improvementPercent: variant.improvementPercent
           });
         }
@@ -234,7 +234,7 @@ export class ABTestSimulation implements ABTestSimulationService {
         winningVariant: winningVariant ? {
           id: winningVariant.id,
           name: winningVariant.name,
-          improvement: winningVariant.improvementPercent || 0,
+          improvement: winningVariant.improvementPercent,
           projectedAnnualSavings: this.calculateProjectedSavings(winningVariant, controlVariant)
         } : undefined,
         insights
@@ -268,8 +268,8 @@ export class ABTestSimulation implements ABTestSimulationService {
       id: 0,
       name: 'Default',
       industry: 'general',
-      marketSize: 1000000,
-      competitionLevel: 0.5,
+      marketSize: "1000000",
+      competitionLevel: "0.5",
       seasonalityPatterns: [
         { month: 1, factor: 1.0 },
         { month: 2, factor: 1.0 },
@@ -289,7 +289,7 @@ export class ABTestSimulation implements ABTestSimulationService {
       conversionModel: 'logistic',
       budgetExhaustionModel: 'linear',
       adFatigueModel: 'exponential',
-      randomVariationFactor: 0.15,
+      randomVariationFactor: "0.15",
       createdAt: new Date(),
       updatedAt: new Date()
     };
@@ -321,12 +321,12 @@ export class ABTestSimulation implements ABTestSimulationService {
       ...controlVariant,
       impressions: baseImpressions,
       clicks: controlClicks,
-      conversions: controlConversions,
-      cost: baseCost,
-      ctr: baseCTR,
-      conversionRate: baseConversionRate,
-      cpa: controlCPA,
-      improvementPercent: 0 // Control is baseline
+      conversions: controlConversions.toString(),
+      cost: baseCost.toString(),
+      ctr: baseCTR.toString(),
+      conversionRate: baseConversionRate.toString(),
+      cpa: controlCPA.toString(),
+      improvementPercent: "0" // Control is baseline
     });
     
     // Now simulate the test variants
@@ -341,25 +341,29 @@ export class ABTestSimulation implements ABTestSimulationService {
       const positivityScore = this.getPositivityScore(variant.value, controlVariant.value);
       
       // Apply the positivity score to adjust metrics
-      const variantCTR = baseCTR * (1 + positivityScore.ctrImpact * params.randomVariationFactor);
-      const variantConvRate = baseConversionRate * (1 + positivityScore.convRateImpact * params.randomVariationFactor);
+      const randomFactor = typeof params.randomVariationFactor === 'string' 
+        ? parseFloat(params.randomVariationFactor) 
+        : params.randomVariationFactor;
+      
+      const variantCTR = baseCTR * (1 + positivityScore.ctrImpact * randomFactor);
+      const variantConvRate = baseConversionRate * (1 + positivityScore.convRateImpact * randomFactor);
       
       const variantClicks = Math.floor(baseImpressions * variantCTR);
       const variantConversions = parseFloat((variantClicks * variantConvRate).toFixed(2));
       const variantCPA = parseFloat((baseCost / variantConversions).toFixed(2));
       
       // Calculate improvement percentage over control (lower CPA is better)
-      const improvementPercent = parseFloat((((controlCPA - variantCPA) / controlCPA) * 100).toFixed(1));
+      const improvementPercent = ((controlCPA - variantCPA) / controlCPA * 100).toFixed(1);
       
       simulatedVariants.push({
         ...variant,
         impressions: baseImpressions,
         clicks: variantClicks,
-        conversions: variantConversions,
-        cost: baseCost,
-        ctr: variantCTR,
-        conversionRate: variantConvRate,
-        cpa: variantCPA,
+        conversions: variantConversions.toString(),
+        cost: baseCost.toString(),
+        ctr: variantCTR.toString(),
+        conversionRate: variantConvRate.toString(),
+        cpa: variantCPA.toString(),
         improvementPercent
       });
     }
@@ -439,7 +443,8 @@ export class ABTestSimulation implements ABTestSimulationService {
       for (const variant of variants) {
         // Add daily variation to CTR (-10% to +10% of base value)
         const dailyVariation = (Math.random() * 0.2) - 0.1;
-        const adjustedCTR = variant.ctr! * (1 + dailyVariation);
+        const ctrValue = typeof variant.ctr === 'string' ? parseFloat(variant.ctr) : 0;
+        const adjustedCTR = ctrValue * (1 + dailyVariation);
         
         dataPoint[`${variant.name} CTR`] = adjustedCTR;
       }
@@ -462,9 +467,11 @@ export class ABTestSimulation implements ABTestSimulationService {
     const testVariants = variants.filter(v => !v.isControl);
     
     // Find the variant with the best improvement
-    const bestVariants = [...testVariants].sort((a, b) => 
-      (b.improvementPercent || 0) - (a.improvementPercent || 0)
-    );
+    const bestVariants = [...testVariants].sort((a, b) => {
+      const aImprovement = parseFloat(a.improvementPercent || "0");
+      const bImprovement = parseFloat(b.improvementPercent || "0");
+      return bImprovement - aImprovement;
+    });
     
     const winningVariant = bestVariants.length > 0 ? bestVariants[0] : undefined;
     
@@ -475,7 +482,8 @@ export class ABTestSimulation implements ABTestSimulationService {
     
     if (winningVariant && winningVariant.improvementPercent) {
       // Higher improvement = higher confidence
-      confidenceLevel = 0.75 + (Math.min(winningVariant.improvementPercent, 30) / 100);
+      const improvementValue = parseFloat(winningVariant.improvementPercent);
+      confidenceLevel = 0.75 + (Math.min(improvementValue, 30) / 100);
       
       // Add some randomness (0.85 to 0.99 range)
       confidenceLevel = Math.min(0.99, confidenceLevel + (Math.random() * 0.14));
@@ -493,63 +501,63 @@ export class ABTestSimulation implements ABTestSimulationService {
     const insights: string[] = [];
     const controlVariant = variants.find(v => v.isControl);
     
-    if (!controlVariant || !winningVariant) {
-      return ['Insufficient data to generate meaningful insights.'];
-    }
+    if (!controlVariant) return ['No control variant found in the test.'];
     
-    // Insight 1: Performance improvement
-    insights.push(
-      `${winningVariant.name} ${winningVariant.improvementPercent! > 0 ? 'outperformed' : 'underperformed'} ` +
-      `the control with ${Math.abs(winningVariant.improvementPercent!).toFixed(1)}% ` +
-      `${winningVariant.improvementPercent! > 0 ? 'lower' : 'higher'} CPA`
-    );
+    // General insights
+    insights.push(`Your A/B test "${test.name}" for ${test.testVariable} ran for ${variants[0].impressions} impressions.`);
     
-    // Insight 2: Content analysis
-    if (test.testVariable === 'headline' || test.testVariable === 'description') {
-      if (winningVariant.value.length < controlVariant.value.length) {
-        insights.push('Shorter, more concise messaging showed better performance');
-      } else if (winningVariant.value.toLowerCase().includes('you') || 
-                winningVariant.value.toLowerCase().includes('your')) {
-        insights.push('More personalized, customer-focused language improved performance');
-      } else if (/\d+/.test(winningVariant.value)) {
-        insights.push('Using specific numbers in the content improved engagement');
+    // If we have a winner
+    if (winningVariant && winningVariant.improvementPercent) {
+      const improvementValue = parseFloat(winningVariant.improvementPercent);
+      if (improvementValue > 0) {
+        insights.push(`"${winningVariant.name}" outperformed the control variant with a ${improvementValue.toFixed(1)}% improvement in cost per acquisition.`);
+        
+        // Add more specific insights based on the test variable
+        if (test.testVariable === 'headline') {
+          insights.push(`Headlines that create a sense of urgency or exclusivity tend to perform better than generic messages.`);
+        } else if (test.testVariable === 'cta') {
+          insights.push(`Action-oriented call-to-action buttons that clearly communicate value work best for your audience.`);
+        } else if (test.testVariable === 'image') {
+          insights.push(`Visual content that shows your product in use resonates better with your target audience.`);
+        }
       } else {
-        insights.push('More direct and action-oriented language showed better performance');
+        insights.push(`None of the tested variants significantly outperformed the control. Consider testing more distinct variations.`);
       }
+    } else {
+      insights.push(`No clear winner was identified in this test. Consider running a follow-up test with more distinct variations.`);
     }
     
-    // Insight 3: Statistical significance
-    insights.push(
-      `The difference was statistically significant with ${(winningVariant.improvementPercent! > 5 ? 97 : 91)}% confidence`
-    );
-    
-    // Insight 4: Projected impact
-    const projectedSavings = this.calculateProjectedSavings(winningVariant, controlVariant);
-    insights.push(
-      `Implementing the winning variant could save approximately $${projectedSavings.toLocaleString()} annually`
-    );
+    // Recommendations for next steps
+    insights.push(`Based on these results, we recommend implementing the winning variant in your marketing campaigns and conducting further tests to continue optimizing performance.`);
     
     return insights;
   }
   
   // Calculate improvement percentage between a variant and the control
-  private calculateImprovement(variant: ABTestVariant, controlVariant: ABTestVariant): number {
-    if (variant.isControl || !variant.cpa || !controlVariant.cpa) return 0;
+  private calculateImprovement(variant: ABTestVariant, controlVariant: ABTestVariant): string {
+    if (variant.isControl || !variant.cpa || !controlVariant.cpa) return "0";
     
     // Lower CPA is better, so improvement is (control CPA - variant CPA) / control CPA
-    return parseFloat((((controlVariant.cpa - variant.cpa) / controlVariant.cpa) * 100).toFixed(1));
+    const controlCPANum = parseFloat(controlVariant.cpa);
+    const variantCPANum = parseFloat(variant.cpa);
+    return ((controlCPANum - variantCPANum) / controlCPANum * 100).toFixed(1);
   }
   
   // Calculate projected annual savings
   private calculateProjectedSavings(variant: ABTestVariant, controlVariant: ABTestVariant): number {
-    if (!variant.cpa || !controlVariant.cpa || variant.cpa >= controlVariant.cpa) return 0;
+    if (!variant.cpa || !controlVariant.cpa) return 0;
+    
+    const variantCPANum = parseFloat(variant.cpa);
+    const controlCPANum = parseFloat(controlVariant.cpa);
+    
+    if (variantCPANum >= controlCPANum) return 0;
     
     // Assume 1000 conversions per month at control CPA
     const monthlyConversions = 1000;
     
     // Calculate monthly cost at each CPA
-    const monthlyControlCost = monthlyConversions * controlVariant.cpa;
-    const monthlyVariantCost = monthlyConversions * variant.cpa;
+    const monthlyControlCost = monthlyConversions * controlCPANum;
+    const monthlyVariantCost = monthlyConversions * variantCPANum;
     
     // Calculate savings and annualize
     const monthlySavings = monthlyControlCost - monthlyVariantCost;
