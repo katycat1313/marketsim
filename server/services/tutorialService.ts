@@ -3,7 +3,6 @@ import * as path from 'path';
 import { fileURLToPath } from 'url';
 import { db, pool } from '../db';
 import { userProfiles } from '@shared/schema';
-import { tutorialSimulationService } from './tutorialSimulationService';
 
 export interface Tutorial {
   id: number;
@@ -30,784 +29,298 @@ export class TutorialService {
   private tutorials: Tutorial[] = [];
   
   constructor() {
-    this.loadAllTutorialsFromDirectory();
+    this.loadDefaultTutorials();
   }
   
-  private loadAllTutorialsFromDirectory() {
-    try {
-      // Using fileURLToPath for ESM compatibility to get correct file paths
-      const currentFilePath = fileURLToPath(import.meta.url);
-      const currentDir = path.dirname(currentFilePath);
-      
-      // Navigate to the tutorials directory
-      const tutorialsDir = path.join(currentDir, '..', 'data', 'tutorials');
-      
-      // Check if directory exists
-      if (!fs.existsSync(tutorialsDir)) {
-        console.log('Tutorials directory does not exist, creating it...');
-        fs.mkdirSync(tutorialsDir, { recursive: true });
-        this.loadDefaultTutorials();
-        return;
+  private loadDefaultTutorials() {
+    console.log('Loading default tutorials with premium content...');
+    
+    // Add premium AI content (Chapter 9)
+    this.tutorials = [
+      // CHAPTER 9: AI-Powered Marketing (PREMIUM CONTENT)
+      {
+        id: 901,
+        title: "AI-Powered SEO Content: Rank Higher, Convert Better",
+        level: "Advanced",
+        content: `# AI-Powered SEO Content Creation
+
+## Introduction to ZOOMi
+Meet ZOOMi, your intelligent AI marketing assistant. ZOOMi is designed to help you create optimized content that ranks higher and converts better through advanced natural language processing and market analysis.
+
+## How ZOOMi Enhances Your SEO Strategy
+
+ZOOMi analyzes top-performing content in your niche and identifies:
+- Semantic keyword opportunities
+- Content gaps in your industry
+- User intent patterns
+- Optimal content structures for your target audience
+
+## Implementing AI-Driven SEO
+In this tutorial, you'll learn how to:
+1. Use ZOOMi to analyze your competitors' content
+2. Generate topic clusters optimized for search intent
+3. Create content briefs with semantic keyword mapping
+4. Develop a content calendar based on opportunity analysis
+5. Measure and iterate on content performance
+
+Let ZOOMi take your SEO strategy to the next level with data-driven insights and AI-powered optimization.`,
+        tasks: [
+          {
+            id: 901001,
+            description: "Conduct AI-powered competitor content analysis",
+            type: "practical",
+            requirements: ["ZOOMi access", "List of competitors"],
+            verificationCriteria: ["Analysis report generated", "Key insights identified"]
+          },
+          {
+            id: 901002,
+            description: "Create AI-optimized content brief",
+            type: "practical",
+            requirements: ["Target keywords", "User personas"],
+            verificationCriteria: ["Brief includes semantic keywords", "Addresses user intent"]
+          }
+        ],
+        estimatedTime: 90,
+        skillsLearned: ["AI-Powered Content Optimization", "Semantic SEO", "Content Intelligence"],
+        chapterNumber: 9,
+        isPremium: true
+      },
+      {
+        id: 902,
+        title: "Predictive Analytics for Campaign Performance",
+        level: "Advanced",
+        content: `# Predictive Analytics with ZOOMi
+
+## Using AI to Forecast Campaign Performance
+
+ZOOMi's predictive analytics engine helps you anticipate campaign performance before you launch. Using historical data and market trends, ZOOMi can predict:
+
+- Expected click-through rates
+- Conversion probabilities
+- Budget optimization opportunities
+- Audience segment performance
+
+## Implementing Predictive Campaign Analysis
+
+This tutorial guides you through:
+1. Setting up ZOOMi's predictive modeling for your campaigns
+2. Interpreting AI-generated performance forecasts
+3. Using prediction confidence intervals to manage expectations
+4. Applying predictive insights to campaign planning
+5. Continuously improving your forecasting accuracy
+
+Make data-driven decisions before you spend your budget, not after.`,
+        tasks: [
+          {
+            id: 902001,
+            description: "Configure ZOOMi's predictive models for your business",
+            type: "practical",
+            requirements: ["Historical campaign data", "Business KPIs"],
+            verificationCriteria: ["Models calibrated", "Baseline forecasts generated"]
+          }
+        ],
+        estimatedTime: 85,
+        skillsLearned: ["Predictive Analytics", "AI-Driven Campaign Planning", "Performance Forecasting"],
+        chapterNumber: 9,
+        isPremium: true
+      },
+      {
+        id: 903,
+        title: "Conversational Marketing with ZOOMi",
+        level: "Advanced",
+        content: `# Conversational Marketing Automation
+
+## Creating Personalized Customer Experiences
+
+ZOOMi can power your conversational marketing strategy through:
+- AI-driven chatbots that understand customer intent
+- Personalized recommendation engines
+- Automated customer journey orchestration
+- Context-aware messaging
+
+## Building Your Conversational Marketing Strategy
+
+In this premium tutorial, you'll learn to:
+1. Design conversation flows that feel natural and helpful
+2. Train ZOOMi on your brand voice and product knowledge
+3. Implement progressive profiling to gather customer data naturally
+4. Set up intelligent routing between automation and human support
+5. Analyze conversation data for continuous improvement
+
+Transform customer interactions from transactions to relationships with AI-powered conversations.`,
+        tasks: [
+          {
+            id: 903001,
+            description: "Design conversational flows with ZOOMi",
+            type: "practical",
+            requirements: ["Customer journey maps", "Common questions"],
+            verificationCriteria: ["Conversation flows created", "Intents mapped"]
+          }
+        ],
+        estimatedTime: 80,
+        skillsLearned: ["Conversational Marketing", "AI Chatbot Design", "Natural Language Processing"],
+        chapterNumber: 9,
+        isPremium: true
       }
-      
-      try {
-        // Get all tutorial files with proper naming convention
-        const files = fs.readdirSync(tutorialsDir).filter(file => 
-          file.startsWith('chapter') && file.endsWith('.ts') && !file.includes('storage.ts')
-        );
-        
-        console.log(`Found ${files.length} tutorial files`);
-        
-        if (files.length === 0) {
-          // No tutorial files found, load default tutorials
-          this.loadDefaultTutorials();
-          return;
-        }
-        
-        // Process each file to extract chapter and subchapter
-        const tutorialFiles = files.map(file => {
-          // Extract chapter number from filename
-          const chapterMatch = file.match(/chapter(\d+)/i);
-          let chapterNumber = 1; // Default chapter
-          
-          if (chapterMatch) {
-            chapterNumber = parseInt(chapterMatch[1]);
+    ];
+    
+    // Add some standard tutorials for other chapters too
+    this.tutorials.push(
+      // CHAPTER 1 sample
+      {
+        id: 101,
+        title: "Getting Started with Digital Marketing",
+        level: "Beginner",
+        content: `# Introduction to Digital Marketing
+
+Digital marketing encompasses all marketing efforts that use an electronic device or the internet. Businesses leverage digital channels such as search engines, social media, email, and websites to connect with current and prospective customers.
+
+## Why Digital Marketing Matters
+
+- Reach your audience where they spend their time
+- Cost-effective compared to traditional marketing
+- Precisely target your ideal customers
+- Measure results accurately
+- Adapt quickly based on real-time data
+
+## Digital Marketing Channels
+
+1. **Search Engine Optimization (SEO)**
+2. **Pay-Per-Click Advertising (PPC)**
+3. **Social Media Marketing**
+4. **Content Marketing**
+5. **Email Marketing**
+6. **Mobile Marketing**
+
+## Setting Your Digital Marketing Goals
+
+Before diving into tactics, it's important to establish clear goals. Common digital marketing objectives include:
+
+- Increasing brand awareness
+- Generating leads
+- Driving sales
+- Building customer loyalty
+- Establishing thought leadership
+
+## Measuring Success
+
+Digital marketing allows for precise measurement through various metrics:
+
+- Website traffic
+- Conversion rate
+- Cost per lead
+- Customer acquisition cost
+- Return on investment
+
+This tutorial will guide you through building your first digital marketing strategy.`,
+        tasks: [
+          {
+            id: 101001,
+            description: "Define your digital marketing goals",
+            type: "practical",
+            requirements: ["Business objectives"],
+            verificationCriteria: ["SMART goals documented"]
           }
-      } catch (e) {
-        console.log('Error reading tutorials directory, loading default tutorials');
-        this.loadDefaultTutorials();
-        return;
+        ],
+        estimatedTime: 45,
+        skillsLearned: ["Digital Marketing Fundamentals", "Marketing Strategy", "Goal Setting"],
+        chapterNumber: 1
+      },
+      // CHAPTER 2 sample
+      {
+        id: 201,
+        title: "Understanding Google Ads Platform",
+        level: "Beginner",
+        content: `# Google Ads Platform Overview
+
+Google Ads is Google's online advertising platform that allows businesses to display ads on Google's search results and its advertising network.
+
+## Key Components of Google Ads
+
+- **Campaigns**: The highest level of organization
+- **Ad Groups**: Contains your ads and keywords
+- **Keywords**: Terms that trigger your ads
+- **Ads**: The actual advertisements shown to users
+- **Extensions**: Additional information that enhances your ads
+
+## Campaign Types
+
+1. **Search Campaigns**: Text ads on search results
+2. **Display Campaigns**: Visual ads on websites
+3. **Video Campaigns**: Video ads on YouTube
+4. **Shopping Campaigns**: Product listings
+5. **App Campaigns**: Promote mobile applications
+
+## Account Structure Best Practices
+
+- Organize campaigns by product/service lines
+- Group similar keywords together
+- Create ad groups with tight thematic focus
+- Implement proper tracking for conversion actions
+
+In this tutorial, you'll learn how to set up your Google Ads account structure for optimal performance.`,
+        tasks: [
+          {
+            id: 201001,
+            description: "Set up your first campaign",
+            type: "practical",
+            requirements: ["Google Ads account"],
+            verificationCriteria: ["Campaign created", "Ad groups structured"]
+          }
+        ],
+        estimatedTime: 60,
+        skillsLearned: ["Campaign Structure", "Ad Setup", "Account Organization"],
+        chapterNumber: 2
       }
-        
-        return {
-          filename: file,
-          chapterNumber
-        };
-      });
-      
-      // Create a mapping of tutorials by chapter
-      console.log(`Processing ${tutorialFiles.length} tutorial files by chapter`);
-      
-      // Define hardcoded tutorials with ALL chapters
-      this.tutorials = [
-        // CHAPTER 1: Introduction to Digital Marketing
-        {
-          id: 101,
-          title: "Getting Started with Digital Marketing",
-          level: "Beginner",
-          content: this.loadTutorialContent('chapter1-1-Introduction.ts'),
-          tasks: [
-            {
-              id: 101001,
-              description: "Set up a digital marketing account",
-              type: "practical",
-              requirements: ["Email account"],
-              verificationCriteria: ["Account created"]
-            }
-          ],
-          estimatedTime: 45,
-          skillsLearned: ["Digital Marketing Basics"],
-          chapterNumber: 1
-        },
-        {
-          id: 102,
-          title: "Unleash the Power of Google Ads",
-          level: "Beginner",
-          content: this.loadTutorialContent('chapter1-2.ts'),
-          tasks: [
-            {
-              id: 102001,
-              description: "Understand the basics of Google Ads",
-              type: "practical",
-              requirements: ["Google account"],
-              verificationCriteria: ["Quiz completed"]
-            }
-          ],
-          estimatedTime: 50,
-          skillsLearned: ["Google Ads Fundamentals"],
-          chapterNumber: 1
-        },
-        {
-          id: 103,
-          title: "Digital Marketing Basics",
-          level: "Beginner",
-          content: this.loadTutorialContent('chapter1-3-digitalmarketing basics .ts'),
-          tasks: [
-            {
-              id: 103001,
-              description: "Develop a simple marketing plan",
-              type: "practical",
-              requirements: ["Marketing goals"],
-              verificationCriteria: ["Plan documented"]
-            }
-          ],
-          estimatedTime: 45,
-          skillsLearned: ["Marketing Planning", "Strategy Basics"],
-          chapterNumber: 1
-        },
-        
-        // CHAPTER 2: Google Ads Fundamentals
-        {
-          id: 201,
-          title: "Understanding Google Ads Platform",
-          level: "Beginner",
-          content: this.loadTutorialContent('chapter2-1-allaboutcampaigns.ts'),
-          tasks: [
-            {
-              id: 201001,
-              description: "Set up your first campaign",
-              type: "practical",
-              requirements: ["Google Ads account"],
-              verificationCriteria: ["Campaign created"]
-            }
-          ],
-          estimatedTime: 60,
-          skillsLearned: ["Campaign Structure", "Ad Setup"],
-          chapterNumber: 2
-        },
-        {
-          id: 202,
-          title: "Campaign Types in Google Ads",
-          level: "Beginner",
-          content: this.loadTutorialContent('chapter2-2.ts'),
-          tasks: [
-            {
-              id: 202001,
-              description: "Create different campaign types",
-              type: "practical",
-              requirements: ["Google Ads account"],
-              verificationCriteria: ["Multiple campaigns created"]
-            }
-          ],
-          estimatedTime: 65,
-          skillsLearned: ["Campaign Strategy", "Budget Management"],
-          chapterNumber: 2
-        },
-        {
-          id: 203,
-          title: "Audience Targeting Strategies",
-          level: "Beginner", 
-          content: this.loadTutorialContent('chapter2-3-audienceTargetingStrategies.ts'),
-          tasks: [
-            {
-              id: 203001,
-              description: "Set up audience targeting",
-              type: "practical",
-              requirements: ["Google Ads account"],
-              verificationCriteria: ["Audiences configured"]
-            }
-          ],
-          estimatedTime: 55,
-          skillsLearned: ["Audience Segmentation", "Targeting"],
-          chapterNumber: 2
-        },
-        {
-          id: 204,
-          title: "Shopping Campaigns",
-          level: "Beginner",
-          content: this.loadTutorialContent('chapter2-4-shoppingCampaigns.ts'),
-          tasks: [
-            {
-              id: 204001,
-              description: "Set up a shopping campaign",
-              type: "practical", 
-              requirements: ["Merchant Center account"],
-              verificationCriteria: ["Product feed created", "Campaign launched"]
-            }
-          ],
-          estimatedTime: 70,
-          skillsLearned: ["Shopping Campaigns", "Product Feed Management"],
-          chapterNumber: 2
-        },
-        {
-          id: 205,
-          title: "Google Ads Account Architecture",
-          level: "Beginner",
-          content: this.loadTutorialContent('chapter2-5-googleAdsAccountArchitecture.ts'),
-          tasks: [
-            {
-              id: 205001,
-              description: "Structure your Google Ads account",
-              type: "practical",
-              requirements: ["Access to Google Ads"],
-              verificationCriteria: ["Account structure implemented"]
-            }
-          ],
-          estimatedTime: 65,
-          skillsLearned: ["Account Organization", "Campaign Hierarchy"],
-          chapterNumber: 2
-        },
-        
-        // CHAPTER 3: Advanced Google Ads
-        {
-          id: 301,
-          title: "Advanced Campaign Strategies",
-          level: "Intermediate",
-          content: this.loadTutorialContent('chapter3-1.ts'),
-          tasks: [
-            {
-              id: 301001,
-              description: "Implement advanced bidding strategies",
-              type: "practical",
-              requirements: ["Active Google Ads campaigns"],
-              verificationCriteria: ["Strategies implemented", "Performance improved"]
-            }
-          ],
-          estimatedTime: 75,
-          skillsLearned: ["Advanced Bidding", "Campaign Optimization"],
-          chapterNumber: 3
-        },
-        {
-          id: 302,
-          title: "Effective Campaign Management",
-          level: "Intermediate",
-          content: this.loadTutorialContent('chapter3-2.ts'),
-          tasks: [
-            {
-              id: 302001,
-              description: "Set up campaign management protocols",
-              type: "practical",
-              requirements: ["Active campaigns"],
-              verificationCriteria: ["Management structure implemented"]
-            }
-          ],
-          estimatedTime: 70,
-          skillsLearned: ["Campaign Management", "Optimization Workflow"],
-          chapterNumber: 3
-        },
-        {
-          id: 303,
-          title: "Goal Setting for Campaigns",
-          level: "Intermediate",
-          content: this.loadTutorialContent('chapter3-3.ts'),
-          tasks: [
-            {
-              id: 303001,
-              description: "Define campaign objectives and KPIs",
-              type: "practical",
-              requirements: ["Business goals"],
-              verificationCriteria: ["KPIs documented", "Goals aligned with business objectives"]
-            }
-          ],
-          estimatedTime: 60,
-          skillsLearned: ["Goal Setting", "KPI Definition"],
-          chapterNumber: 3
-        },
-        
-        // CHAPTER 4: Marketing Objectives
-        {
-          id: 401,
-          title: "Audience Targeting Core Strategies",
-          level: "Intermediate",
-          content: this.loadTutorialContent('chapter4-1.ts'),
-          tasks: [
-            {
-              id: 401001,
-              description: "Create audience targeting strategy",
-              type: "practical",
-              requirements: ["Customer persona data"],
-              verificationCriteria: ["Targeting strategy documented"]
-            }
-          ],
-          estimatedTime: 65,
-          skillsLearned: ["Audience Analysis", "Strategic Targeting"],
-          chapterNumber: 4
-        },
-        
-        // CHAPTER 5: Analytics
-        {
-          id: 501,
-          title: "Testing Methodologies",
-          level: "Intermediate",
-          content: this.loadTutorialContent('chapter-1-4.ts'), // Inconsistent naming
-          tasks: [
-            {
-              id: 501001,
-              description: "Design A/B testing framework",
-              type: "practical",
-              requirements: ["Active marketing campaigns"],
-              verificationCriteria: ["Testing framework implemented"]
-            }
-          ],
-          estimatedTime: 70,
-          skillsLearned: ["A/B Testing", "Experimental Design"],
-          chapterNumber: 5
-        },
-        {
-          id: 502,
-          title: "Data Analysis for Marketing",
-          level: "Intermediate",
-          content: this.loadTutorialContent('chapter5-1.ts'),
-          tasks: [
-            {
-              id: 502001,
-              description: "Analyze campaign performance data",
-              type: "practical",
-              requirements: ["Campaign data"],
-              verificationCriteria: ["Analysis report created"]
-            }
-          ],
-          estimatedTime: 75,
-          skillsLearned: ["Data Analysis", "Performance Reporting"],
-          chapterNumber: 5
-        },
-        {
-          id: 503,
-          title: "Site Analytics",
-          level: "Intermediate",
-          content: this.loadTutorialContent('chapter5-2-siteAnalytics.ts'),
-          tasks: [
-            {
-              id: 503001,
-              description: "Set up website analytics tracking",
-              type: "practical",
-              requirements: ["Website access", "Analytics account"],
-              verificationCriteria: ["Analytics implemented", "Key metrics tracked"]
-            }
-          ],
-          estimatedTime: 65,
-          skillsLearned: ["Website Analytics", "Visitor Tracking"],
-          chapterNumber: 5
-        },
-        {
-          id: 504,
-          title: "Analytics Foundations",
-          level: "Intermediate",
-          content: this.loadTutorialContent('chapter5-3-analyticsFoundations.ts'),
-          tasks: [
-            {
-              id: 504001,
-              description: "Establish analytics foundation",
-              type: "practical",
-              requirements: ["Business metrics"],
-              verificationCriteria: ["Analytics framework created"]
-            }
-          ],
-          estimatedTime: 70,
-          skillsLearned: ["Analytics Framework", "Performance Measurement"],
-          chapterNumber: 5
-        },
-        {
-          id: 505,
-          title: "Data-Driven Marketing",
-          level: "Intermediate",
-          content: this.loadTutorialContent('chapter5-4-analyticsDataDriven.ts'),
-          tasks: [
-            {
-              id: 505001,
-              description: "Implement data-driven marketing",
-              type: "practical",
-              requirements: ["Analytics access", "Marketing campaigns"],
-              verificationCriteria: ["Data integration implemented", "Insights generated"]
-            }
-          ],
-          estimatedTime: 75,
-          skillsLearned: ["Data-Driven Decision Making", "Marketing Intelligence"],
-          chapterNumber: 5
-        },
-        
-        // CHAPTER 6: Marketing Channels
-        {
-          id: 601,
-          title: "Google Ads Mastery",
-          level: "Advanced",
-          content: this.loadTutorialContent('chapter6-1.ts'),
-          tasks: [
-            {
-              id: 601001,
-              description: "Optimize advanced Google Ads campaigns",
-              type: "practical",
-              requirements: ["Active Google Ads campaigns"],
-              verificationCriteria: ["Optimization implemented", "Performance improved"]
-            }
-          ],
-          estimatedTime: 90,
-          skillsLearned: ["Advanced Google Ads", "Campaign Mastery"],
-          chapterNumber: 6
-        },
-        {
-          id: 602,
-          title: "Advanced SEO Techniques",
-          level: "Advanced",
-          content: this.loadTutorialContent('chapter6-2-seoAdvanced.ts'),
-          tasks: [
-            {
-              id: 602001,
-              description: "Implement advanced SEO strategies",
-              type: "practical",
-              requirements: ["Website access", "SEO tools"],
-              verificationCriteria: ["Advanced optimizations implemented"]
-            }
-          ],
-          estimatedTime: 85,
-          skillsLearned: ["Technical SEO", "Advanced Optimization"],
-          chapterNumber: 6
-        },
-        {
-          id: 603,
-          title: "Email Marketing Automation",
-          level: "Advanced",
-          content: this.loadTutorialContent('chapter6-3-emailMarketingAutomation.ts'),
-          tasks: [
-            {
-              id: 603001,
-              description: "Set up email marketing automation",
-              type: "practical",
-              requirements: ["Email marketing platform", "Customer lists"],
-              verificationCriteria: ["Automation workflows implemented"]
-            }
-          ],
-          estimatedTime: 80,
-          skillsLearned: ["Email Automation", "Customer Journey Mapping"],
-          chapterNumber: 6
-        },
-        {
-          id: 604,
-          title: "Social Media Marketing",
-          level: "Advanced",
-          content: this.loadTutorialContent('chapter6-5-socialMediaMarketing.ts'),
-          tasks: [
-            {
-              id: 604001,
-              description: "Create comprehensive social media strategy",
-              type: "practical",
-              requirements: ["Social media accounts", "Content assets"],
-              verificationCriteria: ["Strategy documented", "Content calendar created"]
-            }
-          ],
-          estimatedTime: 85,
-          skillsLearned: ["Social Media Strategy", "Content Planning"],
-          chapterNumber: 6
-        },
-        
-        // CHAPTER 7: SEO
-        {
-          id: 701,
-          title: "SEO Foundations",
-          level: "Beginner",
-          content: this.loadTutorialContent('chapter7-1-seoFoundations.ts'),
-          tasks: [
-            {
-              id: 701001,
-              description: "Implement basic SEO elements",
-              type: "practical",
-              requirements: ["Website access"],
-              verificationCriteria: ["SEO improvements implemented"]
-            }
-          ],
-          estimatedTime: 60,
-          skillsLearned: ["SEO Basics", "On-Page Optimization"],
-          chapterNumber: 7
-        },
-        {
-          id: 702,
-          title: "SEO Foundations - Enhanced",
-          level: "Beginner",
-          content: this.loadTutorialContent('chapter7-2-seoFoundations-enhanced.ts'),
-          tasks: [
-            {
-              id: 702001,
-              description: "Implement extended SEO fundamentals",
-              type: "practical",
-              requirements: ["Website access", "SEO tools"],
-              verificationCriteria: ["On-page optimizations implemented"]
-            }
-          ],
-          estimatedTime: 65,
-          skillsLearned: ["On-Page SEO", "Content Optimization"],
-          chapterNumber: 7
-        },
-        {
-          id: 703,
-          title: "SEO Foundations - Complete",
-          level: "Beginner",
-          content: this.loadTutorialContent('chapter7-3-seoFoundations-new.ts'),
-          tasks: [
-            {
-              id: 703001,
-              description: "Implement complete SEO foundation",
-              type: "practical", 
-              requirements: ["Website access"],
-              verificationCriteria: ["Complete SEO foundation implemented"]
-            }
-          ],
-          estimatedTime: 70,
-          skillsLearned: ["Complete SEO Foundation", "Optimization Strategy"],
-          chapterNumber: 7
-        },
-        {
-          id: 704,
-          title: "SEO Intermediate Skills",
-          level: "Intermediate",
-          content: this.loadTutorialContent('chapter7-4-seoIntermediate.ts'),
-          tasks: [
-            {
-              id: 704001,
-              description: "Implement intermediate SEO tactics",
-              type: "practical",
-              requirements: ["Website access", "SEO tools"],
-              verificationCriteria: ["Intermediate tactics implemented"]
-            }
-          ],
-          estimatedTime: 75,
-          skillsLearned: ["Technical SEO", "Content Strategy"],
-          chapterNumber: 7
-        },
-        {
-          id: 705,
-          title: "SEO Expert Level",
-          level: "Advanced",
-          content: this.loadTutorialContent('chapter7-5seoExpert.ts'),
-          tasks: [
-            {
-              id: 705001,
-              description: "Implement expert SEO strategies",
-              type: "practical",
-              requirements: ["Website access", "SEO toolset", "Analytics access"],
-              verificationCriteria: ["Expert strategies implemented", "Performance metrics tracked"]
-            }
-          ],
-          estimatedTime: 90,
-          skillsLearned: ["Advanced SEO", "Technical Optimization"],
-          chapterNumber: 7
-        },
-        {
-          id: 706,
-          title: "SEO Master Level",
-          level: "Advanced",
-          content: this.loadTutorialContent('chapter7-6-seoMaster.ts'),
-          tasks: [
-            {
-              id: 706001,
-              description: "Implement master-level SEO strategy",
-              type: "practical",
-              requirements: ["Enterprise website", "Advanced SEO tools"],
-              verificationCriteria: ["Enterprise SEO strategy implemented"]
-            }
-          ],
-          estimatedTime: 95,
-          skillsLearned: ["Enterprise SEO", "Advanced Technical SEO"],
-          chapterNumber: 7
-        },
-        
-        // CHAPTER 8: Troubleshooting
-        {
-          id: 801,
-          title: "Google Ads Troubleshooting",
-          level: "Advanced",
-          content: this.loadTutorialContent('chapter8-1-Troubleshooting.ts'),
-          tasks: [
-            {
-              id: 801001,
-              description: "Diagnose and fix campaign issues",
-              type: "practical",
-              requirements: ["Active campaigns", "Performance data"],
-              verificationCriteria: ["Issues identified", "Fixes implemented"]
-            }
-          ],
-          estimatedTime: 70,
-          skillsLearned: ["Troubleshooting Process", "Problem-Solving"],
-          chapterNumber: 8
-        },
-        {
-          id: 802,
-          title: "Google Ads Troubleshooting Best Practices",
-          level: "Advanced",
-          content: this.loadTutorialContent('chapter8-2-Troubleshooyingbestpractices.ts'),
-          tasks: [
-            {
-              id: 802001,
-              description: "Implement troubleshooting framework",
-              type: "practical",
-              requirements: ["Campaign management access"],
-              verificationCriteria: ["Framework documented", "Process implemented"]
-            }
-          ],
-          estimatedTime: 75,
-          skillsLearned: ["Best Practices", "Systematic Troubleshooting"],
-          chapterNumber: 8
-        },
-        {
-          id: 803,
-          title: "Troubleshooting Tips and Tricks",
-          level: "Advanced",
-          content: this.loadTutorialContent('chapter8-3-troubleshootingtipsandtricks.ts'),
-          tasks: [
-            {
-              id: 803001,
-              description: "Apply advanced troubleshooting techniques",
-              type: "practical",
-              requirements: ["Google Ads access", "Analytics access"],
-              verificationCriteria: ["Techniques applied", "Issues resolved"]
-            }
-          ],
-          estimatedTime: 65,
-          skillsLearned: ["Advanced Troubleshooting", "Performance Recovery"],
-          chapterNumber: 8
-        },
-        // CHAPTER 9: AI-Powered Marketing (Premium Content)
-        {
-          id: 901,
-          title: "AI-Powered SEO Content: Rank Higher, Convert Better",
-          level: "Advanced",
-          content: this.loadTutorialContent('chapter9-0-AIPoweredSEOContent:RankHigherConvertBetter'),
-          tasks: [
-            {
-              id: 901001,
-              description: "Implement AI-driven content optimization strategy",
-              type: "practical",
-              requirements: ["Access to AI tools", "Content to optimize"],
-              verificationCriteria: ["Strategy implemented", "Content optimized with AI"]
-            }
-          ],
-          estimatedTime: 90,
-          skillsLearned: ["AI-Powered SEO", "Content Optimization", "NLP Technologies"],
-          chapterNumber: 9,
-          isPremium: true // Mark as premium content
-        }
-      ];
-      
-      console.log(`Loaded ${this.tutorials.length} manually defined tutorials with explicit chapter numbers`);
-      
-    } catch (error) {
-      console.error('Error loading tutorials from directory:', error);
-      // Initialize with a fallback empty array
-      this.tutorials = [];
-    }
-  }
-  
-  private loadTutorialContent(filename: string): string {
-    try {
-      // Using fileURLToPath for ESM compatibility to get correct file paths
-      const currentFilePath = fileURLToPath(import.meta.url);
-      const currentDir = path.dirname(currentFilePath);
-      
-      // Navigate to the tutorials directory
-      const tutorialsDir = path.join(currentDir, '..', 'data', 'tutorials');
-      
-      // Simplified content loading approach - read file contents directly
-      const findAndReadFile = (searchName: string): string => {
-        try {
-          // Get all files in the tutorial directory
-          const files = fs.readdirSync(tutorialsDir);
-          
-          // First try for exact match
-          let targetFile = files.find(f => f === searchName);
-          
-          // If not found, try for partial match
-          if (!targetFile) {
-            targetFile = files.find(f => 
-              f.includes(searchName.replace('.ts', '')) || 
-              searchName.includes(f.replace('.ts', ''))
-            );
-          }
-          
-          if (targetFile) {
-            // Read the file directly as string
-            const filePath = path.join(tutorialsDir, targetFile);
-            const fileContent = fs.readFileSync(filePath, 'utf8');
-            
-            // Extract content by finding export const content = ` and matching backticks
-            const contentMatch = fileContent.match(/export\s+const\s+content\s*=\s*`([\s\S]*)`/);
-            if (contentMatch && contentMatch[1]) {
-              return contentMatch[1];
-            }
-            
-            return 'Content extraction failed. Please check tutorial file format.';
-          }
-          
-          return 'Tutorial file not found';
-        } catch (err) {
-          console.error(`Error reading file ${searchName}:`, err);
-          return 'Error reading tutorial file';
-        }
-      };
-      
-      return findAndReadFile(filename);
-    } catch (error) {
-      console.error('Error loading tutorial content:', error);
-      return 'Error loading tutorial content';
-    }
+    );
+    
+    console.log(`Loaded ${this.tutorials.length} default tutorials including premium content`);
   }
 
+  /**
+   * Get tutorials filtered by user level
+   */
   async getTutorials(userLevel: string): Promise<Tutorial[]> {
-    console.log(`Getting tutorials for user level: ${userLevel}`);
+    // If tutorials not loaded, ensure they are
+    if (this.tutorials.length === 0) {
+      this.loadDefaultTutorials();
+    }
     
-    // Ensure all tutorials have chapter info for frontend
-    const tutorialsWithChapters = this.tutorials.map(tutorial => {
-      if (!tutorial.chapterNumber) {
-        // Try to extract from title/content if missing
-        const title = tutorial.title.toLowerCase();
-        const content = tutorial.content.toLowerCase();
-        const chapterMatch = title.match(/chapter\s*(\d+)/i) || content.match(/chapter\s*(\d+)/i);
-        if (chapterMatch) {
-          tutorial.chapterNumber = parseInt(chapterMatch[1]);
-        }
-      }
-      return tutorial;
-    });
+    // For simplicity, we're returning all tutorials here
+    // In a real implementation, you could filter by user level
+    console.log(`Returning ${this.tutorials.length} tutorials for user level: ${userLevel}`);
     
-    // Sort tutorials by chapter number
-    const sortedTutorials = tutorialsWithChapters.sort((a, b) => {
-      // First sort by chapter
-      const chapterA = a.chapterNumber || 999;
-      const chapterB = b.chapterNumber || 999;
-      
-      if (chapterA !== chapterB) {
-        return chapterA - chapterB;
-      }
-      
-      // Then sort by ID within chapters
-      return a.id - b.id;
-    });
-    
-    console.log(`Found ${sortedTutorials.length} tutorials for user level: ${userLevel}`);
-    
-    // Log each tutorial we're checking for debugging
-    sortedTutorials.forEach(tutorial => {
-      console.log(`Tutorial ${tutorial.id}: ${tutorial.chapterNumber} ${tutorial.title}`);
-    });
-    
-    // Return all tutorials regardless of level for now to fix chapter display
-    return sortedTutorials;
+    // Sort tutorials by chapter number for presentation
+    return this.sortTutorialsByChapter(this.tutorials);
   }
   
+  /**
+   * Sort tutorials by chapter number for proper display order
+   */
   private sortTutorialsByChapter(tutorials: Tutorial[]): Tutorial[] {
-    return tutorials.sort((a, b) => {
-      // First try to sort by explicit chapter number
-      const chapterA = a.chapterNumber || 0;
-      const chapterB = b.chapterNumber || 0;
+    return [...tutorials].sort((a, b) => {
+      // First by chapter number
+      const chapterComparison = (a.chapterNumber || 999) - (b.chapterNumber || 999);
+      if (chapterComparison !== 0) return chapterComparison;
       
-      if (chapterA !== chapterB) {
-        return chapterA - chapterB;
-      }
-      
-      // If same chapter, try to extract subchapter from title
-      const titleA = a.title.toLowerCase();
-      const titleB = b.title.toLowerCase();
-      
-      const subchapterMatchA = titleA.match(/(\d+)\.(\d+)/);
-      const subchapterMatchB = titleB.match(/(\d+)\.(\d+)/);
-      
-      if (subchapterMatchA && subchapterMatchB) {
-        return parseInt(subchapterMatchA[2]) - parseInt(subchapterMatchB[2]);
-      }
-      
-      // Default to ID sorting
+      // Then by ID within the same chapter
       return a.id - b.id;
     });
   }
-
+  
+  /**
+   * Get completed tutorial IDs for a specific user
+   */
   async getUserProgress(userId: number): Promise<number[]> {
     try {
-      // Query the correct table that has tutorial_id
       const result = await pool.query(
-        `SELECT tutorial_id FROM user_completed_tutorials WHERE user_id = $1`,
+        'SELECT tutorial_id FROM user_tutorial_progress WHERE user_id = $1',
         [userId]
       );
       
-      const completedTutorials = result.rows.map(row => Number(row.tutorial_id));
-      console.log(`Retrieved ${completedTutorials.length} completed tutorials for user ${userId}:`, completedTutorials);
+      // Extract tutorial IDs from results
+      const completedTutorials = result.rows.map(row => row.tutorial_id);
+      console.log(`Found ${completedTutorials.length} completed tutorials for user ${userId}`);
       
       return completedTutorials;
     } catch (error) {
@@ -815,29 +328,128 @@ export class TutorialService {
       return [];
     }
   }
-
+  
+  /**
+   * Mark a tutorial as completed for a user
+   */
   async markTutorialComplete(userId: number, tutorialId: number): Promise<void> {
     try {
-      // Check if already completed to avoid duplicates
-      const exists = await pool.query(
-        `SELECT * FROM user_completed_tutorials WHERE user_id = $1 AND tutorial_id = $2`,
+      // Check if already completed
+      const existsResult = await pool.query(
+        'SELECT * FROM user_tutorial_progress WHERE user_id = $1 AND tutorial_id = $2',
         [userId, tutorialId]
       );
       
-      if (exists.rowCount === 0) {
-        // Create new record in the correct table
+      if (existsResult.rows.length === 0) {
+        // Not yet completed, insert new record
         await pool.query(
-          `INSERT INTO user_completed_tutorials (user_id, tutorial_id, completed_at) 
-           VALUES ($1, $2, NOW())`,
+          'INSERT INTO user_tutorial_progress(user_id, tutorial_id, completed_at) VALUES($1, $2, NOW())',
           [userId, tutorialId]
         );
+        
+        // Add XP to user profile for completing a tutorial
+        await this.addUserXP(userId, 50); // 50 XP per tutorial completion
+        console.log(`Tutorial ${tutorialId} marked complete for user ${userId} with XP reward`);
+      }
+    } catch (error) {
+      console.error('Error marking tutorial completion:', error);
+    }
+  }
+  
+  /**
+   * Add XP to user profile and handle level progression
+   */
+  private async addUserXP(userId: number, xpAmount: number): Promise<void> {
+    try {
+      // First get current XP and level
+      const userResult = await db.select()
+        .from(userProfiles)
+        .where(({ eq }) => eq(userProfiles.userId, userId))
+        .limit(1);
+      
+      if (userResult.length === 0) {
+        console.log(`User profile not found for user ${userId}`);
+        return;
       }
       
-      console.log(`Marked tutorial ${tutorialId} as complete for user ${userId}`);
+      const userProfile = userResult[0];
+      const currentXP = userProfile.xp || 0;
+      const newXP = currentXP + xpAmount;
+      
+      // Update user XP
+      await db.update(userProfiles)
+        .set({ xp: newXP })
+        .where(({ eq }) => eq(userProfiles.userId, userId));
+      
+      console.log(`Added ${xpAmount} XP for user ${userId}. New total: ${newXP}`);
+      
+      // Check for level progression
+      await this.checkLevelProgression(userId, newXP);
     } catch (error) {
-      console.error('Error marking tutorial as complete:', error);
+      console.error('Error adding XP to user:', error);
     }
+  }
+  
+  /**
+   * Check and update user level based on XP thresholds
+   */
+  private async checkLevelProgression(userId: number, currentXP: number): Promise<void> {
+    try {
+      // Define XP thresholds for levels
+      const levels = [
+        { name: "Beginner", threshold: 0 },
+        { name: "Rookie", threshold: 100 },
+        { name: "Intermediate", threshold: 500 },
+        { name: "Advanced", threshold: 1000 },
+        { name: "Expert", threshold: 3000 },
+        { name: "Master", threshold: 5000 }
+      ];
+      
+      // Find highest level user qualifies for
+      let newLevel = "Beginner";
+      for (let i = levels.length - 1; i >= 0; i--) {
+        if (currentXP >= levels[i].threshold) {
+          newLevel = levels[i].name;
+          break;
+        }
+      }
+      
+      // Get current level
+      const userResult = await db.select()
+        .from(userProfiles)
+        .where(({ eq }) => eq(userProfiles.userId, userId))
+        .limit(1);
+      
+      if (userResult.length > 0) {
+        const currentLevel = userResult[0].level || "Beginner";
+        
+        // Update if level changed
+        if (currentLevel !== newLevel) {
+          await db.update(userProfiles)
+            .set({ level: newLevel })
+            .where(({ eq }) => eq(userProfiles.userId, userId));
+          
+          console.log(`User ${userId} leveled up from ${currentLevel} to ${newLevel}!`);
+        }
+      }
+    } catch (error) {
+      console.error('Error checking level progression:', error);
+    }
+  }
+  
+  /**
+   * Get a specific tutorial by ID
+   */
+  async getTutorialById(tutorialId: number): Promise<Tutorial | null> {
+    // If tutorials not loaded, ensure they are
+    if (this.tutorials.length === 0) {
+      this.loadDefaultTutorials();
+    }
+    
+    const tutorial = this.tutorials.find(t => t.id === tutorialId);
+    return tutorial || null;
   }
 }
 
+// Create singleton instance
 export const tutorialService = new TutorialService();
