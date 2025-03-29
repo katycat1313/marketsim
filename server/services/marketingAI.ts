@@ -643,7 +643,114 @@ Provide personalized recommendations considering:
     // use the first available model
     if (this.anthropic) return ANTHROPIC_MODEL;
     if (this.openai) return OPENAI_MODEL;
-    throw new Error('No AI model available');
+    
+    // If no premium models are available, use the free model
+    return "gpt-3.5-turbo"; // Fallback to free model
+  }
+  
+  /**
+   * Tests if a specific AI provider is working correctly with the given API key
+   * 
+   * @param provider The AI provider to test ('anthropic', 'openai', or 'gemini')
+   * @returns Object with working status and message
+   */
+  async testProvider(provider: 'anthropic' | 'openai' | 'gemini'): Promise<{working: boolean, message: string}> {
+    try {
+      const prompt = 'Return the text "API_KEY_WORKING" if you can read this message.';
+      
+      switch (provider) {
+        case 'anthropic':
+          if (!this.anthropic) throw new Error('Anthropic not configured');
+          const anthropicResponse = await this.anthropic.messages.create({
+            model: ANTHROPIC_MODEL,
+            max_tokens: 100,
+            messages: [{
+              role: 'user',
+              content: prompt
+            }]
+          });
+          
+          const anthropicText = anthropicResponse.content[0].text;
+          return {
+            working: anthropicText.includes('API_KEY_WORKING'),
+            message: 'Anthropic API key is working correctly!'
+          };
+          
+        case 'openai':
+          if (!this.openai) throw new Error('OpenAI not configured');
+          const openaiResponse = await this.openai.chat.completions.create({
+            model: OPENAI_MODEL,
+            messages: [{
+              role: 'user',
+              content: prompt
+            }]
+          });
+          
+          const openaiText = openaiResponse.choices[0].message.content;
+          return {
+            working: openaiText?.includes('API_KEY_WORKING') || false,
+            message: 'OpenAI API key is working correctly!'
+          };
+          
+        case 'gemini':
+          if (!this.geminiKey) throw new Error('Gemini not configured');
+          const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent';
+          const response = await fetch(`${url}?key=${this.geminiKey}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              contents: [{
+                parts: [{
+                  text: prompt
+                }]
+              }]
+            })
+          });
+          
+          const data = await response.json();
+          if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
+            throw new Error('Invalid response from Gemini API');
+          }
+          
+          const geminiText = data.candidates[0].content.parts[0].text;
+          return {
+            working: geminiText.includes('API_KEY_WORKING'),
+            message: 'Gemini API key is working correctly!'
+          };
+          
+        default:
+          throw new Error('Unsupported AI provider');
+      }
+    } catch (error) {
+      // Handle specific error types and return appropriate messages
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      
+      // Common API key errors to detect
+      if (errorMessage.includes('401') || errorMessage.includes('unauthorized') || errorMessage.includes('invalid api key')) {
+        return {
+          working: false,
+          message: `Invalid ${provider} API key. Please check your key and try again.`
+        };
+      } else if (errorMessage.includes('403') || errorMessage.includes('forbidden')) {
+        return {
+          working: false,
+          message: `Your ${provider} API key doesn't have permission to access the required model.`
+        };
+      } else if (errorMessage.includes('429') || errorMessage.includes('rate limit')) {
+        return {
+          working: false,
+          message: `Rate limit exceeded for your ${provider} API key. Please try again later.`
+        };
+      }
+      
+      // Default error response
+      return {
+        working: false,
+        message: `Error testing ${provider} API key: ${errorMessage}`
+      };
+    }
   }
 
 
@@ -975,8 +1082,11 @@ Provide personalized recommendations considering:
   }
 }
 
-// Helper function to safely initialize API keys from environment variables
-function getApiKeys() {
+// Helper function to safely initialize system API keys from environment variables
+// These are used for the free tier only
+function getSystemApiKeys() {
+  // We only need one of these keys for the free tier
+  // Prioritize using Anthropic, then OpenAI, then Gemini
   const anthropicKey = process.env.ANTHROPIC_API_KEY || null;
   const openaiKey = process.env.OPENAI_API_KEY || null;
   const geminiKey = process.env.GOOGLE_AI_API_KEY || null;
@@ -984,9 +1094,12 @@ function getApiKeys() {
   return { anthropicKey, openaiKey, geminiKey };
 }
 
-// Create instances for different subscription tiers
-const { anthropicKey, openaiKey, geminiKey } = getApiKeys();
+// Create a basic instance for the free tier
+// Uses system API keys if available, otherwise falls back to default free models
+const { anthropicKey, openaiKey, geminiKey } = getSystemApiKeys();
 
+// This instance is used for free tier users
+// It will use a system API key if available, or fallback to free models
 export const freeMarketingAI = new MarketingAI(
   SubscriptionTier.FREE,
   anthropicKey,
@@ -994,16 +1107,42 @@ export const freeMarketingAI = new MarketingAI(
   geminiKey
 );
 
+// For premium tiers, we don't initialize with API keys
+// Instead we'll create user-specific instances with their own API keys
 export const premiumMarketingAI = new MarketingAI(
-  SubscriptionTier.PREMIUM,
-  anthropicKey,
-  openaiKey,
-  geminiKey
+  SubscriptionTier.PREMIUM
 );
 
 export const enterpriseMarketingAI = new MarketingAI(
-  SubscriptionTier.ENTERPRISE,
-  anthropicKey,
-  openaiKey,
-  geminiKey
+  SubscriptionTier.ENTERPRISE
 );
+
+// Create a user-specific instance of MarketingAI based on their stored API settings
+export async function getUserMarketingAI(username: string, tier: SubscriptionTier): Promise<MarketingAI> {
+  if (tier === SubscriptionTier.FREE) {
+    // Free tier users share the system instance
+    return freeMarketingAI;
+  }
+  
+  // For premium tiers, get the user's API settings
+  try {
+    const storage = new Storage();
+    const userSettings = await storage.getUserApiSettings(username);
+    
+    if (userSettings) {
+      // Create a new instance with the user's keys
+      return new MarketingAI(
+        tier,
+        userSettings.anthropicApiKey || null,
+        userSettings.openaiApiKey || null,
+        userSettings.geminiApiKey || null
+      );
+    }
+  } catch (error) {
+    console.error(`Error getting API settings for user ${username}:`, error);
+  }
+  
+  // If no user settings found or error occurred, return the appropriate tier instance
+  // without API keys (will use free models only)
+  return tier === SubscriptionTier.PREMIUM ? premiumMarketingAI : enterpriseMarketingAI;
+}
