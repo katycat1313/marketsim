@@ -1,4 +1,4 @@
-import { useState } from "react";
+import * as React from "react";
 import { useLocation } from "wouter";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -26,6 +26,7 @@ import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { Eye, EyeOff, LogIn, Facebook, Lock } from "lucide-react";
 import Logo from "@/components/Logo";
+import { useAuth } from "@/context/AuthContext";
 
 const loginSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address" }),
@@ -36,7 +37,15 @@ const loginSchema = z.object({
 export default function LoginPage() {
   const [, navigate] = useLocation();
   const { toast } = useToast();
-  const [showPassword, setShowPassword] = useState(false);
+  const { login, isAuthenticated } = useAuth();
+  const [showPassword, setShowPassword] = React.useState(false);
+  
+  // Redirect if already authenticated
+  React.useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/dashboard');
+    }
+  }, [isAuthenticated, navigate]);
   
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -49,30 +58,11 @@ export default function LoginPage() {
 
   async function onSubmit(values: z.infer<typeof loginSchema>) {
     try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: values.email,
-          password: values.password,
-        }),
-      });
-      
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Login failed');
-      }
-      
-      const userData = await response.json();
-      
-      // Save user data to localStorage or context
-      localStorage.setItem('user', JSON.stringify(userData));
+      await login(values.email, values.password);
       
       toast({
         title: "Login successful",
-        description: `Welcome back, ${userData.firstName || 'User'}!`,
+        description: "Welcome back!",
       });
       
       // Navigate to dashboard after login
