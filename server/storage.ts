@@ -68,6 +68,22 @@ type InsertAchievement = z.infer<typeof insertAchievementSchema>;
 type InsertUserQuizResult = z.infer<typeof insertUserQuizResultSchema>;
 
 export interface IStorage {
+  // A/B Testing operations
+  createABTest(test: schema.InsertABTest): Promise<number>;
+  getABTest(testId: number): Promise<schema.ABTest | null>;
+  getABTests(userId?: number, campaignId?: number): Promise<schema.ABTest[]>;
+  updateABTest(testId: number, updates: Partial<schema.ABTest>): Promise<void>;
+  deleteABTest(testId: number): Promise<void>;
+  
+  createABTestVariant(variant: schema.InsertABTestVariant): Promise<number>;
+  getABTestVariant(variantId: number): Promise<schema.ABTestVariant | null>;
+  getABTestVariants(testId: number): Promise<schema.ABTestVariant[]>;
+  updateABTestVariant(variantId: number, updates: Partial<schema.ABTestVariant>): Promise<void>;
+  deleteABTestVariant(variantId: number): Promise<void>;
+  
+  saveSimulationResult(testId: number, result: any): Promise<void>;
+  getSimulationResult(testId: number): Promise<any | null>;
+  
   // Persona operations
   createPersona(persona: schema.InsertPersona): Promise<schema.Persona>;
   getPersona(id: number): Promise<schema.Persona | undefined>;
@@ -397,6 +413,80 @@ export class DrizzleStorage implements IStorage {
   async getKeywordListById(id: number): Promise<schema.KeywordList | undefined> {
     const result = await db.select().from(keywordLists).where(eq(keywordLists.id, id));
     return result[0];
+  }
+
+  // A/B Testing Operations
+  async createABTest(test: schema.InsertABTest): Promise<number> {
+    const result = await db.insert(abTests).values(test).returning();
+    return result[0].id;
+  }
+
+  async getABTest(testId: number): Promise<schema.ABTest | null> {
+    const result = await db.select().from(abTests).where(eq(abTests.id, testId));
+    return result[0] || null;
+  }
+
+  async getABTests(userId?: number, campaignId?: number): Promise<schema.ABTest[]> {
+    let query = db.select().from(abTests);
+    
+    if (campaignId) {
+      query = query.where(eq(abTests.campaignId, campaignId));
+    }
+    
+    // Note: This assumes that tests have a userId field or similar
+    // If not present in your schema, remove this condition
+    /* 
+    if (userId) {
+      query = query.where(eq(abTests.userId, userId));
+    }
+    */
+    
+    return await query;
+  }
+
+  async updateABTest(testId: number, updates: Partial<schema.ABTest>): Promise<void> {
+    await db.update(abTests)
+      .set(updates)
+      .where(eq(abTests.id, testId));
+  }
+
+  async deleteABTest(testId: number): Promise<void> {
+    await db.delete(abTests).where(eq(abTests.id, testId));
+  }
+
+  async createABTestVariant(variant: schema.InsertABTestVariant): Promise<number> {
+    const result = await db.insert(abTestVariants).values(variant).returning();
+    return result[0].id;
+  }
+
+  async getABTestVariant(variantId: number): Promise<schema.ABTestVariant | null> {
+    const result = await db.select().from(abTestVariants).where(eq(abTestVariants.id, variantId));
+    return result[0] || null;
+  }
+
+  async getABTestVariants(testId: number): Promise<schema.ABTestVariant[]> {
+    return await db.select().from(abTestVariants).where(eq(abTestVariants.abTestId, testId));
+  }
+
+  async updateABTestVariant(variantId: number, updates: Partial<schema.ABTestVariant>): Promise<void> {
+    await db.update(abTestVariants)
+      .set(updates)
+      .where(eq(abTestVariants.id, variantId));
+  }
+
+  async deleteABTestVariant(variantId: number): Promise<void> {
+    await db.delete(abTestVariants).where(eq(abTestVariants.id, variantId));
+  }
+
+  // Simulation Results (stored in-memory for now, would be stored in a real database)
+  private simulationResults = new Map<number, any>();
+
+  async saveSimulationResult(testId: number, result: any): Promise<void> {
+    this.simulationResults.set(testId, result);
+  }
+
+  async getSimulationResult(testId: number): Promise<any | null> {
+    return this.simulationResults.get(testId) || null;
   }
 }
 
