@@ -92,11 +92,12 @@ export class AuthService {
       
       // Check if the password matches using Node.js crypto
       const [salt, storedHash] = user.password.split(':');
-      const hashedBuffer = scryptSync(password, salt, 64);
       
-      // Use timing-safe comparison to prevent timing attacks
-      const keyBuffer = Buffer.from(storedHash, 'hex');
-      const isMatch = timingSafeEqual(hashedBuffer, keyBuffer);
+      // Generate hash of the provided password
+      const hashedInputPassword = scryptSync(password, salt, 64).toString('hex');
+      
+      // Use constant-time comparison to prevent timing attacks
+      const isMatch = storedHash === hashedInputPassword;
       
       if (!isMatch) {
         return null;
