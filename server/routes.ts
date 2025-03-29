@@ -34,6 +34,7 @@ import { registerAdSimulationRoutes } from "./routes/adSimulationRoutes";
 import { registerDataVisualizationRoutes } from "./routes/dataVisualizationRoutes";
 import abTestRoutes from "./routes/abTestRoutes";
 import { authService } from "./services/authService";
+import { registerAICapabilitiesRoutes } from "./services/aiCapabilities";
 
 export async function registerRoutes(app: Express) {
   const httpServer = createServer(app);
@@ -1017,6 +1018,10 @@ export async function registerRoutes(app: Express) {
   // Register A/B Test routes
   app.use('/api/ab-tests', abTestRoutes);
   console.log('A/B Test routes registered');
+
+  // Register AI Capabilities routes
+  registerAICapabilitiesRoutes(app);
+  console.log('AI Capabilities routes registered');
 
   return httpServer;
 }
