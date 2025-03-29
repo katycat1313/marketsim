@@ -1,5 +1,6 @@
 // user.ts
 import { pgTable, serial, text, integer, timestamp } from "drizzle-orm/pg-core";
+import { eq } from "drizzle-orm";
 import { db } from "./server/db";
 
 export const users = pgTable("users", {
@@ -41,6 +42,32 @@ export const userCollaborations = pgTable("user_collaborations", {
 
 // Function to update user level based on performance
 async function updateUserLevel(userId: number, performanceScore: number) {
-  const newLevel = Math.min(Math.floor(performanceScore / 20) + 1, 6); // Simple leveling logic
-  await db.update(users).set({ level: newLevel }).where({ id: userId });
+  // Convert numerical level to string level based on performance score
+  let levelString: string;
+  const newLevelNum = Math.min(Math.floor(performanceScore / 20) + 1, 6); // Simple leveling logic
+  
+  switch(newLevelNum) {
+    case 1:
+      levelString = 'Beginner';
+      break;
+    case 2:
+      levelString = 'Intermediate';
+      break;
+    case 3:
+      levelString = 'Advanced';
+      break;
+    case 4:
+      levelString = 'Expert';
+      break;
+    case 5:
+      levelString = 'Master';
+      break;
+    case 6:
+      levelString = 'Legend';
+      break;
+    default:
+      levelString = 'Beginner';
+  }
+  
+  await db.update(users).set({ level: levelString }).where(eq(users.id, userId));
 }
