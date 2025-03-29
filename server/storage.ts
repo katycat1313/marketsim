@@ -34,7 +34,30 @@ import {
   keywordLists,
   insertKeywordResearchProjectSchema,
   insertKeywordResultSchema,
-  insertKeywordListSchema
+  insertKeywordListSchema,
+  // Campaign Simulation Engine imports
+  campaignPerformanceMetrics,
+  insertCampaignPerformanceMetricsSchema,
+  keywordPerformance,
+  insertKeywordPerformanceSchema,
+  adCreatives,
+  insertAdCreativesSchema,
+  adCreativePerformance,
+  insertAdCreativePerformanceSchema,
+  abTests,
+  insertAbTestsSchema,
+  abTestVariants,
+  insertAbTestVariantsSchema,
+  marketConditions,
+  insertMarketConditionsSchema,
+  audienceInsights,
+  insertAudienceInsightsSchema,
+  simulationParameters,
+  insertSimulationParametersSchema,
+  simulationRuns,
+  insertSimulationRunsSchema,
+  funnelAnalytics,
+  insertFunnelAnalyticsSchema
 } from "../shared/schema";
 
 type InsertUserProfile = z.infer<typeof insertUserProfileSchema>;

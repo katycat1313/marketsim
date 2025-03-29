@@ -796,6 +796,290 @@ export type InsertKeywordResearchProject = z.infer<typeof insertKeywordResearchP
 export type InsertKeywordResult = z.infer<typeof insertKeywordResultSchema>;
 export type InsertKeywordList = z.infer<typeof insertKeywordListSchema>;
 
+// Campaign Simulation Engine Tables
+
+// Campaign Performance Metrics - Detailed daily metrics for each campaign
+export const campaignPerformanceMetrics = pgTable("campaign_performance_metrics", {
+  id: serial("id").primaryKey(),
+  campaignId: integer("campaign_id").references(() => campaigns.id).notNull(),
+  date: timestamp("date").notNull(),
+  impressions: integer("impressions").notNull(),
+  clicks: integer("clicks").notNull(),
+  cost: decimal("cost", { precision: 10, scale: 2 }).notNull(),
+  conversions: integer("conversions").notNull(),
+  conversionValue: decimal("conversion_value", { precision: 10, scale: 2 }).notNull(),
+  ctr: decimal("ctr", { precision: 5, scale: 4 }).notNull(), // Click-through rate
+  cpc: decimal("cpc", { precision: 8, scale: 2 }).notNull(), // Cost per click
+  cpa: decimal("cpa", { precision: 8, scale: 2 }), // Cost per acquisition
+  roas: decimal("roas", { precision: 8, scale: 2 }), // Return on ad spend
+  qualityScore: decimal("quality_score", { precision: 4, scale: 1 }), // Google Ads specific
+  averagePosition: decimal("average_position", { precision: 4, scale: 1 }), // Search position
+  // Audience engagement metrics
+  engagement: decimal("engagement", { precision: 5, scale: 4 }), // Engagement rate
+  videoViews: integer("video_views"), // For video campaigns
+  videoViewRate: decimal("video_view_rate", { precision: 5, scale: 4 }),
+  // Social-specific metrics
+  socialEngagements: integer("social_engagements"), // Likes, shares, comments
+  // Weather and seasonal data that might affect performance
+  seasonalityFactor: decimal("seasonality_factor", { precision: 4, scale: 2 }),
+  weatherConditions: text("weather_conditions"),
+  // Market volatility factors
+  competitionIntensity: decimal("competition_intensity", { precision: 4, scale: 2 }),
+  industryTrends: json("industry_trends").$type<{
+    trendName: string,
+    impact: number, // -1.0 to 1.0 impact scale
+  }[]>(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Keyword Performance - Track individual keyword performance in search campaigns
+export const keywordPerformance = pgTable("keyword_performance", {
+  id: serial("id").primaryKey(),
+  campaignId: integer("campaign_id").references(() => campaigns.id).notNull(),
+  keyword: text("keyword").notNull(),
+  matchType: text("match_type").notNull(), // 'broad', 'phrase', 'exact'
+  date: timestamp("date").notNull(),
+  impressions: integer("impressions").notNull(),
+  clicks: integer("clicks").notNull(),
+  cost: decimal("cost", { precision: 10, scale: 2 }).notNull(),
+  conversions: decimal("conversions", { precision: 8, scale: 2 }).notNull(),
+  conversionValue: decimal("conversion_value", { precision: 10, scale: 2 }),
+  ctr: decimal("ctr", { precision: 5, scale: 4 }).notNull(),
+  cpc: decimal("cpc", { precision: 8, scale: 2 }).notNull(),
+  qualityScore: decimal("quality_score", { precision: 4, scale: 1 }), 
+  searchImpressionShare: decimal("search_impression_share", { precision: 5, scale: 4 }),
+  averagePosition: decimal("average_position", { precision: 4, scale: 1 }),
+  competitorBidding: boolean("competitor_bidding").default(false), // Is competition bidding on this keyword
+  competitorIntensity: decimal("competitor_intensity", { precision: 4, scale: 2 }),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Ad Creative Performance - Track performance of individual ad creatives
+export const adCreatives = pgTable("ad_creatives", {
+  id: serial("id").primaryKey(),
+  campaignId: integer("campaign_id").references(() => campaigns.id).notNull(),
+  name: text("name").notNull(),
+  type: text("type").notNull(), // 'text', 'image', 'video', 'responsive'
+  headline: text("headline"),
+  description: text("description"),
+  imageUrl: text("image_url"),
+  videoUrl: text("video_url"),
+  callToAction: text("call_to_action"),
+  destinationUrl: text("destination_url").notNull(),
+  adStrength: text("ad_strength"), // 'poor', 'average', 'good', 'excellent'
+  creativeScore: decimal("creative_score", { precision: 4, scale: 1 }), // AI-generated score based on best practices
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Ad Creative Performance Metrics
+export const adCreativePerformance = pgTable("ad_creative_performance", {
+  id: serial("id").primaryKey(),
+  adCreativeId: integer("ad_creative_id").references(() => adCreatives.id).notNull(),
+  date: timestamp("date").notNull(),
+  impressions: integer("impressions").notNull(),
+  clicks: integer("clicks").notNull(),
+  conversions: decimal("conversions", { precision: 8, scale: 2 }).notNull(),
+  ctr: decimal("ctr", { precision: 5, scale: 4 }).notNull(),
+  cost: decimal("cost", { precision: 8, scale: 2 }).notNull(),
+  conversionRate: decimal("conversion_rate", { precision: 5, scale: 4 }),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// A/B Testing - Configure and track A/B tests for campaigns
+export const abTests = pgTable("ab_tests", {
+  id: serial("id").primaryKey(),
+  campaignId: integer("campaign_id").references(() => campaigns.id).notNull(),
+  name: text("name").notNull(),
+  status: text("status").notNull(), // 'active', 'paused', 'completed'
+  startDate: timestamp("start_date").notNull(),
+  endDate: timestamp("end_date"),
+  testVariable: text("test_variable").notNull(), // 'headline', 'description', 'image', 'bidding_strategy', etc.
+  controlGroupId: integer("control_group_id"), // Reference to control variant
+  winningVariantId: integer("winning_variant_id"), // Reference to winning variant
+  confidenceLevel: decimal("confidence_level", { precision: 5, scale: 4 }), // Statistical confidence
+  conclusions: text("conclusions"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// A/B Test Variants - Individual variants in an A/B test
+export const abTestVariants = pgTable("ab_test_variants", {
+  id: serial("id").primaryKey(),
+  abTestId: integer("ab_test_id").references(() => abTests.id).notNull(),
+  name: text("name").notNull(),
+  isControl: boolean("is_control").default(false).notNull(),
+  value: text("value").notNull(), // The actual variant value being tested
+  impressions: integer("impressions").default(0).notNull(),
+  clicks: integer("clicks").default(0).notNull(),
+  conversions: decimal("conversions", { precision: 8, scale: 2 }).default(0).notNull(),
+  cost: decimal("cost", { precision: 10, scale: 2 }).default(0).notNull(),
+  ctr: decimal("ctr", { precision: 5, scale: 4 }),
+  conversionRate: decimal("conversion_rate", { precision: 5, scale: 4 }),
+  cpa: decimal("cpa", { precision: 8, scale: 2 }), 
+  improvementPercent: decimal("improvement_percent", { precision: 6, scale: 2 }), // Improvement over control
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Market Conditions - Simulated market conditions that affect campaign performance
+export const marketConditions = pgTable("market_conditions", {
+  id: serial("id").primaryKey(),
+  date: timestamp("date").notNull(),
+  industry: text("industry").notNull(),
+  competitionLevel: decimal("competition_level", { precision: 4, scale: 2 }).notNull(), // 0-1 scale
+  seasonalityFactor: decimal("seasonality_factor", { precision: 4, scale: 2 }).notNull(), // Seasonal impact
+  events: json("events").$type<{
+    name: string,
+    impact: number, // -1.0 to 1.0 impact scale
+    affectedChannels: string[]
+  }[]>(),
+  trendingKeywords: json("trending_keywords").$type<{
+    keyword: string,
+    volumeIncrease: number, // Percent increase
+    competitionIncrease: number // Percent increase
+  }[]>(),
+  channelPerformance: json("channel_performance").$type<{
+    channel: string, // 'search', 'social', 'display', etc.
+    performanceIndex: number // 0-10 scale of overall channel performance
+  }[]>(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Campaign Audience Insights - Detailed audience performance data
+export const audienceInsights = pgTable("audience_insights", {
+  id: serial("id").primaryKey(),
+  campaignId: integer("campaign_id").references(() => campaigns.id).notNull(),
+  date: date("date").notNull(),
+  ageRange: text("age_range"), // '18-24', '25-34', etc.
+  gender: text("gender"), // 'male', 'female', 'unknown'
+  location: text("location"),
+  device: text("device"), // 'mobile', 'desktop', 'tablet'
+  interests: text("interests").array(),
+  impressions: integer("impressions").notNull(),
+  clicks: integer("clicks").notNull(),
+  conversions: decimal("conversions", { precision: 8, scale: 2 }).notNull(),
+  cost: decimal("cost", { precision: 10, scale: 2 }).notNull(),
+  ctr: decimal("ctr", { precision: 5, scale: 4 }).notNull(),
+  conversionRate: decimal("conversion_rate", { precision: 5, scale: 4 }).notNull(),
+  cpa: decimal("cpa", { precision: 8, scale: 2 }).notNull(),
+  engagementRate: decimal("engagement_rate", { precision: 5, scale: 4 }),
+  audienceAffinityScore: decimal("audience_affinity_score", { precision: 4, scale: 1 }), // How well this audience matches with the campaign
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Simulation Parameters - Configure how simulations run
+export const simulationParameters = pgTable("simulation_parameters", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  industry: text("industry").notNull(),
+  marketSize: decimal("market_size", { precision: 12, scale: 2 }).notNull(), // Total addressable market size
+  competitionLevel: decimal("competition_level", { precision: 4, scale: 2 }).notNull(), // 0-1 scale
+  seasonalityPatterns: json("seasonality_patterns").$type<{
+    month: number, // 1-12
+    factor: number // Multiplier for this month
+  }[]>().notNull(),
+  userBehaviorModel: text("user_behavior_model").notNull(), // Algorithm used to simulate user behavior
+  clickThroughModel: text("click_through_model").notNull(), // Algorithm for CTR calculation
+  conversionModel: text("conversion_model").notNull(), // Algorithm for conversion calculation
+  budgetExhaustionModel: text("budget_exhaustion_model").notNull(), // How budget spending is simulated
+  adFatigueModel: text("ad_fatigue_model").notNull(), // How ad performance degrades over time
+  randomVariationFactor: decimal("random_variation_factor", { precision: 4, scale: 2 }).notNull(), // How much randomness to include
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Simulation Runs - Track individual simulation runs for campaigns
+export const simulationRuns = pgTable("simulation_runs", {
+  id: serial("id").primaryKey(),
+  campaignId: integer("campaign_id").references(() => campaigns.id).notNull(),
+  simulationParametersId: integer("simulation_parameters_id").references(() => simulationParameters.id).notNull(),
+  startDate: date("start_date").notNull(),
+  endDate: date("end_date").notNull(), 
+  status: text("status").notNull(), // 'running', 'completed', 'failed'
+  resultsData: json("results_data"), // Aggregated results of the simulation
+  performanceScore: decimal("performance_score", { precision: 4, scale: 1 }), // Overall performance rating
+  insightsGenerated: text("insights_generated").array(), // AI-generated insights
+  optimizationSuggestions: json("optimization_suggestions").$type<{
+    category: string, // 'bidding', 'targeting', 'creative', etc.
+    suggestion: string,
+    estimatedImprovement: string
+  }[]>(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Campaign Funnel Analytics - Track user journey through the marketing funnel
+export const funnelAnalytics = pgTable("funnel_analytics", {
+  id: serial("id").primaryKey(),
+  campaignId: integer("campaign_id").references(() => campaigns.id).notNull(),
+  date: date("date").notNull(),
+  // Funnel stages
+  impressions: integer("impressions").notNull(),
+  clicks: integer("clicks").notNull(), 
+  landingPageViews: integer("landing_page_views").notNull(),
+  productPageViews: integer("product_page_views"),
+  addToCarts: integer("add_to_carts"),
+  checkoutStarts: integer("checkout_starts"),
+  conversions: integer("conversions").notNull(),
+  // Funnel metrics
+  clickThroughRate: decimal("click_through_rate", { precision: 5, scale: 4 }).notNull(),
+  landingPageConversionRate: decimal("landing_page_conversion_rate", { precision: 5, scale: 4 }).notNull(),
+  cartAbandonmentRate: decimal("cart_abandonment_rate", { precision: 5, scale: 4 }),
+  overallConversionRate: decimal("overall_conversion_rate", { precision: 5, scale: 4 }).notNull(),
+  // Funnel analysis
+  dropOffPoints: json("drop_off_points").$type<{
+    funnelStage: string,
+    dropOffRate: number,
+    potentialIssues: string[]
+  }[]>(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Insert schemas
+export const insertCampaignPerformanceMetricsSchema = createInsertSchema(campaignPerformanceMetrics).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertKeywordPerformanceSchema = createInsertSchema(keywordPerformance).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertAdCreativesSchema = createInsertSchema(adCreatives).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertAdCreativePerformanceSchema = createInsertSchema(adCreativePerformance).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertAbTestsSchema = createInsertSchema(abTests).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertAbTestVariantsSchema = createInsertSchema(abTestVariants).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertMarketConditionsSchema = createInsertSchema(marketConditions).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertAudienceInsightsSchema = createInsertSchema(audienceInsights).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertSimulationParametersSchema = createInsertSchema(simulationParameters).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertSimulationRunsSchema = createInsertSchema(simulationRuns).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertFunnelAnalyticsSchema = createInsertSchema(funnelAnalytics).omit({ id: true, createdAt: true, updatedAt: true });
+
+// Export simulation engine types
+export type CampaignPerformanceMetrics = typeof campaignPerformanceMetrics.$inferSelect;
+export type KeywordPerformance = typeof keywordPerformance.$inferSelect;
+export type AdCreative = typeof adCreatives.$inferSelect;
+export type AdCreativePerformance = typeof adCreativePerformance.$inferSelect;
+export type ABTest = typeof abTests.$inferSelect;
+export type ABTestVariant = typeof abTestVariants.$inferSelect;
+export type MarketCondition = typeof marketConditions.$inferSelect;
+export type AudienceInsight = typeof audienceInsights.$inferSelect;
+export type SimulationParameter = typeof simulationParameters.$inferSelect;
+export type SimulationRun = typeof simulationRuns.$inferSelect;
+export type FunnelAnalytic = typeof funnelAnalytics.$inferSelect;
+
+export type InsertCampaignPerformanceMetrics = z.infer<typeof insertCampaignPerformanceMetricsSchema>;
+export type InsertKeywordPerformance = z.infer<typeof insertKeywordPerformanceSchema>;
+export type InsertAdCreative = z.infer<typeof insertAdCreativesSchema>;
+export type InsertAdCreativePerformance = z.infer<typeof insertAdCreativePerformanceSchema>;
+export type InsertABTest = z.infer<typeof insertAbTestsSchema>;
+export type InsertABTestVariant = z.infer<typeof insertAbTestVariantsSchema>;
+export type InsertMarketCondition = z.infer<typeof insertMarketConditionsSchema>;
+export type InsertAudienceInsight = z.infer<typeof insertAudienceInsightsSchema>;
+export type InsertSimulationParameter = z.infer<typeof insertSimulationParametersSchema>;
+export type InsertSimulationRun = z.infer<typeof insertSimulationRunsSchema>;
+export type InsertFunnelAnalytic = z.infer<typeof insertFunnelAnalyticsSchema>;
+
 // Export types
 export type DataVisualizationChallenge = typeof dataVisualizationChallenges.$inferSelect;
 export type DataVisualizationAttempt = typeof dataVisualizationAttempts.$inferSelect;
