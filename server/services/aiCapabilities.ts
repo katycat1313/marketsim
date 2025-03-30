@@ -591,7 +591,7 @@ export class AICapabilities {
     // For now, extract some relevant knowledge based on keywords
     const keywords = question.toLowerCase().split(' ');
     
-    const relevantData: any = {
+    const relevantData: Record<string, any> = {
       channels: {},
       analytics: {},
       testing: {},
@@ -642,7 +642,7 @@ export class AICapabilities {
     };
     
     // Get industry-specific knowledge
-    const relevantChannels = {};
+    const relevantChannels: Record<string, any> = {};
     Object.keys(knowledgeBaseData.channels).forEach(channel => {
       relevantChannels[channel] = {
         fundamentals: knowledgeBaseData.channels[channel].fundamentals,
@@ -854,7 +854,7 @@ export const aiCapabilities = new AICapabilities();
 
 // Routes helper
 export const registerAICapabilitiesRoutes = (app: any) => {
-  app.post('/api/ai/simulation-feedback', async (req, res) => {
+  app.post('/api/ai/simulation-feedback', async (req: any, res: any) => {
     try {
       const { simulationType, simulationData, userProfile, provider } = req.body;
       
@@ -876,7 +876,7 @@ export const registerAICapabilitiesRoutes = (app: any) => {
     }
   });
   
-  app.post('/api/ai/content-analysis', async (req, res) => {
+  app.post('/api/ai/content-analysis', async (req: any, res: any) => {
     try {
       const { contentType, content, targetAudience, goals, provider } = req.body;
       
@@ -899,7 +899,7 @@ export const registerAICapabilitiesRoutes = (app: any) => {
     }
   });
   
-  app.post('/api/ai/strategy-suggestion', async (req, res) => {
+  app.post('/api/ai/strategy-suggestion', async (req: any, res: any) => {
     try {
       const { businessType, industry, objectives, targetAudience, budget, currentChannels, provider } = req.body;
       
@@ -924,7 +924,7 @@ export const registerAICapabilitiesRoutes = (app: any) => {
     }
   });
   
-  app.post('/api/ai/knowledge-analysis', async (req, res) => {
+  app.post('/api/ai/knowledge-analysis', async (req: any, res: any) => {
     try {
       const { userId, completedTutorials, quizResults, simulationScores, provider } = req.body;
       
@@ -947,7 +947,7 @@ export const registerAICapabilitiesRoutes = (app: any) => {
     }
   });
   
-  app.post('/api/ai/assistant', async (req, res) => {
+  app.post('/api/ai/assistant', async (req: any, res: any) => {
     try {
       const { question, chatHistory, userContext, provider } = req.body;
       
