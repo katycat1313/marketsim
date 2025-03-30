@@ -255,6 +255,40 @@ export class TutorialService {
       }]
     });
     
+    this.tutorials.push({
+      id: 1001,
+      chapterNumber: 10,
+      title: "Conversion Rate Optimization Fundamentals",
+      level: "Intermediate",
+      content: this.loadTutorialContent('chapter10-1-ConversionRateOptimization.ts'),
+      estimatedTime: 120,
+      skillsLearned: ["Conversion Optimization", "A/B Testing", "User Experience"],
+      tasks: [{
+        id: 100101,
+        description: "Analyze a website for conversion opportunities",
+        type: "practical",
+        requirements: ["Complete CRO analysis worksheet"],
+        verificationCriteria: ["Identified at least 3 conversion barriers", "Proposed specific solutions"]
+      }]
+    });
+    
+    this.tutorials.push({
+      id: 1002,
+      chapterNumber: 10,
+      title: "Landing Page Optimization Strategies",
+      level: "Intermediate",
+      content: this.loadTutorialContent('chapter10-2-LandingPageOptimization.ts'),
+      estimatedTime: 90,
+      skillsLearned: ["Landing Page Design", "Message Matching", "Call-to-Action Optimization"],
+      tasks: [{
+        id: 100201,
+        description: "Optimize a landing page using best practices",
+        type: "practical",
+        requirements: ["Apply landing page best practices"],
+        verificationCriteria: ["Clear value proposition", "Strong visual hierarchy", "Compelling CTAs", "Effective trust elements"]
+      }]
+    });
+    
     // Chapter 11: Advanced Analytics & Attribution
     this.tutorials.push({
       id: 13,
