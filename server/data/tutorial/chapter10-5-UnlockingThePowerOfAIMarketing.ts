@@ -39,11 +39,13 @@ Enhanced ROI: By identifying what works (and what doesn’t), AI ensures your ma
 
 Example: E-commerce brands use predictive analytics to identify customers likely to abandon their carts and send them personalized discount offers at just the right moment.
 
-Graphs & Charts: Visualizing the Benefits
-Key Benefit     Traditional Marketing Approach  AI-Powered Marketing Approach   Improvement (%)
-Personalization Generic messaging       Hyper-personalized content      +150%
-Time Spent on Tasks     10 hours/week   3 hours/week    -70%
-Campaign Optimization   Manual adjustments      Real-time automation    +200% ROI
+## Graphs & Charts: Visualizing the Benefits
+
+| Key Benefit | Traditional Marketing Approach | AI-Powered Marketing Approach | Improvement (%) |
+|-------------|--------------------------------|-------------------------------|-----------------|
+| Personalization | Generic messaging | Hyper-personalized content | +150% |
+| Time Spent on Tasks | 10 hours/week | 3 hours/week | -70% |
+| Campaign Optimization | Manual adjustments | Real-time automation | +200% ROI |
 Interactive Exercise: Applying AI Benefits to Your Business
 🔹 Activity
 Open your chatbot and input this prompt:

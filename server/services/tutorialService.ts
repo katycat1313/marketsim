@@ -68,6 +68,8 @@ export class TutorialService {
       const lesson3Content = await this.loadTutorialContent('chapter10-3-DemocratizationofTechnology.ts');
       const lesson4Content = await this.loadTutorialContent('chapter10-4-ChallengeandOpportunity.ts');
       const lesson5Content = await this.loadTutorialContent('chapter10-5-UnlockingThePowerOfAIMarketing.ts');
+      const lesson6Content = await this.loadTutorialContent('chapter10-6-AIIntoAction.ts');
+      const lesson7Content = await this.loadTutorialContent('chapter10-7-FutureOfAIMarketing.ts');
     // Chapter 1: Digital Marketing Fundamentals
     this.tutorials.push({
       id: 1,
@@ -278,7 +280,7 @@ export class TutorialService {
       chapterNumber: 10,
       title: "The AI Marketing Revolution – A New Paradigm",
       level: "Intermediate",
-      content: this.loadTutorialContent('chapter10-1-FoundationsofAIinDigital Marketing.ts'),
+      content: lesson1Content,
       estimatedTime: 45,
       skillsLearned: ["AI Marketing Fundamentals", "Marketing Transformation", "Digital Disruption"],
       tasks: [{
@@ -295,7 +297,7 @@ export class TutorialService {
       chapterNumber: 10,
       title: "The AI Shift – From Buzzword to Backbone",
       level: "Intermediate",
-      content: this.loadTutorialContent('chapter10-2-TheAIShift.ts'),
+      content: lesson2Content,
       estimatedTime: 50,
       skillsLearned: ["Predictive Analytics", "Hyper-Personalization", "Workflow Automation"],
       tasks: [{
@@ -312,7 +314,7 @@ export class TutorialService {
       chapterNumber: 10,
       title: "Democratization of Technology – Power to the People",
       level: "Intermediate",
-      content: this.loadTutorialContent('chapter10-3-DemocratizationofTechnology.ts'),
+      content: lesson3Content,
       estimatedTime: 60,
       skillsLearned: ["AI Tool Selection", "Affordable Technology", "Small Business AI Strategy"],
       tasks: [{
@@ -329,7 +331,7 @@ export class TutorialService {
       chapterNumber: 10,
       title: "Challenge and Opportunity – Embracing the Learning Curve",
       level: "Intermediate",
-      content: this.loadTutorialContent('chapter10-4-ChallengeandOpportunity.ts'),
+      content: lesson4Content,
       estimatedTime: 55,
       skillsLearned: ["AI Adoption Strategies", "Change Management", "Learning Plan Development"],
       tasks: [{
@@ -346,7 +348,7 @@ export class TutorialService {
       chapterNumber: 10,
       title: "Key Benefits – Unlocking the Power of AI in Marketing",
       level: "Advanced",
-      content: this.loadTutorialContent('chapter10-5-UnlockingThePowerOfAIMarketing.ts'),
+      content: lesson5Content,
       estimatedTime: 65,
       skillsLearned: ["Audience Connection", "Automated Marketing", "Data-Driven Decision Making"],
       tasks: [{
@@ -355,6 +357,42 @@ export class TutorialService {
         type: "simulation",
         requirements: ["Identify which AI benefit has greatest potential for your business", "Plan implementation of selected AI approach"],
         verificationCriteria: ["Clear benefit prioritization", "Specific tools identified", "Implementation roadmap with timeline", "Success metrics defined"]
+      }]
+    });
+    
+    // Add Lesson 6: Real-World Examples - AI in Action
+    this.tutorials.push({
+      id: 1006,
+      chapterNumber: 10,
+      title: "Real-World Examples - AI in Action",
+      level: "Advanced",
+      content: lesson6Content,
+      estimatedTime: 70,
+      skillsLearned: ["Case Study Analysis", "AI Implementation Planning", "ROI Measurement"],
+      tasks: [{
+        id: 100601,
+        description: "Create an AI implementation plan for a specific marketing challenge",
+        type: "practical",
+        requirements: ["Identify a specific business challenge", "Research relevant AI solutions"],
+        verificationCriteria: ["Clear problem statement", "Appropriate AI solution selected", "Implementation steps outlined", "Success metrics defined"]
+      }]
+    });
+    
+    // Add Lesson 7: The Future of AI Marketing
+    this.tutorials.push({
+      id: 1007,
+      chapterNumber: 10,
+      title: "The Future of AI Marketing - Trends and Predictions",
+      level: "Advanced",
+      content: lesson7Content,
+      estimatedTime: 60,
+      skillsLearned: ["Future Trend Analysis", "AI Readiness Assessment", "Strategic Planning"],
+      tasks: [{
+        id: 100701,
+        description: "Develop a 5-year AI marketing vision for your business",
+        type: "practical",
+        requirements: ["Assess current AI readiness", "Identify future opportunities", "Create implementation roadmap"],
+        verificationCriteria: ["Realistic vision statement", "Specific milestones identified", "Resource requirements defined", "Measures of success established"]
       }]
     });
     
@@ -378,6 +416,9 @@ export class TutorialService {
     });
     
     console.log(`Loaded ${this.tutorials.length} default tutorials`);
+    } catch (error) {
+      console.error('Error loading tutorials:', error);
+    }
   }
   
 
