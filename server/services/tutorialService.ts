@@ -34,9 +34,31 @@ export class TutorialService {
    */
   private loadTutorialContent(filename: string): string {
     try {
-      // Try to import the content dynamically
-      const content = require(`../data/tutorial/${filename}`).default || "";
-      return content;
+      // Use dynamic import with ES modules pattern
+      // First try to access directly
+      const fs = require('fs');
+      const path = require('path');
+      
+      // Construct the path to the tutorial file
+      const tutorialPath = path.join(__dirname, '../data/tutorial', filename);
+      
+      if (fs.existsSync(tutorialPath)) {
+        // Read the file content directly
+        const fileContent = fs.readFileSync(tutorialPath, 'utf-8');
+        
+        // Extract the content from the file
+        // Most tutorial files export content as "export const content = `...`" and "export default content"
+        const contentMatch = fileContent.match(/export const content = `([\s\S]*?)`/);
+        if (contentMatch && contentMatch[1]) {
+          return contentMatch[1];
+        } else {
+          // If we can't find the export pattern, just use the file content directly
+          return fileContent;
+        }
+      } else {
+        console.error(`Tutorial file not found: ${filename}`);
+        return "Content could not be found. Please try again later.";
+      }
     } catch (error) {
       console.error(`Error loading tutorial content from ${filename}:`, error);
       return "Content could not be loaded. Please try again later.";

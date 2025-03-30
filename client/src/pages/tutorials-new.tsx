@@ -162,7 +162,22 @@ export default function TutorialsPage() {
     }
     
     // If no explicit chapter number, use content-based heuristics to assign chapters
-    if (titleLower.includes('seo') || contentLower.includes('search engine optimization')) {
+    if (titleLower.includes('content marketing') || 
+        titleLower.includes('ai-powered') || 
+        contentLower.includes('content marketing') ||
+        contentLower.includes('ai-powered seo')) {
+      return 9; // Content Marketing & AI belongs to Chapter 9
+    } else if (titleLower.includes('conversion rate') || 
+              titleLower.includes('landing page') || 
+              contentLower.includes('conversion rate') || 
+              contentLower.includes('landing page optimization')) {
+      return 10; // Conversion Optimization belongs to Chapter 10
+    } else if (titleLower.includes('advanced analytics') || 
+              titleLower.includes('attribution') || 
+              contentLower.includes('advanced analytics') ||
+              contentLower.includes('attribution model')) {
+      return 11; // Advanced Analytics & Attribution belongs to Chapter 11
+    } else if (titleLower.includes('seo') || contentLower.includes('search engine optimization')) {
       return 7; // SEO belongs to Chapter 7
     } else if (titleLower.includes('troubleshoot') || contentLower.includes('troubleshoot')) {
       return 8; // Troubleshooting to Chapter 8
@@ -299,6 +314,30 @@ export default function TutorialsPage() {
         image: "attached_assets/cart-with-packages.jpeg",
         icon: <HelpCircle className="h-6 w-6 text-orange-500" />,
         tutorials: []
+      },
+      {
+        number: 9,
+        title: "Content Marketing & AI",
+        description: "Content strategy and using AI for SEO content optimization",
+        image: "attached_assets/seo-visual.jpeg",
+        icon: <FileText className="h-6 w-6 text-blue-500" />,
+        tutorials: []
+      },
+      {
+        number: 10,
+        title: "Conversion Optimization",
+        description: "Advanced techniques to improve conversion rates across all channels",
+        image: "attached_assets/cart-with-packages.jpeg",
+        icon: <BarChart3 className="h-6 w-6 text-green-500" />,
+        tutorials: []
+      },
+      {
+        number: 11,
+        title: "Advanced Analytics & Attribution",
+        description: "Master advanced analytics including multi-touch attribution models",
+        image: "attached_assets/group-thinking.jpeg",
+        icon: <BarChart3 className="h-6 w-6 text-purple-500" />,
+        tutorials: []
       }
     ];
     
@@ -343,7 +382,22 @@ export default function TutorialsPage() {
       const titleLower = tutorial.title.toLowerCase();
       const contentLower = tutorial.content.toLowerCase();
       
-      if (titleLower.includes('seo') || contentLower.includes('search engine optimization')) {
+      if (titleLower.includes('content marketing') || 
+          titleLower.includes('ai-powered') || 
+          contentLower.includes('content marketing') ||
+          contentLower.includes('ai-powered seo')) {
+        chapterStructure[8].tutorials.push(tutorial); // Content Marketing & AI - Chapter 9
+      } else if (titleLower.includes('conversion rate') || 
+                titleLower.includes('landing page') || 
+                contentLower.includes('conversion rate') || 
+                contentLower.includes('landing page optimization')) {
+        chapterStructure[9].tutorials.push(tutorial); // Conversion Optimization - Chapter 10
+      } else if (titleLower.includes('advanced analytics') || 
+                titleLower.includes('attribution') || 
+                contentLower.includes('advanced analytics') ||
+                contentLower.includes('attribution model')) {
+        chapterStructure[10].tutorials.push(tutorial); // Advanced Analytics - Chapter 11
+      } else if (titleLower.includes('seo') || contentLower.includes('search engine optimization')) {
         chapterStructure[6].tutorials.push(tutorial); // SEO - Chapter 7
       } else if (titleLower.includes('troubleshoot') || contentLower.includes('troubleshoot')) {
         chapterStructure[7].tutorials.push(tutorial); // Troubleshooting - Chapter 8
