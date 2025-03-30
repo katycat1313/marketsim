@@ -35,6 +35,7 @@ import { registerDataVisualizationRoutes } from "./routes/dataVisualizationRoute
 import abTestRoutes from "./routes/abTestRoutes";
 import { authService } from "./services/authService";
 import { registerAICapabilitiesRoutes } from "./services/aiCapabilities";
+import { registerMicroFeedbackRoutes } from "./routes/microFeedbackRoutes";
 
 export async function registerRoutes(app: Express) {
   const httpServer = createServer(app);
@@ -1022,6 +1023,10 @@ export async function registerRoutes(app: Express) {
   // Register AI Capabilities routes
   registerAICapabilitiesRoutes(app);
   console.log('AI Capabilities routes registered');
+
+  // Register Micro-Feedback routes
+  registerMicroFeedbackRoutes(app);
+  console.log('Micro-Feedback routes registered');
 
   return httpServer;
 }

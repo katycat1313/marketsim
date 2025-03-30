@@ -28,6 +28,8 @@ import {
   insertAdPlatformSimulationAttemptSchema,
   dataVisualizationChallenges,
   dataVisualizationAttempts,
+  microFeedback,
+  insertMicroFeedbackSchema,
   insertDataVisualizationAttemptSchema,
   keywordResearchProjects,
   keywordResults,
@@ -153,6 +155,12 @@ export interface IStorage {
   createKeywordList(list: schema.InsertKeywordList): Promise<schema.KeywordList>;
   getKeywordLists(projectId: number): Promise<schema.KeywordList[]>;
   getKeywordListById(id: number): Promise<schema.KeywordList | undefined>;
+  
+  // Micro-Feedback operations
+  createMicroFeedback(feedback: schema.InsertMicroFeedback): Promise<schema.MicroFeedback>;
+  getMicroFeedbackByContentId(contentType: string, contentId: number): Promise<schema.MicroFeedback[]>;
+  getMicroFeedbackByUserId(userId: number): Promise<schema.MicroFeedback[]>;
+  getMicroFeedbackStats(contentType: string, contentId?: number): Promise<{ positive: number, neutral: number, negative: number, total: number }>;
 }
 
 export class DrizzleStorage implements IStorage {
@@ -487,6 +495,61 @@ export class DrizzleStorage implements IStorage {
 
   async getSimulationResult(testId: number): Promise<any | null> {
     return this.simulationResults.get(testId) || null;
+  }
+  
+  // Micro-Feedback operations
+  async createMicroFeedback(feedback: schema.InsertMicroFeedback): Promise<schema.MicroFeedback> {
+    const result = await db.insert(microFeedback).values(feedback).returning();
+    return result[0];
+  }
+  
+  async getMicroFeedbackByContentId(contentType: string, contentId: number): Promise<schema.MicroFeedback[]> {
+    return await db.select()
+      .from(microFeedback)
+      .where(
+        eq(microFeedback.contentType, contentType) && 
+        eq(microFeedback.contentId, contentId)
+      );
+  }
+  
+  async getMicroFeedbackByUserId(userId: number): Promise<schema.MicroFeedback[]> {
+    return await db.select()
+      .from(microFeedback)
+      .where(eq(microFeedback.userId, userId));
+  }
+  
+  async getMicroFeedbackStats(contentType: string, contentId?: number): Promise<{ positive: number, neutral: number, negative: number, total: number }> {
+    // Create base query condition
+    let condition = eq(microFeedback.contentType, contentType);
+    
+    // Add content ID condition if provided
+    if (contentId) {
+      condition = condition && eq(microFeedback.contentId, contentId);
+    }
+    
+    // Execute query with conditions
+    const results = await db.select({ sentiment: microFeedback.sentiment })
+      .from(microFeedback)
+      .where(condition);
+    
+    const stats = {
+      positive: 0,
+      neutral: 0,
+      negative: 0,
+      total: results.length
+    };
+    
+    results.forEach(result => {
+      if (result.sentiment === 'positive') {
+        stats.positive++;
+      } else if (result.sentiment === 'neutral') {
+        stats.neutral++;
+      } else if (result.sentiment === 'negative') {
+        stats.negative++;
+      }
+    });
+    
+    return stats;
   }
 }
 

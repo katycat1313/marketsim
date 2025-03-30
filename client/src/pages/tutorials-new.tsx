@@ -16,6 +16,7 @@ import {
 import ErrorBoundary from '../components/ErrorBoundary';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import TutorialContentRenderer from '../components/TutorialContentRenderer';
+import { MicroFeedback } from '@/components/ui/micro-feedback';
 
 // Tutorial interface
 interface Tutorial {
@@ -554,6 +555,15 @@ export default function TutorialsPage() {
                   content={currentTutorial.content} 
                   chapterNumber={(currentTutorial as any).chapterNumber}
                   tutorialIndex={(currentTutorial as any).lessonNumber} 
+                />
+              </div>
+
+              <div className="mt-6 mb-2">
+                <MicroFeedback 
+                  contentType="tutorial"
+                  contentId={currentTutorial.id}
+                  context={`Tutorial: ${currentTutorial.title}`}
+                  className="justify-end"
                 />
               </div>
               

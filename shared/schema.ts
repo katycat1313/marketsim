@@ -1085,3 +1085,22 @@ export type DataVisualizationChallenge = typeof dataVisualizationChallenges.$inf
 export type DataVisualizationAttempt = typeof dataVisualizationAttempts.$inferSelect;
 export type InsertDataVisualizationChallenge = z.infer<typeof insertDataVisualizationChallengeSchema>;
 export type InsertDataVisualizationAttempt = z.infer<typeof insertDataVisualizationAttemptSchema>;
+
+// Micro-Feedback Sentiment System
+export const microFeedback = pgTable("micro_feedback", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull(),
+  contentType: text("content_type").notNull(), // 'tutorial', 'simulation', 'article', etc.
+  contentId: integer("content_id").notNull(), // Reference to the content item
+  sentiment: text("sentiment").notNull(), // 'positive', 'neutral', 'negative'
+  context: text("context"), // Additional context about where in the content the feedback was given
+  additionalNotes: text("additional_notes"), // Optional user notes
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// Add validation schemas for Micro-Feedback
+export const insertMicroFeedbackSchema = createInsertSchema(microFeedback).omit({ id: true, createdAt: true });
+
+// Export Micro-Feedback types
+export type MicroFeedback = typeof microFeedback.$inferSelect;
+export type InsertMicroFeedback = z.infer<typeof insertMicroFeedbackSchema>;
