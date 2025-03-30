@@ -75,10 +75,10 @@ export class AICapabilities {
         response = await this.openai.chat.completions.create({
           model: OPENAI_MODEL,
           messages: [{
-            role: 'system',
+            role: 'system' as const,
             content: 'You are a marketing expert providing detailed feedback on marketing simulations.'
           }, {
-            role: 'user',
+            role: 'user' as const,
             content: prompt
           }],
           response_format: { type: "json_object" }
@@ -525,30 +525,38 @@ export class AICapabilities {
       { role: 'system' as const, content: systemPrompt }
     ];
     
-    // Add chat history
+    // Add chat history - we need to cast each role to the appropriate type
     chatHistory.forEach(msg => {
       messages.push({
-        role: msg.role as 'user' | 'assistant',
+        role: msg.role === 'user' ? 'user' : 'assistant',
         content: msg.content
       });
     });
     
     // Add current question
     messages.push({
-      role: 'user' as const,
+      role: 'user',
       content: question
     });
     
     switch (provider) {
       case 'anthropic':
         if (!this.anthropic) throw new Error('Anthropic not configured');
+        // For Anthropic, we need to handle system messages separately since Claude API
+        // doesn't support the system role directly
+        const systemContent = messages.find(m => m.role === 'system')?.content || '';
+        const userAssistantMessages = messages
+          .filter(m => m.role !== 'system')
+          .map(m => ({
+            role: m.role === 'user' ? 'user' : 'assistant',
+            content: m.content
+          }));
+          
         const response = await this.anthropic.messages.create({
           model: ANTHROPIC_MODEL,
           max_tokens: 1000,
-          messages: messages.map(m => ({
-            role: (m.role === 'system' ? 'assistant' : (m.role === 'user' ? 'user' : 'assistant')) as 'user' | 'assistant',
-            content: m.content
-          }))
+          system: systemContent,
+          messages: userAssistantMessages
         });
         const responseText = response.content[0] && 'text' in response.content[0] ? response.content[0].text : "";
         return responseText;
@@ -768,7 +776,7 @@ export class AICapabilities {
     const history = messages
       .filter(m => m.role !== 'system')
       .map(m => ({
-        role: m.role,
+        role: m.role === 'user' ? 'user' : 'model',
         parts: [{ text: m.content }]
       }));
     

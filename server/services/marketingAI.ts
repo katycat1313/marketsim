@@ -905,10 +905,10 @@ Provide personalized recommendations considering:
         const openaiResponse = await this.openai.chat.completions.create({
           model: OPENAI_MODEL,
           messages: [{
-            role: 'system',
+            role: 'system' as const,
             content: 'You are an expert marketing campaign analyzer.'
           }, {
-            role: 'user',
+            role: 'user' as const,
             content: prompt
           }],
           response_format: { type: "json_object" }
@@ -1022,7 +1022,7 @@ Provide personalized recommendations considering:
           model: ANTHROPIC_MODEL,
           max_tokens: 2000,
           messages: [{
-            role: 'user',
+            role: 'user' as const,
             content: prompt
           }],
           response_format: { type: "json_object" }
@@ -1034,10 +1034,10 @@ Provide personalized recommendations considering:
         const openaiResponse = await this.openai.chat.completions.create({
           model: OPENAI_MODEL,
           messages: [{
-            role: 'system',
+            role: 'system' as const,
             content: 'You are an expert marketing campaign optimizer.'
           }, {
-            role: 'user',
+            role: 'user' as const,
             content: prompt
           }],
           response_format: { type: "json_object" }
