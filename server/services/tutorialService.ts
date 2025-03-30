@@ -61,6 +61,13 @@ export class TutorialService {
    * Load default tutorial data
    */
   private async loadDefaultTutorials(): Promise<void> {
+    try {
+      // First load all the AI in Digital Marketing content
+      const lesson1Content = await this.loadTutorialContent('chapter10-1-FoundationsofAIinDigital Marketing.ts');
+      const lesson2Content = await this.loadTutorialContent('chapter10-2-TheAIShift.ts');
+      const lesson3Content = await this.loadTutorialContent('chapter10-3-DemocratizationofTechnology.ts');
+      const lesson4Content = await this.loadTutorialContent('chapter10-4-ChallengeandOpportunity.ts');
+      const lesson5Content = await this.loadTutorialContent('chapter10-5-UnlockingThePowerOfAIMarketing.ts');
     // Chapter 1: Digital Marketing Fundamentals
     this.tutorials.push({
       id: 1,
