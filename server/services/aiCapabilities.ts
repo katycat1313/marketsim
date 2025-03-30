@@ -63,11 +63,12 @@ export class AICapabilities {
           model: ANTHROPIC_MODEL,
           max_tokens: 1500,
           messages: [{
-            role: 'user',
+            role: 'user' as const,
             content: prompt
           }]
         });
-        return this.parseAIResponse(response.content[0].text);
+        const responseText = response.content[0] && 'text' in response.content[0] ? response.content[0].text : "";
+        return this.parseAIResponse(responseText);
         
       case 'openai':
         if (!this.openai) throw new Error('OpenAI not configured');
@@ -82,7 +83,7 @@ export class AICapabilities {
           }],
           response_format: { type: "json_object" }
         });
-        return JSON.parse(response.choices[0].message.content);
+        return JSON.parse(response.choices[0].message.content || "{}");
         
       case 'gemini':
         if (!this.geminiKey) throw new Error('Gemini not configured');
@@ -266,26 +267,27 @@ export class AICapabilities {
           model: ANTHROPIC_MODEL,
           max_tokens: 1200,
           messages: [{
-            role: 'user',
+            role: 'user' as const,
             content: prompt
           }]
         });
-        return this.parseAIResponse(response.content[0].text);
+        const responseText = response.content[0] && 'text' in response.content[0] ? response.content[0].text : "";
+        return this.parseAIResponse(responseText);
         
       case 'openai':
         if (!this.openai) throw new Error('OpenAI not configured');
         const openaiResponse = await this.openai.chat.completions.create({
           model: OPENAI_MODEL,
           messages: [{
-            role: 'system',
+            role: 'system' as const,
             content: 'You are a marketing content expert providing detailed analysis and recommendations.'
           }, {
-            role: 'user',
+            role: 'user' as const,
             content: prompt
           }],
           response_format: { type: "json_object" }
         });
-        return JSON.parse(openaiResponse.choices[0].message.content);
+        return JSON.parse(openaiResponse.choices[0].message.content || "{}");
         
       case 'gemini':
         if (!this.geminiKey) throw new Error('Gemini not configured');
@@ -344,26 +346,27 @@ export class AICapabilities {
           model: ANTHROPIC_MODEL,
           max_tokens: 2000,
           messages: [{
-            role: 'user',
+            role: 'user' as const,
             content: prompt
           }]
         });
-        return this.parseAIResponse(response.content[0].text);
+        const responseText = response.content[0] && 'text' in response.content[0] ? response.content[0].text : "";
+        return this.parseAIResponse(responseText);
         
       case 'openai':
         if (!this.openai) throw new Error('OpenAI not configured');
         const openaiResponse = await this.openai.chat.completions.create({
           model: OPENAI_MODEL,
           messages: [{
-            role: 'system',
+            role: 'system' as const,
             content: 'You are a marketing strategist providing detailed recommendations.'
           }, {
-            role: 'user',
+            role: 'user' as const,
             content: prompt
           }],
           response_format: { type: "json_object" }
         });
-        return JSON.parse(openaiResponse.choices[0].message.content);
+        return JSON.parse(openaiResponse.choices[0].message.content || "{}");
         
       case 'gemini':
         if (!this.geminiKey) throw new Error('Gemini not configured');
@@ -450,26 +453,27 @@ export class AICapabilities {
           model: ANTHROPIC_MODEL,
           max_tokens: 1500,
           messages: [{
-            role: 'user',
+            role: 'user' as const,
             content: prompt
           }]
         });
-        return this.parseAIResponse(response.content[0].text);
+        const responseText = response.content[0] && 'text' in response.content[0] ? response.content[0].text : "";
+        return this.parseAIResponse(responseText);
         
       case 'openai':
         if (!this.openai) throw new Error('OpenAI not configured');
         const openaiResponse = await this.openai.chat.completions.create({
           model: OPENAI_MODEL,
           messages: [{
-            role: 'system',
+            role: 'system' as const,
             content: 'You are a marketing education expert providing learning path recommendations.'
           }, {
-            role: 'user',
+            role: 'user' as const,
             content: prompt
           }],
           response_format: { type: "json_object" }
         });
-        return JSON.parse(openaiResponse.choices[0].message.content);
+        return JSON.parse(openaiResponse.choices[0].message.content || "{}");
         
       case 'gemini':
         if (!this.geminiKey) throw new Error('Gemini not configured');
@@ -518,20 +522,20 @@ export class AICapabilities {
     
     // Prepare conversation history
     const messages = [
-      { role: 'system', content: systemPrompt }
+      { role: 'system' as const, content: systemPrompt }
     ];
     
     // Add chat history
     chatHistory.forEach(msg => {
       messages.push({
-        role: msg.role,
+        role: msg.role as 'user' | 'assistant',
         content: msg.content
       });
     });
     
     // Add current question
     messages.push({
-      role: 'user',
+      role: 'user' as const,
       content: question
     });
     
@@ -542,19 +546,23 @@ export class AICapabilities {
           model: ANTHROPIC_MODEL,
           max_tokens: 1000,
           messages: messages.map(m => ({
-            role: m.role === 'system' ? 'assistant' : m.role, // Anthropic doesn't have a system role
+            role: (m.role === 'system' ? 'assistant' : (m.role === 'user' ? 'user' : 'assistant')) as 'user' | 'assistant',
             content: m.content
           }))
         });
-        return response.content[0].text;
+        const responseText = response.content[0] && 'text' in response.content[0] ? response.content[0].text : "";
+        return responseText;
         
       case 'openai':
         if (!this.openai) throw new Error('OpenAI not configured');
         const openaiResponse = await this.openai.chat.completions.create({
           model: OPENAI_MODEL,
-          messages: messages
+          messages: messages.map(m => ({
+            role: m.role as 'system' | 'user' | 'assistant',
+            content: m.content
+          }))
         });
-        return openaiResponse.choices[0].message.content;
+        return openaiResponse.choices[0].message.content || "";
         
       case 'gemini':
         if (!this.geminiKey) throw new Error('Gemini not configured');

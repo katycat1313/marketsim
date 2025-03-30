@@ -303,7 +303,7 @@ export class MarketingAI {
       model: ANTHROPIC_MODEL,
       max_tokens: 1000,
       messages: [{
-        role: 'user',
+        role: 'user' as const,
         content: prompt
       }]
     });
@@ -317,10 +317,10 @@ export class MarketingAI {
     const response = await this.openai.chat.completions.create({
       model: OPENAI_MODEL,
       messages: [{
-        role: 'system',
+        role: 'system' as const,
         content: 'You are an expert marketing skills evaluator.'
       }, {
-        role: 'user',
+        role: 'user' as const,
         content: prompt
       }],
       response_format: { type: "json_object" }
@@ -464,10 +464,10 @@ Provide recommendations focusing on:
       model: this.getModelName(),
       max_tokens: this.userConfig.maxContextSize,
       messages: [{
-        role: 'system',
+        role: 'system' as const,
         content: 'You are a marketing advisor providing general guidance based on industry best practices.'
       }, {
-        role: 'user',
+        role: 'user' as const,
         content: context
       }]
     });
@@ -563,10 +563,10 @@ Provide personalized recommendations considering:
       model: this.getModelName(),
       max_tokens: 2000,
       messages: [{
-        role: 'system',
+        role: 'system' as const,
         content: 'You are an expert marketing mentor providing personalized guidance based on comprehensive market knowledge.'
       }, {
-        role: 'user',
+        role: 'user' as const,
         content: enhancedContext
       }]
     });
@@ -611,7 +611,7 @@ Provide personalized recommendations considering:
       model: this.getModelName(),
       max_tokens: 1500,
       messages: [{
-        role: 'user',
+        role: 'user' as const,
         content: prompt
       }]
     });
@@ -665,7 +665,7 @@ Provide personalized recommendations considering:
             model: ANTHROPIC_MODEL,
             max_tokens: 100,
             messages: [{
-              role: 'user',
+              role: 'user' as const,
               content: prompt
             }]
           });
@@ -681,7 +681,7 @@ Provide personalized recommendations considering:
           const openaiResponse = await this.openai.chat.completions.create({
             model: OPENAI_MODEL,
             messages: [{
-              role: 'user',
+              role: 'user' as const,
               content: prompt
             }]
           });
@@ -778,10 +778,10 @@ Provide personalized recommendations considering:
       model: this.getModelName(),
       max_tokens: 1000,
       messages: [{
-        role: 'system',
+        role: 'system' as const,
         content: 'You are an expert marketing knowledge validator.'
       }, {
-        role: 'user',
+        role: 'user' as const,
         content: prompt
       }],
       response_format: { type: "json_object" }
@@ -893,7 +893,7 @@ Provide personalized recommendations considering:
           model: ANTHROPIC_MODEL,
           max_tokens: 2000,
           messages: [{
-            role: 'user',
+            role: 'user' as const,
             content: prompt
           }],
           response_format: { type: "json_object" }
