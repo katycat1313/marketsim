@@ -1,4 +1,4 @@
-export const content = `#LLesson 5: Key Benefits – Unlocking the Power of AI in Marketing
+export const content = `# Lesson 5: Key Benefits – Unlocking the Power of AI in Marketing
 Lesson Objective
 To explore the specific benefits of using AI in marketing and understand how these advantages can transform your marketing efforts into more efficient, personalized, and data-driven strategies.
 

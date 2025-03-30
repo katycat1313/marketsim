@@ -32,32 +32,24 @@ export class TutorialService {
   /**
    * Load tutorial content from file
    */
-  private loadTutorialContent(filename: string): string {
+  private async loadTutorialContent(filename: string): Promise<string> {
     try {
       // Use dynamic import with ES modules pattern
-      // First try to access directly
-      const fs = require('fs');
-      const path = require('path');
-      
-      // Construct the path to the tutorial file
-      const tutorialPath = path.join(__dirname, '../data/tutorial', filename);
-      
-      if (fs.existsSync(tutorialPath)) {
-        // Read the file content directly
-        const fileContent = fs.readFileSync(tutorialPath, 'utf-8');
+      try {
+        // Use dynamic import to load the module
+        const tutorialModule = await import(`../data/tutorial/${filename}`);
         
-        // Extract the content from the file
-        // Most tutorial files export content as "export const content = `...`" and "export default content"
-        const contentMatch = fileContent.match(/export const content = `([\s\S]*?)`/);
-        if (contentMatch && contentMatch[1]) {
-          return contentMatch[1];
-        } else {
-          // If we can't find the export pattern, just use the file content directly
-          return fileContent;
+        // Return the content from the module
+        if (tutorialModule.content) {
+          return tutorialModule.content;
+        } else if (tutorialModule.default) {
+          return tutorialModule.default;
         }
-      } else {
-        console.error(`Tutorial file not found: ${filename}`);
-        return "Content could not be found. Please try again later.";
+        
+        throw new Error(`No valid content export found in ${filename}`);
+      } catch (importError) {
+        console.error(`Error importing module ${filename}:`, importError);
+        return "Error loading content. Please try again later.";
       }
     } catch (error) {
       console.error(`Error loading tutorial content from ${filename}:`, error);
@@ -68,7 +60,7 @@ export class TutorialService {
   /**
    * Load default tutorial data
    */
-  private loadDefaultTutorials(): void {
+  private async loadDefaultTutorials(): Promise<void> {
     // Chapter 1: Digital Marketing Fundamentals
     this.tutorials.push({
       id: 1,
@@ -389,7 +381,7 @@ export class TutorialService {
   async getTutorials(userLevel: string): Promise<Tutorial[]> {
     // If tutorials not loaded, ensure they are
     if (this.tutorials.length === 0) {
-      this.loadDefaultTutorials();
+      await this.loadDefaultTutorials();
     }
     
     // For simplicity, we're returning all tutorials here
@@ -549,7 +541,7 @@ export class TutorialService {
   async getTutorialById(tutorialId: number): Promise<Tutorial | null> {
     // If tutorials not loaded, ensure they are
     if (this.tutorials.length === 0) {
-      this.loadDefaultTutorials();
+      await this.loadDefaultTutorials();
     }
     
     const tutorial = this.tutorials.find(t => t.id === tutorialId);
