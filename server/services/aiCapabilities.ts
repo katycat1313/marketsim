@@ -528,7 +528,7 @@ export class AICapabilities {
     // Add chat history - we need to cast each role to the appropriate type
     chatHistory.forEach(msg => {
       messages.push({
-        role: msg.role === 'user' ? 'user' : 'assistant',
+        role: (msg.role === 'user' ? 'user' : 'assistant') as 'user' | 'assistant' | 'system',
         content: msg.content
       });
     });
@@ -548,7 +548,7 @@ export class AICapabilities {
         const userAssistantMessages = messages
           .filter(m => m.role !== 'system')
           .map(m => ({
-            role: m.role === 'user' ? 'user' : 'assistant',
+            role: (m.role === 'user' ? 'user' : 'assistant') as 'user' | 'assistant',
             content: m.content
           }));
           
@@ -584,7 +584,7 @@ export class AICapabilities {
   /**
    * Extracts relevant marketing knowledge based on the question
    */
-  private getRelevantKnowledge(question: string): any {
+  private getRelevantKnowledge(question: string): Record<string, any> {
     // This is a simplified version - in a real implementation, you would use
     // embeddings or semantic search to find the most relevant knowledge
     
@@ -627,7 +627,7 @@ export class AICapabilities {
   /**
    * Get industry-specific insights
    */
-  private async getIndustryInsights(industry: string): Promise<any> {
+  private async getIndustryInsights(industry: string): Promise<Record<string, any>> {
     // In a full implementation, this would query the database
     // For now, return data from our local knowledge base
     
@@ -660,7 +660,7 @@ export class AICapabilities {
   /**
    * Get industry trends
    */
-  private getIndustryTrends(industry: string): any {
+  private getIndustryTrends(industry: string): Record<string, any> {
     // This would typically come from a regularly updated database or API
     // For now we'll use hardcoded recent trends by industry
     const trends: Record<string, any> = {
@@ -732,7 +732,7 @@ export class AICapabilities {
   /**
    * Get Gemini API feedback from prompt
    */
-  private async getGeminiFeedback(prompt: string): Promise<any> {
+  private async getGeminiFeedback(prompt: string): Promise<Record<string, any>> {
     if (!this.geminiKey) throw new Error('Gemini not configured');
     
     const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent';
@@ -803,7 +803,7 @@ export class AICapabilities {
   /**
    * Convert the raw AI response into a structured feedback object
    */
-  private parseAIResponse(rawResponse: string): any {
+  private parseAIResponse(rawResponse: string): Record<string, any> {
     try {
       // Try to parse the entire response as JSON
       return JSON.parse(rawResponse);

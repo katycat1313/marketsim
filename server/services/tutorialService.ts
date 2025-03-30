@@ -30,6 +30,20 @@ export class TutorialService {
   private tutorials: Tutorial[] = [];
   
   /**
+   * Load tutorial content from file
+   */
+  private loadTutorialContent(filename: string): string {
+    try {
+      // Try to import the content dynamically
+      const content = require(`../data/tutorial/${filename}`).default || "";
+      return content;
+    } catch (error) {
+      console.error(`Error loading tutorial content from ${filename}:`, error);
+      return "Content could not be loaded. Please try again later.";
+    }
+  }
+
+  /**
    * Load default tutorial data
    */
   private loadDefaultTutorials(): void {
