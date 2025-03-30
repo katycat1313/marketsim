@@ -25,7 +25,7 @@ A mid-sized beauty retailer implemented AI-powered personalization for their ema
 
 **Implementation Technique**: The brand used an AI tool that segmented customers based on purchase frequency, product preferences, and lifecycle stage. Each email featured dynamic content blocks that automatically displayed products relevant to individual customers.
 
-```
+\`\`\`
 // Example of how AI personalizes email content blocks
 function personalizeEmail(userData) {
   // AI analyzes customer data
@@ -40,7 +40,7 @@ function personalizeEmail(userData) {
     offerType: determineOptimalOffer(lifecycle)
   };
 }
-```
+\`\`\`
 
 ### 2. AI-Powered Chatbots and Conversational Marketing
 
@@ -128,11 +128,14 @@ Meet Sarah, owner of a local boutique home décor shop with limited marketing re
 **Key Insight**: Sarah's success demonstrates that AI marketing isn't just for big companies with large budgets—it can be implemented incrementally with significant returns even for small businesses.
 
 ## Visual Guide: AI Marketing Implementation Roadmap
-1. **Assessment** - Identify key business challenges and opportunities
-2. **Research** - Explore AI solutions that address your specific needs
-3. **Start Small** - Begin with one high-impact application
-4. **Measure Results** - Track performance against clear KPIs
-5. **Expand & Iterate** - Scale successful implementations and refine approach
+
+| Implementation Stage | Key Actions | Timeline | Success Indicators |
+|---------------------|-------------|----------|-------------------|
+| **1. Assessment** | - Identify key business challenges<br>- Document pain points<br>- Prioritize opportunities | Week 1-2 | Clearly defined problems with measurable impact |
+| **2. Research** | - Explore AI solutions for specific needs<br>- Compare vendors/tools<br>- Calculate ROI potential | Week 3-4 | Shortlist of 2-3 solutions with cost estimates |
+| **3. Start Small** | - Implement one high-impact application<br>- Train team members<br>- Set up tracking systems | Month 2 | Functioning AI system addressing key challenge |
+| **4. Measure Results** | - Track performance against KPIs<br>- Gather user feedback<br>- Document learnings | Month 3-4 | Performance dashboard with clear metrics |
+| **5. Expand & Iterate** | - Scale successful implementations<br>- Add new AI capabilities<br>- Refine existing systems | Month 5+ | Expanded AI footprint with improved performance |
 
 ## Discussion Exercise: Your AI Action Plan
 
@@ -159,4 +162,5 @@ Using what you've learned from these case studies, identify one specific area of
 - How you'll measure success
 - A timeline for implementation
 
-Share your plan with a colleague for feedback, or post it in our community forum for input from fellow marketers.`;
+Share your plan with a colleague for feedback, or post it in our community forum for input from fellow marketers.
+`;

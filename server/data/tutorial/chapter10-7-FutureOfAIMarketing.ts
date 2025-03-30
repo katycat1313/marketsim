@@ -87,19 +87,11 @@ Current AI systems can predict outcomes. Future systems will automatically take 
 
 **Visual Representation: The Analytics Evolution**
 
-```
-┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-│    Past     │     │   Present   │     │   Future    │
-├─────────────┤     ├─────────────┤     ├─────────────┤
-│ Descriptive │ ──> │ Predictive  │ ──> │ Prescriptive│
-├─────────────┤     ├─────────────┤     ├─────────────┤
-│"What        │     │"What will   │     │"What should │
-│ happened?"  │     │ happen?"    │     │ we do?"     │
-├─────────────┤     ├─────────────┤     ├─────────────┤
-│ Reports     │     │ Forecasts   │     │ Autonomous  │
-│             │     │             │     │ Actions     │
-└─────────────┘     └─────────────┘     └─────────────┘
-```
+| Analytics Stage | Time Focus | Key Question | Primary Output |
+|----------------|------------|--------------|----------------|
+| **Past** (Descriptive) | Historical | "What happened?" | Reports |
+| **Present** (Predictive) | Current/Future | "What will happen?" | Forecasts |
+| **Future** (Prescriptive) | Future Actions | "What should we do?" | Autonomous Actions |
 
 **Marketing Impact**:
 - Campaign optimization will happen in real time
@@ -183,4 +175,5 @@ As AI takes over more routine and analytical marketing tasks, what uniquely huma
 
 ---
 
-Congratulations on completing Chapter 10: AI in Digital Marketing! You now have a comprehensive understanding of how AI is transforming marketing today and how it will continue to evolve in the years ahead. You're well-positioned to leverage these insights to drive innovation and results in your own marketing efforts.`;
+Congratulations on completing Chapter 10: AI in Digital Marketing! You now have a comprehensive understanding of how AI is transforming marketing today and how it will continue to evolve in the years ahead. You're well-positioned to leverage these insights to drive innovation and results in your own marketing efforts.
+`;
