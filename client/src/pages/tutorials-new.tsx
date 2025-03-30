@@ -11,7 +11,8 @@ import {
   Megaphone, 
   FileText, 
   HelpCircle,
-  CheckCircle2
+  CheckCircle2,
+  Cpu
 } from 'lucide-react';
 import ErrorBoundary from '../components/ErrorBoundary';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
@@ -167,11 +168,15 @@ export default function TutorialsPage() {
         contentLower.includes('content marketing') ||
         contentLower.includes('ai-powered seo')) {
       return 9; // Content Marketing & AI belongs to Chapter 9
-    } else if (titleLower.includes('conversion rate') || 
-              titleLower.includes('landing page') || 
-              contentLower.includes('conversion rate') || 
-              contentLower.includes('landing page optimization')) {
-      return 10; // Conversion Optimization belongs to Chapter 10
+    } else if (titleLower.includes('ai in digital marketing') || 
+              titleLower.includes('ai marketing') || 
+              titleLower.includes('artificial intelligence') || 
+              contentLower.includes('ai revolution') || 
+              contentLower.includes('ai shift') || 
+              contentLower.includes('democratization of technology') ||
+              contentLower.includes('ai benefits') ||
+              contentLower.includes('ai in marketing')) {
+      return 10; // AI in Digital Marketing belongs to Chapter 10
     } else if (titleLower.includes('advanced analytics') || 
               titleLower.includes('attribution') || 
               contentLower.includes('advanced analytics') ||
@@ -325,10 +330,10 @@ export default function TutorialsPage() {
       },
       {
         number: 10,
-        title: "Conversion Optimization",
-        description: "Advanced techniques to improve conversion rates across all channels",
-        image: "attached_assets/cart-with-packages.jpeg",
-        icon: <BarChart3 className="h-6 w-6 text-green-500" />,
+        title: "AI in Digital Marketing",
+        description: "Leveraging artificial intelligence to transform your marketing strategy",
+        image: "attached_assets/group-thinking.jpeg",
+        icon: <Cpu className="h-6 w-6 text-green-500" />,
         tutorials: []
       },
       {
@@ -387,11 +392,15 @@ export default function TutorialsPage() {
           contentLower.includes('content marketing') ||
           contentLower.includes('ai-powered seo')) {
         chapterStructure[8].tutorials.push(tutorial); // Content Marketing & AI - Chapter 9
-      } else if (titleLower.includes('conversion rate') || 
-                titleLower.includes('landing page') || 
-                contentLower.includes('conversion rate') || 
-                contentLower.includes('landing page optimization')) {
-        chapterStructure[9].tutorials.push(tutorial); // Conversion Optimization - Chapter 10
+      } else if (titleLower.includes('ai in digital marketing') || 
+                titleLower.includes('ai marketing') || 
+                titleLower.includes('artificial intelligence') || 
+                contentLower.includes('ai revolution') || 
+                contentLower.includes('ai shift') || 
+                contentLower.includes('democratization of technology') ||
+                contentLower.includes('ai benefits') ||
+                contentLower.includes('ai in marketing')) {
+        chapterStructure[9].tutorials.push(tutorial); // AI in Digital Marketing - Chapter 10
       } else if (titleLower.includes('advanced analytics') || 
                 titleLower.includes('attribution') || 
                 contentLower.includes('advanced analytics') ||

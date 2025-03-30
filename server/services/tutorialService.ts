@@ -272,56 +272,90 @@ export class TutorialService {
       }]
     });
     
-    // Chapter 10: Conversion Optimization
-    this.tutorials.push({
-      id: 12,
-      chapterNumber: 10,
-      title: "Conversion Rate Optimization",
-      level: "Advanced",
-      content: "Advanced techniques to improve conversion rates across digital channels.",
-      estimatedTime: 240,
-      skillsLearned: ["CRO", "User Experience", "Landing Page Optimization"],
-      hasSimulation: true,
-      tasks: [{
-        id: 1,
-        description: "Optimize a landing page for conversions",
-        type: "simulation",
-        requirements: ["Identify conversion barriers", "Implement optimization techniques"],
-        verificationCriteria: ["Clear value proposition", "Optimized call to action", "Streamlined form design", "Conversion tracking implemented"]
-      }]
-    });
-    
+    // Chapter 10: AI in Digital Marketing (Renamed from Conversion Optimization)
+    // New Chapter 10 lessons focusing on AI in Digital Marketing
     this.tutorials.push({
       id: 1001,
       chapterNumber: 10,
-      title: "Conversion Rate Optimization Fundamentals",
+      title: "The AI Marketing Revolution – A New Paradigm",
       level: "Intermediate",
-      content: this.loadTutorialContent('chapter10-1-ConversionRateOptimization.ts'),
-      estimatedTime: 120,
-      skillsLearned: ["Conversion Optimization", "A/B Testing", "User Experience"],
+      content: this.loadTutorialContent('chapter10-1-FoundationsofAIinDigital Marketing.ts'),
+      estimatedTime: 45,
+      skillsLearned: ["AI Marketing Fundamentals", "Marketing Transformation", "Digital Disruption"],
       tasks: [{
         id: 100101,
-        description: "Analyze a website for conversion opportunities",
+        description: "Identify AI's impact on your marketing strategy",
         type: "practical",
-        requirements: ["Complete CRO analysis worksheet"],
-        verificationCriteria: ["Identified at least 3 conversion barriers", "Proposed specific solutions"]
+        requirements: ["Use AI to analyze your current marketing approach"],
+        verificationCriteria: ["Identified at least 3 areas for AI integration", "Created a preliminary AI adoption plan"]
       }]
     });
     
     this.tutorials.push({
       id: 1002,
       chapterNumber: 10,
-      title: "Landing Page Optimization Strategies",
+      title: "The AI Shift – From Buzzword to Backbone",
       level: "Intermediate",
-      content: this.loadTutorialContent('chapter10-2-LandingPageOptimization.ts'),
-      estimatedTime: 90,
-      skillsLearned: ["Landing Page Design", "Message Matching", "Call-to-Action Optimization"],
+      content: this.loadTutorialContent('chapter10-2-TheAIShift.ts'),
+      estimatedTime: 50,
+      skillsLearned: ["Predictive Analytics", "Hyper-Personalization", "Workflow Automation"],
       tasks: [{
         id: 100201,
-        description: "Optimize a landing page using best practices",
+        description: "Design a hyper-personalized email campaign",
         type: "practical",
-        requirements: ["Apply landing page best practices"],
-        verificationCriteria: ["Clear value proposition", "Strong visual hierarchy", "Compelling CTAs", "Effective trust elements"]
+        requirements: ["Use AI to segment your audience", "Create personalized messaging"],
+        verificationCriteria: ["At least 3 customer segments identified", "Personalized content for each segment", "Implementation plan for automation"]
+      }]
+    });
+    
+    this.tutorials.push({
+      id: 1003,
+      chapterNumber: 10,
+      title: "Democratization of Technology – Power to the People",
+      level: "Intermediate",
+      content: this.loadTutorialContent('chapter10-3-DemocratizationofTechnology.ts'),
+      estimatedTime: 60,
+      skillsLearned: ["AI Tool Selection", "Affordable Technology", "Small Business AI Strategy"],
+      tasks: [{
+        id: 100301,
+        description: "Explore democratized AI tools for your business",
+        type: "practical",
+        requirements: ["Research affordable AI solutions", "Evaluate tools based on your needs"],
+        verificationCriteria: ["Selected appropriate tools for content, targeting, and analytics", "Documented implementation considerations", "Estimated ROI analysis"]
+      }]
+    });
+    
+    this.tutorials.push({
+      id: 1004,
+      chapterNumber: 10,
+      title: "Challenge and Opportunity – Embracing the Learning Curve",
+      level: "Intermediate",
+      content: this.loadTutorialContent('chapter10-4-ChallengeandOpportunity.ts'),
+      estimatedTime: 55,
+      skillsLearned: ["AI Adoption Strategies", "Change Management", "Learning Plan Development"],
+      tasks: [{
+        id: 100401,
+        description: "Create your AI learning plan",
+        type: "practical",
+        requirements: ["Identify your biggest AI adoption challenges", "Develop a step-by-step learning roadmap"],
+        verificationCriteria: ["Honest assessment of current skills", "Specific learning resources identified", "Realistic timeline for implementation"]
+      }]
+    });
+    
+    this.tutorials.push({
+      id: 1005,
+      chapterNumber: 10,
+      title: "Key Benefits – Unlocking the Power of AI in Marketing",
+      level: "Advanced",
+      content: this.loadTutorialContent('chapter10-5-UnlockingThePowerOfAIMarketing.ts'),
+      estimatedTime: 65,
+      skillsLearned: ["Audience Connection", "Automated Marketing", "Data-Driven Decision Making"],
+      tasks: [{
+        id: 100501,
+        description: "Apply AI benefits to your marketing strategy",
+        type: "simulation",
+        requirements: ["Identify which AI benefit has greatest potential for your business", "Plan implementation of selected AI approach"],
+        verificationCriteria: ["Clear benefit prioritization", "Specific tools identified", "Implementation roadmap with timeline", "Success metrics defined"]
       }]
     });
     
