@@ -6,7 +6,7 @@ import { mockAuthMiddleware } from './auth/middleware';
 
 async function main() {
   const app = express();
-  const port = 5000; // Always serve on port 5000
+  const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 5000;
 
   app.use(bodyParser.json());
   

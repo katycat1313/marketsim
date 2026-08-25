@@ -285,40 +285,17 @@ function SideNav() {
               </div>
             </div>
 
-            {/* Community Section */}
+            {/* Progress & Achievements */}
             <div className="space-y-2">
               <div className="text-xs uppercase text-muted-foreground font-semibold tracking-wider pl-2">
-                COMMUNITY
+                PROGRESS & SKILLS
               </div>
               <div className="space-y-1 pl-2">
-                <Link href="/network" onClick={() => setIsMobileMenuOpen(false)}>
+                <Link href="/dashboard" onClick={() => setIsMobileMenuOpen(false)}>
                   <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
-                    ${isActive('/network') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
-                    <Users className="h-5 w-5" />
-                    <span>Network</span>
-                  </div>
-                </Link>
-                <Link href="/community" onClick={() => setIsMobileMenuOpen(false)}>
-                  <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
-                    ${isActive('/community') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
-                    <MessageSquare className="h-5 w-5" />
-                    <span>Community</span>
-                  </div>
-                </Link>
-              </div>
-            </div>
-
-            {/* Level & Achievements */}
-            <div className="space-y-2">
-              <div className="text-xs uppercase text-muted-foreground font-semibold tracking-wider pl-2">
-                PROGRESS
-              </div>
-              <div className="space-y-1 pl-2">
-                <Link href="/level" onClick={() => setIsMobileMenuOpen(false)}>
-                  <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
-                    ${isActive('/level') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
+                    ${isActive('/dashboard') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
                     <BarChart2 className="h-5 w-5" />
-                    <span>Level & Skills</span>
+                    <span>Skills & Analytics</span>
                   </div>
                 </Link>
                 <Link href="/achievements" onClick={() => setIsMobileMenuOpen(false)}>

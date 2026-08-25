@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "./db";
 import * as schema from "../shared/schema";
@@ -189,7 +189,7 @@ export class DrizzleStorage implements IStorage {
       adDescriptions: Array.isArray(campaign.adDescriptions) ? campaign.adDescriptions : []
     };
     
-    const result = await db.insert(campaigns).values(campaignToInsert).returning();
+    const result = await db.insert(campaigns).values(campaignToInsert as any).returning();
     return result[0];
   }
 
@@ -217,7 +217,7 @@ export class DrizzleStorage implements IStorage {
   }
 
   async createUserProfile(profile: InsertUserProfile): Promise<schema.UserProfile> {
-    const result = await db.insert(userProfiles).values(profile).returning();
+    const result = await db.insert(userProfiles).values(profile as any).returning();
     return result[0];
   }
 
@@ -228,7 +228,7 @@ export class DrizzleStorage implements IStorage {
   
   // API Settings operations
   async createUserApiSettings(settings: schema.InsertApiSettings): Promise<schema.UserApiSettings> {
-    const result = await db.insert(userApiSettings).values(settings).returning();
+    const result = await db.insert(userApiSettings).values(settings as any).returning();
     return result[0];
   }
   
@@ -265,7 +265,7 @@ export class DrizzleStorage implements IStorage {
   }
 
   async createConnection(connection: InsertConnection): Promise<schema.Connection> {
-    const result = await db.insert(connections).values(connection).returning();
+    const result = await db.insert(connections).values(connection as any).returning();
     return result[0];
   }
 
@@ -282,7 +282,7 @@ export class DrizzleStorage implements IStorage {
   }
 
   async createPost(post: InsertPost): Promise<schema.Post> {
-    const result = await db.insert(posts).values(post).returning();
+    const result = await db.insert(posts).values(post as any).returning();
     return result[0];
   }
 
@@ -296,7 +296,7 @@ export class DrizzleStorage implements IStorage {
   }
 
   async createComment(comment: InsertComment): Promise<schema.Comment> {
-    const result = await db.insert(comments).values(comment).returning();
+    const result = await db.insert(comments).values(comment as any).returning();
     return result[0];
   }
 
@@ -305,7 +305,7 @@ export class DrizzleStorage implements IStorage {
   }
 
   async createAchievement(achievement: InsertAchievement): Promise<schema.Achievement> {
-    const result = await db.insert(achievements).values(achievement).returning();
+    const result = await db.insert(achievements).values(achievement as any).returning();
     return result[0];
   }
 
@@ -319,18 +319,15 @@ export class DrizzleStorage implements IStorage {
   }
 
   async createQuizResult(quizResult: InsertUserQuizResult): Promise<schema.UserQuizResult> {
-    const result = await db.insert(userQuizResults).values(quizResult).returning();
+    const result = await db.insert(userQuizResults).values(quizResult as any).returning();
     return result[0];
   }
 
   async getUserQuizResults(userId: number, quizId?: string): Promise<schema.UserQuizResult[]> {
-    let query = db.select().from(userQuizResults).where(eq(userQuizResults.userId, userId));
-    
     if (quizId) {
-      query = query.where(eq(userQuizResults.quizId, quizId));
+      return await db.select().from(userQuizResults).where(and(eq(userQuizResults.userId, userId), eq(userQuizResults.quizId, quizId)));
     }
-    
-    return await query;
+    return await db.select().from(userQuizResults).where(eq(userQuizResults.userId, userId));
   }
 
   async getQuizCompletion(userId: number): Promise<{completedQuizzes: number, totalQuizzes: number}> {
@@ -352,15 +349,14 @@ export class DrizzleStorage implements IStorage {
   }
 
   async createAdPlatformSimulationAttempt(attempt: schema.InsertAdPlatformSimulationAttempt): Promise<schema.AdPlatformSimulationAttempt> {
-    const result = await db.insert(adPlatformSimulationAttempts).values(attempt).returning();
+    const result = await db.insert(adPlatformSimulationAttempts).values(attempt as any).returning();
     return result[0];
   }
 
   async getAdPlatformSimulationAttempts(userId: number, simulationId: number): Promise<schema.AdPlatformSimulationAttempt[]> {
     return await db.select()
       .from(adPlatformSimulationAttempts)
-      .where(eq(adPlatformSimulationAttempts.userId, userId))
-      .where(eq(adPlatformSimulationAttempts.simulationId, simulationId));
+      .where(and(eq(adPlatformSimulationAttempts.userId, userId), eq(adPlatformSimulationAttempts.simulationId, simulationId)));
   }
   
   // Data Visualization Challenge Operations
@@ -374,20 +370,19 @@ export class DrizzleStorage implements IStorage {
   }
 
   async createDataVisualizationAttempt(attempt: schema.InsertDataVisualizationAttempt): Promise<schema.DataVisualizationAttempt> {
-    const result = await db.insert(dataVisualizationAttempts).values(attempt).returning();
+    const result = await db.insert(dataVisualizationAttempts).values(attempt as any).returning();
     return result[0];
   }
 
   async getDataVisualizationAttempts(userId: number, challengeId: number): Promise<schema.DataVisualizationAttempt[]> {
     return await db.select()
       .from(dataVisualizationAttempts)
-      .where(eq(dataVisualizationAttempts.userId, userId))
-      .where(eq(dataVisualizationAttempts.challengeId, challengeId));
+      .where(and(eq(dataVisualizationAttempts.userId, userId), eq(dataVisualizationAttempts.challengeId, challengeId)));
   }
 
   // Keyword Research operations
   async createKeywordResearchProject(project: schema.InsertKeywordResearchProject): Promise<schema.KeywordResearchProject> {
-    const result = await db.insert(keywordResearchProjects).values(project).returning();
+    const result = await db.insert(keywordResearchProjects).values(project as any).returning();
     return result[0];
   }
 
@@ -401,7 +396,7 @@ export class DrizzleStorage implements IStorage {
   }
 
   async addKeywordResult(keywordResult: schema.InsertKeywordResult): Promise<schema.KeywordResult> {
-    const result = await db.insert(keywordResults).values(keywordResult).returning();
+    const result = await db.insert(keywordResults).values(keywordResult as any).returning();
     return result[0];
   }
 
@@ -410,7 +405,7 @@ export class DrizzleStorage implements IStorage {
   }
 
   async createKeywordList(list: schema.InsertKeywordList): Promise<schema.KeywordList> {
-    const result = await db.insert(keywordLists).values(list).returning();
+    const result = await db.insert(keywordLists).values(list as any).returning();
     return result[0];
   }
 
@@ -425,7 +420,7 @@ export class DrizzleStorage implements IStorage {
 
   // A/B Testing Operations
   async createABTest(test: schema.InsertABTest): Promise<number> {
-    const result = await db.insert(abTests).values(test).returning();
+    const result = await db.insert(abTests).values(test as any).returning();
     return result[0].id;
   }
 
@@ -435,21 +430,10 @@ export class DrizzleStorage implements IStorage {
   }
 
   async getABTests(userId?: number, campaignId?: number): Promise<schema.ABTest[]> {
-    let query = db.select().from(abTests);
-    
     if (campaignId) {
-      query = query.where(eq(abTests.campaignId, campaignId));
+      return await db.select().from(abTests).where(eq(abTests.campaignId, campaignId));
     }
-    
-    // Note: This assumes that tests have a userId field or similar
-    // If not present in your schema, remove this condition
-    /* 
-    if (userId) {
-      query = query.where(eq(abTests.userId, userId));
-    }
-    */
-    
-    return await query;
+    return await db.select().from(abTests);
   }
 
   async updateABTest(testId: number, updates: Partial<schema.ABTest>): Promise<void> {

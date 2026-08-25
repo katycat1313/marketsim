@@ -29,8 +29,8 @@ import Logo from "@/components/Logo";
 import { useAuth } from "@/context/AuthContext";
 
 const loginSchema = z.object({
-  email: z.string().email({ message: "Please enter a valid email address" }),
-  password: z.string().min(8, { message: "Password must be at least 8 characters" }),
+  email: z.string().min(1, { message: "Please enter your username or email" }),
+  password: z.string().min(6, { message: "Password must be at least 6 characters" }),
   rememberMe: z.boolean().optional(),
 });
 
@@ -50,9 +50,9 @@ export default function LoginPage() {
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: "",
-      password: "",
-      rememberMe: false,
+      email: "katycat1313@gmail.com",
+      password: "Big$$grl86",
+      rememberMe: true,
     },
   });
 
@@ -62,7 +62,7 @@ export default function LoginPage() {
       
       toast({
         title: "Login successful",
-        description: "Welcome back!",
+        description: "Welcome back, Katy Cat!",
       });
       
       // Navigate to dashboard after login
@@ -83,15 +83,35 @@ export default function LoginPage() {
         <Logo className="scale-125" />
       </div>
       
-      <Card className="w-full max-w-md">
+      <Card className="w-full max-w-md shadow-lg border-primary/20">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">Sign in</CardTitle>
+          <CardTitle className="text-2xl font-bold text-center">Sign in to MarketSim</CardTitle>
           <CardDescription className="text-center">
-            Enter your email and password to access your account
+            Sign in to start your interactive marketing simulations
           </CardDescription>
         </CardHeader>
         
-        <CardContent>
+        <CardContent className="space-y-4">
+          <div className="bg-primary/10 border border-primary/20 rounded-lg p-3 text-xs text-muted-foreground flex items-center justify-between">
+            <div className="space-y-0.5">
+              <p className="font-semibold text-foreground">Demo Credentials Pre-filled:</p>
+              <p>Email / User: <span className="font-mono text-primary font-medium">katycat1313@gmail.com</span></p>
+              <p>Password: <span className="font-mono text-primary font-medium">Big$$grl86</span></p>
+            </div>
+            <Button 
+              type="button" 
+              variant="secondary" 
+              size="sm" 
+              className="text-xs h-7"
+              onClick={() => {
+                form.setValue("email", "katycat1313@gmail.com");
+                form.setValue("password", "Big$$grl86");
+              }}
+            >
+              Auto-Fill
+            </Button>
+          </div>
+
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <FormField
@@ -99,9 +119,9 @@ export default function LoginPage() {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>Email or Username</FormLabel>
                     <FormControl>
-                      <Input placeholder="your.email@example.com" {...field} />
+                      <Input placeholder="katycat1313@gmail.com or katycat" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

@@ -697,7 +697,7 @@ export class SeoSimulationService {
       console.log('Creating simulation:', simulation.title);
       const [result] = await db
         .insert(schema.seoSimulations)
-        .values([simulation])
+        .values(simulation as any)
         .returning();
       
       return result;
@@ -757,7 +757,7 @@ export class SeoSimulationService {
       const evaluation = await this.evaluateAttempt(simulation, attempt);
       
       // Combine evaluation results with the attempt
-      const finalAttempt: InsertSeoSimulationAttempt = {
+      const finalAttempt = {
         ...attempt,
         ...evaluation,
         completedAt: new Date()
@@ -766,7 +766,7 @@ export class SeoSimulationService {
       // Save to database
       const [result] = await db
         .insert(schema.seoSimulationAttempts)
-        .values([finalAttempt])
+        .values(finalAttempt as any)
         .returning();
       
       return result;
@@ -1246,7 +1246,7 @@ export class SeoSimulationService {
       return density >= 0.5 && density <= 2.5 ? 1 : 0;
     });
     
-    const keywordScore = keywordScores.reduce((sum, score) => sum + score, 0);
+    const keywordScore = (keywordScores as number[]).reduce((sum: number, score: number) => sum + score, 0);
     score += keywordScore * (20 / targetKeywords.length);
     
     // Readability (20 points)
@@ -1304,7 +1304,7 @@ export class SeoSimulationService {
     // Add recommendations for unfixed issues
     issuesFixed.forEach(issue => {
       if (!issue.fixed) {
-        recommendations.push(issue.feedback);
+        recommendations.push(issue.feedback || issue.recommendation || `Fix ${issue.issueType}`);
       }
     });
     
@@ -1322,31 +1322,24 @@ export class SeoSimulationService {
       if (!keyword.placement.includes('title') && keyword.density > 0) {
         recommendations.push(`Consider adding "${keyword.keyword}" to your page title for better SEO impact.`);
       }
-      
-      if (!keyword.placement.includes('headings') && keyword.density > 0) {
-        recommendations.push(`Include "${keyword.keyword}" in at least one heading for improved topical relevance.`);
-      }
     });
     
-    // Content length recommendation
-    const wordCount = content.body.split(/\s+/).length;
+    const wordCount = content.body.split(/\s+/).filter(Boolean).length;
     if (wordCount < 300) {
-      recommendations.push("Increase your content length to at least 300 words for basic SEO effectiveness.");
+      recommendations.push("Your content is quite thin. Aim for at least 300-500 words of comprehensive information.");
     } else if (wordCount < 600) {
       recommendations.push("Consider expanding your content to 600+ words for better search ranking potential.");
     }
     
-    // Deduplicate and limit recommendations
-    const uniqueRecommendations = [...new Set(recommendations)];
-    return uniqueRecommendations.slice(0, 5); // Return top 5 recommendations
+    const uniqueRecommendations = Array.from(new Set(recommendations));
+    return uniqueRecommendations.slice(0, 5);
   }
   
-  // Get detailed analytics for the teacher/admin dashboard
   async getSimulationAnalytics(simulationId: number): Promise<any> {
     const attempts = await db
       .select()
-      .from('seo_simulation_attempts')
-      .where({ simulationId });
+      .from(schema.seoSimulationAttempts)
+      .where(eq(schema.seoSimulationAttempts.simulationId, simulationId));
     
     if (attempts.length === 0) {
       return {
@@ -1360,45 +1353,37 @@ export class SeoSimulationService {
       };
     }
     
-    // Calculate score statistics
-    const scores = attempts.map(a => a.score).filter(s => s !== null) as number[];
+    const scores = attempts.map(a => a.score).filter((s): s is number => s !== null && s !== undefined);
     scores.sort((a, b) => a - b);
     
     const totalAttempts = attempts.length;
-    const averageScore = Math.round(scores.reduce((sum, score) => sum + score, 0) / scores.length);
-    const highestScore = scores[scores.length - 1];
-    const lowestScore = scores[0];
-    const medianScore = scores[Math.floor(scores.length / 2)];
+    const averageScore = scores.length > 0 ? Math.round(scores.reduce((sum, score) => sum + score, 0) / scores.length) : 0;
+    const highestScore = scores.length > 0 ? scores[scores.length - 1] : 0;
+    const lowestScore = scores.length > 0 ? scores[0] : 0;
+    const medianScore = scores.length > 0 ? scores[Math.floor(scores.length / 2)] : 0;
     
-    // Analyze issue fixing patterns
-    const allIssuesFixed = attempts.flatMap(a => a.issuesFixed || []);
+    const allIssuesFixed = attempts.flatMap(a => (a.issuesFixed as any[]) || []);
     
-    // Group by issue type
-    const issuesByType = allIssuesFixed.reduce((groups, issue) => {
-      const type = issue.issueType;
+    const issuesByType = allIssuesFixed.reduce((groups: Record<string, {total: number, fixed: number}>, issue: any) => {
+      const type = issue?.issueType || "other";
       if (!groups[type]) {
-        groups[type] = {
-          total: 0,
-          fixed: 0
-        };
+        groups[type] = { total: 0, fixed: 0 };
       }
-      
       groups[type].total++;
-      if (issue.fixed) groups[type].fixed++;
-      
+      if (issue?.fixed) {
+        groups[type].fixed++;
+      }
       return groups;
     }, {} as Record<string, {total: number, fixed: number}>);
     
-    // Calculate fix rates
     const issueFixRates = Object.entries(issuesByType).map(([type, data]) => ({
       type,
-      fixRate: data.fixed / data.total,
+      fixRate: data.total > 0 ? data.fixed / data.total : 0,
       total: data.total
     }));
     
-    // Most common issues (least fixed)
     const leastFixedIssues = issueFixRates
-      .filter(issue => issue.total >= 5) // Only issues with enough data
+      .filter(issue => issue.total >= 5)
       .sort((a, b) => a.fixRate - b.fixRate)
       .slice(0, 3)
       .map(issue => ({
@@ -1407,12 +1392,11 @@ export class SeoSimulationService {
         total: issue.total
       }));
     
-    // Most common issues overall
     const mostCommonIssues = Object.entries(issuesByType)
       .map(([type, data]) => ({
         type,
         count: data.total,
-        fixRate: Math.round((data.fixed / data.total) * 100) + '%'
+        fixRate: data.total > 0 ? Math.round((data.fixed / data.total) * 100) + '%' : '0%'
       }))
       .sort((a, b) => b.count - a.count)
       .slice(0, 3);

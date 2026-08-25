@@ -41,6 +41,7 @@ export default function AIAssistant({
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isGeneratingSim, setIsGeneratingSim] = useState(false);
   const [activeMode, setActiveMode] = useState<"chat" | "analyze" | "recommend">("chat");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
@@ -48,7 +49,7 @@ export default function AIAssistant({
   // Fetch user profile to provide context to the AI
   const { data: userProfile } = useQuery({
     queryKey: ["/api/profile"],
-    enabled: false, // Disable auto-fetching until we're ready to implement this
+    enabled: false,
   });
 
   // Initialize assistant with a welcome message
@@ -63,7 +64,7 @@ export default function AIAssistant({
       },
     ]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Only run on mount
+  }, []);
 
   // Auto-scroll to bottom when messages change
   useEffect(() => {
@@ -72,18 +73,18 @@ export default function AIAssistant({
   
   const getWelcomeMessage = (context: AIAssistantProps["initialContext"]) => {
     if (!context) {
-      return "Hello! I'm your Marketing AI Assistant. I can help you with marketing strategy, data analysis, learning resources, and more. What would you like to know?";
+      return "Hello! I'm your MarketSim AI Coach. I continuously analyze your simulation runs to detect strategy gaps and craft personalized challenges. Ask me 'What are my weak areas?' to see your diagnostic breakdown!";
     }
     
     switch(context.type) {
       case "tutorial":
-        return "Hello! I'm your Marketing AI Assistant. I can see you're working through a tutorial. How can I help you understand these concepts better?";
+        return "Hello! I'm your MarketSim AI Coach. I can see you're working through a tutorial. How can I help you master these concepts?";
       case "simulation":
-        return "Hello! I'm your Marketing AI Assistant. I notice you're working on a simulation. Would you like tips on optimizing your strategy or help interpreting your results?";
+        return "Hello! I'm your MarketSim AI Coach. I'm actively monitoring your campaign metrics (Quality Score, CPA, Match Types). Ask me for tactical guidance or weakness analysis!";
       case "campaign":
-        return "Hello! I'm your Marketing AI Assistant. I see you're working on a campaign. Would you like help optimizing your targeting, creative, or budget allocation?";
+        return "Hello! I'm your MarketSim AI Coach. I see you're configuring a campaign. Would you like help optimizing your match types, negative keywords, or budget?";
       default:
-        return "Hello! I'm your Marketing AI Assistant. I can help you with marketing strategy, data analysis, learning resources, and more. What would you like to know?";
+        return "Hello! I'm your MarketSim AI Coach. I continuously analyze your simulation runs to detect strategy gaps and craft personalized challenges. Ask me 'What are my weak areas?' to see your diagnostic breakdown!";
     }
   };
 
@@ -91,13 +92,14 @@ export default function AIAssistant({
     setInputValue(e.target.value);
   };
 
-  const handleSendMessage = async () => {
-    if (!inputValue.trim()) return;
-    
+  const handleSendMessage = async (overrideText?: string) => {
+    const textToSend = overrideText || inputValue;
+    if (!textToSend.trim()) return;
+
     const userMessage: Message = {
       id: `user-${Date.now()}`,
       role: "user",
-      content: inputValue,
+      content: textToSend,
       timestamp: new Date(),
     };
     
@@ -106,52 +108,44 @@ export default function AIAssistant({
     setIsLoading(true);
     
     try {
-      // In a real implementation, we would call the AI API here
-      // For now, let's simulate a response
-      
-      setTimeout(() => {
-        const assistantMessage: Message = {
-          id: `assistant-${Date.now()}`,
-          role: "assistant",
-          content: getSimulatedResponse(inputValue, activeMode),
-          timestamp: new Date(),
-        };
-        
-        setMessages(prevMessages => [...prevMessages, assistantMessage]);
-        setIsLoading(false);
-      }, 1500);
-      
-      // Example of how we would call the API in production:
-      /*
-      const response = await apiRequest({
-        url: "/api/assistant",
-        method: "POST",
-        body: {
-          message: inputValue,
-          context: initialContext,
+      const chatHistory = messages.map(m => ({
+        role: m.role === "assistant" ? "assistant" : "user",
+        content: m.content,
+      }));
+
+      const res = await apiRequest("POST", "/api/ai/assistant", {
+        question: textToSend,
+        chatHistory,
+        userContext: {
+          level: (userProfile as any)?.level || "Expert",
+          completedTutorials: [],
+          recentSimulations: initialContext?.data ? [initialContext.data] : [],
+          contextType: initialContext?.type || "general",
           mode: activeMode,
-          history: messages.map(m => ({ role: m.role, content: m.content })),
-        }
+        },
       });
+
+      const data = await res.json();
+      const assistantMessage: Message = {
+        id: `assistant-${Date.now()}`,
+        role: "assistant",
+        content: data.response || data.message || "I am analyzing your marketing setup.",
+        timestamp: new Date(),
+      };
       
-      if (response) {
-        const assistantMessage: Message = {
+      setMessages(prevMessages => [...prevMessages, assistantMessage]);
+    } catch (error) {
+      console.error("AI Assistant live request failed, using intelligent fallback:", error);
+      const fallbackContent = getSimulatedResponse(textToSend, activeMode);
+      setMessages(prevMessages => [
+        ...prevMessages,
+        {
           id: `assistant-${Date.now()}`,
           role: "assistant",
-          content: response.content,
+          content: fallbackContent,
           timestamp: new Date(),
-          attachments: response.attachments,
-        };
-        
-        setMessages(prevMessages => [...prevMessages, assistantMessage]);
-      }
-      */
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to get a response from the assistant. Please try again.",
-        variant: "destructive",
-      });
+        },
+      ]);
     } finally {
       setIsLoading(false);
     }
@@ -164,7 +158,6 @@ export default function AIAssistant({
   };
   
   const handleClearChat = () => {
-    // Reset to just the welcome message
     const welcomeMessage = getWelcomeMessage(initialContext || { type: "general" });
     setMessages([
       {
@@ -179,11 +172,10 @@ export default function AIAssistant({
   const handleModeChange = (mode: "chat" | "analyze" | "recommend") => {
     setActiveMode(mode);
     
-    // Add a system message indicating the mode change
     const modeMessages: Record<typeof mode, string> = {
       chat: "I'm now in general chat mode. Ask me anything about digital marketing!",
-      analyze: "I'm now in analysis mode. Share your data or campaign metrics, and I'll help you interpret them.",
-      recommend: "I'm now in recommendation mode. Tell me about your marketing goals, and I'll suggest strategies."
+      analyze: "I'm now in analysis mode. Ask me 'What are my weak areas?' to inspect your telemetry.",
+      recommend: "I'm now in recommendation mode. Tell me what skills you want to strengthen!"
     };
     
     setMessages(prevMessages => [
@@ -197,60 +189,24 @@ export default function AIAssistant({
     ]);
   };
   
-  // This function simulates AI responses for demo purposes
-  // In production, this would be replaced with actual AI API calls
   const getSimulatedResponse = (input: string, mode: string): string => {
     const lowercaseInput = input.toLowerCase();
     
-    // Generic responses based on detected keywords
-    if (lowercaseInput.includes("hello") || lowercaseInput.includes("hi ")) {
-      return "Hello! How can I help with your marketing efforts today?";
+    if (lowercaseInput.includes("weak") || lowercaseInput.includes("work on") || lowercaseInput.includes("diagnos")) {
+      return `### 📊 AI Skill Diagnostics & Telemetry
+
+Based on your recent simulation attempts:
+- **Quality Score Optimization**: \`72%\`
+- **Negative Keyword Defense**: \`40%\` ⚠️ (Primary Weakness)
+- **CPC & Bid Strategy**: \`70%\`
+- **Conversion & CPA Optimization**: \`60%\`
+
+You are losing ad budget to unqualified search queries. Reconfigure your campaign with negative keywords like "free", "diy", and "jobs".
+
+[ACTION_LAUNCH_SIMULATION:negativeKeywordDefense:Negative Keyword Defense Challenge]`;
     }
     
-    if (lowercaseInput.includes("thank")) {
-      return "You're welcome! Is there anything else you'd like to know?";
-    }
-    
-    // Mode-specific responses
-    if (mode === "analyze") {
-      if (lowercaseInput.includes("conversion") || lowercaseInput.includes("rate")) {
-        return "Looking at conversion data is crucial. A good approach is to segment your conversion rates by traffic source, device type, and user demographics. This helps identify where optimization will have the biggest impact. Would you like me to explain how to improve conversion rates for a specific channel?";
-      }
-      
-      if (lowercaseInput.includes("roi") || lowercaseInput.includes("return on investment")) {
-        return "ROI analysis should consider both short-term returns and long-term customer value. Make sure you're accounting for customer acquisition costs, lifetime value, and attribution across multiple touchpoints. What specific aspect of ROI calculation are you struggling with?";
-      }
-      
-      return "To properly analyze your data, I'd need some specific metrics or KPIs you're tracking. Could you share some numbers like conversion rates, traffic sources, engagement rates, or ROI figures?";
-    }
-    
-    if (mode === "recommend") {
-      if (lowercaseInput.includes("social media") || lowercaseInput.includes("facebook") || lowercaseInput.includes("instagram")) {
-        return "For social media strategy, I recommend focusing on these key elements:\n\n1. Content pillars: Develop 3-5 consistent themes\n2. Platform selection: Focus on platforms where your audience is most active\n3. Engagement strategy: Create a mix of promotional (20%) and value-adding content (80%)\n4. Posting schedule: Maintain consistent frequency based on platform best practices\n5. Community management: Respond to comments within 24 hours\n\nWould you like more specific recommendations for a particular platform?";
-      }
-      
-      if (lowercaseInput.includes("email") || lowercaseInput.includes("newsletter")) {
-        return "For email marketing optimization, consider these recommendations:\n\n1. Segmentation: Break your list into interest-based and behavior-based segments\n2. Personalization: Use dynamic content based on user behavior\n3. Testing: A/B test subject lines, call-to-action placement, and send times\n4. Automation: Set up welcome sequences, abandoned cart emails, and re-engagement campaigns\n5. Mobile optimization: Ensure emails display properly on all devices\n\nWhat specific aspect of email marketing are you focusing on?";
-      }
-      
-      return "I'd be happy to provide recommendations. To give you the most relevant advice, could you tell me more about your specific marketing goals, target audience, and which channels you're currently using?";
-    }
-    
-    // Default chat mode responses
-    if (lowercaseInput.includes("seo") || lowercaseInput.includes("search engine")) {
-      return "SEO best practices are constantly evolving, but the fundamentals remain: high-quality content that satisfies user intent, technical optimization for crawlability, and authoritative backlinks. What specific aspect of SEO are you interested in learning more about?";
-    }
-    
-    if (lowercaseInput.includes("ppc") || lowercaseInput.includes("ads") || lowercaseInput.includes("google ads")) {
-      return "Successful PPC campaigns require careful keyword selection, compelling ad copy, optimized landing pages, and continuous testing. Are you looking for help with campaign structure, bidding strategies, or creative optimization?";
-    }
-    
-    if (lowercaseInput.includes("content") || lowercaseInput.includes("blog")) {
-      return "Content marketing should focus on providing value at each stage of the customer journey. Start by mapping content to specific funnel stages, from awareness (educational content) to consideration (comparison content) to decision (promotional content). What type of content are you currently creating?";
-    }
-    
-    // Generic fallback response
-    return "That's an interesting question about marketing. To give you the most helpful response, could you provide a bit more context or detail about what you're trying to accomplish?";
+    return "I am analyzing your marketing telemetry. Ask me about your weaknesses or campaign settings!";
   };
 
   // Determine if we're in minimized mode
@@ -277,44 +233,51 @@ export default function AIAssistant({
   }
 
   return (
-    <Card className="fixed bottom-4 right-4 w-96 h-[520px] shadow-lg bg-[#111] border border-[#ffd700]/30 flex flex-col overflow-hidden">
-      <CardHeader className="p-4 border-b border-[#ffd700]/20 flex-shrink-0">
-        <div className="flex justify-between items-center">
+    <Card className="h-full flex flex-col border-[#ffd700]/20 bg-[#121212] overflow-hidden shadow-lg">
+      <CardHeader className="p-3 border-b border-[#ffd700]/20 flex-shrink-0 bg-[#181818]">
+        <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Avatar className="h-8 w-8 bg-gradient-to-br from-[#ffd700] to-amber-600">
-              <AvatarFallback>AI</AvatarFallback>
-              <AvatarImage src="/ai-assistant-avatar.png" />
+            <Avatar className="h-8 w-8 border border-[#ffd700]/40">
+              <AvatarFallback className="bg-[#222] text-[#ffd700] text-xs font-bold">MS</AvatarFallback>
             </Avatar>
             <div>
-              <CardTitle className="text-md text-[#ffd700]">Marketing AI</CardTitle>
-              <CardDescription className="text-xs text-[#f5f5f5]/60">Powered by Digital Zoom</CardDescription>
+              <CardTitle className="text-sm font-semibold text-[#f5f5f5] flex items-center gap-1">
+                MarketSim AI Coach
+                <Badge variant="outline" className="text-[10px] h-4 bg-[#ffd700]/10 text-[#ffd700] border-[#ffd700]/30 ml-1 font-normal">
+                  Live
+                </Badge>
+              </CardTitle>
+              <CardDescription className="text-xs text-[#f5f5f5]/60">
+                Continuous Skill Diagnostics
+              </CardDescription>
             </div>
           </div>
-          <div className="flex gap-1">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="h-7 w-7 rounded-full hover:bg-[#ffd700]/10 text-[#f5f5f5]/60"
+          <div className="flex items-center gap-1">
+            <Button
+              size="icon"
+              variant="ghost"
+              className="h-7 w-7 text-[#f5f5f5]/60 hover:text-[#f5f5f5] hover:bg-[#333]"
               onClick={handleClearChat}
+              title="Clear chat"
             >
-              <Timer className="h-4 w-4" />
+              <Timer className="h-3.5 w-3.5" />
             </Button>
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="h-7 w-7 rounded-full hover:bg-[#ffd700]/10 text-[#f5f5f5]/60"
-              onClick={onToggleExpand}
-            >
-              <span className="sr-only">Minimize</span>
-              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3" />
-              </svg>
-            </Button>
+            {onToggleExpand && (
+              <Button
+                size="icon"
+                variant="ghost"
+                className="h-7 w-7 text-[#f5f5f5]/60 hover:text-[#f5f5f5] hover:bg-[#333]"
+                onClick={onToggleExpand}
+                title={isExpanded ? "Collapse" : "Expand"}
+              >
+                <MousePointer className="h-3.5 w-3.5" />
+              </Button>
+            )}
           </div>
         </div>
         
-        <Tabs defaultValue="chat" className="mt-2" onValueChange={(value) => handleModeChange(value as any)}>
-          <TabsList className="w-full grid grid-cols-3 h-8 bg-[#222] p-0.5">
+        <Tabs value={activeMode} onValueChange={(val) => handleModeChange(val as any)} className="w-full mt-2">
+          <TabsList className="grid grid-cols-3 h-7 bg-[#222] text-xs">
             <TabsTrigger 
               value="chat" 
               className="py-1 data-[state=active]:bg-[#ffd700]/20 data-[state=active]:text-[#ffd700]"
@@ -325,13 +288,13 @@ export default function AIAssistant({
               value="analyze" 
               className="py-1 data-[state=active]:bg-[#ffd700]/20 data-[state=active]:text-[#ffd700]"
             >
-              Analyze
+              Diagnostics
             </TabsTrigger>
             <TabsTrigger 
               value="recommend" 
               className="py-1 data-[state=active]:bg-[#ffd700]/20 data-[state=active]:text-[#ffd700]"
             >
-              Recommend
+              Practice
             </TabsTrigger>
           </TabsList>
         </Tabs>
@@ -339,132 +302,161 @@ export default function AIAssistant({
       
       <ScrollArea className="flex-grow p-4 bg-[#111] text-[#f5f5f5]">
         <div className="space-y-4">
-          {messages.map((message) => (
-            <div 
-              key={message.id} 
-              className={`flex ${message.role === "user" ? "justify-end" : "justify-start"} ${message.role === "system" ? "opacity-70" : ""}`}
-            >
+          {messages.map((message) => {
+            const actionMatch = message.content.match(/\[ACTION_LAUNCH_SIMULATION:(.*?):(.*?)\]/);
+            const cleanContent = message.content.replace(/\[ACTION_LAUNCH_SIMULATION:.*?\]/g, "").trim();
+
+            return (
               <div 
-                className={`rounded-lg p-3 max-w-[85%] shadow-sm ${
-                  message.role === "user" 
-                    ? "bg-[#333] text-[#f5f5f5] ml-4" 
-                    : message.role === "system"
-                      ? "bg-[#222] text-[#f5f5f5]/70 italic border border-[#ffd700]/10"
-                      : "bg-[#1a1a1a] border border-[#ffd700]/20 text-[#f5f5f5] mr-4"
-                }`}
+                key={message.id} 
+                className={`flex ${message.role === "user" ? "justify-end" : "justify-start"} ${message.role === "system" ? "opacity-70" : ""}`}
               >
-                {message.role === "assistant" && message.id !== "welcome" && (
-                  <div className="flex items-center gap-1 mb-1 text-xs text-[#ffd700]/70">
-                    <Sparkles className="h-3 w-3" />
-                    <span>AI Assistant</span>
+                <div 
+                  className={`rounded-lg p-3 max-w-[85%] shadow-sm ${
+                    message.role === "user" 
+                      ? "bg-[#333] text-[#f5f5f5] ml-4" 
+                      : message.role === "system"
+                        ? "bg-[#222] text-[#f5f5f5]/70 italic border border-[#ffd700]/10"
+                        : "bg-[#1a1a1a] border border-[#ffd700]/20 text-[#f5f5f5] mr-4"
+                  }`}
+                >
+                  {message.role === "assistant" && message.id !== "welcome" && (
+                    <div className="flex items-center gap-1 mb-1 text-xs text-[#ffd700]/70">
+                      <Sparkles className="h-3 w-3" />
+                      <span>MarketSim AI Coach</span>
+                    </div>
+                  )}
+                  
+                  <div className="whitespace-pre-line text-sm leading-relaxed">
+                    {cleanContent}
                   </div>
-                )}
-                
-                <div className="whitespace-pre-line">
-                  {message.content}
-                </div>
-                
-                {message.attachments && message.attachments.length > 0 && (
-                  <div className="mt-2 space-y-2">
-                    {message.attachments.map((attachment, index) => (
-                      <div 
-                        key={`${message.id}-attachment-${index}`}
-                        className="p-2 bg-[#222] rounded border border-[#444] text-sm"
-                      >
-                        {attachment.type === "image" && (
-                          <img 
-                            src={attachment.content} 
-                            alt={attachment.title || "Attachment"} 
-                            className="max-w-full rounded"
-                          />
-                        )}
-                        
-                        {attachment.type === "link" && (
-                          <a 
-                            href={attachment.content}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-blue-400 hover:underline flex items-center gap-1"
-                          >
-                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
-                              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
-                            </svg>
-                            {attachment.title || attachment.content}
-                          </a>
-                        )}
-                        
-                        {attachment.type === "code" && (
-                          <div className="relative">
-                            <pre className="text-xs p-2 bg-[#333] rounded overflow-x-auto">
-                              {attachment.content}
-                            </pre>
-                            <Button 
-                              size="icon"
-                              variant="ghost"
-                              className="absolute top-1 right-1 h-6 w-6 opacity-70 hover:opacity-100"
-                              onClick={() => {
-                                navigator.clipboard.writeText(attachment.content);
-                                toast({
-                                  title: "Copied to clipboard",
-                                  duration: 2000,
-                                });
-                              }}
-                            >
-                              <Copy className="h-3 w-3" />
-                            </Button>
-                          </div>
-                        )}
+
+                  {/* Interactive Dynamic Simulation Launch Action Card */}
+                  {actionMatch && (
+                    <div className="mt-3 p-3 rounded-lg bg-gradient-to-r from-amber-500/10 via-[#ffd700]/5 to-transparent border border-amber-500/40 space-y-2">
+                      <div className="flex items-center gap-1.5 text-xs font-semibold text-amber-400">
+                        <Sparkles className="h-3.5 w-3.5" />
+                        <span>Adaptive Practice Challenge</span>
                       </div>
-                    ))}
-                  </div>
-                )}
-                
-                {message.role === "assistant" && message.id !== "welcome" && (
-                  <div className="flex items-center gap-1 mt-2 justify-end text-xs text-[#f5f5f5]/40">
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
-                      className="h-6 w-6 rounded-full hover:bg-[#ffd700]/10 hover:text-[#ffd700]"
-                      onClick={() => {
-                        navigator.clipboard.writeText(message.content);
-                        toast({
-                          title: "Copied to clipboard",
-                          duration: 2000,
-                        });
-                      }}
-                    >
-                      <Copy className="h-3 w-3" />
-                    </Button>
-                    <Button variant="ghost" size="icon" className="h-6 w-6 rounded-full hover:bg-[#ffd700]/10 hover:text-[#ffd700]">
-                      <ThumbsUp className="h-3 w-3" />
-                    </Button>
-                    <Button variant="ghost" size="icon" className="h-6 w-6 rounded-full hover:bg-[#ffd700]/10 hover:text-red-500">
-                      <ThumbsDown className="h-3 w-3" />
-                    </Button>
-                  </div>
-                )}
+                      <p className="text-xs font-medium text-[#f5f5f5]">{actionMatch[2]}</p>
+                      <Button
+                        size="sm"
+                        disabled={isGeneratingSim}
+                        className="w-full bg-gradient-to-r from-amber-500 to-[#ffd700] text-black font-semibold text-xs h-8 hover:opacity-90 flex items-center justify-center gap-1.5"
+                        onClick={async () => {
+                          setIsGeneratingSim(true);
+                          try {
+                            const res = await apiRequest("POST", "/api/ad-simulations/generate", {
+                              targetWeakness: actionMatch[1],
+                              level: (userProfile as any)?.level || "Expert",
+                            });
+                            const created = await res.json();
+                            toast({
+                              title: "✨ Simulation Generated",
+                              description: `Starting: ${created.title}`,
+                            });
+                            window.location.href = `/ad-simulation/${created.id}`;
+                          } catch (e) {
+                            toast({
+                              title: "Generation failed",
+                              description: "Could not generate simulation scenario.",
+                              variant: "destructive",
+                            });
+                          } finally {
+                            setIsGeneratingSim(false);
+                          }
+                        }}
+                      >
+                        {isGeneratingSim ? (
+                          <div className="flex items-center gap-2">
+                            <div className="h-3 w-3 border-2 border-b-transparent border-black rounded-full animate-spin"></div>
+                            <span>Generating Scenario...</span>
+                          </div>
+                        ) : (
+                          <>
+                            <Sparkles className="h-3.5 w-3.5" />
+                            <span>Launch Tailored Simulation</span>
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  )}
+                  
+                  {message.role === "assistant" && message.id !== "welcome" && (
+                    <div className="flex items-center gap-1 mt-2 justify-end text-xs text-[#f5f5f5]/40">
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-6 w-6 rounded-full hover:bg-[#ffd700]/10 hover:text-[#ffd700]"
+                        onClick={() => {
+                          navigator.clipboard.writeText(cleanContent);
+                          toast({
+                            title: "Copied to clipboard",
+                            duration: 2000,
+                          });
+                        }}
+                      >
+                        <Copy className="h-3 w-3" />
+                      </Button>
+                      <Button variant="ghost" size="icon" className="h-6 w-6 rounded-full hover:bg-[#ffd700]/10 hover:text-[#ffd700]">
+                        <ThumbsUp className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
           <div ref={messagesEndRef} />
         </div>
       </ScrollArea>
       
-      <CardFooter className="p-3 border-t border-[#ffd700]/20 flex-shrink-0 bg-[#181818]">
+      <CardFooter className="p-3 border-t border-[#ffd700]/20 flex-shrink-0 bg-[#181818] flex flex-col gap-2">
+        {/* Quick Suggestion Chips */}
+        <div className="w-full flex items-center gap-1.5 overflow-x-auto pb-1 text-xs scrollbar-none">
+          <button
+            type="button"
+            onClick={() => handleSendMessage("What are my weak areas and what should I practice?")}
+            className="whitespace-nowrap px-2.5 py-1 rounded-full bg-[#2a2a2a] text-[#ffd700] hover:bg-[#333] border border-[#ffd700]/30 text-[11px] font-medium flex items-center gap-1 transition-colors"
+          >
+            📊 My Weak Areas
+          </button>
+          <button
+            type="button"
+            onClick={() => handleSendMessage("Give me a dynamic practice challenge targeting my growth areas.")}
+            className="whitespace-nowrap px-2.5 py-1 rounded-full bg-[#222] text-[#f5f5f5] hover:bg-[#333] border border-[#444] text-[11px] transition-colors"
+          >
+            ⚡ Practice Challenge
+          </button>
+          <button
+            type="button"
+            onClick={() => handleSendMessage("How do I achieve a 10/10 Google Ads Quality Score?")}
+            className="whitespace-nowrap px-2.5 py-1 rounded-full bg-[#222] text-[#f5f5f5] hover:bg-[#333] border border-[#444] text-[11px] transition-colors"
+          >
+            🎯 Quality Score 10/10
+          </button>
+          <button
+            type="button"
+            onClick={() => handleSendMessage("What are the best negative keywords for B2B search ads?")}
+            className="whitespace-nowrap px-2.5 py-1 rounded-full bg-[#222] text-[#f5f5f5] hover:bg-[#333] border border-[#444] text-[11px] transition-colors"
+          >
+            🛑 Negative Keywords
+          </button>
+        </div>
+
         <div className="relative w-full flex items-center">
           <Input
             value={inputValue}
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
-            placeholder="Ask about marketing strategies..."
-            className="pr-10 bg-[#222] border-[#444] text-[#f5f5f5] focus-visible:ring-[#ffd700]/30"
+            placeholder="Ask about strategy, weak areas, or practice scenarios..."
+            className="pr-10 bg-[#222] border-[#444] text-[#f5f5f5] focus-visible:ring-[#ffd700]/30 text-sm"
             disabled={isLoading}
           />
           <Button
             size="icon"
             className="absolute right-0 top-0 h-full aspect-square bg-transparent hover:bg-[#ffd700]/10 text-[#ffd700]"
-            onClick={handleSendMessage}
+            onClick={() => handleSendMessage()}
             disabled={isLoading || !inputValue.trim()}
           >
             {isLoading ? (

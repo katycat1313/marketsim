@@ -3,6 +3,7 @@ import OpenAI from 'openai';
 import { db } from '../db';
 import { userProfiles, marketingKnowledgeBase, industryBenchmarks } from '@shared/schema';
 import { marketingKnowledgeBase as knowledgeBaseData, industryBenchmarks as benchmarkData } from '../data/marketingKnowledgeBase';
+import { dynamicSimulationGenerator } from './dynamicSimulationGenerator';
 
 // the newest Anthropic model is "claude-3-7-sonnet-20250219" which was released February 24, 2025
 const ANTHROPIC_MODEL = "claude-3-7-sonnet-20250219";
@@ -539,46 +540,168 @@ export class AICapabilities {
       content: question
     });
     
-    switch (provider) {
-      case 'anthropic':
-        if (!this.anthropic) throw new Error('Anthropic not configured');
-        // For Anthropic, we need to handle system messages separately since Claude API
-        // doesn't support the system role directly
-        const systemContent = messages.find(m => m.role === 'system')?.content || '';
-        const userAssistantMessages = messages
-          .filter(m => m.role !== 'system')
-          .map(m => ({
-            role: (m.role === 'user' ? 'user' : 'assistant') as 'user' | 'assistant',
-            content: m.content
-          }));
+    try {
+      switch (provider) {
+        case 'anthropic':
+          if (this.anthropic) {
+            const systemContent = messages.find(m => m.role === 'system')?.content || '';
+            const userAssistantMessages = messages
+              .filter(m => m.role !== 'system')
+              .map(m => ({
+                role: (m.role === 'user' ? 'user' : 'assistant') as 'user' | 'assistant',
+                content: m.content
+              }));
+              
+            const response = await this.anthropic.messages.create({
+              model: ANTHROPIC_MODEL,
+              max_tokens: 1000,
+              system: systemContent,
+              messages: userAssistantMessages
+            });
+            const responseText = response.content[0] && 'text' in response.content[0] ? response.content[0].text : "";
+            if (responseText) return responseText;
+          }
+          break;
           
-        const response = await this.anthropic.messages.create({
-          model: ANTHROPIC_MODEL,
-          max_tokens: 1000,
-          system: systemContent,
-          messages: userAssistantMessages
-        });
-        const responseText = response.content[0] && 'text' in response.content[0] ? response.content[0].text : "";
-        return responseText;
-        
-      case 'openai':
-        if (!this.openai) throw new Error('OpenAI not configured');
-        const openaiResponse = await this.openai.chat.completions.create({
-          model: OPENAI_MODEL,
-          messages: messages.map(m => ({
-            role: m.role as 'system' | 'user' | 'assistant',
-            content: m.content
-          }))
-        });
-        return openaiResponse.choices[0].message.content || "";
-        
-      case 'gemini':
-        if (!this.geminiKey) throw new Error('Gemini not configured');
-        return this.getGeminiResponse(messages);
-        
-      default:
-        throw new Error('Unsupported AI provider');
+        case 'openai':
+          if (this.openai) {
+            const openaiResponse = await this.openai.chat.completions.create({
+              model: OPENAI_MODEL,
+              messages: messages.map(m => ({
+                role: m.role as 'system' | 'user' | 'assistant',
+                content: m.content
+              }))
+            });
+            const resContent = openaiResponse.choices[0]?.message?.content;
+            if (resContent) return resContent;
+          }
+          break;
+          
+        case 'gemini':
+          if (this.geminiKey) {
+            return await this.getGeminiResponse(messages);
+          }
+          break;
+      }
+    } catch (apiErr) {
+      console.warn("AI API call error, falling back to dynamic marketing copilot engine:", apiErr);
     }
+
+    // Dynamic Intelligent Marketing Copilot Fallback
+    return this.generateDynamicMarketingAssistantResponse(question, userContext);
+  }
+
+  /**
+   * Generates a context-aware marketing assistant response without requiring external API keys
+   */
+  private generateDynamicMarketingAssistantResponse(question: string, userContext: any): string {
+    const q = question.toLowerCase();
+    const userLevel = userContext?.level || "Beginner";
+
+    // 1. Diagnostics & Weakness Analysis query
+    if (
+      q.includes("weak") ||
+      q.includes("work on") ||
+      q.includes("diagnos") ||
+      q.includes("skill") ||
+      q.includes("practice") ||
+      q.includes("challenge") ||
+      q.includes("improve") ||
+      q.includes("how am i doing") ||
+      q.includes("feedback on my") ||
+      q.includes("what should i do")
+    ) {
+      const userId = userContext?.userId || 1;
+      const diagnostics = dynamicSimulationGenerator.getUserDiagnostics(userId, userLevel);
+      
+      return `### 📊 AI Skill Diagnostics & Performance Analysis
+
+Based on your simulation telemetry and **${userLevel}** tier profile:
+
+#### 🎯 Competency Breakdown:
+- **Quality Score Optimization**: \`${diagnostics.skillScores.qualityScoreOptimization}%\`
+- **Negative Keyword Defense**: \`${diagnostics.skillScores.negativeKeywordDefense}%\`
+- **Bid Strategy & CPC Efficiency**: \`${diagnostics.skillScores.cpcBidEfficiency}%\`
+- **Conversion & CPA Alignment**: \`${diagnostics.skillScores.conversionOptimization}%\`
+- **Audience Targeting Precision**: \`${diagnostics.skillScores.audienceTargeting}%\`
+- **Ad Creative & Copywriting**: \`${diagnostics.skillScores.adCopywriting}%\`
+
+---
+
+#### ⚠️ Primary Area Needing Work: **${diagnostics.primaryWeakness.label}**
+- **The Issue**: ${diagnostics.primaryWeakness.description}
+- **Tactical Fix**: ${diagnostics.primaryWeakness.recommendation}
+
+#### ⚡ Recommended Practice Challenge:
+I can generate a tailored scenario calibrated to test this exact skill gap:
+**"${diagnostics.recommendedSimulations[0].title}"**
+
+[ACTION_LAUNCH_SIMULATION:${diagnostics.primaryWeakness.key}:${diagnostics.recommendedSimulations[0].title}]`;
+    }
+
+    if (q.includes("quality score") || q.includes("qs")) {
+      return `### 🎯 How to Maximize Google Ads Quality Score (1-10)
+
+Quality Score directly controls your **Cost-Per-Click (CPC)** and **Ad Rank**. Raising your Quality Score from 5 to 9 can reduce your CPC by up to **40-50%**.
+
+1. **Ad Relevance (35%)**: Include your primary keyword in Headline 1 and Headline 2. Make sure your description reiterates user search intent.
+2. **Expected Click-Through Rate (CTR) (35%)**: Switch high-intent terms from Broad Match to **Phrase Match** or **Exact Match**. Use emotional hooks, numbers, and clear value propositions.
+3. **Landing Page Experience (30%)**: Ensure your destination URL has fast load times, mobile responsiveness, and headline messaging that matches your ad promise.
+4. **Ad Extensions Boost**: Always configure **Sitelinks**, **Callouts**, and **Structured Snippets**. They expand your visual screen real estate and increase CTR by 10-15%.`;
+    }
+
+    if (q.includes("negative keyword") || q.includes("negative")) {
+      return `### 🛑 Negative Keyword Strategy
+
+Negative keywords prevent your ads from triggering on irrelevant, wasteful search queries.
+
+- **Universal Waste Negatives**: \`free\`, \`cheap\`, \`discount\`, \`jobs\`, \`careers\`, \`salary\`, \`definition\`, \`torrent\`, \`DIY\`
+- **Intent Refinement**: If you sell enterprise B2B SaaS ($500+/mo), add \`small business\`, \`personal\`, \`open source\`, \`freeware\` to negatives.
+- **Match Types**: Add exact match negatives \`[free]\` for single-word stops, or phrase match \`"how to make"\` for informational research queries.
+
+*In competitive auctions (Intermediate & Expert simulations), missing negative keywords can waste 25% to 40% of your daily budget!*`;
+    }
+
+    if (q.includes("hint") || q.includes("guide") || q.includes("help") || q.includes("audit")) {
+      return `### 💡 Marketing Copilot Guidance
+
+Here are tactical suggestions for your current simulation:
+
+1. **Match Search Intent**: Align your ad headlines with the exact problem the customer is searching for.
+2. **Control Match Types**: Avoid putting all keywords on broad match without negative keywords. Use \`"phrase match"\` for targeted queries.
+3. **Bidding & Budget**: Set a daily budget that allows at least 15-20 clicks per day so the algorithm can optimize conversions.
+4. **Enable Extensions / Pixels**: If on Google Ads, add sitelinks; if on Meta Ads, make sure the conversion pixel is toggled on for tracking.`;
+    }
+
+    if (q.includes("seo") || q.includes("organic") || q.includes("ranking") || q.includes("meta")) {
+      return `### 🔍 Core SEO Best Practices
+
+1. **Title Tag**: Keep it under 60 characters with the primary keyword near the front (e.g. \`Primary Keyword | Brand Name\`).
+2. **Meta Description**: Keep it between 140–160 characters. Include secondary keywords and a clear call-to-action to maximize search SERP CTR.
+3. **Heading Hierarchy**: Use exactly one \`<h1>\` containing your target keyword, followed by logically structured \`<h2>\` and \`<h3>\` subheadings.
+4. **Content Quality & Intent**: Answer the searcher's intent comprehensively. Avoid keyword stuffing (aim for 1.5% - 2.5% natural keyword density).
+5. **Schema Markup**: Add structured JSON-LD data (Product, Organization, Article, or FAQ) to earn rich search snippets.`;
+    }
+
+    if (q.includes("roas") || q.includes("cpa") || q.includes("cpc") || q.includes("ctr") || q.includes("metric")) {
+      return `### 📊 Key Performance Indicators (KPIs) Breakdown
+
+- **CTR (Click-Through Rate)** = \`Clicks / Impressions × 100\`. Benchmark: ~2.0-3.5% for Search, ~1.0-1.5% for Social.
+- **CPC (Cost Per Click)** = \`Total Spend / Clicks\`. Directly influenced by Quality Score and auction competition.
+- **CPA (Cost Per Acquisition)** = \`Total Spend / Conversions\`. Must remain lower than your customer lifetime gross margin.
+- **ROAS (Return on Ad Spend)** = \`Total Revenue / Total Ad Spend\`. Aim for >3.0x to 4.0x for sustainable scaling.`;
+    }
+
+    return `### 🚀 MarketSim Strategy Advisor
+
+Great question! In digital marketing at the **${userLevel}** tier, success depends on tight alignment across:
+
+1. **Audience Segmentation**: Clear buyer personas with distinct pain points and search intent.
+2. **Compelling Ad Messaging**: Headlines that highlight benefits rather than generic features.
+3. **Conversion Tracking**: Rigorous event and pixel measurement so every dollar spent is attributable.
+4. **Iterative A/B Testing**: Continually testing copy variants and landing page elements to lower CPA.
+
+Would you like specific recommendations on your ad campaign structure, keyword match types, or SEO metadata?`;
   }
   
   /**

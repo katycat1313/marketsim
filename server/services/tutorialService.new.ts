@@ -768,12 +768,12 @@ export class TutorialService {
   async getUserProgress(userId: number): Promise<number[]> {
     try {
       // Query database for completed tutorials
-      const result = await db.execute(
+      const result = await pool.query(
         `SELECT tutorial_id FROM user_tutorial_progress WHERE user_id = $1 AND status = 'completed'`,
         [userId]
       );
       
-      const completedTutorials = result.rows.map(row => Number(row.tutorial_id));
+      const completedTutorials = result.rows.map((row: any) => Number(row.tutorial_id));
       console.log(`Retrieved ${completedTutorials.length} completed tutorials for user ${userId}:`, completedTutorials);
       
       return completedTutorials;
@@ -786,27 +786,27 @@ export class TutorialService {
   async markTutorialComplete(userId: number, tutorialId: number): Promise<void> {
     try {
       // Check if progress entry exists
-      const exists = await db.execute(
+      const exists = await pool.query(
         `SELECT * FROM user_tutorial_progress WHERE user_id = $1 AND tutorial_id = $2`,
         [userId, tutorialId]
       );
       
-      if (exists.rowCount > 0) {
+      if (exists.rowCount && exists.rowCount > 0) {
         // Update existing record
-        await db.execute(
+        await pool.query(
           `UPDATE user_tutorial_progress SET status = 'completed', completed_at = NOW(), progress = 100 WHERE user_id = $1 AND tutorial_id = $2`,
           [userId, tutorialId]
         );
       } else {
         // Create new record
-        await db.execute(
+        await pool.query(
           `INSERT INTO user_tutorial_progress (user_id, tutorial_id, status, started_at, completed_at, progress) VALUES ($1, $2, 'completed', NOW(), NOW(), 100)`,
           [userId, tutorialId]
         );
       }
       
       // Update user experience
-      await db.execute(
+      await pool.query(
         `UPDATE user_profiles SET experience_points = experience_points + 50 WHERE id = $1`,
         [userId]
       );

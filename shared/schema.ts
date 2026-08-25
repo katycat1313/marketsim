@@ -19,6 +19,26 @@ export const insertApiSettingsSchema = createInsertSchema(userApiSettings);
 export type UserApiSettings = typeof userApiSettings.$inferSelect;
 export type InsertApiSettings = z.infer<typeof insertApiSettingsSchema>;
 
+// Core users table for authentication
+export const users = pgTable("users", {
+  id: serial("id").primaryKey(),
+  username: text("username").unique().notNull(),
+  email: text("email").unique().notNull(),
+  password: text("password").notNull(),
+  firstName: text("first_name").notNull(),
+  lastName: text("last_name").notNull(),
+  level: text("level").notNull().default("Beginner"),
+  xp: integer("xp").notNull().default(0),
+  specializations: json("specializations").$type<string[]>().default([]),
+  achievements: json("achievements").$type<string[]>().default([]),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const insertUserSchema = createInsertSchema(users);
+export type User = typeof users.$inferSelect;
+export type InsertUser = z.infer<typeof insertUserSchema>;
+
 export const personas = pgTable("personas", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),

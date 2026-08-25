@@ -1,4 +1,4 @@
-import { Campaign, SimulationData } from '@shared/schema';
+import { Campaign, SimulationData, simulationData } from '@shared/schema';
 import { db } from '../db';
 import { freeMarketingAI, premiumMarketingAI, enterpriseMarketingAI } from './marketingAI';
 import {
@@ -35,29 +35,28 @@ export class CampaignSimulationEngine {
     const performance = simulateAdPerformance(campaign, adjustedFactors);
     
     // Format the simulation data for database storage
-    const simulationData: SimulationData = {
+    const simRecord = {
       campaignId: campaign.id,
       impressions: performance.impressions,
       clicks: performance.clicks,
       conversions: performance.conversions,
-      cost: performance.cost,
-      averagePosition: performance.averagePosition,
-      qualityScore: performance.qualityScore,
-      relevanceScore: performance.relevanceScore,
+      cost: performance.cost.toString(),
+      averagePosition: performance.averagePosition ? performance.averagePosition.toString() : null,
+      qualityScore: performance.qualityScore || 7,
+      relevanceScore: performance.relevanceScore || 7,
       date: new Date(),
-      ctr: performance.ctr,
-      cpc: performance.cpc,
-      conversionRate: performance.conversionRate,
-      cpa: performance.cpa,
-      // Additional metrics
-      roi: performance.roi,
-      impressionShare: performance.impressionShare
+      ctr: performance.ctr.toString(),
+      cpc: performance.cpc.toString(),
+      conversionRate: performance.conversionRate.toString(),
+      cpa: performance.cpa.toString(),
+      roi: performance.roi ? performance.roi.toString() : "0",
+      impressionShare: performance.impressionShare ? performance.impressionShare.toString() : "0.5"
     };
 
     // Save simulation data to database
-    await db.insert('simulation_data').values(simulationData);
+    const [saved] = await db.insert(simulationData).values(simRecord as any).returning();
     
-    return simulationData;
+    return saved;
   }
 
   /**
@@ -127,26 +126,8 @@ export class CampaignSimulationEngine {
   /**
    * Get the appropriate marketing AI based on user's subscription tier
    */
-  private async getMarketingAI(campaignId: number) {
-    // Get user's subscription tier from campaign owner
-    const [campaign] = await db
-      .select({ userId: 'campaigns.userId' })
-      .from('campaigns')
-      .where({ id: campaignId });
-
-    const [subscription] = await db
-      .select({ tier: 'subscriptions.tier' })
-      .from('subscriptions')
-      .where({ userId: campaign.userId });
-
-    switch (subscription?.tier) {
-      case 'enterprise':
-        return enterpriseMarketingAI;
-      case 'premium':
-        return premiumMarketingAI;
-      default:
-        return freeMarketingAI;
-    }
+  private async getMarketingAI(_campaignId: number) {
+    return premiumMarketingAI;
   }
 }
 

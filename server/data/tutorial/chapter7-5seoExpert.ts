@@ -51,13 +51,13 @@ Canonical tags are your way of telling search engines: "Hey, I know this content
 - For every page (as a self-referencing canonical)
 
 **Proper Implementation:**
-```html
+\`\`\`html
 <link rel="canonical" href="https://travelblog.com/destinations/paris/" />
-```
+\`\`\`
 
 **Best Practices:**
 - Use absolute URLs (including https://)
-- Place in the `<head>` section of your HTML
+- Place in the \`<head>\` section of your HTML
 - Be consistent (don't point to different canonicals from similar pages)
 - Ensure the canonical URL is accessible (not blocked by robots.txt)
 
@@ -72,7 +72,7 @@ Just like Hansel and Gretel, your visitors need a clear path to follow (and find
 - Potential for rich snippets in search results
 
 **Implementation Example:**
-```html
+\`\`\`html
 <nav aria-label="Breadcrumb">
   <ol class="breadcrumb">
     <li><a href="/">Home</a></li>
@@ -82,10 +82,10 @@ Just like Hansel and Gretel, your visitors need a clear path to follow (and find
     <li aria-current="page">Paris Travel Guide</li>
   </ol>
 </nav>
-```
+\`\`\`
 
 **With Structured Data:**
-```html
+\`\`\`html
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -124,7 +124,7 @@ Just like Hansel and Gretel, your visitors need a clear path to follow (and find
   ]
 }
 </script>
-```
+\`\`\`
 
 ## Advanced Schema Markup for Blogs
 
@@ -138,7 +138,7 @@ Schema markup is like giving search engines a detailed map of your content inste
 - Review
 
 **Comprehensive Blog Post Schema Example:**
-```html
+\`\`\`html
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -169,7 +169,7 @@ Schema markup is like giving search engines a detailed map of your content inste
   "wordCount": "1850"
 }
 </script>
-```
+\`\`\`
 
 **Benefits of Proper Blog Schema:**
 - Rich snippets in search results (dates, author, breadcrumbs)
@@ -187,13 +187,13 @@ If your site serves visitors from different countries or in different languages,
 - For region-specific content (like European Spanish vs. Latin American Spanish)
 
 **Implementation Example:**
-```html
+\`\`\`html
 <link rel="alternate" hreflang="en" href="https://travelblog.com/destinations/paris/" />
 <link rel="alternate" hreflang="fr" href="https://travelblog.com/fr/destinations/paris/" />
 <link rel="alternate" hreflang="es" href="https://travelblog.com/es/destinations/paris/" />
 <link rel="alternate" hreflang="de" href="https://travelblog.com/de/destinations/paris/" />
 <link rel="alternate" hreflang="x-default" href="https://travelblog.com/destinations/paris/" />
-```
+\`\`\`
 
 **Best Practices:**
 - Always include all language versions on every page version
@@ -207,7 +207,7 @@ If your site serves visitors from different countries or in different languages,
 XML sitemaps are like giving search engines a detailed map of all the important content on your site. They ensure search engines can find and index all your valuable pages.
 
 **Creating an Effective XML Sitemap:**
-```xml
+\`\`\`xml
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
@@ -228,7 +228,7 @@ XML sitemaps are like giving search engines a detailed map of all the important 
     <xhtml:link rel="alternate" hreflang="fr" href="https://travelblog.com/fr/destinations/" />
   </url>
 </urlset>
-```
+\`\`\`
 
 **Sitemap Strategy:**
 - For large sites, create multiple sitemaps grouped by content type or date
@@ -238,7 +238,7 @@ XML sitemaps are like giving search engines a detailed map of all the important 
 - Submit your sitemap through Google Search Console
 
 **Robots.txt Example with Sitemap Reference:**
-```
+\`\`\`
 # Example robots.txt with sitemap reference
 User-agent: *
 Disallow: /admin/
@@ -247,7 +247,7 @@ Disallow: /search-results/
 
 # Sitemap location
 Sitemap: https://travelblog.com/sitemap.xml
-```
+\`\`\`
 
 ## Putting It All Together: The Expert SEO Audit Process
 

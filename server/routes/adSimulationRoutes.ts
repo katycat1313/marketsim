@@ -141,6 +141,58 @@ const sampleAdSimulations = [
     adCreativeSamples: ["Complete Your Course Registration", "Your Selected Course Is Waiting", "50% Off - Limited Time Offer"],
     advancedFeatures: ["Dynamic product ads", "Conversion optimization", "Different messaging based on funnel stage"],
     attributionSettings: ["7-day click, 1-day view"]
+  },
+  {
+    title: "Expert Google Ads Competitive Conquesting",
+    platform: "google_ads",
+    type: "search",
+    industry: "Finance",
+    difficulty: "Expert",
+    scenarioDescription: "Manage a high-stakes search campaign in the ultra-competitive business loans sector. Bids exceed $25/click from aggressive competitors. You must maintain strict negative keyword hygiene, achieve a 9+ Quality Score, and leverage phrase/exact match types to achieve a positive ROAS.",
+    objectives: [
+      "Target high-intent commercial loan searches",
+      "Defend against competitor click inflation",
+      "Achieve sub-$60 cost per qualified lead",
+      "Maintain a Quality Score of 8+"
+    ],
+    targetAudience: {
+      locations: ["United States (Top 50 Metros)"],
+      demographics: {
+        ageRanges: ["35-54", "55-64"],
+        genders: ["all"],
+        householdIncome: ["top 10%", "top 25%"]
+      },
+      interests: ["Small Business", "Commercial Banking", "Business Financing"]
+    },
+    budget: 150,
+    keywords: ["commercial business loans", "working capital funding", "fast business financing", "equipment financing loan"],
+    keywordMatchTypes: ["phrase", "exact"],
+    negativeKeywords: ["free", "personal", "bad credit", "scam", "government grants", "calculator"],
+    adCreativeSamples: ["Fast Commercial Business Loans", "Same-Day Funding Approval", "Rates from 5.9% APR"]
+  },
+  {
+    title: "Expert Omnichannel Multi-Placement Blitz",
+    platform: "meta_ads",
+    type: "conversion",
+    industry: "E-commerce",
+    difficulty: "Expert",
+    scenarioDescription: "Scale an international direct-to-consumer brand during Q4 holiday surge. Ad fatigue sets in within 48 hours. You must implement dynamic creative testing, broad audience Advantage+ targeting with strict lookalike exclusions, and conversion API pixel tracking.",
+    objectives: [
+      "Scale daily revenue past 4.5x ROAS",
+      "Combat rapid ad creative fatigue",
+      "Optimize checkout conversion rate across Instagram Reels & Feeds"
+    ],
+    targetAudience: {
+      locations: ["United States", "United Kingdom", "Germany", "Canada"],
+      demographics: {
+        ageRanges: ["21-45"],
+        genders: ["all"]
+      },
+      interests: ["Premium lifestyle", "Direct to consumer brands", "Holiday gift guides"]
+    },
+    budget: 200,
+    adCreativeSamples: ["The #1 Rated Holiday Gift of 2025", "Limited Stock Remaining - Order Before Dec 15", "Unlock 25% Off Storewide VIP Access"],
+    placementOptions: ["Instagram Reels", "Instagram Stories", "Facebook Feed", "Messenger Stories"]
   }
 ];
 
@@ -152,7 +204,6 @@ const seedAdSimulations = async () => {
     console.log("Seeding ad platform simulations...");
     
     // Get existing simulations
-    console.log("Getting existing simulations...");
     const existingSimulations = await storage.listAdPlatformSimulations();
     console.log(`Found ${existingSimulations.length} existing ad simulations`);
     
@@ -164,7 +215,7 @@ const seedAdSimulations = async () => {
     
     for (const sim of sampleAdSimulations) {
       if (!existingTitles.includes(sim.title)) {
-        await db.insert(db.schema.adPlatformSimulations).values(sim);
+        await db.insert(adPlatformSimulations).values(sim as any);
         newSimulationsCount++;
         console.log(`Added new ad simulation: ${sim.title}`);
       } else {
@@ -173,7 +224,6 @@ const seedAdSimulations = async () => {
     }
     
     console.log(`Added ${newSimulationsCount} new ad simulations`);
-    
     return true;
   } catch (error) {
     console.error("Error seeding ad simulations:", error);
@@ -181,27 +231,37 @@ const seedAdSimulations = async () => {
   }
 };
 
+import { dynamicSimulationGenerator } from "../services/dynamicSimulationGenerator";
+
+// Memory store for dynamically generated simulations
+const dynamicSimulationsStore: Map<number, any> = new Map();
+
+// Helper to get fallback sample simulations with sequential IDs
+const seededStaticSimulations = sampleAdSimulations.map((sim, index) => ({
+  id: index + 1,
+  ...sim,
+  createdAt: new Date(),
+  updatedAt: new Date()
+}));
+
 /**
- * Get all ad platform simulations
+ * Get all ad platform simulations (combines static library + user-tailored dynamic simulations)
  */
 const getAdSimulations = async (req: Request, res: Response) => {
   try {
-    console.log("Fetching all ad platform simulations...");
-    const simulations = await storage.listAdPlatformSimulations();
-    console.log(`Found ${simulations.length} ad simulations`);
-    
-    // Only seed if no simulations exist
-    if (simulations.length === 0) {
-      console.log("No ad simulations found, seeding ad platform simulations...");
-      await seedAdSimulations();
-      // Get the simulations again after seeding
-      const seededSimulations = await storage.listAdPlatformSimulations();
-      console.log(`Returning ${seededSimulations.length} ad simulations after seeding`);
-      return res.json(seededSimulations);
+    let dbSimulations: any[] = [];
+    try {
+      dbSimulations = await storage.listAdPlatformSimulations();
+    } catch (e) {
+      console.warn("Using in-memory simulations fallback.");
     }
     
-    console.log(`Returning ${simulations.length} ad simulations`);
-    res.json(simulations);
+    const baseList = dbSimulations.length > 0 ? dbSimulations : seededStaticSimulations;
+    const dynamicList = Array.from(dynamicSimulationsStore.values());
+    
+    // Combine base catalog with newly generated simulations
+    const combined = [...dynamicList, ...baseList];
+    res.json(combined);
   } catch (error) {
     console.error("Error fetching ad simulations:", error);
     res.status(500).json({ error: "Failed to fetch ad simulations" });
@@ -214,16 +274,81 @@ const getAdSimulations = async (req: Request, res: Response) => {
 const getAdSimulationById = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const simulation = await storage.getAdPlatformSimulation(parseInt(id));
-    
-    if (!simulation) {
-      return res.status(404).json({ error: "Ad simulation not found" });
+    const simulationId = parseInt(id);
+
+    // 1. Check dynamically generated simulations
+    if (dynamicSimulationsStore.has(simulationId)) {
+      return res.json(dynamicSimulationsStore.get(simulationId));
     }
     
-    res.json(simulation);
+    // 2. Check storage / database
+    try {
+      const simulation = await storage.getAdPlatformSimulation(simulationId);
+      if (simulation) {
+        return res.json(simulation);
+      }
+    } catch (e) {
+      // fallback
+    }
+
+    // 3. Check seeded static simulations
+    const staticSim = seededStaticSimulations.find(s => s.id === simulationId);
+    if (staticSim) {
+      return res.json(staticSim);
+    }
+    
+    res.status(404).json({ error: "Ad simulation not found" });
   } catch (error) {
     console.error("Error fetching ad simulation:", error);
     res.status(500).json({ error: "Failed to fetch ad simulation" });
+  }
+};
+
+/**
+ * Dynamically generate a personalized simulation tailored to the user's expertise level and weaknesses
+ */
+const generateAdSimulation = async (req: Request, res: Response) => {
+  try {
+    const userId = req.user?.id || 1;
+    const { level, targetWeakness, platform, industry } = req.body || {};
+
+    const generatedSim = dynamicSimulationGenerator.generateSimulation({
+      userId,
+      level,
+      targetWeakness,
+      platform,
+      industry
+    });
+
+    // Store in-memory
+    dynamicSimulationsStore.set(generatedSim.id, generatedSim);
+
+    // Also attempt to persist to database if available
+    try {
+      await db.insert(adPlatformSimulations).values(generatedSim as any);
+    } catch (e) {
+      console.log("Persisted dynamic simulation to memory store.");
+    }
+
+    res.status(201).json(generatedSim);
+  } catch (error) {
+    console.error("Error generating dynamic simulation:", error);
+    res.status(500).json({ error: "Failed to generate dynamic simulation" });
+  }
+};
+
+/**
+ * Get user's current skill diagnostics and weakness profile
+ */
+const getUserSkillDiagnostics = async (req: Request, res: Response) => {
+  try {
+    const userId = req.user?.id || 1;
+    const userLevel = (req.user as any)?.level || "Expert";
+    const diagnostics = dynamicSimulationGenerator.getUserDiagnostics(userId, userLevel);
+    res.json(diagnostics);
+  } catch (error) {
+    console.error("Error getting skill diagnostics:", error);
+    res.status(500).json({ error: "Failed to fetch skill diagnostics" });
   }
 };
 
@@ -234,30 +359,66 @@ const submitAdSimulationAttempt = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const simulationId = parseInt(id);
-    const userId = req.user?.id || 1; // Default to 1 for testing if no user is authenticated
+    const userId = req.user?.id || 1;
     
-    // Fetch the original simulation
-    const simulation = await storage.getAdPlatformSimulation(simulationId);
+    // Fetch the simulation
+    let simulation = dynamicSimulationsStore.get(simulationId);
+    if (!simulation) {
+      try {
+        simulation = await storage.getAdPlatformSimulation(simulationId);
+      } catch (e) {}
+    }
+    if (!simulation) {
+      simulation = seededStaticSimulations.find(s => s.id === simulationId);
+    }
+
     if (!simulation) {
       return res.status(404).json({ error: "Ad simulation not found" });
     }
     
-    // Validate the attempt data
     const attemptData = {
       ...req.body,
       simulationId,
       userId
     };
     
-    // Process the attempt with our simulation engine
+    // Process the attempt with our mathematical simulation engine
     const evaluationResult = await evaluateAdSimulationAttempt(simulation, attemptData);
     
-    // Save the attempt results
-    const savedAttempt = await storage.createAdPlatformSimulationAttempt({
+    // Record attempt in user's live skill & weakness tracker
+    const hasNegs = Array.isArray(attemptData.negativeKeywords) 
+      ? attemptData.negativeKeywords.length > 0
+      : (attemptData.adGroups || []).some((ag: any) => ag.negativeKeywords?.length > 0);
+
+    const attemptRecord = {
+      id: Date.now(),
+      userId,
+      simulationId,
+      platform: simulation.platform || "google_ads",
+      difficulty: simulation.difficulty || "Beginner",
+      score: evaluationResult.score,
+      metrics: evaluationResult.metrics as any,
+      usedNegativeKeywords: hasNegs,
+      hasExtensions: !!(attemptData.platformSpecificSettings?.adExtensions?.length || attemptData.adExtensions?.length),
+      timestamp: new Date()
+    };
+
+    dynamicSimulationGenerator.recordAttempt(attemptRecord);
+    const postSimDebrief = dynamicSimulationGenerator.generatePostSimDebrief(attemptRecord, simulation);
+
+    const savedAttempt = {
+      ...attemptRecord,
       ...attemptData,
       ...evaluationResult,
+      postSimDebrief,
       completedAt: new Date()
-    });
+    };
+    
+    try {
+      await storage.createAdPlatformSimulationAttempt(savedAttempt as any);
+    } catch (e) {
+      console.log("Saved attempt in memory session.");
+    }
     
     res.json(savedAttempt);
   } catch (error) {
@@ -273,181 +434,274 @@ const getUserAttempts = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const simulationId = parseInt(id);
-    const userId = req.user?.id || 1; // Default to 1 for testing if no user is authenticated
+    const userId = req.user?.id || 1;
     
-    const attempts = await storage.getAdPlatformSimulationAttempts(userId, simulationId);
-    res.json(attempts);
+    try {
+      const attempts = await storage.getAdPlatformSimulationAttempts(userId, simulationId);
+      return res.json(attempts);
+    } catch (e) {
+      return res.json([]);
+    }
   } catch (error) {
     console.error("Error fetching user attempts:", error);
     res.status(500).json({ error: "Failed to fetch attempts" });
   }
 };
 
-// Mock evaluation function - this would be replaced with a more sophisticated evaluation engine
+// Advanced Deterministic & Adaptive Marketing Simulation Evaluation Engine
 async function evaluateAdSimulationAttempt(
   simulation: AdPlatformSimulation, 
   attempt: any
 ): Promise<{ score: number; feedback: string[]; metrics: Record<string, number> }> {
-  // Basic simulation metrics
-  const metrics: Record<string, number> = {
-    impressions: Math.floor(Math.random() * 10000) + 1000,
-    clicks: Math.floor(Math.random() * 1000) + 100,
-    conversions: Math.floor(Math.random() * 100) + 10,
-    cost: parseFloat((Math.random() * 1000 + 100).toFixed(2))
+  const difficulty = (simulation.difficulty || "beginner").toLowerCase();
+  const platform = simulation.platform || "google_ads";
+  const industry = simulation.industry || "General";
+  const dailyBudget = typeof attempt.dailyBudget === "number" && attempt.dailyBudget > 0 ? attempt.dailyBudget : (simulation.budget || 50);
+
+  // 1. Benchmark Rates by Platform & Industry
+  const industryCpcBase: Record<string, number> = {
+    "E-commerce": 1.35,
+    "Online Retail": 1.25,
+    "Local Business": 1.80,
+    "Restaurants": 1.40,
+    "B2B SaaS": 4.20,
+    "B2B Software": 4.50,
+    "Healthcare": 3.10,
+    "Finance": 5.40,
+    "Education": 2.20,
+    "Travel": 1.60,
+    "General": 1.90,
   };
-  
-  // Calculate derived metrics
-  metrics.ctr = parseFloat(((metrics.clicks / metrics.impressions) * 100).toFixed(2));
-  metrics.cpc = parseFloat((metrics.cost / metrics.clicks).toFixed(2));
-  metrics.conversionRate = parseFloat(((metrics.conversions / metrics.clicks) * 100).toFixed(2));
-  metrics.costPerConversion = parseFloat((metrics.cost / metrics.conversions).toFixed(2));
-  
-  // Base score calculation
-  let score = 0;
+
+  const aovBenchmarks: Record<string, number> = {
+    "E-commerce": 75,
+    "Online Retail": 65,
+    "Local Business": 35,
+    "Restaurants": 28,
+    "B2B SaaS": 350,
+    "B2B Software": 450,
+    "Healthcare": 180,
+    "Finance": 400,
+    "Education": 120,
+    "Travel": 250,
+    "General": 80,
+  };
+
+  const baseCpc = industryCpcBase[industry] || industryCpcBase["General"];
+  const aov = aovBenchmarks[industry] || aovBenchmarks["General"];
+
+  // 2. Difficulty Multipliers
+  let difficultyCpcMultiplier = 1.0;
+  let difficultyCvrMultiplier = 1.0;
+  let competitionIndex = 1.0;
+
+  if (difficulty === "beginner") {
+    difficultyCpcMultiplier = 0.85;
+    difficultyCvrMultiplier = 1.20;
+    competitionIndex = 0.8;
+  } else if (difficulty === "intermediate") {
+    difficultyCpcMultiplier = 1.10;
+    difficultyCvrMultiplier = 1.0;
+    competitionIndex = 1.1;
+  } else if (difficulty === "advanced") {
+    difficultyCpcMultiplier = 1.35;
+    difficultyCvrMultiplier = 0.88;
+    competitionIndex = 1.35;
+  } else if (difficulty === "expert") {
+    difficultyCpcMultiplier = 1.65;
+    difficultyCvrMultiplier = 0.75;
+    competitionIndex = 1.6;
+  }
+
+  // 3. Evaluate Keywords & Match Types (for Search / Google Ads)
+  let keywordRelevanceScore = 5;
+  let matchTypeMultiplier = 1.0;
+  let hasNegativeKeywords = false;
+  let totalKeywordsCount = 0;
+  let exactPhraseRatio = 0;
+
+  if (attempt.adGroupStructure && Array.isArray(attempt.adGroupStructure)) {
+    const allKeywords: Array<{ text: string; matchType?: string }> = [];
+    const allNegatives: string[] = [];
+
+    attempt.adGroupStructure.forEach((ag: any) => {
+      if (ag.targeting?.keywords && Array.isArray(ag.targeting.keywords)) {
+        allKeywords.push(...ag.targeting.keywords);
+      }
+      if (ag.targeting?.negativeKeywords && Array.isArray(ag.targeting.negativeKeywords)) {
+        allNegatives.push(...ag.targeting.negativeKeywords);
+      }
+    });
+
+    totalKeywordsCount = allKeywords.length;
+    hasNegativeKeywords = allNegatives.length > 0;
+
+    if (totalKeywordsCount > 0) {
+      const exactPhraseCount = allKeywords.filter(k => k.matchType === "exact" || k.matchType === "phrase").length;
+      exactPhraseRatio = exactPhraseCount / totalKeywordsCount;
+      
+      // Match type strategy weighting
+      if (exactPhraseRatio >= 0.6) {
+        matchTypeMultiplier = 1.25; // Higher intent and higher CTR
+        keywordRelevanceScore += 3;
+      } else if (exactPhraseRatio >= 0.3) {
+        matchTypeMultiplier = 1.05;
+        keywordRelevanceScore += 1;
+      } else {
+        // High broad match share
+        matchTypeMultiplier = difficulty === "expert" || difficulty === "advanced" ? 0.75 : 0.9;
+        keywordRelevanceScore -= 1;
+      }
+
+      if (hasNegativeKeywords) {
+        keywordRelevanceScore += 2;
+      } else if (difficulty === "advanced" || difficulty === "expert") {
+        keywordRelevanceScore -= 2; // Penalty in advanced/expert tiers for no negative keywords
+      }
+    }
+  }
+
+  // 4. Evaluate Ad Copy & Creative Relevance
+  let creativeRelevanceScore = 5;
+  const creatives = attempt.creatives || [];
+  if (creatives.length > 0) {
+    const firstCreative = creatives[0];
+    const headline = (firstCreative.headline || "").toLowerCase();
+    const description = (firstCreative.description || "").toLowerCase();
+    const destUrl = (firstCreative.destinationUrl || "").toLowerCase();
+
+    // Check if creative contains relevant industry / target intent keywords
+    const searchTerms = (simulation.title + " " + (simulation.scenarioDescription || "")).toLowerCase();
+    const words = searchTerms.split(/\s+/).filter(w => w.length > 4);
+    const matchesHeadline = words.some(w => headline.includes(w));
+    const matchesDesc = words.some(w => description.includes(w));
+
+    if (matchesHeadline) creativeRelevanceScore += 2;
+    if (matchesDesc) creativeRelevanceScore += 2;
+    if (destUrl && destUrl.length > 5 && !destUrl.includes("example.com")) creativeRelevanceScore += 1;
+  }
+
+  // 5. Evaluate Extensions and Platform Features
+  let extensionsBonus = 0;
+  if (platform === "google_ads") {
+    const exts = attempt.platformSpecificSettings?.adExtensions;
+    if (Array.isArray(exts) && exts.length > 0) {
+      extensionsBonus = Math.min(exts.length * 0.5, 1.5);
+    }
+  } else if (platform === "meta_ads") {
+    if (attempt.platformSpecificSettings?.pixelEnabled) extensionsBonus += 1.0;
+    if (attempt.platformSpecificSettings?.placements?.length >= 2) extensionsBonus += 0.5;
+  } else if (platform === "linkedin_ads") {
+    if (attempt.platformSpecificSettings?.leadGenEnabled) extensionsBonus += 1.0;
+    if (attempt.platformSpecificSettings?.insightTagEnabled) extensionsBonus += 0.5;
+  }
+
+  // 6. Calculate Quality Score (1 - 10)
+  const rawQualityScore = Math.round((keywordRelevanceScore * 0.45) + (creativeRelevanceScore * 0.45) + extensionsBonus);
+  const qualityScore = Math.max(1, Math.min(10, rawQualityScore));
+
+  // 7. Calculate Expected CTR
+  let baseCtr = 0.021; // 2.1%
+  if (platform === "meta_ads") baseCtr = 0.012;
+  if (platform === "linkedin_ads") baseCtr = 0.008;
+
+  const qsCtrMultiplier = 0.6 + (qualityScore * 0.08); // QS 10 -> 1.4x, QS 5 -> 1.0x, QS 1 -> 0.68x
+  const ctr = parseFloat(Math.max(0.4, Math.min(8.5, (baseCtr * matchTypeMultiplier * qsCtrMultiplier * 100))).toFixed(2));
+
+  // 8. Calculate CPC (Auction formula: discount for high QS, surcharge for low QS)
+  const qsCpcDiscount = (11 - qualityScore) * 0.09 + 0.5; // QS 10 -> 0.59x, QS 5 -> 1.04x, QS 1 -> 1.40x
+  const cpc = parseFloat(Math.max(0.20, (baseCpc * difficultyCpcMultiplier * qsCpcDiscount)).toFixed(2));
+
+  // 9. Calculate Daily Spend, Impressions & Clicks
+  const estimatedClicks = Math.max(1, Math.floor(dailyBudget / cpc));
+  const impressions = Math.max(100, Math.round((estimatedClicks / (ctr / 100))));
+  const clicks = Math.max(1, Math.round(impressions * (ctr / 100)));
+  const cost = parseFloat(Math.min(dailyBudget, clicks * cpc).toFixed(2));
+
+  // 10. Calculate Conversion Rate and Conversions
+  let baseCvr = 0.032; // 3.2%
+  if (platform === "meta_ads") baseCvr = 0.021;
+  if (platform === "linkedin_ads") baseCvr = 0.045;
+
+  const cvrMultiplier = (0.7 + (qualityScore * 0.06)) * difficultyCvrMultiplier;
+  const conversionRate = parseFloat(Math.max(0.5, Math.min(15.0, (baseCvr * cvrMultiplier * 100))).toFixed(2));
+  const conversions = Math.max(0, Math.round(clicks * (conversionRate / 100)));
+
+  const costPerConversion = conversions > 0 ? parseFloat((cost / conversions).toFixed(2)) : cost;
+  const totalRevenue = conversions * aov;
+  const roas = parseFloat((totalRevenue / (cost || 1)).toFixed(2));
+
+  const metrics: Record<string, number> = {
+    impressions,
+    clicks,
+    conversions,
+    cost,
+    ctr,
+    cpc,
+    conversionRate,
+    costPerConversion,
+    qualityScore,
+    roas,
+    averagePosition: qualityScore >= 8 ? 1.4 : qualityScore >= 6 ? 2.2 : qualityScore >= 4 ? 3.5 : 4.8
+  };
+
+  // 11. Calculate Overall Performance Score (0 - 100)
+  let calculatedScore = 0;
   const feedback: string[] = [];
-  
-  // Evaluate campaign naming (basic check)
-  if (attempt.campaignName && attempt.campaignName.length > 0) {
-    score += 5;
-    if (attempt.campaignName.includes(simulation.industry)) {
-      score += 5;
-      feedback.push("Good job including the industry in your campaign name for easy identification.");
-    } else {
-      feedback.push("Consider including the industry in your campaign name for better organization.");
-    }
+
+  // Quality Score component (up to 30 pts)
+  calculatedScore += qualityScore * 3;
+  if (qualityScore >= 8) {
+    feedback.push(`Outstanding Quality Score (${qualityScore}/10). Your ad copy strongly matches search intent and keywords.`);
+  } else if (qualityScore >= 6) {
+    feedback.push(`Solid Quality Score (${qualityScore}/10). Consider tightening headline copy to boost relevance.`);
   } else {
-    feedback.push("Your campaign needs a descriptive name.");
+    feedback.push(`Low Quality Score (${qualityScore}/10). Irrelevant copy or unconstrained match types are inflating your CPC by ~${Math.round((qsCpcDiscount - 1) * 100)}%.`);
   }
-  
-  // Evaluate campaign objective
-  if (attempt.campaignObjective) {
-    score += 10;
-    if (simulation.objectives.some(obj => obj.toLowerCase().includes(attempt.campaignObjective.toLowerCase()))) {
-      score += 10;
-      feedback.push("Your campaign objective aligns well with the business goals.");
-    } else {
-      feedback.push("Your campaign objective could be better aligned with the business goals.");
-    }
+
+  // CTR & Intent Strategy component (up to 25 pts)
+  if (ctr >= 3.5) {
+    calculatedScore += 25;
+    feedback.push(`High Click-Through Rate (${ctr}%). Strong headline hooks and ad extensions are driving above-average engagement.`);
+  } else if (ctr >= 2.0) {
+    calculatedScore += 18;
+    feedback.push(`Moderate Click-Through Rate (${ctr}%). Adding sitelinks and callout extensions will lift your CTR.`);
   } else {
-    feedback.push("Setting a clear campaign objective is essential for success.");
+    calculatedScore += 8;
+    feedback.push(`Sub-optimal CTR (${ctr}%). Test more compelling call-to-actions (CTAs) and review keyword match types.`);
   }
-  
-  // Evaluate targeting
-  if (attempt.targeting && attempt.targeting.locations && attempt.targeting.locations.length > 0) {
-    score += 10;
-    
-    // Check if locations match those in the simulation
-    const targetLocations = simulation.targetAudience.locations || [];
-    const matching = attempt.targeting.locations.filter((loc: string) => 
-      targetLocations.includes(loc)
-    ).length;
-    
-    if (matching > 0) {
-      score += 10 * (matching / targetLocations.length);
-      feedback.push("Your location targeting matches the target audience well.");
-    } else {
-      feedback.push("Your location targeting could be improved to better match the target audience.");
-    }
+
+  // Cost Efficiency & CPA component (up to 25 pts)
+  if (conversions > 0 && costPerConversion <= baseCpc * 8) {
+    calculatedScore += 25;
+    feedback.push(`Cost per acquisition is efficient at $${costPerConversion.toFixed(2)} (ROAS: ${roas}x).`);
+  } else if (conversions > 0) {
+    calculatedScore += 16;
+    feedback.push(`Generated ${conversions} conversions, but CPA ($${costPerConversion.toFixed(2)}) can be improved with landing page conversion optimization.`);
   } else {
-    feedback.push("Targeting specific locations is important for campaign efficiency.");
+    calculatedScore += 5;
+    feedback.push(`No conversions recorded within the budget. Refine your audience targeting and ensure landing page proposition matches the ad promise.`);
   }
-  
-  // Evaluate budget based on simulation requirements
-  if (attempt.dailyBudget && typeof attempt.dailyBudget === 'number') {
-    score += 10;
-    
-    if (attempt.dailyBudget >= simulation.budget * 0.7 && attempt.dailyBudget <= simulation.budget * 1.3) {
-      score += 10;
-      feedback.push("Your budget is appropriate for this campaign scenario.");
-    } else if (attempt.dailyBudget < simulation.budget * 0.7) {
-      feedback.push("Your budget may be too low to achieve the campaign objectives.");
-    } else {
-      feedback.push("Your budget may be higher than necessary for this campaign.");
-    }
+
+  // Advanced & Strategy Settings (up to 20 pts)
+  if (hasNegativeKeywords) {
+    calculatedScore += 10;
+    feedback.push("Negative keywords actively filtered out irrelevant search queries, preventing wasted spend.");
+  } else if (platform === "google_ads" && (difficulty === "advanced" || difficulty === "expert")) {
+    feedback.push("Critical: You did not include negative keywords. In competitive auctions, broad traffic without negatives wastes 20-35% of ad spend.");
+  }
+
+  if (extensionsBonus > 0) {
+    calculatedScore += 10;
+    feedback.push("Effective use of platform tracking and extensions increased overall Ad Rank.");
   } else {
-    feedback.push("Setting an appropriate budget is crucial for campaign success.");
+    feedback.push("Pro tip: Enable full ad extensions (Sitelinks, Callouts) or conversion pixels to improve Ad Rank without raising your bid.");
   }
-  
-  // Evaluate creatives
-  if (attempt.creatives && attempt.creatives.length > 0) {
-    score += 10;
-    
-    // Check if at least one creative has all required fields
-    const completeCreatives = attempt.creatives.filter((creative: any) => 
-      creative.headline && 
-      creative.description && 
-      creative.destinationUrl
-    ).length;
-    
-    if (completeCreatives > 0) {
-      score += 10 * (completeCreatives / attempt.creatives.length);
-      feedback.push("Your ad creatives are well-structured and complete.");
-    } else {
-      feedback.push("Make sure your ad creatives include all necessary elements (headline, description, URL).");
-    }
-  } else {
-    feedback.push("Creating compelling ad content is essential for campaign performance.");
-  }
-  
-  // Platform-specific evaluations
-  switch (simulation.platform) {
-    case "google_ads":
-      if (attempt.platformSpecificSettings?.adExtensions?.length > 0) {
-        score += 10;
-        feedback.push("Good job utilizing ad extensions for Google Ads.");
-      } else {
-        feedback.push("Consider adding ad extensions to improve your Google Ads performance.");
-      }
-      
-      // Check if there are negative keywords for Google Ads
-      if (attempt.adGroupStructure && attempt.adGroupStructure.some((group: any) => 
-        group.targeting?.negativeKeywords?.length > 0
-      )) {
-        score += 5;
-        feedback.push("Using negative keywords demonstrates advanced campaign management.");
-      } else {
-        feedback.push("Adding negative keywords can help reduce wasted ad spend.");
-      }
-      break;
-      
-    case "meta_ads":
-      if (attempt.platformSpecificSettings?.placements?.includes("instagram")) {
-        score += 5;
-        feedback.push("Including Instagram in your Meta Ads placements is a good choice for this audience.");
-      }
-      
-      if (attempt.platformSpecificSettings?.pixelEnabled) {
-        score += 10;
-        feedback.push("Enabling the Meta Pixel is excellent for tracking and optimization.");
-      } else {
-        feedback.push("Consider implementing the Meta Pixel for better conversion tracking.");
-      }
-      break;
-      
-    case "linkedin_ads":
-      if (attempt.targeting?.jobTitles?.length > 0 || 
-          attempt.targeting?.jobFunctions?.length > 0 || 
-          attempt.targeting?.industries?.length > 0) {
-        score += 10;
-        feedback.push("Your LinkedIn targeting uses professional attributes effectively.");
-      } else {
-        feedback.push("LinkedIn Ads perform best when targeting specific professional attributes.");
-      }
-      
-      if (attempt.platformSpecificSettings?.leadGenEnabled && simulation.objectives.some(obj => 
-        obj.toLowerCase().includes("lead")
-      )) {
-        score += 10;
-        feedback.push("Using LinkedIn's Lead Gen forms aligns well with your lead generation objective.");
-      }
-      break;
-  }
-  
-  // Cap score at 100
-  score = Math.min(Math.round(score), 100);
-  
+
+  const finalScore = Math.min(100, Math.max(10, Math.round(calculatedScore)));
+
   return {
-    score,
+    score: finalScore,
     feedback,
     metrics
   };
@@ -456,6 +710,8 @@ async function evaluateAdSimulationAttempt(
 export const registerAdSimulationRoutes = (app: Express) => {
   app.get("/api/ad-simulations", getAdSimulations);
   app.get("/api/ad-simulations/:id", getAdSimulationById);
+  app.post("/api/ad-simulations/generate", generateAdSimulation);
+  app.get("/api/user/skill-diagnostics", getUserSkillDiagnostics);
   app.post("/api/ad-simulations/:id/attempt", submitAdSimulationAttempt);
   app.get("/api/ad-simulations/:id/attempts", getUserAttempts);
 };

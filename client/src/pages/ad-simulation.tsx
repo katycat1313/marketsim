@@ -14,8 +14,23 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { CheckCircle, AlertCircle, Info, ArrowRight, Plus, Trash2 } from "lucide-react";
+import { 
+  CheckCircle, 
+  AlertCircle, 
+  Info, 
+  ArrowRight, 
+  Plus, 
+  Trash2,
+  Sparkles,
+  Brain,
+  ShieldAlert,
+  Zap,
+  TrendingUp,
+  RefreshCw,
+  Target
+} from "lucide-react";
+import { Progress } from "@/components/ui/progress";
+import { useToast } from "@/hooks/use-toast";
 import { getQueryFn, apiRequest, queryClient } from "@/lib/queryClient";
 import { AdPlatformSimulation } from "@shared/schema";
 
@@ -117,6 +132,33 @@ export default function AdSimulationPage() {
   const [matched, params] = useRoute<{ simulationId: string }>('/ad-simulation/:simulationId');
   const simulationId = matched && params ? parseInt(params.simulationId) : null;
   const [, setLocation] = useLocation();
+  const { toast } = useToast();
+  const [isGeneratingNext, setIsGeneratingNext] = useState(false);
+
+  const handleLaunchRemediation = async (weaknessKey: string, difficulty: string = "Expert") => {
+    setIsGeneratingNext(true);
+    try {
+      const res = await apiRequest("POST", "/api/ad-simulations/generate", {
+        targetWeakness: weaknessKey,
+        level: difficulty,
+        platform: simulation?.platform || "google_ads",
+      });
+      const created = await res.json();
+      toast({
+        title: "✨ Targeted Remediation Challenge Generated",
+        description: `Starting: ${created.title}`,
+      });
+      setLocation(`/ad-simulation/${created.id}`);
+    } catch (e: any) {
+      toast({
+        title: "Generation Failed",
+        description: e.message || "Could not generate remediation simulation.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsGeneratingNext(false);
+    }
+  };
   
   // State for the forms
   const [googleForm, setGoogleForm] = useState<GoogleAdForm>({
@@ -1982,95 +2024,228 @@ export default function AdSimulationPage() {
   const renderSimulationResults = () => {
     if (!simulationResults) return null;
     
-    const { score, feedback, metrics } = simulationResults;
+    const { score, feedback = [], metrics = {}, postSimDebrief } = simulationResults;
+    const diagnostics = postSimDebrief?.updatedDiagnostics;
+    const nextChallenge = postSimDebrief?.nextChallenge;
     
     return (
       <div className="space-y-6">
-        <Card className="border-none shadow-none bg-gray-50">
+        {/* Top Summary Card */}
+        <Card className="border-primary/20 bg-gradient-to-r from-background via-card to-background shadow-md">
           <CardContent className="pt-6">
-            <div className="text-center">
-              <div className="inline-flex items-center justify-center rounded-full p-4 bg-gray-100 mb-4">
-                {score >= 70 ? (
-                  <CheckCircle className="h-12 w-12 text-green-500" />
-                ) : score >= 40 ? (
-                  <Info className="h-12 w-12 text-amber-500" />
+            <div className="text-center space-y-2">
+              <div className="inline-flex items-center justify-center rounded-full p-4 bg-primary/10 border border-primary/20 mb-2">
+                {score >= 75 ? (
+                  <CheckCircle className="h-12 w-12 text-emerald-500" />
+                ) : score >= 50 ? (
+                  <Info className="h-12 w-12 text-amber-400" />
                 ) : (
                   <AlertCircle className="h-12 w-12 text-red-500" />
                 )}
               </div>
-              <h3 className="text-2xl font-bold mb-2">
-                {score >= 70 ? "Great job!" : score >= 40 ? "Good effort!" : "Needs improvement"}
+              <h3 className="text-2xl font-bold text-foreground">
+                {score >= 80 ? "Outstanding Campaign Execution!" : score >= 60 ? "Solid Attempt with Growth Opportunities" : "Critical Optimization Required"}
               </h3>
-              <p className="text-gray-600 mb-4">Your score: {score}/100</p>
-              <div className="flex justify-center">
-                <Badge className={`px-3 py-1 text-sm ${
-                  score >= 70 ? "bg-green-100 text-green-800" : 
-                  score >= 40 ? "bg-amber-100 text-amber-800" : 
-                  "bg-red-100 text-red-800"
-                }`}>
-                  {score >= 70 ? "Successful" : score >= 40 ? "Partially Successful" : "Unsuccessful"}
+              <p className="text-muted-foreground text-sm">
+                Overall Performance Score: <strong className="text-primary text-base font-semibold">{score}/100</strong>
+              </p>
+              <div className="flex justify-center gap-2 pt-1">
+                <Badge className={score >= 75 ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" : score >= 50 ? "bg-amber-500/10 text-amber-400 border-amber-500/30" : "bg-red-500/10 text-red-400 border-red-500/30"}>
+                  {score >= 75 ? "Proficient" : score >= 50 ? "Developing" : "Needs Remediation"}
                 </Badge>
+                {metrics.roas && (
+                  <Badge variant="outline" className="text-xs">
+                    ROAS: {metrics.roas}x
+                  </Badge>
+                )}
+                {metrics.qualityScore && (
+                  <Badge variant="outline" className="text-xs">
+                    Quality Score: {metrics.qualityScore}/10
+                  </Badge>
+                )}
               </div>
             </div>
           </CardContent>
         </Card>
+
+        {/* AI Coach Post-Simulation Debrief & Skill Weakness Breakdown */}
+        {postSimDebrief && (
+          <Card className="border-amber-500/40 bg-gradient-to-br from-amber-500/10 via-card to-background shadow-lg">
+            <CardHeader className="pb-3 border-b border-amber-500/20">
+              <div className="flex items-center justify-between flex-wrap gap-2">
+                <div className="flex items-center gap-2">
+                  <Brain className="h-5 w-5 text-amber-400" />
+                  <CardTitle className="text-lg text-foreground">MarketSim AI Coach Debrief</CardTitle>
+                  <Badge variant="outline" className="bg-amber-500/15 text-amber-400 border-amber-500/40 text-xs">
+                    Telemetric Analysis
+                  </Badge>
+                </div>
+                <div className="text-xs text-muted-foreground">
+                  Updated Live Skill Profile
+                </div>
+              </div>
+              <CardDescription>
+                AI analysis of your campaign mechanics, wasted spend detection, and targeted remediation.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-5 pt-4">
+              {/* Primary Weakness & Wasted Budget Notice */}
+              <div className="p-4 rounded-lg bg-background/80 border border-amber-500/30 space-y-3">
+                <div className="flex items-center gap-2 text-sm font-semibold text-amber-400">
+                  <ShieldAlert className="h-4 w-4" />
+                  <span>Identified Growth Area: {postSimDebrief.primaryWeaknessLabel}</span>
+                </div>
+                
+                {postSimDebrief.wastedSpendReasons && postSimDebrief.wastedSpendReasons.length > 0 && (
+                  <ul className="space-y-1.5 pl-2 text-xs text-muted-foreground">
+                    {postSimDebrief.wastedSpendReasons.map((reason: string, i: number) => (
+                      <li key={i} className="flex items-start gap-2">
+                        <span className="text-amber-400">•</span>
+                        <span>{reason}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+
+                <div className="p-2.5 rounded bg-primary/10 border border-primary/20 text-xs text-foreground flex items-start gap-2">
+                  <Sparkles className="h-4 w-4 text-primary shrink-0 mt-0.5" />
+                  <div>
+                    <strong>AI Coach Recommendation:</strong> {postSimDebrief.actionTip}
+                  </div>
+                </div>
+              </div>
+
+              {/* Updated Live Skill Telemetry Progress Bars */}
+              {diagnostics?.skillScores && (
+                <div className="space-y-2">
+                  <p className="text-xs font-semibold text-foreground uppercase tracking-wider">
+                    Your Updated Skill Telemetry:
+                  </p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                    <div className="p-2.5 rounded bg-card/60 border border-border/40 space-y-1">
+                      <div className="flex justify-between">
+                        <span>Quality Score Optimization</span>
+                        <span className="font-mono text-primary">{diagnostics.skillScores.qualityScoreOptimization}%</span>
+                      </div>
+                      <Progress value={diagnostics.skillScores.qualityScoreOptimization} className="h-1.5" />
+                    </div>
+
+                    <div className="p-2.5 rounded bg-card/60 border border-border/40 space-y-1">
+                      <div className="flex justify-between">
+                        <span>Negative Keyword Defense</span>
+                        <span className="font-mono text-primary">{diagnostics.skillScores.negativeKeywordDefense}%</span>
+                      </div>
+                      <Progress value={diagnostics.skillScores.negativeKeywordDefense} className="h-1.5" />
+                    </div>
+
+                    <div className="p-2.5 rounded bg-card/60 border border-border/40 space-y-1">
+                      <div className="flex justify-between">
+                        <span>CPC & Bid Strategy</span>
+                        <span className="font-mono text-primary">{diagnostics.skillScores.cpcBidEfficiency}%</span>
+                      </div>
+                      <Progress value={diagnostics.skillScores.cpcBidEfficiency} className="h-1.5" />
+                    </div>
+
+                    <div className="p-2.5 rounded bg-card/60 border border-border/40 space-y-1">
+                      <div className="flex justify-between">
+                        <span>CPA & Conversion Alignment</span>
+                        <span className="font-mono text-primary">{diagnostics.skillScores.conversionOptimization}%</span>
+                      </div>
+                      <Progress value={diagnostics.skillScores.conversionOptimization} className="h-1.5" />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Next Remediation Challenge Box */}
+              {nextChallenge && (
+                <div className="p-4 rounded-lg bg-gradient-to-r from-amber-500/15 via-primary/10 to-card border border-amber-500/40 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-1.5 text-xs font-semibold text-amber-400">
+                      <Zap className="h-4 w-4" />
+                      <span>Next Adaptive Remediation Challenge</span>
+                    </div>
+                    <h4 className="text-sm font-bold text-foreground">{nextChallenge.title}</h4>
+                    <p className="text-xs text-muted-foreground">{nextChallenge.reason}</p>
+                  </div>
+                  <Button 
+                    onClick={() => handleLaunchRemediation(nextChallenge.targetWeakness, simulation?.difficulty || "Expert")}
+                    disabled={isGeneratingNext}
+                    className="shrink-0 bg-gradient-to-r from-amber-500 to-primary text-black font-semibold text-xs h-9 px-4 flex items-center gap-2 hover:opacity-90"
+                  >
+                    {isGeneratingNext ? (
+                      <span>Constructing Challenge...</span>
+                    ) : (
+                      <>
+                        <Zap className="h-4 w-4" />
+                        <span>Launch Remediation Simulation</span>
+                      </>
+                    )}
+                  </Button>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
         
+        {/* Performance Metrics Card */}
         <Card>
           <CardHeader>
-            <CardTitle>Performance Metrics</CardTitle>
-            <CardDescription>How your campaign would perform based on your settings</CardDescription>
+            <CardTitle>Auction & Platform Performance Metrics</CardTitle>
+            <CardDescription>Deterministic campaign metrics calculated from auction math and platform benchmarks</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <div className="text-sm text-gray-500">Impressions</div>
+              <div className="bg-card p-4 rounded-lg border border-border/40">
+                <div className="text-xs text-muted-foreground">Impressions</div>
                 <div className="text-2xl font-bold">{metrics.impressions?.toLocaleString() || 0}</div>
               </div>
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <div className="text-sm text-gray-500">Clicks</div>
+              <div className="bg-card p-4 rounded-lg border border-border/40">
+                <div className="text-xs text-muted-foreground">Clicks</div>
                 <div className="text-2xl font-bold">{metrics.clicks?.toLocaleString() || 0}</div>
               </div>
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <div className="text-sm text-gray-500">CTR</div>
-                <div className="text-2xl font-bold">{metrics.ctr?.toFixed(2) || 0}%</div>
+              <div className="bg-card p-4 rounded-lg border border-border/40">
+                <div className="text-xs text-muted-foreground">CTR</div>
+                <div className="text-2xl font-bold text-primary">{metrics.ctr?.toFixed(2) || 0}%</div>
               </div>
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <div className="text-sm text-gray-500">Avg. CPC</div>
+              <div className="bg-card p-4 rounded-lg border border-border/40">
+                <div className="text-xs text-muted-foreground">Avg. CPC</div>
                 <div className="text-2xl font-bold">${metrics.cpc?.toFixed(2) || 0}</div>
               </div>
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <div className="text-sm text-gray-500">Conversions</div>
-                <div className="text-2xl font-bold">{metrics.conversions?.toLocaleString() || 0}</div>
+              <div className="bg-card p-4 rounded-lg border border-border/40">
+                <div className="text-xs text-muted-foreground">Conversions</div>
+                <div className="text-2xl font-bold text-emerald-400">{metrics.conversions?.toLocaleString() || 0}</div>
               </div>
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <div className="text-sm text-gray-500">Conv. Rate</div>
+              <div className="bg-card p-4 rounded-lg border border-border/40">
+                <div className="text-xs text-muted-foreground">Conv. Rate</div>
                 <div className="text-2xl font-bold">{metrics.conversionRate?.toFixed(2) || 0}%</div>
               </div>
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <div className="text-sm text-gray-500">Cost/Conv.</div>
+              <div className="bg-card p-4 rounded-lg border border-border/40">
+                <div className="text-xs text-muted-foreground">Cost/Conv. (CPA)</div>
                 <div className="text-2xl font-bold">${metrics.costPerConversion?.toFixed(2) || 0}</div>
               </div>
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <div className="text-sm text-gray-500">Total Cost</div>
+              <div className="bg-card p-4 rounded-lg border border-border/40">
+                <div className="text-xs text-muted-foreground">Total Spend</div>
                 <div className="text-2xl font-bold">${metrics.cost?.toFixed(2) || 0}</div>
               </div>
             </div>
           </CardContent>
         </Card>
         
+        {/* Feedback Points */}
         <Card>
           <CardHeader>
-            <CardTitle>Feedback & Analysis</CardTitle>
-            <CardDescription>Learn what worked and what could be improved</CardDescription>
+            <CardTitle>Detailed Strategy Breakdown</CardTitle>
+            <CardDescription>Granular analysis of ad rank, match type selectivity, and conversion mechanics</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-3">
             {feedback.map((item: string, index: number) => (
-              <Alert key={index} variant="default" className="bg-gray-50">
-                <div className="flex items-start">
-                  <Info className="h-5 w-5 text-blue-500 mr-2 mt-0.5" />
+              <Alert key={index} className="bg-card border-border/60">
+                <div className="flex items-start gap-2">
+                  <Info className="h-4 w-4 text-primary shrink-0 mt-0.5" />
                   <div>
-                    <AlertTitle className="text-sm font-medium text-gray-900">Feedback Point {index + 1}</AlertTitle>
-                    <AlertDescription className="text-sm text-gray-700 mt-1">
+                    <AlertTitle className="text-xs font-semibold text-foreground">Analysis Point {index + 1}</AlertTitle>
+                    <AlertDescription className="text-xs text-muted-foreground mt-0.5">
                       {item}
                     </AlertDescription>
                   </div>
@@ -2078,12 +2253,13 @@ export default function AdSimulationPage() {
               </Alert>
             ))}
           </CardContent>
-          <CardFooter className="flex justify-between">
-            <Button variant="outline" onClick={() => setActiveStep("setup")}>
-              Edit Campaign
+          <CardFooter className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-border/40">
+            <Button variant="outline" onClick={() => setActiveStep("setup")} className="flex items-center gap-2">
+              <RefreshCw className="h-4 w-4" />
+              <span>Refine & Re-run Campaign</span>
             </Button>
             <Button variant="default" onClick={() => setLocation("/ad-simulations")}>
-              Try Another Simulation
+              All Simulations Catalog
             </Button>
           </CardFooter>
         </Card>

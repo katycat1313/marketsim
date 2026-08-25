@@ -23,14 +23,14 @@ Before implementing any changes, you need a systematic approach to identify all 
 - **Industry-Specific Requirements:** Schema implementation, vertical-specific ranking factors
 
 **Audit Priority Matrix:**
-```
+\`\`\`
 | Issue Type       | High Impact + Easy Fix | High Impact + Hard Fix | Low Impact + Easy Fix | Low Impact + Hard Fix |
 |------------------|------------------------|------------------------|------------------------|------------------------|
 | Technical        | Fix immediately        | Schedule resources     | Quick wins            | Backlog               |
 | Content          | Fix immediately        | Create content plan    | Quick wins            | Backlog               |
 | User Experience  | Fix immediately        | Plan development       | Quick wins            | Consider ROI          |
 | Off-Page         | Capitalize quickly     | Long-term strategy     | When time allows      | Lowest priority       |
-```
+\`\`\`
 
 ### 2. Security and Trust Implementation
 
@@ -44,7 +44,7 @@ With increasing focus on website security and user trust, these elements have be
 - **Brand Reputation Management:** Monitoring and responding to reviews across platforms
 
 **Example Security Header Implementation:**
-```html
+\`\`\`html
 <!-- Example security headers to add to .htaccess or server configuration -->
 <IfModule mod_headers.c>
   Header set Content-Security-Policy "default-src 'self';"
@@ -54,7 +54,7 @@ With increasing focus on website security and user trust, these elements have be
   Header set Referrer-Policy "strict-origin-when-cross-origin"
   Header set Permissions-Policy "geolocation=(), microphone=(), camera=()"
 </IfModule>
-```
+\`\`\`
 
 ### 3. Advanced Competitive Analysis and Differentiation
 
@@ -86,12 +86,12 @@ Internal linking is often underutilized but is extremely powerful for distributi
 - **Link Depth Analysis:** Ensure no important page is more than 3 clicks from homepage
 
 **Internal Linking Audit Tool Template:**
-```
+\`\`\`
 | Page URL | Current Inlinks | Target Inlinks | Current Outlinks | Orphan Page? | Priority Pages | Action Required |
 |----------|----------------|----------------|------------------|--------------|----------------|----------------|
 | /service-1 | 4 | 8 | 12 | No | Yes | Add 4 internal links |
 | /blog/post-3 | 1 | 5 | 2 | Near-orphan | No | Add 4 internal links |
-```
+\`\`\`
 
 ### 5. Integrated Content Strategy
 
@@ -105,14 +105,14 @@ Content at the master level should be strategically planned to address all aspec
 - **Semantic Content Optimization:** Ensure comprehensive topic coverage beyond just primary keywords
 
 **Example Journey-Based Content Plan:**
-```
+\`\`\`
 | Journey Stage | User Intent | Content Format | Primary Keywords | Supporting Topics | CTAs |
 |---------------|------------|----------------|------------------|-------------------|------|
 | Awareness | Information | Guide, FAQ | "business challenges" | Industry trends, problem definitions | Newsletter signup |
 | Consideration | Comparison | Case studies, Comparison tools | "solutions for [problem]" | Benefits, implementation steps | Free consultation |
 | Decision | Conversion | Pricing pages, testimonials | "business consulting services" | ROI, implementation timeline | Book a call |
 | Retention | Support | Knowledge base, tutorials | "how to maximize [service]" | Advanced tips, new features | Upsell services |
-```
+\`\`\`
 
 ### 6. Comprehensive Schema Strategy
 
@@ -126,7 +126,7 @@ A master-level approach to schema markup goes beyond basic implementation to cre
 - **Specialized Industry Schemas:** Use industry-specific schema like ProfessionalService, FinancialProduct, etc.
 
 **Example Entity Relationship Schema:**
-```html
+\`\`\`html
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -171,7 +171,7 @@ A master-level approach to schema markup goes beyond basic implementation to cre
   }
 }
 </script>
-```
+\`\`\`
 
 ### 7. Multimedia and Visual Optimization
 
@@ -202,14 +202,14 @@ For businesses serving multiple regions or languages, proper international SEO i
 - **Regional Link Building:** Build regional backlink profiles for each target market
 
 **Hreflang Implementation Example:**
-```html
+\`\`\`html
 <!-- For a page about consulting services in multiple languages -->
 <link rel="alternate" hreflang="en-us" href="https://example.com/services/" />
 <link rel="alternate" hreflang="es-es" href="https://example.com/es/servicios/" />
 <link rel="alternate" hreflang="fr-fr" href="https://example.com/fr/services/" />
 <link rel="alternate" hreflang="de-de" href="https://example.com/de/dienstleistungen/" />
 <link rel="alternate" hreflang="x-default" href="https://example.com/services/" />
-```
+\`\`\`
 
 ### 9. Performance Optimization and Core Web Vitals
 
@@ -223,7 +223,7 @@ With Google's increasing focus on page experience signals, mastering Core Web Vi
 - **Font Optimization:** Preload critical fonts, use font-display swap, subset large font files
 
 **Core Web Vitals Optimization Code Examples:**
-```html
+\`\`\`html
 <!-- Preconnect to required origins -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://cdn.example.com" crossorigin>
@@ -237,7 +237,7 @@ With Google's increasing focus on page experience signals, mastering Core Web Vi
 
 <!-- Minimize Cumulative Layout Shift with explicit dimensions -->
 <img src="/images/product.jpg" width="400" height="300" alt="Product image">
-```
+\`\`\`
 
 ### 10. Measurement and Analytics Framework
 

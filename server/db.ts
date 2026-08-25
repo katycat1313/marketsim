@@ -6,10 +6,11 @@ import * as schema from "@shared/schema";
 neonConfig.webSocketConstructor = ws;
 
 if (!process.env.DATABASE_URL) {
-  throw new Error(
-    "DATABASE_URL must be set. Did you forget to provision a database?",
+  console.warn(
+    "[Warning] DATABASE_URL not set. Running with local development fallback database URL.",
   );
 }
 
-export const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const connectionString = process.env.DATABASE_URL || "postgres://postgres:postgres@localhost:5432/marketsim";
+export const pool = new Pool({ connectionString });
 export const db = drizzle({ client: pool, schema });
