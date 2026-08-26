@@ -1091,6 +1091,59 @@ export const registerAICapabilitiesRoutes = (app: any) => {
       res.status(500).json({ error: 'Failed to get assistant response' });
     }
   });
+
+  app.post('/api/ai/interview-evaluate', async (req: any, res: any) => {
+    try {
+      const { question, userAnswer, targetRole = 'Junior PPC Specialist' } = req.body;
+
+      if (!userAnswer || !question) {
+        return res.status(400).json({ error: 'Question and answer are required' });
+      }
+
+      const answerLower = userAnswer.toLowerCase();
+      
+      // Agency vocabulary dictionaries
+      const searchTerms = ['quality score', 'negative keyword', 'phrase match', 'exact match', 'headline', 'expected ctr', 'sitelink', 'cpc', 'cpa', 'ad group', 'search query report'];
+      const socialTerms = ['lookalike', 'pixel', 'custom audience', 'frequency', 'cpm', 'ctr', 'reels', 'creative fatigue', 'roas', 'attribution', 'hook'];
+      const seoTerms = ['title tag', 'meta description', 'h1', 'search intent', 'backlinks', 'keyword density', 'crawlability', 'internal linking', 'serp'];
+      
+      const allTerms = [...searchTerms, ...socialTerms, ...seoTerms];
+      const usedTerms = allTerms.filter(t => answerLower.includes(t));
+      const vocabularyScore = Math.min(100, Math.max(30, usedTerms.length * 20));
+
+      let strategicScore = 60;
+      if (answerLower.includes('diagnos') || answerLower.includes('check') || answerLower.includes('first') || answerLower.includes('audit')) {
+        strategicScore += 15;
+      }
+      if (answerLower.includes('test') || answerLower.includes('measure') || answerLower.includes('kpi') || answerLower.includes('cpa') || answerLower.includes('roas')) {
+        strategicScore += 15;
+      }
+      if (userAnswer.length > 120) strategicScore += 10;
+      strategicScore = Math.min(100, strategicScore);
+
+      const overallScore = Math.round((vocabularyScore * 0.45) + (strategicScore * 0.55));
+      const isReady = overallScore >= 75;
+
+      const responsePayload = {
+        score: overallScore,
+        vocabularyScore,
+        strategicScore,
+        rating: overallScore >= 85 ? '🌟 Top Tier Agency Candidate' : overallScore >= 70 ? '✅ Interview Ready' : '⚠️ Needs Practice',
+        usedTerminology: usedTerms,
+        recommendedTerminology: ['Negative Keyword Lists', 'Expected CTR', 'Target CPA Ceilings', 'Quality Score Optimization', 'Search Query Report'].filter(t => !usedTerms.includes(t.toLowerCase())),
+        feedback: [
+          usedTerms.length > 0 ? `Great use of professional agency terminology: "${usedTerms.slice(0, 3).join('", "')}".` : 'Try incorporating more industry terminology like Quality Score, Negative Keywords, and Target CPA.',
+          strategicScore >= 75 ? 'Strong structured reasoning: diagnosing root cause before taking action is exactly what hiring directors look for.' : 'Structure your answer in a clear 3-step sequence: 1) Audit data, 2) Apply fix, 3) Measure CPA/ROAS impact.',
+        ],
+        sampleModelAnswer: `In an agency setting, I start by reviewing the Search Query Report to identify budget bleed from unqualified clicks and immediately deploy negative keywords. Next, I optimize the RSA Headlines to mirror high-intent keyword themes and raise Expected CTR to achieve a 8+ Quality Score. Finally, I adjust target CPA bid caps to prevent overpaying in peak auction hours.`
+      };
+
+      res.json(responsePayload);
+    } catch (error) {
+      console.error('Error evaluating interview answer:', error);
+      res.status(500).json({ error: 'Failed to evaluate interview answer' });
+    }
+  });
   
   console.log('AI Capabilities routes registered');
 };

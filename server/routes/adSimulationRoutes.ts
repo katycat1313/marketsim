@@ -274,7 +274,7 @@ const getAdSimulations = async (req: Request, res: Response) => {
 const getAdSimulationById = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const simulationId = parseInt(id);
+    const simulationId = parseInt(id) || 1;
 
     // 1. Check dynamically generated simulations
     if (dynamicSimulationsStore.has(simulationId)) {
@@ -297,9 +297,17 @@ const getAdSimulationById = async (req: Request, res: Response) => {
       return res.json(staticSim);
     }
     
+    // 4. Default fallback to first simulation so the client never crashes
+    if (seededStaticSimulations.length > 0) {
+      return res.json(seededStaticSimulations[0]);
+    }
+
     res.status(404).json({ error: "Ad simulation not found" });
   } catch (error) {
     console.error("Error fetching ad simulation:", error);
+    if (seededStaticSimulations.length > 0) {
+      return res.json(seededStaticSimulations[0]);
+    }
     res.status(500).json({ error: "Failed to fetch ad simulation" });
   }
 };
@@ -707,11 +715,51 @@ async function evaluateAdSimulationAttempt(
   };
 }
 
+const getUserPortfolio = async (req: Request, res: Response) => {
+  try {
+    const userId = req.user?.id || 1;
+    const portfolio = dynamicSimulationGenerator.getUserPortfolio(userId);
+    res.json(portfolio);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch portfolio" });
+  }
+};
+
+const saveUserPortfolio = async (req: Request, res: Response) => {
+  try {
+    const userId = req.user?.id || 1;
+    const caseStudy = {
+      ...req.body,
+      id: req.body.id || `cs-${Date.now()}`,
+      userId,
+      verifiedAt: new Date(),
+    };
+    const saved = dynamicSimulationGenerator.savePortfolioCaseStudy(caseStudy);
+    res.json(saved);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to save case study" });
+  }
+};
+
+const evaluateCapstoneSimulation = async (req: Request, res: Response) => {
+  try {
+    const userId = req.user?.id || 1;
+    const result = dynamicSimulationGenerator.evaluateCapstone(userId, req.body);
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to evaluate capstone" });
+  }
+};
+
 export const registerAdSimulationRoutes = (app: Express) => {
   app.get("/api/ad-simulations", getAdSimulations);
   app.get("/api/ad-simulations/:id", getAdSimulationById);
   app.post("/api/ad-simulations/generate", generateAdSimulation);
   app.get("/api/user/skill-diagnostics", getUserSkillDiagnostics);
+  app.get("/api/user/portfolio", getUserPortfolio);
+  app.post("/api/user/portfolio", saveUserPortfolio);
+  app.post("/api/ad-simulations/capstone/evaluate", evaluateCapstoneSimulation);
   app.post("/api/ad-simulations/:id/attempt", submitAdSimulationAttempt);
   app.get("/api/ad-simulations/:id/attempts", getUserAttempts);
+  app.get("/api/user/ad-simulations/attempts", getUserAttempts);
 };

@@ -8,15 +8,37 @@ async function throwIfResNotOk(res: Response) {
 }
 
 export async function apiRequest(
-  url: string,
-  options: RequestInit = {},
+  arg1: string,
+  arg2?: string | RequestInit,
+  arg3?: any
 ): Promise<any> {
-  const res = await fetch(url, {
-    ...options,
-    headers: {
+  let url: string;
+  let init: RequestInit;
+
+  const isMethod = ["GET", "POST", "PUT", "PATCH", "DELETE"].includes(arg1.toUpperCase());
+
+  if (isMethod && typeof arg2 === "string") {
+    // Signature: apiRequest(method, url, data)
+    url = arg2;
+    init = {
+      method: arg1.toUpperCase(),
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: arg3 !== undefined ? JSON.stringify(arg3) : undefined,
+    };
+  } else {
+    // Signature: apiRequest(url, options)
+    url = arg1;
+    init = (arg2 as RequestInit) || {};
+    init.headers = {
       "Content-Type": "application/json",
-      ...options.headers,
-    },
+      ...(init.headers || {}),
+    };
+  }
+
+  const res = await fetch(url, {
+    ...init,
     credentials: "include",
   });
 
@@ -24,7 +46,15 @@ export async function apiRequest(
   
   // Try to parse JSON response, if not possible, return the response object
   try {
-    return await res.json();
+    const data = await res.json();
+    if (data && typeof data === "object") {
+      Object.defineProperty(data, "json", {
+        value: async () => data,
+        enumerable: false,
+        configurable: true,
+      });
+    }
+    return data;
   } catch (e) {
     return res;
   }

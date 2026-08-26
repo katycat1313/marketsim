@@ -77,6 +77,63 @@ userAttemptHistory.set(1, [
   }
 ]);
 
+export interface PortfolioCaseStudy {
+  id: string;
+  userId: number;
+  simulationId: number;
+  title: string;
+  clientName: string;
+  industry: string;
+  platform: string;
+  difficulty: string;
+  challengeSummary: string;
+  strategySummary: string;
+  keyTactics: string[];
+  metrics: {
+    qualityScore: number;
+    roas: number;
+    cpa: number;
+    ctr: number;
+    conversions: number;
+    spend: number;
+  };
+  score: number;
+  verifiedAt: Date;
+}
+
+const userPortfolios: Map<number, PortfolioCaseStudy[]> = new Map();
+
+// Seed initial verified case study for user 1
+userPortfolios.set(1, [
+  {
+    id: "cs-101",
+    userId: 1,
+    simulationId: 1,
+    title: "Apex D2C Footwear: Reducing CPA via Exact Match Negatives",
+    clientName: "Apex Athletics",
+    industry: "E-Commerce Footwear",
+    platform: "Google Search & Meta",
+    difficulty: "Advanced",
+    challengeSummary: "Client was burning $3,500/mo on broad queries with a $62.00 CPA against a $35.00 ceiling target.",
+    strategySummary: "Deployed 28 negative keywords (cheap, free, wholesale), restructured to Phrase/Exact match pairs, and aligned RSA Headline 1 to user search intent.",
+    keyTactics: [
+      "Negative keyword exclusion list eliminating 38% search query noise",
+      "Quality Score optimization lifting rating from 4/10 to 9/10",
+      "Sitelink and structured snippet extension implementation"
+    ],
+    metrics: {
+      qualityScore: 9,
+      roas: 4.6,
+      cpa: 22.40,
+      ctr: 4.82,
+      conversions: 84,
+      spend: 1881.60
+    },
+    score: 94,
+    verifiedAt: new Date(Date.now() - 172800000)
+  }
+]);
+
 export class DynamicSimulationGenerator {
   recordAttempt(attempt: SimulationAttemptRecord) {
     const history = userAttemptHistory.get(attempt.userId) || [];
@@ -394,7 +451,86 @@ export class DynamicSimulationGenerator {
       }
     };
   }
+
+  getUserPortfolio(userId: number): PortfolioCaseStudy[] {
+    return userPortfolios.get(userId) || [];
+  }
+
+  savePortfolioCaseStudy(caseStudy: PortfolioCaseStudy): PortfolioCaseStudy {
+    const list = userPortfolios.get(caseStudy.userId) || [];
+    const existingIdx = list.findIndex(c => c.id === caseStudy.id);
+    if (existingIdx >= 0) {
+      list[existingIdx] = caseStudy;
+    } else {
+      list.unshift(caseStudy);
+    }
+    userPortfolios.set(caseStudy.userId, list);
+    return caseStudy;
+  }
+
+  evaluateCapstone(userId: number, capstoneData: any) {
+    const { persona, searchAds, socialAds, landingPage, budget = 5000 } = capstoneData;
+    
+    // Check persona depth
+    let personaScore = 20;
+    if (!persona?.targetDemographic || !persona?.corePainPoint) personaScore -= 8;
+    if (!persona?.hookAngle) personaScore -= 6;
+
+    // Check search ads
+    let searchScore = 25;
+    const hasSearchNegs = (searchAds?.negativeKeywords || []).length > 0;
+    const searchKeywords = searchAds?.keywords || [];
+    const hasSearchMatch = searchKeywords.some((k: any) => k.matchType === 'phrase' || k.matchType === 'exact');
+    if (!hasSearchNegs) searchScore -= 10;
+    if (!hasSearchMatch) searchScore -= 7;
+
+    // Check social ads
+    let socialScore = 25;
+    if (!socialAds?.lookalikeAudiences?.length && !socialAds?.interests?.length) socialScore -= 8;
+    if (!socialAds?.creativeHeadline) socialScore -= 7;
+
+    // Check landing page synergy
+    let landingPageScore = 30;
+    if (!landingPage?.headlineMatch) landingPageScore -= 10;
+    if (!landingPage?.callToAction) landingPageScore -= 8;
+
+    const totalScore = Math.max(35, Math.min(100, personaScore + searchScore + socialScore + landingPageScore));
+    const qualityScore = hasSearchNegs && hasSearchMatch ? 9 : 6;
+    const ctr = hasSearchNegs ? 4.6 : 2.1;
+    const cpc = qualityScore >= 8 ? 1.45 : 2.80;
+    const conversions = Math.round((budget / cpc) * 0.042);
+    const cpa = parseFloat((budget / Math.max(1, conversions)).toFixed(2));
+    const roas = parseFloat((((conversions * 120) / budget)).toFixed(2));
+
+    const result = {
+      score: totalScore,
+      qualityScore,
+      metrics: {
+        budget,
+        spend: budget,
+        impressions: Math.round(budget * 42),
+        clicks: Math.round(budget / cpc),
+        ctr,
+        cpc,
+        conversions,
+        conversionRate: 4.2,
+        costPerConversion: cpa,
+        roas: Math.max(1.8, roas),
+      },
+      feedback: [
+        hasSearchNegs ? "✅ Search negative keyword gating protected 32% of budget from unqualified clicks." : "⚠️ Missing search negative keywords caused budget leakage.",
+        qualityScore >= 8 ? "✅ High headline-to-search query synergy achieved Quality Score 9/10 with 35% CPC discount." : "⚠️ Search ad copy lacked direct keyword mirroring, incurring a CPC penalty.",
+        landingPage?.headlineMatch ? "✅ Landing page proposition directly matched social and search ad hooks." : "⚠️ Message mismatch on landing page lowered conversion rate baseline.",
+      ],
+      aiDebrief: {
+        title: "Omnichannel Agency Campaign Evaluation",
+        verdict: totalScore >= 80 ? "Mastery Approved: Campaign ready for client scale" : "Developing: Optimization needed before scaling",
+        summary: `Campaign generated ${conversions} conversions at an average CPA of $${cpa} with a ${roas}x blended ROAS across Google Search and Meta Ads.`
+      }
+    };
+
+    return result;
+  }
 }
 
 export const dynamicSimulationGenerator = new DynamicSimulationGenerator();
-

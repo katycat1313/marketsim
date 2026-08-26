@@ -24,6 +24,9 @@ import SubscriptionSuccessPage from "@/pages/subscription/success";
 import SubscriptionCancelPage from "@/pages/subscription/cancel";
 import LoginPage from "@/pages/login";
 import SignupPage from "@/pages/signup";
+import PortfolioViewPage from "@/pages/portfolio-view";
+import InterviewSimulatorPage from "@/pages/interview-simulator";
+import CapstoneSimulationPage from "@/pages/capstone-simulation";
 import Achievements from "@/components/Achievements";
 import Posts from "@/components/Posts";
 import AIAssistant from "@/components/AIAssistant";
@@ -61,8 +64,14 @@ import {
   Book,
   Activity,
   ScrollText,
+  Briefcase,
+  Mic,
+  Trophy,
+  Sparkles,
   X
 } from "lucide-react";
+
+import ErrorBoundary from "@/components/ErrorBoundary";
 
 // Protected Route component
 function ProtectedRoute({ component: Component }: { component: React.ComponentType }) {
@@ -83,7 +92,11 @@ function ProtectedRoute({ component: Component }: { component: React.ComponentTy
     );
   }
   
-  return isAuthenticated ? <Component /> : null;
+  return isAuthenticated ? (
+    <ErrorBoundary>
+      <Component />
+    </ErrorBoundary>
+  ) : null;
 }
 
 function SideNav() {
@@ -157,101 +170,76 @@ function SideNav() {
               </Link>
             </div>
 
-            {/* Dashboard */}
-            <div>
-              <Link href="/dashboard" onClick={() => setIsMobileMenuOpen(false)}>
-                <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
-                  ${isActive('/dashboard') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
-                  <BarChart2 className="h-5 w-5" />
-                  <span>Dashboard</span>
-                </div>
-              </Link>
-            </div>
-
-            {/* Learn Section */}
-            <div className="space-y-2">
-              <div className="text-xs uppercase text-muted-foreground font-semibold tracking-wider pl-2">
-                LEARN
-              </div>
-              
-              {/* Tutorials - simplified link without dropdown */}
-              <div className="pl-2">
-                <Link href="/tutorials-new" onClick={() => setIsMobileMenuOpen(false)}>
-                  <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
-                    ${isActive('/tutorials-new') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}
-                  >
-                    <GraduationCap className="h-5 w-5" />
-                    <span>Tutorials</span>
-                  </div>
-                </Link>
-              </div>
-              
-              {/* Quiz */}
-              <div className="pl-2">
-                <Link href="/seo-quiz" onClick={() => setIsMobileMenuOpen(false)}>
-                  <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
-                    ${isActive('/seo-quiz') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
-                    <BookOpen className="h-5 w-5" />
-                    <span>Quizzes</span>
-                  </div>
-                </Link>
-              </div>
-            </div>
-
             {/* Simulations Section */}
             <div className="space-y-2">
               <div className="text-xs uppercase text-muted-foreground font-semibold tracking-wider pl-2">
-                SIMULATIONS
+                AGENCY SIMULATIONS
               </div>
+              <div className="space-y-1 pl-2">
+                <Link href="/ad-simulations" onClick={() => setIsMobileMenuOpen(false)}>
+                  <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
+                    ${isActive('/ad-simulation') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
+                    <MousePointer className="h-5 w-5 text-primary" />
+                    <span>Ad Platform Sims</span>
+                  </div>
+                </Link>
 
-              {/* Simulations with dropdown */}
-              <div className="pl-2">
-                <button 
-                  onClick={() => toggleDropdown('simulations')}
-                  className={`w-full flex items-center justify-between gap-3 p-2 rounded-md transition-colors
-                    ${(isActive('/seo-simulation') || isActive('/ad-simulation') || isActive('/data-visualization')) ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}
-                >
-                  <div className="flex items-center gap-3">
-                    <Monitor className="h-5 w-5" />
-                    <span>All Simulations</span>
+                <Link href="/capstone-simulation" onClick={() => setIsMobileMenuOpen(false)}>
+                  <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
+                    ${isActive('/capstone-simulation') ? 'bg-amber-500/15 text-amber-400 font-medium border border-amber-500/30' : 'text-amber-400/90 hover:bg-amber-500/10'}`}>
+                    <Trophy className="h-5 w-5 text-amber-400" />
+                    <span>🏆 Master Capstone</span>
                   </div>
-                  <ChevronDown className={`h-4 w-4 transition-transform ${activeDropdown === 'simulations' ? 'rotate-180' : ''}`} />
-                </button>
-                
-                {activeDropdown === 'simulations' && (
-                  <div className="ml-7 mt-1 space-y-1 border-l pl-3">
-                    <Link href="/seo-simulations" onClick={() => setIsMobileMenuOpen(false)}>
-                      <div className={`flex items-center gap-2 p-1.5 rounded-md transition-colors text-sm
-                        ${isActive('/seo-simulation') ? 'text-primary font-medium' : 'text-muted-foreground hover:text-foreground'}`}>
-                        <Search className="h-4 w-4" />
-                        <span>SEO Simulations</span>
-                      </div>
-                    </Link>
-                    <Link href="/ad-simulations" onClick={() => setIsMobileMenuOpen(false)}>
-                      <div className={`flex items-center gap-2 p-1.5 rounded-md transition-colors text-sm
-                        ${isActive('/ad-simulation') ? 'text-primary font-medium' : 'text-muted-foreground hover:text-foreground'}`}>
-                        <MousePointer className="h-4 w-4" />
-                        <span>Ad Platforms</span>
-                      </div>
-                    </Link>
-                    <Link href="/data-visualization" onClick={() => setIsMobileMenuOpen(false)}>
-                      <div className={`flex items-center gap-2 p-1.5 rounded-md transition-colors text-sm
-                        ${isActive('/data-visualization') ? 'text-primary font-medium' : 'text-muted-foreground hover:text-foreground'}`}>
-                        <LineChart className="h-4 w-4" />
-                        <span>Data Visualization</span>
-                      </div>
-                    </Link>
+                </Link>
+
+                <Link href="/seo-simulations" onClick={() => setIsMobileMenuOpen(false)}>
+                  <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
+                    ${isActive('/seo-simulation') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
+                    <Search className="h-5 w-5" />
+                    <span>SEO & SERP Sims</span>
                   </div>
-                )}
+                </Link>
               </div>
             </div>
 
-            {/* Create Section */}
+            {/* Career & Proof-of-Work Section */}
             <div className="space-y-2">
               <div className="text-xs uppercase text-muted-foreground font-semibold tracking-wider pl-2">
-                CREATE
+                CAREER PROOF OF WORK
               </div>
               <div className="space-y-1 pl-2">
+                <Link href="/portfolio" onClick={() => setIsMobileMenuOpen(false)}>
+                  <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
+                    ${isActive('/portfolio') ? 'bg-emerald-500/15 text-emerald-400 font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
+                    <Briefcase className="h-5 w-5 text-emerald-400" />
+                    <span>Verified Portfolio</span>
+                  </div>
+                </Link>
+
+                <Link href="/interview-prep" onClick={() => setIsMobileMenuOpen(false)}>
+                  <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
+                    ${isActive('/interview-prep') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
+                    <Mic className="h-5 w-5 text-primary" />
+                    <span>AI Interview Prep</span>
+                  </div>
+                </Link>
+              </div>
+            </div>
+
+            {/* Agency Strategy & Skills Section */}
+            <div className="space-y-2">
+              <div className="text-xs uppercase text-muted-foreground font-semibold tracking-wider pl-2">
+                STRATEGY & SKILLS
+              </div>
+              <div className="space-y-1 pl-2">
+                <Link href="/dashboard" onClick={() => setIsMobileMenuOpen(false)}>
+                  <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
+                    ${isActive('/dashboard') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
+                    <BarChart2 className="h-5 w-5" />
+                    <span>Skills Radar & Analytics</span>
+                  </div>
+                </Link>
+
                 <Link href="/persona-builder-template" onClick={() => setIsMobileMenuOpen(false)}>
                   <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
                     ${isActive('/persona-builder-template') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
@@ -259,50 +247,20 @@ function SideNav() {
                     <span>Customer Personas</span>
                   </div>
                 </Link>
-                <Link href="/campaign-creator" onClick={() => setIsMobileMenuOpen(false)}>
-                  <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
-                    ${isActive('/campaign-creator') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
-                    <Activity className="h-5 w-5" />
-                    <span>Campaigns</span>
-                  </div>
-                </Link>
-              </div>
-            </div>
 
-            {/* Portfolio Section */}
-            <div className="space-y-2">
-              <div className="text-xs uppercase text-muted-foreground font-semibold tracking-wider pl-2">
-                PORTFOLIO
-              </div>
-              <div className="space-y-1 pl-2">
-                <Link href="/portfolio" onClick={() => setIsMobileMenuOpen(false)}>
+                <Link href="/data-visualization" onClick={() => setIsMobileMenuOpen(false)}>
                   <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
-                    ${isActive('/portfolio') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
-                    <Layers className="h-5 w-5" />
-                    <span>Portfolio Management</span>
+                    ${isActive('/data-visualization') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
+                    <LineChart className="h-5 w-5" />
+                    <span>Performance Reporting</span>
                   </div>
                 </Link>
-              </div>
-            </div>
 
-            {/* Progress & Achievements */}
-            <div className="space-y-2">
-              <div className="text-xs uppercase text-muted-foreground font-semibold tracking-wider pl-2">
-                PROGRESS & SKILLS
-              </div>
-              <div className="space-y-1 pl-2">
-                <Link href="/dashboard" onClick={() => setIsMobileMenuOpen(false)}>
+                <Link href="/tutorials-new" onClick={() => setIsMobileMenuOpen(false)}>
                   <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
-                    ${isActive('/dashboard') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
-                    <BarChart2 className="h-5 w-5" />
-                    <span>Skills & Analytics</span>
-                  </div>
-                </Link>
-                <Link href="/achievements" onClick={() => setIsMobileMenuOpen(false)}>
-                  <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
-                    ${isActive('/achievements') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
-                    <Award className="h-5 w-5" />
-                    <span>Achievements</span>
+                    ${isActive('/tutorials-new') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
+                    <GraduationCap className="h-5 w-5" />
+                    <span>Agency Playbooks</span>
                   </div>
                 </Link>
               </div>
@@ -459,21 +417,18 @@ function Router() {
             <Route path="/api-settings">
               <ProtectedRoute component={ApiSettings} />
             </Route>
-            <Route path="/network">
-              <ProtectedRoute component={NetworkPage} />
-            </Route>
-            <Route path="/community">
-              <ProtectedRoute component={Posts} />
-            </Route>
             <Route path="/achievements">
               <ProtectedRoute component={Achievements} />
             </Route>
-            <Route path="/level">
-              <ProtectedRoute component={Dashboard} />
-            </Route> {/* Temporary using Dashboard, will create dedicated Level page */}
             <Route path="/portfolio">
-              <ProtectedRoute component={DataVisualizationPage} />
-            </Route> {/* Temporary using DataViz, will create dedicated Portfolio page */}
+              <ProtectedRoute component={PortfolioViewPage} />
+            </Route>
+            <Route path="/interview-prep">
+              <ProtectedRoute component={InterviewSimulatorPage} />
+            </Route>
+            <Route path="/capstone-simulation">
+              <ProtectedRoute component={CapstoneSimulationPage} />
+            </Route>
             <Route path="/seo-simulations">
               <ProtectedRoute component={SeoSimulationsPage} />
             </Route>
@@ -485,9 +440,6 @@ function Router() {
             </Route>
             <Route path="/ad-simulation/:id">
               <ProtectedRoute component={AdSimulationPage} />
-            </Route>
-            <Route path="/seo-quiz">
-              <ProtectedRoute component={SeoQuizPage} />
             </Route>
             <Route path="/data-visualization">
               <ProtectedRoute component={DataVisualizationPage} />
@@ -540,13 +492,20 @@ function App() {
         
         {/* Floating AI Assistant Button */}
         <button
-          className="fixed bottom-6 right-6 p-3 rounded-full shadow-lg bg-primary text-white z-50 flex items-center justify-center hover:bg-primary/90 transition-all duration-300 transform hover:scale-105"
+          className="fixed bottom-6 right-6 h-13 w-13 p-3.5 rounded-full shadow-2xl bg-primary text-primary-foreground z-50 flex items-center justify-center hover:bg-primary/90 transition-all duration-300 transform hover:scale-105 border-2 border-primary-foreground/20 group cursor-pointer"
           onClick={toggleAIAssistant}
+          aria-label="Toggle MarketSim AI Coach"
         >
           {isAIAssistantExpanded ? (
             <X className="h-6 w-6" />
           ) : (
-            <MessageSquare className="h-6 w-6" />
+            <div className="relative flex items-center justify-center">
+              <MessageSquare className="h-5 w-5" />
+              <span className="absolute -top-1.5 -right-1.5 flex h-3 w-3">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+              </span>
+            </div>
           )}
         </button>
         

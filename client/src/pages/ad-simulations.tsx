@@ -31,7 +31,16 @@ import {
   PlusCircle, 
   CheckCircle2, 
   ArrowRight,
-  Brain
+  Brain,
+  Trophy,
+  Briefcase,
+  Mic,
+  GraduationCap,
+  BookOpen,
+  Lightbulb,
+  Check,
+  CheckCircle,
+  MessageSquare
 } from "lucide-react";
 
 export default function AdSimulationsPage() {
@@ -44,6 +53,105 @@ export default function AdSimulationsPage() {
   const [genDifficulty, setGenDifficulty] = useState("Expert");
   const [genWeakness, setGenWeakness] = useState("negativeKeywordDefense");
   const [genIndustry, setGenIndustry] = useState("B2B Cybersecurity SaaS");
+
+  // MarketSim Pre-Simulation AI Socratic Micro-Lesson Modal State
+  const [selectedSimForLesson, setSelectedSimForLesson] = useState<any>(null);
+  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
+  const [isAnswerSubmitted, setIsAnswerSubmitted] = useState(false);
+  const [isCorrect, setIsCorrect] = useState(false);
+
+  const getMicroLesson = (sim: any) => {
+    if (!sim) return null;
+    const isMeta = sim.platform === "meta_ads";
+    const isQualityScore = sim.title?.toLowerCase().includes("quality") || sim.weaknessLabel?.toLowerCase().includes("quality");
+
+    if (isMeta) {
+      return {
+        conceptTitle: "Meta Ads Audience Gating & Creative Fatigue",
+        duration: "90-Second Concept",
+        scenarioBrief: `Our client in the ${sim.industry} sector needs to generate profitable conversions without audience saturation. When ad frequency passes 3.5, click-through rates plummet and CPA doubles.`,
+        socraticBreakdown: [
+          "🎯 Broad Interest Targeting vs. Lookalikes: Avoid overly narrow audiences that drive up CPM.",
+          "🖼️ Visual Hook & Copy Synergy: The first 3 seconds of the ad must call out the buyer's pain point.",
+          "🔄 Frequency Capping & Refresh: Rotate 2-3 visual variations to prevent fatigue.",
+          "🤖 Ethical AI & Fact-Checking: Use AI to ideate creative angles 10x faster, but always fact-check client claims and verify character limits before launch."
+        ],
+        checkQuestion: "What happens when you run a single ad creative for too long to a narrow audience?",
+        options: [
+          { text: "Creative fatigue sets in: ad frequency rises, CTR drops, and CPA surges.", correct: true, explanation: "Exactly right! High frequency causes users to ignore the ad, making Facebook charge more per impression." },
+          { text: "The ad automatically converts twice as many users.", correct: false, explanation: "Incorrect. Users experience ad fatigue when seeing the same ad repeatedly." },
+          { text: "Your daily budget is permanently reduced by the algorithm.", correct: false, explanation: "Incorrect. The algorithm doesn't reduce your budget; it charges higher CPMs." }
+        ]
+      };
+    }
+
+    if (isQualityScore) {
+      return {
+        conceptTitle: "Google Ads Quality Score & Auction Discounting",
+        duration: "90-Second Concept",
+        scenarioBrief: `The client is currently overpaying on Google search auctions. By optimizing keyword-to-ad relevance, you can achieve a Quality Score discount.`,
+        socraticBreakdown: [
+          "📈 Ad Rank Formula: Ad Rank = Max CPC Bid × Quality Score (Expected CTR + Ad Relevance + Landing Page Experience).",
+          "💰 The Quality Score Discount: A 10/10 Quality Score gives up to a 50% discount on actual CPC.",
+          "🎯 Ad Copy Alignment: Matching headline text with exact user search query boosts CTR.",
+          "🤖 Human-in-the-Loop AI: Draft headline variants with AI, but verify search intent and avoid hallucinated promises."
+        ],
+        checkQuestion: "How does achieving a high Quality Score (8–10/10) impact your Google Ads campaign?",
+        options: [
+          { text: "You win top SERP positions while paying up to 50% less per click than competitors.", correct: true, explanation: "Correct! Google rewards highly relevant ads with lower actual CPC costs." },
+          { text: "It doubles your cost-per-click to guarantee first place.", correct: false, explanation: "Incorrect. Quality Score reduces CPC costs, never increases them." },
+          { text: "It disables negative keywords on the campaign.", correct: false, explanation: "Incorrect. Quality Score has no impact on negative keyword settings." }
+        ]
+      };
+    }
+
+    return {
+      conceptTitle: "Search Intent Alignment & Negative Keyword Defense",
+      duration: "90-Second Concept",
+      scenarioBrief: `Our client, ${sim.industry} Partner, is seeing high click volume but high CPA due to untargeted search queries. You must tighten match types and build negative keyword barriers.`,
+      socraticBreakdown: [
+        "🛑 Negative Keyword Shield: Add negative keywords (e.g. 'free', 'jobs', 'diy') to block non-buyers.",
+        "🔤 Match Type Silos: Transition from wasteful Broad match to targeted Phrase (\" \") and Exact ([ ]) match.",
+        "📊 Commercial Intent Focus: Prioritize transactional keywords ('buy', 'cost', 'quote', 'near me').",
+        "🤖 Ethical AI Verification: Prompt AI to discover negative keyword clusters, but manually review to prevent blocking profitable queries."
+      ],
+      checkQuestion: "Why is deploying negative keywords critical when running Google Search campaigns?",
+      options: [
+        { text: "It filters out zero-intent search queries, eliminating wasted ad spend.", correct: true, explanation: "Spot on! Negative keywords prevent your ads from triggering on queries from job seekers, bargain hunters, or DIY researchers." },
+        { text: "It automatically increases your daily spend limit.", correct: false, explanation: "Incorrect. Negative keywords protect your budget from being spent on irrelevant searches." },
+        { text: "It prevents Google from indexing your competitors' websites.", correct: false, explanation: "Incorrect. Negative keywords only filter search terms triggering your own ads." }
+      ]
+    };
+  };
+
+  const handleOpenMicroLesson = (sim: any) => {
+    setSelectedSimForLesson(sim);
+    setSelectedAnswer(null);
+    setIsAnswerSubmitted(false);
+    setIsCorrect(false);
+  };
+
+  const handleSelectOption = (index: number) => {
+    setSelectedAnswer(index);
+    const lesson = getMicroLesson(selectedSimForLesson);
+    if (!lesson) return;
+    const isAnsCorrect = lesson.options[index]?.correct || false;
+    setIsCorrect(isAnsCorrect);
+    setIsAnswerSubmitted(true);
+    if (isAnsCorrect) {
+      toast({
+        title: "🎯 Concept Mastered! (+50 XP)",
+        description: "You're ready for the live campaign workbench!",
+      });
+    }
+  };
+
+  const handleProceedToSimulation = () => {
+    if (!selectedSimForLesson) return;
+    const simId = selectedSimForLesson.id;
+    setSelectedSimForLesson(null);
+    setLocation(`/ad-simulation/${simId}`);
+  };
 
   // Fetch all ad platform simulations (including dynamically generated ones)
   const { data: simulations = [], isLoading, refetch } = useQuery<any[]>({
@@ -184,12 +292,13 @@ export default function AdSimulationsPage() {
       </CardContent>
 
       <CardFooter>
-        <Link href={`/ad-simulation/${simulation.id}`} className="w-full">
-          <Button className="w-full flex items-center justify-center gap-2">
-            <span>Start Simulation</span>
-            <ArrowRight className="h-4 w-4" />
-          </Button>
-        </Link>
+        <Button 
+          onClick={() => handleOpenMicroLesson(simulation)}
+          className="w-full flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-primary-foreground font-medium"
+        >
+          <GraduationCap className="h-4 w-4" />
+          <span>Briefing & Start Simulation</span>
+        </Button>
       </CardFooter>
     </Card>
   );
@@ -303,8 +412,58 @@ export default function AdSimulationsPage() {
             <Zap className="h-4 w-4" />
             <span>Practice Weak Area</span>
           </Button>
+
+          <Button 
+            variant="outline"
+            onClick={() => setLocation("/portfolio")}
+            className="flex items-center gap-1.5 border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10"
+          >
+            <Briefcase className="h-4 w-4" />
+            <span>My Portfolio</span>
+          </Button>
+
+          <Button 
+            variant="outline"
+            onClick={() => setLocation("/interview-prep")}
+            className="flex items-center gap-1.5 border-primary/30 text-primary hover:bg-primary/10"
+          >
+            <Mic className="h-4 w-4" />
+            <span>Interview Prep</span>
+          </Button>
         </div>
       </div>
+
+      {/* Featured Master Challenge: Agency Capstone Full Omnichannel Campaign */}
+      <Card className="border-amber-500/50 bg-gradient-to-r from-amber-500/15 via-card to-background shadow-lg">
+        <CardContent className="p-6">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <Trophy className="h-5 w-5 text-amber-400" />
+                <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/40 text-xs">
+                  The Master Agency Challenge
+                </Badge>
+                <Badge variant="outline" className="text-xs">
+                  Full Omnichannel
+                </Badge>
+              </div>
+              <h2 className="text-xl font-bold text-foreground">
+                Agency Capstone: End-to-End Client Campaign
+              </h2>
+              <p className="text-xs text-muted-foreground max-w-2xl">
+                Take complete ownership of a $5,000/mo client account. Build the Buyer Persona $\rightarrow$ Google Search Match Strategy $\rightarrow$ Meta Ads Creative $\rightarrow$ Landing Page Synergy $\rightarrow$ Save Verified Case Study to Portfolio!
+              </p>
+            </div>
+            <Button 
+              onClick={() => setLocation("/capstone-simulation")}
+              className="shrink-0 bg-gradient-to-r from-amber-500 to-primary text-black font-semibold h-10 px-6 flex items-center gap-2 hover:opacity-90 shadow-md"
+            >
+              <Trophy className="h-4 w-4" />
+              <span>Launch Capstone Project</span>
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* AI Skill Diagnostics & Telemetry Dashboard */}
       {diagnostics && (
@@ -504,6 +663,136 @@ export default function AdSimulationsPage() {
           )}
         </TabsContent>
       </Tabs>
+
+      {/* MarketSim Pre-Simulation AI Micro-Lesson Modal */}
+      {selectedSimForLesson && (() => {
+        const lesson = getMicroLesson(selectedSimForLesson);
+        if (!lesson) return null;
+
+        return (
+          <Dialog open={!!selectedSimForLesson} onOpenChange={(open) => !open && setSelectedSimForLesson(null)}>
+            <DialogContent className="max-w-2xl bg-card border-border/80 text-foreground p-6 max-h-[90vh] overflow-y-auto">
+              <DialogHeader className="space-y-2 border-b border-border/60 pb-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-primary font-bold text-lg">
+                    <GraduationCap className="h-6 w-6 text-primary" />
+                    <span>MarketSim AI Pre-Simulation Briefing</span>
+                  </div>
+                  <Badge variant="outline" className="border-primary/40 text-primary">
+                    {lesson.duration}
+                  </Badge>
+                </div>
+                <DialogTitle className="text-xl font-bold text-foreground">
+                  {lesson.conceptTitle}
+                </DialogTitle>
+                <DialogDescription className="text-xs text-muted-foreground">
+                  Master the core principle with your AI Coach before executing on the live client account.
+                </DialogDescription>
+              </DialogHeader>
+
+              <div className="space-y-5 py-4">
+                {/* 1. Client Problem Briefing */}
+                <div className="p-3.5 rounded-xl bg-secondary/50 border border-border/60 space-y-1.5">
+                  <div className="flex items-center gap-2 text-xs font-bold text-foreground uppercase tracking-wide">
+                    <BookOpen className="h-4 w-4 text-primary" />
+                    <span>Client Scenario Briefing</span>
+                  </div>
+                  <p className="text-xs sm:text-sm text-foreground/90 leading-relaxed">
+                    {lesson.scenarioBrief}
+                  </p>
+                </div>
+
+                {/* 2. Socratic Concept Breakdown */}
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-xs font-bold text-foreground uppercase tracking-wide">
+                    <Lightbulb className="h-4 w-4 text-amber-400" />
+                    <span>Strategic Principles (90-Second Mastery)</span>
+                  </div>
+                  <div className="space-y-2">
+                    {lesson.socraticBreakdown.map((item: string, idx: number) => (
+                      <div key={idx} className="text-xs sm:text-sm p-2.5 rounded-lg bg-background border border-border/50 text-foreground/90">
+                        {item}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 3. Check for Understanding (Socratic Quiz) */}
+                <div className="p-4 rounded-xl bg-primary/5 border border-primary/30 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-xs font-bold text-primary uppercase tracking-wide">
+                      <Target className="h-4 w-4" />
+                      <span>Check for Understanding</span>
+                    </div>
+                    <span className="text-[11px] text-muted-foreground font-mono">+50 XP Available</span>
+                  </div>
+                  
+                  <p className="text-xs sm:text-sm font-semibold text-foreground">
+                    {lesson.checkQuestion}
+                  </p>
+
+                  <div className="space-y-2">
+                    {lesson.options.map((option: any, optIdx: number) => {
+                      const isChosen = selectedAnswer === optIdx;
+                      let optionStyle = "border-border/60 hover:border-primary/60 hover:bg-secondary/40";
+                      
+                      if (isAnswerSubmitted && isChosen) {
+                        optionStyle = option.correct 
+                          ? "border-emerald-500/80 bg-emerald-500/10 text-emerald-300 font-medium" 
+                          : "border-red-500/80 bg-red-500/10 text-red-300";
+                      } else if (isAnswerSubmitted && option.correct) {
+                        optionStyle = "border-emerald-500/80 bg-emerald-500/10 text-emerald-300 font-medium";
+                      }
+
+                      return (
+                        <div key={optIdx} className="space-y-1">
+                          <button
+                            type="button"
+                            onClick={() => handleSelectOption(optIdx)}
+                            className={`w-full text-left p-3 rounded-lg border text-xs sm:text-sm transition-all flex items-start gap-2.5 ${optionStyle}`}
+                          >
+                            <span className="shrink-0 w-5 h-5 rounded-full border border-current flex items-center justify-center text-[10px] font-bold">
+                              {String.fromCharCode(65 + optIdx)}
+                            </span>
+                            <span className="flex-grow">{option.text}</span>
+                            {isAnswerSubmitted && option.correct && (
+                              <CheckCircle className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
+                            )}
+                          </button>
+                          {isAnswerSubmitted && isChosen && (
+                            <p className={`text-[11px] px-3 pt-0.5 ${option.correct ? "text-emerald-400" : "text-red-400"}`}>
+                              {option.explanation}
+                            </p>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+
+              <DialogFooter className="flex flex-col sm:flex-row justify-between items-center gap-2 pt-2 border-t border-border/60">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={handleProceedToSimulation}
+                  className="text-xs text-muted-foreground hover:text-foreground"
+                >
+                  ⚡ Skip Direct to Workbench
+                </Button>
+                
+                <Button 
+                  onClick={handleProceedToSimulation}
+                  className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-primary-foreground font-semibold flex items-center gap-2 text-xs sm:text-sm h-10 px-5"
+                >
+                  <span>Launch Simulation Workbench</span>
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        );
+      })()}
     </div>
   );
 }

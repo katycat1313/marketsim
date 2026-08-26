@@ -209,264 +209,248 @@ You are losing ad budget to unqualified search queries. Reconfigure your campaig
     return "I am analyzing your marketing telemetry. Ask me about your weaknesses or campaign settings!";
   };
 
-  // Determine if we're in minimized mode
-  const isMinimized = !isExpanded;
-
-  // If minimized, show compact version
-  if (isMinimized) {
-    return (
-      <div 
-        className="fixed bottom-4 right-4 bg-[#111] border border-[#ffd700]/30 rounded-full p-3 cursor-pointer shadow-lg hover:shadow-xl transition-all duration-200 hover:border-[#ffd700]/60 group"
-        onClick={onToggleExpand}
-      >
-        <div className="relative">
-          <Sparkles className="w-6 h-6 text-[#ffd700]" />
-          <span className="absolute -top-2 -right-2 bg-primary text-primary-foreground text-xs rounded-full w-4 h-4 flex items-center justify-center">
-            {messages.filter(m => m.role === "assistant" && m.id !== "welcome").length}
-          </span>
-        </div>
-        <div className="absolute opacity-0 group-hover:opacity-100 bottom-full mb-2 right-0 whitespace-nowrap bg-black/80 text-white text-xs rounded px-2 py-1 pointer-events-none transition-opacity duration-200">
-          AI Marketing Assistant
-        </div>
-      </div>
-    );
+  // If minimized, do not render floating card (App.tsx floating button handles toggle)
+  if (!isExpanded) {
+    return null;
   }
 
   return (
-    <Card className="h-full flex flex-col border-[#ffd700]/20 bg-[#121212] overflow-hidden shadow-lg">
-      <CardHeader className="p-3 border-b border-[#ffd700]/20 flex-shrink-0 bg-[#181818]">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Avatar className="h-8 w-8 border border-[#ffd700]/40">
-              <AvatarFallback className="bg-[#222] text-[#ffd700] text-xs font-bold">MS</AvatarFallback>
-            </Avatar>
-            <div>
-              <CardTitle className="text-sm font-semibold text-[#f5f5f5] flex items-center gap-1">
-                MarketSim AI Coach
-                <Badge variant="outline" className="text-[10px] h-4 bg-[#ffd700]/10 text-[#ffd700] border-[#ffd700]/30 ml-1 font-normal">
-                  Live
-                </Badge>
-              </CardTitle>
-              <CardDescription className="text-xs text-[#f5f5f5]/60">
-                Continuous Skill Diagnostics
-              </CardDescription>
+    <div className="fixed bottom-20 right-4 sm:right-6 w-[calc(100vw-32px)] sm:w-[420px] h-[580px] max-h-[82vh] z-50 shadow-2xl rounded-2xl border border-border/80 bg-card overflow-hidden flex flex-col animate-in fade-in slide-in-from-bottom-5 duration-200">
+      <Card className="h-full flex flex-col border-0 rounded-none bg-card text-foreground">
+        <CardHeader className="p-3.5 border-b border-border/70 flex-shrink-0 bg-secondary/30">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <Avatar className="h-8 w-8 border border-primary/40">
+                <AvatarFallback className="bg-primary/20 text-primary text-xs font-bold">MS</AvatarFallback>
+              </Avatar>
+              <div>
+                <CardTitle className="text-sm font-semibold text-foreground flex items-center gap-1.5">
+                  MarketSim AI Coach
+                  <Badge variant="outline" className="text-[10px] h-4 bg-emerald-500/10 text-emerald-400 border-emerald-500/30 font-medium">
+                    Online
+                  </Badge>
+                </CardTitle>
+                <CardDescription className="text-xs text-muted-foreground">
+                  Continuous Skill Diagnostics & Strategy
+                </CardDescription>
+              </div>
             </div>
-          </div>
-          <div className="flex items-center gap-1">
-            <Button
-              size="icon"
-              variant="ghost"
-              className="h-7 w-7 text-[#f5f5f5]/60 hover:text-[#f5f5f5] hover:bg-[#333]"
-              onClick={handleClearChat}
-              title="Clear chat"
-            >
-              <Timer className="h-3.5 w-3.5" />
-            </Button>
-            {onToggleExpand && (
+            <div className="flex items-center gap-1">
               <Button
                 size="icon"
                 variant="ghost"
-                className="h-7 w-7 text-[#f5f5f5]/60 hover:text-[#f5f5f5] hover:bg-[#333]"
-                onClick={onToggleExpand}
-                title={isExpanded ? "Collapse" : "Expand"}
+                className="h-7 w-7 text-muted-foreground hover:text-foreground"
+                onClick={handleClearChat}
+                title="Clear chat"
               >
-                <MousePointer className="h-3.5 w-3.5" />
+                <Timer className="h-3.5 w-3.5" />
               </Button>
-            )}
-          </div>
-        </div>
-        
-        <Tabs value={activeMode} onValueChange={(val) => handleModeChange(val as any)} className="w-full mt-2">
-          <TabsList className="grid grid-cols-3 h-7 bg-[#222] text-xs">
-            <TabsTrigger 
-              value="chat" 
-              className="py-1 data-[state=active]:bg-[#ffd700]/20 data-[state=active]:text-[#ffd700]"
-            >
-              Chat
-            </TabsTrigger>
-            <TabsTrigger 
-              value="analyze" 
-              className="py-1 data-[state=active]:bg-[#ffd700]/20 data-[state=active]:text-[#ffd700]"
-            >
-              Diagnostics
-            </TabsTrigger>
-            <TabsTrigger 
-              value="recommend" 
-              className="py-1 data-[state=active]:bg-[#ffd700]/20 data-[state=active]:text-[#ffd700]"
-            >
-              Practice
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
-      </CardHeader>
-      
-      <ScrollArea className="flex-grow p-4 bg-[#111] text-[#f5f5f5]">
-        <div className="space-y-4">
-          {messages.map((message) => {
-            const actionMatch = message.content.match(/\[ACTION_LAUNCH_SIMULATION:(.*?):(.*?)\]/);
-            const cleanContent = message.content.replace(/\[ACTION_LAUNCH_SIMULATION:.*?\]/g, "").trim();
-
-            return (
-              <div 
-                key={message.id} 
-                className={`flex ${message.role === "user" ? "justify-end" : "justify-start"} ${message.role === "system" ? "opacity-70" : ""}`}
-              >
-                <div 
-                  className={`rounded-lg p-3 max-w-[85%] shadow-sm ${
-                    message.role === "user" 
-                      ? "bg-[#333] text-[#f5f5f5] ml-4" 
-                      : message.role === "system"
-                        ? "bg-[#222] text-[#f5f5f5]/70 italic border border-[#ffd700]/10"
-                        : "bg-[#1a1a1a] border border-[#ffd700]/20 text-[#f5f5f5] mr-4"
-                  }`}
+              {onToggleExpand && (
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="h-7 w-7 text-muted-foreground hover:text-foreground"
+                  onClick={onToggleExpand}
+                  title="Close Assistant"
                 >
-                  {message.role === "assistant" && message.id !== "welcome" && (
-                    <div className="flex items-center gap-1 mb-1 text-xs text-[#ffd700]/70">
-                      <Sparkles className="h-3 w-3" />
-                      <span>MarketSim AI Coach</span>
-                    </div>
-                  )}
-                  
-                  <div className="whitespace-pre-line text-sm leading-relaxed">
-                    {cleanContent}
-                  </div>
+                  <X className="h-4 w-4" />
+                </Button>
+              )}
+            </div>
+          </div>
+          
+          <Tabs value={activeMode} onValueChange={(val) => handleModeChange(val as any)} className="w-full mt-2.5">
+            <TabsList className="grid grid-cols-3 h-8 bg-secondary/60 text-xs">
+              <TabsTrigger 
+                value="chat" 
+                className="py-1 text-xs data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-medium"
+              >
+                Chat
+              </TabsTrigger>
+              <TabsTrigger 
+                value="analyze" 
+                className="py-1 text-xs data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-medium"
+              >
+                Diagnostics
+              </TabsTrigger>
+              <TabsTrigger 
+                value="recommend" 
+                className="py-1 text-xs data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-medium"
+              >
+                Practice
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
+        </CardHeader>
+        
+        <ScrollArea className="flex-grow p-4 bg-background text-foreground">
+          <div className="space-y-4">
+            {messages.map((message) => {
+              const actionMatch = message.content.match(/\[ACTION_LAUNCH_SIMULATION:(.*?):(.*?)\]/);
+              const cleanContent = message.content.replace(/\[ACTION_LAUNCH_SIMULATION:.*?\]/g, "").trim();
 
-                  {/* Interactive Dynamic Simulation Launch Action Card */}
-                  {actionMatch && (
-                    <div className="mt-3 p-3 rounded-lg bg-gradient-to-r from-amber-500/10 via-[#ffd700]/5 to-transparent border border-amber-500/40 space-y-2">
-                      <div className="flex items-center gap-1.5 text-xs font-semibold text-amber-400">
-                        <Sparkles className="h-3.5 w-3.5" />
-                        <span>Adaptive Practice Challenge</span>
+              return (
+                <div 
+                  key={message.id} 
+                  className={`flex ${message.role === "user" ? "justify-end" : "justify-start"} ${message.role === "system" ? "opacity-70" : ""}`}
+                >
+                  <div 
+                    className={`rounded-xl p-3 max-w-[85%] shadow-sm ${
+                      message.role === "user" 
+                        ? "bg-primary text-primary-foreground ml-4" 
+                        : message.role === "system"
+                          ? "bg-secondary/40 text-muted-foreground italic border border-border/40"
+                          : "bg-secondary/60 border border-border/80 text-foreground mr-4"
+                    }`}
+                  >
+                    {message.role === "assistant" && message.id !== "welcome" && (
+                      <div className="flex items-center gap-1.5 mb-1.5 text-xs text-primary font-medium">
+                        <Sparkles className="h-3 w-3" />
+                        <span>MarketSim AI Coach</span>
                       </div>
-                      <p className="text-xs font-medium text-[#f5f5f5]">{actionMatch[2]}</p>
-                      <Button
-                        size="sm"
-                        disabled={isGeneratingSim}
-                        className="w-full bg-gradient-to-r from-amber-500 to-[#ffd700] text-black font-semibold text-xs h-8 hover:opacity-90 flex items-center justify-center gap-1.5"
-                        onClick={async () => {
-                          setIsGeneratingSim(true);
-                          try {
-                            const res = await apiRequest("POST", "/api/ad-simulations/generate", {
-                              targetWeakness: actionMatch[1],
-                              level: (userProfile as any)?.level || "Expert",
-                            });
-                            const created = await res.json();
-                            toast({
-                              title: "✨ Simulation Generated",
-                              description: `Starting: ${created.title}`,
-                            });
-                            window.location.href = `/ad-simulation/${created.id}`;
-                          } catch (e) {
-                            toast({
-                              title: "Generation failed",
-                              description: "Could not generate simulation scenario.",
-                              variant: "destructive",
-                            });
-                          } finally {
-                            setIsGeneratingSim(false);
-                          }
-                        }}
-                      >
-                        {isGeneratingSim ? (
-                          <div className="flex items-center gap-2">
-                            <div className="h-3 w-3 border-2 border-b-transparent border-black rounded-full animate-spin"></div>
-                            <span>Generating Scenario...</span>
-                          </div>
-                        ) : (
-                          <>
-                            <Sparkles className="h-3.5 w-3.5" />
-                            <span>Launch Tailored Simulation</span>
-                          </>
-                        )}
-                      </Button>
+                    )}
+                    
+                    <div className="whitespace-pre-line text-xs sm:text-sm leading-relaxed">
+                      {cleanContent}
                     </div>
-                  )}
-                  
-                  {message.role === "assistant" && message.id !== "welcome" && (
-                    <div className="flex items-center gap-1 mt-2 justify-end text-xs text-[#f5f5f5]/40">
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        className="h-6 w-6 rounded-full hover:bg-[#ffd700]/10 hover:text-[#ffd700]"
-                        onClick={() => {
-                          navigator.clipboard.writeText(cleanContent);
-                          toast({
-                            title: "Copied to clipboard",
-                            duration: 2000,
-                          });
-                        }}
-                      >
-                        <Copy className="h-3 w-3" />
-                      </Button>
-                      <Button variant="ghost" size="icon" className="h-6 w-6 rounded-full hover:bg-[#ffd700]/10 hover:text-[#ffd700]">
-                        <ThumbsUp className="h-3 w-3" />
-                      </Button>
-                    </div>
-                  )}
-                </div>
-              </div>
-            );
-          })}
-          <div ref={messagesEndRef} />
-        </div>
-      </ScrollArea>
-      
-      <CardFooter className="p-3 border-t border-[#ffd700]/20 flex-shrink-0 bg-[#181818] flex flex-col gap-2">
-        {/* Quick Suggestion Chips */}
-        <div className="w-full flex items-center gap-1.5 overflow-x-auto pb-1 text-xs scrollbar-none">
-          <button
-            type="button"
-            onClick={() => handleSendMessage("What are my weak areas and what should I practice?")}
-            className="whitespace-nowrap px-2.5 py-1 rounded-full bg-[#2a2a2a] text-[#ffd700] hover:bg-[#333] border border-[#ffd700]/30 text-[11px] font-medium flex items-center gap-1 transition-colors"
-          >
-            📊 My Weak Areas
-          </button>
-          <button
-            type="button"
-            onClick={() => handleSendMessage("Give me a dynamic practice challenge targeting my growth areas.")}
-            className="whitespace-nowrap px-2.5 py-1 rounded-full bg-[#222] text-[#f5f5f5] hover:bg-[#333] border border-[#444] text-[11px] transition-colors"
-          >
-            ⚡ Practice Challenge
-          </button>
-          <button
-            type="button"
-            onClick={() => handleSendMessage("How do I achieve a 10/10 Google Ads Quality Score?")}
-            className="whitespace-nowrap px-2.5 py-1 rounded-full bg-[#222] text-[#f5f5f5] hover:bg-[#333] border border-[#444] text-[11px] transition-colors"
-          >
-            🎯 Quality Score 10/10
-          </button>
-          <button
-            type="button"
-            onClick={() => handleSendMessage("What are the best negative keywords for B2B search ads?")}
-            className="whitespace-nowrap px-2.5 py-1 rounded-full bg-[#222] text-[#f5f5f5] hover:bg-[#333] border border-[#444] text-[11px] transition-colors"
-          >
-            🛑 Negative Keywords
-          </button>
-        </div>
 
-        <div className="relative w-full flex items-center">
-          <Input
-            value={inputValue}
-            onChange={handleInputChange}
-            onKeyDown={handleKeyDown}
-            placeholder="Ask about strategy, weak areas, or practice scenarios..."
-            className="pr-10 bg-[#222] border-[#444] text-[#f5f5f5] focus-visible:ring-[#ffd700]/30 text-sm"
-            disabled={isLoading}
-          />
-          <Button
-            size="icon"
-            className="absolute right-0 top-0 h-full aspect-square bg-transparent hover:bg-[#ffd700]/10 text-[#ffd700]"
-            onClick={() => handleSendMessage()}
-            disabled={isLoading || !inputValue.trim()}
-          >
-            {isLoading ? (
-              <div className="h-4 w-4 border-2 border-b-transparent border-[#ffd700] rounded-full animate-spin"></div>
-            ) : (
-              <Send className="h-4 w-4" />
-            )}
-          </Button>
-        </div>
-      </CardFooter>
-    </Card>
+                    {/* Interactive Dynamic Simulation Launch Action Card */}
+                    {actionMatch && (
+                      <div className="mt-3 p-3 rounded-lg bg-secondary/80 border border-primary/40 space-y-2">
+                        <div className="flex items-center gap-1.5 text-xs font-semibold text-primary">
+                          <Sparkles className="h-3.5 w-3.5" />
+                          <span>Adaptive Practice Challenge</span>
+                        </div>
+                        <p className="text-xs font-medium text-foreground">{actionMatch[2]}</p>
+                        <Button
+                          size="sm"
+                          disabled={isGeneratingSim}
+                          className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-xs h-8 flex items-center justify-center gap-1.5"
+                          onClick={async () => {
+                            setIsGeneratingSim(true);
+                            try {
+                              const res = await apiRequest("POST", "/api/ad-simulations/generate", {
+                                targetWeakness: actionMatch[1],
+                                level: (userProfile as any)?.level || "Expert",
+                              });
+                              const created = await res.json();
+                              toast({
+                                title: "✨ Simulation Generated",
+                                description: `Starting: ${created.title}`,
+                              });
+                              window.location.href = `/ad-simulation/${created.id}`;
+                            } catch (e) {
+                              toast({
+                                title: "Generation failed",
+                                description: "Could not generate simulation scenario.",
+                                variant: "destructive",
+                              });
+                            } finally {
+                              setIsGeneratingSim(false);
+                            }
+                          }}
+                        >
+                          {isGeneratingSim ? (
+                            <div className="flex items-center gap-2">
+                              <div className="h-3 w-3 border-2 border-b-transparent border-primary-foreground rounded-full animate-spin"></div>
+                              <span>Generating Scenario...</span>
+                            </div>
+                          ) : (
+                            <>
+                              <Sparkles className="h-3.5 w-3.5" />
+                              <span>Launch Tailored Simulation</span>
+                            </>
+                          )}
+                        </Button>
+                      </div>
+                    )}
+                    
+                    {message.role === "assistant" && message.id !== "welcome" && (
+                      <div className="flex items-center gap-1 mt-2 justify-end text-xs text-muted-foreground">
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="h-6 w-6 rounded-full hover:bg-accent hover:text-foreground"
+                          onClick={() => {
+                            navigator.clipboard.writeText(cleanContent);
+                            toast({
+                              title: "Copied to clipboard",
+                              duration: 2000,
+                            });
+                          }}
+                        >
+                          <Copy className="h-3 w-3" />
+                        </Button>
+                        <Button variant="ghost" size="icon" className="h-6 w-6 rounded-full hover:bg-accent hover:text-foreground">
+                          <ThumbsUp className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+            <div ref={messagesEndRef} />
+          </div>
+        </ScrollArea>
+        
+        <CardFooter className="p-3 border-t border-border/70 flex-shrink-0 bg-secondary/30 flex flex-col gap-2">
+          {/* Quick Suggestion Chips */}
+          <div className="w-full flex items-center gap-1.5 overflow-x-auto pb-1 text-xs scrollbar-none">
+            <button
+              type="button"
+              onClick={() => handleSendMessage("What are my weak areas and what should I practice?")}
+              className="whitespace-nowrap px-2.5 py-1 rounded-full bg-secondary text-primary hover:bg-secondary/80 border border-primary/30 text-[11px] font-medium flex items-center gap-1 transition-colors"
+            >
+              📊 My Weak Areas
+            </button>
+            <button
+              type="button"
+              onClick={() => handleSendMessage("Give me a dynamic practice challenge targeting my growth areas.")}
+              className="whitespace-nowrap px-2.5 py-1 rounded-full bg-secondary/60 text-foreground hover:bg-secondary border border-border text-[11px] transition-colors"
+            >
+              ⚡ Practice Challenge
+            </button>
+            <button
+              type="button"
+              onClick={() => handleSendMessage("How do I achieve a 10/10 Google Ads Quality Score?")}
+              className="whitespace-nowrap px-2.5 py-1 rounded-full bg-secondary/60 text-foreground hover:bg-secondary border border-border text-[11px] transition-colors"
+            >
+              🎯 Quality Score 10/10
+            </button>
+            <button
+              type="button"
+              onClick={() => handleSendMessage("What are the best negative keywords for B2B search ads?")}
+              className="whitespace-nowrap px-2.5 py-1 rounded-full bg-secondary/60 text-foreground hover:bg-secondary border border-border text-[11px] transition-colors"
+            >
+              🛑 Negative Keywords
+            </button>
+          </div>
+
+          <div className="relative w-full flex items-center">
+            <Input
+              value={inputValue}
+              onChange={handleInputChange}
+              onKeyDown={handleKeyDown}
+              placeholder="Ask about strategy, weak areas, or practice scenarios..."
+              className="pr-10 bg-background border-border text-foreground focus-visible:ring-primary/40 text-xs sm:text-sm"
+              disabled={isLoading}
+            />
+            <Button
+              size="icon"
+              className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 bg-primary text-primary-foreground hover:bg-primary/90"
+              onClick={() => handleSendMessage()}
+              disabled={isLoading || !inputValue.trim()}
+            >
+              {isLoading ? (
+                <div className="h-3.5 w-3.5 border-2 border-b-transparent border-primary-foreground rounded-full animate-spin"></div>
+              ) : (
+                <Send className="h-3.5 w-3.5" />
+              )}
+            </Button>
+          </div>
+        </CardFooter>
+      </Card>
+    </div>
   );
 }

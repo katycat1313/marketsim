@@ -3,277 +3,63 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222 47% 11%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222 47% 11%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 75.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 22%;
+    --input: 217.2 32.6% 22%;
+    --ring: 224.3 76.3% 48%;
+    --radius: 0.75rem;
+
+    --sidebar-background: 222.2 84% 4.9%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 217.2 91.2% 59.8%;
+    --sidebar-primary-foreground: 222.2 47.4% 11.2%;
+    --sidebar-accent: 217.2 32.6% 17.5%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 217.2 32.6% 22%;
+    --sidebar-ring: 224.3 76.3% 48%;
+  }
+
   * {
     @apply border-border;
   }
 
   body {
     @apply font-sans antialiased bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
 
-/* Tutorial slide animations */
-.tutorial-slide {
-  transition: all 0.3s ease-in-out;
-}
-
-.slide-left {
-  transform: translateX(-10px);
-  opacity: 0;
-}
-
-.slide-right {
-  transform: translateX(10px);
-  opacity: 0;
-}
-
-/* Interactive tutorial elements */
-.tutorial-card {
-  border-radius: 10px;
-  overflow: hidden;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  position: relative;
-}
-
-.tutorial-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
-}
-
-.tutorial-header {
-  background-color: #f0f5ff;
-  padding: 1rem;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-.tutorial-content {
-  padding: 1rem;
-  background-color: white;
-}
-
-/* Interactive expandable items */
-.expandable-item {
-  margin-bottom: 0.5rem;
-  border-radius: 0.5rem;
-  overflow: hidden;
-}
-
-.expandable-item-header {
-  padding: 0.75rem 1rem;
-  background-color: #5c6bc0;
-  color: white;
-  cursor: pointer;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-weight: 500;
-  transition: background-color 0.2s ease;
-}
-
-.expandable-item-header:hover {
-  background-color: #4a58b2;
-}
-
-.expandable-item-content {
-  max-height: 0;
-  overflow: hidden;
-  background-color: #f8f9fa;
-  transition: max-height 0.3s ease, padding 0.3s ease;
-  padding: 0 1rem;
-}
-
-.expandable-item.expanded .expandable-item-content {
-  max-height: 500px;
-  padding: 1rem;
-}
-
-/* Swipeable tutorial slides */
-.swipeable-container {
-  position: relative;
-  overflow: hidden;
-  border-radius: 0.5rem;
-  background-color: #f0f5ff;
-}
-
-.swipeable-wrapper {
-  display: flex;
-  transition: transform 0.3s ease;
-}
-
-.swipeable-slide {
-  min-width: 100%;
-  padding: 1.5rem;
-}
-
-.swipe-indicator {
-  display: flex;
-  justify-content: center;
-  margin-top: 1rem;
-}
-
-.swipe-dot {
+/* Custom scrollbars for accessible workbench viewing */
+::-webkit-scrollbar {
   width: 8px;
   height: 8px;
-  border-radius: 50%;
-  background-color: #d1d5db;
-  margin: 0 4px;
-  transition: all 0.2s ease;
 }
 
-.swipe-dot.active {
-  width: 24px;
+::-webkit-scrollbar-track {
+  background: hsl(var(--background));
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--border));
   border-radius: 4px;
-  background-color: #5c6bc0;
 }
 
-.swipe-instruction {
-  text-align: center;
-  color: #6b7280;
-  padding: 0.5rem;
-  font-size: 0.875rem;
-}
-
-/* Navigation buttons for swipeable content */
-.swipe-nav-button {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background-color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
-  z-index: 10;
-}
-
-.swipe-nav-button.prev {
-  left: 10px;
-}
-
-.swipe-nav-button.next {
-  right: 10px;
-}
-
-/* Enhanced styling with gold accents and reduced whitespace */
-.prose p {
-  margin-bottom: 1rem;
-  line-height: 1.6;
-  color: #f5f5f5;
-}
-
-.prose h1, .prose h2, .prose h3, .prose h4, .prose h5 {
-  font-weight: 600;
-  line-height: 1.3;
-  margin-top: 1.5rem;
-  margin-bottom: 1rem;
-  color: #ffd700; /* Gold color for headings */
-  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
-}
-
-.prose ul, .prose ol {
-  padding-left: 1.5rem;
-  margin-bottom: 1rem;
-  color: #f5f5f5;
-}
-
-/* Enhanced Card styles with gold accents */
-.tutorial-card {
-  background-color: rgba(30, 30, 30, 0.8);
-  border: 1px solid rgba(255, 215, 0, 0.3); /* Gold border */
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-}
-
-.tutorial-card h3 {
-  color: #ffd700 !important; /* Gold color for card titles */
-}
-
-/* Fix for the white task box */
-.bg-blue-50 {
-  background-color: rgba(30, 30, 30, 0.9) !important;
-  border: 1px solid rgba(255, 215, 0, 0.3) !important;
-  padding: 1.5rem !important;
-  color: #f5f5f5 !important;
-}
-
-/* Fix for the excessive whitespace */
-.space-y-6 > div {
-  padding: 0.75rem !important;
-  margin-bottom: 0.75rem !important;
-}
-
-/* Style the expandable sections */
-.expandable-item-header {
-  background-color: #333333 !important;
-  border-left: 3px solid #ffd700; /* Gold accent */
-  color: #ffffff !important;
-}
-
-.expandable-item-content {
-  background-color: #1e1e1e !important;
-  color: #f5f5f5 !important;
-}
-
-.swipeable-container {
-  background-color: #1e1e1e !important;
-  border: 1px solid rgba(255, 215, 0, 0.3); /* Gold border */
-}
-
-.swipe-dot.active {
-  background-color: #ffd700 !important; /* Gold active dot */
-}
-
-.swipe-instruction {
-  color: #ffd700 !important; /* Gold instruction text */
-}
-
-/* Make text in tutorial content more visible */
-.text-gray-700, .text-gray-600 {
-  color: #f5f5f5 !important;
-}
-
-/* Highlight important content */
-strong, b {
-  color: #ffd700 !important;
-  font-weight: 600;
-}
-
-/* Add gold accents to the UI */
-.font-semibold {
-  color: #ffd700 !important;
-}
-
-/* Make tutorial card titles more visible */
-.tutorial-card .text-blue-800 {
-  color: #ffd700 !important;
-}
-
-/* Add styling to the beginner badge */
-.bg-blue-100 {
-  background-color: rgba(20, 20, 20, 0.7) !important;
-  border: 1px solid #ffd700 !important;
-}
-
-.text-blue-800 {
-  color: #ffd700 !important;
-}
-
-/* Add visual highlights */
-h1, h2, h3 {
-  position: relative;
-  padding-left: 0.5rem;
-}
-
-h1::before, h2::before, h3::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0;
-  height: 100%;
-  width: 3px;
-  background-color: #ffd700;
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground));
 }

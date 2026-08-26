@@ -129,8 +129,8 @@ interface LinkedInAdForm {
 }
 
 export default function AdSimulationPage() {
-  const [matched, params] = useRoute<{ simulationId: string }>('/ad-simulation/:simulationId');
-  const simulationId = matched && params ? parseInt(params.simulationId) : null;
+  const [matched, params] = useRoute<{ id?: string; simulationId?: string }>('/ad-simulation/:id');
+  const simulationId = params?.id ? parseInt(params.id) : (params?.simulationId ? parseInt(params.simulationId) : null);
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const [isGeneratingNext, setIsGeneratingNext] = useState(false);
@@ -157,6 +157,52 @@ export default function AdSimulationPage() {
       });
     } finally {
       setIsGeneratingNext(false);
+    }
+  };
+
+  const [isSavingPortfolio, setIsSavingPortfolio] = useState(false);
+
+  const handleSaveToPortfolio = async () => {
+    if (!simulationResults) return;
+    setIsSavingPortfolio(true);
+    try {
+      const payload = {
+        id: `cs-sim-${Date.now()}`,
+        simulationId: simulationId || 1,
+        title: simulation?.title || "Paid Search Campaign Optimization",
+        clientName: simulation?.industry ? `${simulation.industry.split(' ')[0]} Partner` : "Agency Client",
+        industry: simulation?.industry || "E-Commerce",
+        platform: simulation?.platform || "Google Ads Search",
+        difficulty: simulation?.difficulty || "Advanced",
+        challengeSummary: simulation?.scenarioDescription || "Optimizing paid advertising to reduce CPA and scale revenue.",
+        strategySummary: `Executed keyword match type gating, deployed negative keyword filters, and improved headline relevance.`,
+        keyTactics: (simulationResults.feedback || []).slice(0, 3),
+        metrics: {
+          qualityScore: simulationResults.metrics?.qualityScore || 8,
+          roas: simulationResults.metrics?.roas || 3.8,
+          cpa: simulationResults.metrics?.costPerConversion || 28.5,
+          ctr: simulationResults.metrics?.ctr || 3.4,
+          conversions: simulationResults.metrics?.conversions || 18,
+          spend: simulationResults.metrics?.cost || 500
+        },
+        score: simulationResults.score || 85,
+      };
+
+      await apiRequest("POST", "/api/user/portfolio", payload);
+      queryClient.invalidateQueries({ queryKey: ["/api/user/portfolio"] });
+      toast({
+        title: "📌 Case Study Saved to Portfolio",
+        description: "Verified case study added to your public portfolio!",
+      });
+      setLocation("/portfolio");
+    } catch (e: any) {
+      toast({
+        title: "Save Failed",
+        description: e.message || "Could not save to portfolio.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSavingPortfolio(false);
     }
   };
   
@@ -260,33 +306,36 @@ export default function AdSimulationPage() {
         setActivePlatformTab("linkedin");
       }
 
+      const locationsList = Array.isArray(simulation?.targetAudience?.locations)
+        ? simulation.targetAudience.locations
+        : (Array.isArray(simulation?.targetAudience) ? simulation.targetAudience : ["United States", "Canada"]);
+
       // Update form defaults based on simulation requirements
-      // This is just a placeholder - we'd need to update this based on the actual schema
       if (simulation.platform === "google_ads") {
         setGoogleForm(prev => ({
           ...prev,
-          campaignName: `${simulation.title} Campaign`,
-          locations: simulation.targetAudience.locations || []
+          campaignName: `${simulation.title || "Search"} Campaign`,
+          locations: locationsList
         }));
       } else if (simulation.platform === "meta_ads") {
         setMetaForm(prev => ({
           ...prev,
-          campaignName: `${simulation.title} Campaign`,
+          campaignName: `${simulation.title || "Meta"} Campaign`,
           adSets: [{
             ...prev.adSets[0],
             targeting: {
-              ...prev.adSets[0].targeting,
-              locations: simulation.targetAudience.locations || []
+              ...prev.adSets[0]?.targeting,
+              locations: locationsList
             }
           }]
         }));
       } else if (simulation.platform === "linkedin_ads") {
         setLinkedinForm(prev => ({
           ...prev,
-          campaignName: `${simulation.title} Campaign`,
+          campaignName: `${simulation.title || "LinkedIn"} Campaign`,
           targeting: {
             ...prev.targeting,
-            locations: simulation.targetAudience.locations || []
+            locations: locationsList
           }
         }));
       }
@@ -2253,14 +2302,41 @@ export default function AdSimulationPage() {
               </Alert>
             ))}
           </CardContent>
+          
+          {score >= 70 && (
+            <div className="mx-6 mb-4 p-4 rounded-lg bg-gradient-to-r from-emerald-500/15 via-primary/10 to-card border border-emerald-500/30 flex flex-col md:flex-row md:items-center justify-between gap-3">
+              <div className="space-y-0.5">
+                <div className="flex items-center gap-1.5 text-xs font-semibold text-emerald-400">
+                  <ShieldCheck className="h-4 w-4" />
+                  <span>Eligible for Proof-of-Work Verification</span>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Score of {score}/100 qualifies this campaign for your verified Agency Portfolio.
+                </p>
+              </div>
+              <Button 
+                onClick={handleSaveToPortfolio}
+                disabled={isSavingPortfolio}
+                className="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs h-8 px-3.5 shrink-0 flex items-center gap-1.5"
+              >
+                <span>📌 Save to My Portfolio</span>
+              </Button>
+            </div>
+          )}
+
           <CardFooter className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-border/40">
             <Button variant="outline" onClick={() => setActiveStep("setup")} className="flex items-center gap-2">
               <RefreshCw className="h-4 w-4" />
               <span>Refine & Re-run Campaign</span>
             </Button>
-            <Button variant="default" onClick={() => setLocation("/ad-simulations")}>
-              All Simulations Catalog
-            </Button>
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={() => setLocation("/portfolio")}>
+                View Portfolio
+              </Button>
+              <Button variant="default" onClick={() => setLocation("/ad-simulations")}>
+                All Simulations Catalog
+              </Button>
+            </div>
           </CardFooter>
         </Card>
       </div>
@@ -2271,14 +2347,24 @@ export default function AdSimulationPage() {
     return (
       <div className="container mx-auto py-8">
         <div className="animate-pulse space-y-6">
-          <div className="h-8 bg-gray-200 rounded w-1/3"></div>
-          <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+          <div className="h-8 bg-muted rounded w-1/3"></div>
+          <div className="h-4 bg-muted rounded w-2/3"></div>
           <div className="space-y-3">
-            <div className="h-4 bg-gray-200 rounded"></div>
-            <div className="h-4 bg-gray-200 rounded"></div>
-            <div className="h-4 bg-gray-200 rounded"></div>
+            <div className="h-4 bg-muted rounded"></div>
+            <div className="h-4 bg-muted rounded"></div>
+            <div className="h-4 bg-muted rounded"></div>
           </div>
         </div>
+      </div>
+    );
+  }
+
+  if (!simulation) {
+    return (
+      <div className="container mx-auto py-16 text-center space-y-4">
+        <h2 className="text-2xl font-bold text-foreground">Scenario Not Found</h2>
+        <p className="text-muted-foreground text-sm">The selected campaign scenario could not be loaded from the server.</p>
+        <Button onClick={() => setLocation("/ad-simulations")}>Back to Simulations Catalog</Button>
       </div>
     );
   }
@@ -2295,17 +2381,17 @@ export default function AdSimulationPage() {
         </CardHeader>
         <CardContent className="space-y-2 pt-0">
           <div className="text-sm">
-            <p className="font-medium">Objectives:</p>
-            <ul className="list-disc pl-5 space-y-1 text-gray-600">
-              {simulation.objectives.map((obj: string, index: number) => (
+            <p className="font-medium text-foreground">Objectives:</p>
+            <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
+              {(Array.isArray(simulation?.objectives) ? simulation.objectives : [simulation?.objectives || "Optimize campaign ROAS and reduce CPA"]).map((obj: string, index: number) => (
                 <li key={index}>{obj}</li>
               ))}
             </ul>
           </div>
           <div className="text-sm">
-            <p className="font-medium">Success Criteria:</p>
-            <ul className="list-disc pl-5 space-y-1 text-gray-600">
-              {simulation.successCriteria && Array.isArray(simulation.successCriteria) ? 
+            <p className="font-medium text-foreground">Success Criteria:</p>
+            <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
+              {simulation?.successCriteria && Array.isArray(simulation.successCriteria) ? 
                 simulation.successCriteria.map((criteria: any, index: number) => (
                   <li key={index}>
                     {typeof criteria === 'object' && criteria.metric ? 
@@ -2347,10 +2433,10 @@ export default function AdSimulationPage() {
             <h3 className="text-lg font-medium mb-2">Business Details</h3>
             <p className="text-gray-600 mb-3">{simulation?.businessType}</p>
             
-            <h3 className="text-lg font-medium mb-2">Objectives</h3>
+            <h3 className="text-lg font-medium mb-2 text-foreground">Objectives</h3>
             <ul className="list-disc pl-5 space-y-1 mb-3">
-              {simulation?.objectives.map((obj: string, index: number) => (
-                <li key={index} className="text-gray-600">{obj}</li>
+              {(Array.isArray(simulation?.objectives) ? simulation.objectives : [simulation?.objectives || "Maximize return on ad spend"]).map((obj: string, index: number) => (
+                <li key={index} className="text-muted-foreground">{obj}</li>
               ))}
             </ul>
             

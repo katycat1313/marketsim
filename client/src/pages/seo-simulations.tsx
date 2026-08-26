@@ -3,11 +3,27 @@ import { Link } from 'wouter';
 import { apiRequest } from '@/lib/queryClient';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowRight, Book, Clock, AlertTriangle, GraduationCap, BookOpen } from 'lucide-react';
+import { 
+  ArrowRight, 
+  Book, 
+  Clock, 
+  AlertTriangle, 
+  GraduationCap, 
+  BookOpen, 
+  Globe, 
+  Sparkles, 
+  TrendingUp, 
+  ShieldCheck, 
+  Building, 
+  Coffee, 
+  Stethoscope, 
+  Home, 
+  Laptop, 
+  Wrench 
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import Logo from "@/components/Logo";
 
 interface SeoSimulation {
   id: number;
@@ -25,12 +41,37 @@ interface SeoSimulation {
   createdAt: string;
 }
 
-const DIFFICULTY_ORDER = {
-  'Beginner': 1,
-  'Intermediate': 2,
-  'Advanced': 3,
-  'Expert': 4,
-  'Master': 5
+const clientBusinessMetadata: Record<number, { icon: any; clientName: string; model: string; focus: string }> = {
+  1: {
+    icon: Coffee,
+    clientName: "Artisan Roast Co.",
+    model: "D2C E-Commerce & Retail",
+    focus: "On-Page Metadata, Title Tags & Search Snippet CTR"
+  },
+  2: {
+    icon: Stethoscope,
+    clientName: "Bright Smile Family Dentistry",
+    model: "Local Healthcare Clinic",
+    focus: "Local Search Intent, Map Pack & Schema Markup"
+  },
+  3: {
+    icon: Home,
+    clientName: "Premier Luxury Properties",
+    model: "High-Ticket Real Estate",
+    focus: "Deceptive Client Brief, Heading Silos & Bounce Reduction"
+  },
+  4: {
+    icon: Laptop,
+    clientName: "CloudVault Security",
+    model: "B2B SaaS CRM",
+    focus: "Bottom-of-Funnel Commercial Intent & Funnel Optimization"
+  },
+  5: {
+    icon: Wrench,
+    clientName: "Apex Emergency Home Services",
+    model: "24/7 HVAC & Trade Services",
+    focus: "Multi-Location SERP Dominance & Conversion Optimization"
+  }
 };
 
 export default function SeoSimulationsPage() {
@@ -39,47 +80,18 @@ export default function SeoSimulationsPage() {
     queryFn: () => apiRequest('/api/seo-simulations', { method: 'GET' })
   });
 
-  // Make sure we're working with an array of simulations
-  const simulations = Array.isArray(data) ? data : [];
-
-  // Separate simulations into leveled and practice categories
-  const leveledSimulations = simulations.filter(sim => sim.title.startsWith('Level'));
-  const practiceSimulations = simulations.filter(sim => !sim.title.startsWith('Level'));
-
-  // Sort leveled simulations by level number
-  const sortedLeveledSimulations = [...leveledSimulations].sort((a, b) => {
-    const levelA = parseInt(a.title.match(/Level (\d+)/)?.[1] || '0');
-    const levelB = parseInt(b.title.match(/Level (\d+)/)?.[1] || '0');
-    return levelA - levelB;
-  });
-
-  // Sort practice simulations by difficulty
-  const sortedPracticeSimulations = [...practiceSimulations].sort((a, b) => {
-    return (DIFFICULTY_ORDER[a.difficulty] || 99) - (DIFFICULTY_ORDER[b.difficulty] || 99);
-  });
+  const simulations: SeoSimulation[] = Array.isArray(data) ? data : [];
 
   if (isLoading) {
     return (
-      <div className="container mx-auto p-4">
-        <h1 className="text-3xl font-bold mb-8">SEO Simulations</h1>
+      <div className="container max-w-6xl mx-auto py-8 px-4 space-y-8">
+        <h1 className="text-3xl font-bold">SEO Website Simulations</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[...Array(3)].map((_, i) => (
-            <Card key={i}>
-              <CardHeader>
-                <Skeleton className="h-8 w-3/4 mb-2" />
-                <Skeleton className="h-4 w-1/2" />
-              </CardHeader>
-              <CardContent>
-                <Skeleton className="h-24 w-full mb-4" />
-                <div className="flex gap-2 mb-4">
-                  <Skeleton className="h-6 w-20" />
-                  <Skeleton className="h-6 w-24" />
-                </div>
-                <Skeleton className="h-6 w-32" />
-              </CardContent>
-              <CardFooter>
-                <Skeleton className="h-10 w-full" />
-              </CardFooter>
+            <Card key={i} className="p-6">
+              <Skeleton className="h-6 w-3/4 mb-4" />
+              <Skeleton className="h-20 w-full mb-4" />
+              <Skeleton className="h-10 w-full" />
             </Card>
           ))}
         </div>
@@ -89,121 +101,122 @@ export default function SeoSimulationsPage() {
 
   if (error) {
     return (
-      <div className="container mx-auto p-4">
-        <div className="bg-red-50 p-6 rounded-lg border border-red-200">
-          <h1 className="text-2xl font-bold text-red-700 flex items-center">
-            <AlertTriangle className="mr-2" />
-            Error Loading Simulations
+      <div className="container max-w-6xl mx-auto py-8 px-4">
+        <div className="bg-destructive/15 p-6 rounded-xl border border-destructive/30">
+          <h1 className="text-xl font-bold text-destructive flex items-center gap-2">
+            <AlertTriangle className="h-5 w-5" />
+            Error Loading Website Simulations
           </h1>
-          <p className="mt-2">Unable to load SEO simulations. Please try again later.</p>
+          <p className="mt-2 text-sm text-muted-foreground">Unable to load simulations. Please try refreshing the page.</p>
         </div>
       </div>
     );
   }
 
-  const renderSimulationCard = (simulation: SeoSimulation) => (
-    <Card key={simulation.id} className="overflow-hidden border border-navy-700 hover:border-matte-blue-400 transition-all hover:shadow-md">
-      <CardHeader className="bg-navy-800 text-white">
-        <CardTitle>{simulation.title}</CardTitle>
-        <CardDescription className="text-matte-blue-300">{simulation.industry} Industry</CardDescription>
-      </CardHeader>
-      <CardContent className="bg-white">
-        <p className="text-gray-700 mb-4 line-clamp-3">{simulation.description}</p>
-        <div className="flex flex-wrap gap-2 mb-4">
-          <Badge 
-            variant={
-              simulation.difficulty === 'Beginner' ? 'secondary' : 
-              simulation.difficulty === 'Intermediate' ? 'default' : 
-              simulation.difficulty === 'Advanced' ? 'outline' :
-              simulation.difficulty === 'Expert' ? 'destructive' : 'destructive'
-            }
-            className="bg-matte-blue-400 text-white hover:bg-matte-blue-500"
-          >
-            {simulation.difficulty}
-          </Badge>
-          <Badge variant="outline" className="border-navy-700 text-navy-700">
-            <AlertTriangle className="h-3 w-3 mr-1" /> 
-            {simulation.seoIssues.length} issues
-          </Badge>
-        </div>
-        <div className="flex items-center text-sm text-gray-600">
-          <Clock className="h-4 w-4 mr-1 text-navy-700" /> 
-          <span>Estimated time: 30-45 minutes</span>
-        </div>
-      </CardContent>
-      <CardFooter className="bg-white border-t border-navy-700 border-opacity-10">
-        <Button asChild className="w-full bg-navy-700 hover:bg-navy-800">
-          <Link to={`/seo-simulation/${simulation.id}`}>
-            Start Simulation <ArrowRight className="ml-2 h-4 w-4" />
-          </Link>
-        </Button>
-      </CardFooter>
-    </Card>
-  );
-
   return (
-    <div className="container mx-auto p-4">
-      <div className="flex justify-between items-center mb-6">
-        <div>
-          <h1 className="text-3xl font-bold text-navy-700">SEO Simulations</h1>
-          <p className="text-matte-blue-400">Practice optimizing web content for search engines</p>
+    <div className="container max-w-6xl mx-auto py-8 px-4 space-y-8">
+      {/* Header Banner */}
+      <div className="p-6 rounded-xl bg-gradient-to-r from-primary/15 via-card to-background border border-primary/30 shadow-lg space-y-2">
+        <div className="flex items-center gap-2">
+          <Globe className="h-6 w-6 text-primary" />
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground">
+            Interactive Website SEO & Analytics Studio
+          </h1>
+          <Badge className="bg-primary/10 text-primary border-primary/20 text-xs">
+            Live Sandbox Engine
+          </Badge>
         </div>
+        <p className="text-muted-foreground text-sm max-w-3xl">
+          Choose a real-world client website. Open the <strong>Website CMS Sandbox</strong> to diagnose and optimize headings, metadata, copy, and schema, then trigger the <strong>Live Analytics Sandbox</strong> to measure organic traffic lift, SERP ranking improvements, and bounce rate reduction.
+        </p>
       </div>
 
-      <Tabs defaultValue="learning-path" className="mb-8">
-        <TabsList className="mb-4 bg-navy-800">
-          <TabsTrigger value="learning-path" className="flex items-center data-[state=active]:bg-matte-blue-500 data-[state=active]:text-white">
-            <GraduationCap className="mr-2 h-4 w-4" />
-            Learning Path (5 Levels)
-          </TabsTrigger>
-          <TabsTrigger value="practice" className="flex items-center data-[state=active]:bg-matte-blue-500 data-[state=active]:text-white">
-            <BookOpen className="mr-2 h-4 w-4" />
-            Additional Practice
-          </TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="learning-path">
-          <div className="mb-4">
-            <h2 className="text-xl font-semibold mb-1 text-navy-700">SEO Mastery Path</h2>
-            <p className="text-matte-blue-500 mb-4">Progress through five levels from beginner to master SEO practitioner</p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {sortedLeveledSimulations.map(renderSimulationCard)}
-            
-            {sortedLeveledSimulations.length === 0 && (
-              <div className="col-span-full bg-navy-800 p-6 rounded-lg border border-navy-700">
-                <h2 className="text-xl font-semibold text-white flex items-center">
-                  <Book className="mr-2" />
-                  No Learning Path Available
-                </h2>
-                <p className="mt-2 text-matte-blue-300">Check back later for our structured SEO learning path.</p>
-              </div>
-            )}
-          </div>
-        </TabsContent>
-        
-        <TabsContent value="practice">
-          <div className="mb-4">
-            <h2 className="text-xl font-semibold mb-1 text-navy-700">Additional Practice Simulations</h2>
-            <p className="text-matte-blue-500 mb-4">Standalone simulations for extra practice and skill-building</p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {sortedPracticeSimulations.map(renderSimulationCard)}
-            
-            {sortedPracticeSimulations.length === 0 && (
-              <div className="col-span-full bg-navy-800 p-6 rounded-lg border border-navy-700">
-                <h2 className="text-xl font-semibold text-white flex items-center">
-                  <Book className="mr-2" />
-                  No Practice Simulations Available
-                </h2>
-                <p className="mt-2 text-matte-blue-300">Check back later for additional practice simulations.</p>
-              </div>
-            )}
-          </div>
-        </TabsContent>
-      </Tabs>
+      {/* Client Website Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {simulations.map((sim, idx) => {
+          const clientMeta = clientBusinessMetadata[sim.id] || {
+            icon: Globe,
+            clientName: sim.title,
+            model: `${sim.industry} Business`,
+            focus: "On-Page SEO Optimization"
+          };
+          const IconComp = clientMeta.icon;
+
+          return (
+            <Card 
+              key={sim.id} 
+              className="border-border/60 bg-gradient-to-b from-card to-background shadow-md hover:border-primary/50 transition-all flex flex-col justify-between"
+            >
+              <CardHeader className="pb-3 border-b border-border/40 space-y-2">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center font-bold">
+                      <IconComp className="h-4 w-4" />
+                    </div>
+                    <div>
+                      <CardTitle className="text-base font-bold text-foreground">
+                        {sim.title}
+                      </CardTitle>
+                      <CardDescription className="text-xs text-primary font-medium">
+                        Client: {clientMeta.clientName}
+                      </CardDescription>
+                    </div>
+                  </div>
+
+                  <Badge 
+                    variant="outline" 
+                    className={`text-xs shrink-0 ${
+                      sim.difficulty === 'Beginner' ? 'border-emerald-500/40 text-emerald-400' :
+                      sim.difficulty === 'Intermediate' ? 'border-blue-500/40 text-blue-400' :
+                      sim.difficulty === 'Advanced' ? 'border-amber-500/40 text-amber-400' :
+                      'border-red-500/40 text-red-400'
+                    }`}
+                  >
+                    {sim.difficulty}
+                  </Badge>
+                </div>
+              </CardHeader>
+
+              <CardContent className="space-y-4 pt-4 text-xs">
+                <div className="p-2.5 rounded-lg bg-secondary/30 border border-border/40 space-y-1">
+                  <div className="font-semibold text-foreground">Business Model:</div>
+                  <div className="text-muted-foreground">{clientMeta.model}</div>
+                </div>
+
+                <p className="text-muted-foreground line-clamp-3 leading-relaxed">
+                  {sim.description}
+                </p>
+
+                <div className="space-y-1.5">
+                  <div className="font-semibold text-foreground">Strategic Focus:</div>
+                  <div className="text-muted-foreground">{clientMeta.focus}</div>
+                </div>
+
+                {/* Target Keywords Strip */}
+                <div className="space-y-1">
+                  <div className="text-muted-foreground text-[11px]">Target Keywords:</div>
+                  <div className="flex flex-wrap gap-1">
+                    {sim.targetKeywords.slice(0, 3).map((kw, i) => (
+                      <Badge key={i} variant="secondary" className="text-[10px]">
+                        {kw}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              </CardContent>
+
+              <CardFooter className="border-t border-border/40 pt-3">
+                <Button asChild className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-xs h-9">
+                  <Link to={`/seo-simulation/${sim.id}`}>
+                    <span>Enter Website Sandbox</span>
+                    <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
+                  </Link>
+                </Button>
+              </CardFooter>
+            </Card>
+          );
+        })}
+      </div>
     </div>
   );
 }
