@@ -89,36 +89,60 @@ const seoSimulationTemplates: InsertSeoSimulation[] = [
         location: "links"
       }
     ],
+    clientDossier: {
+      clientName: "Jenny's Artisan Java & Roastery",
+      founderName: "Jenny Miller (Founder & Master Roaster)",
+      businessModel: "Direct-to-Consumer E-Commerce & Local Roastery",
+      location: "Morgantown, West Virginia (Est. 2014)",
+      products: "100% Organic Certified Arabica Coffee Beans, Single-Origin roasts (Guatemala & Ethiopia), Specialty Espresso Blends (250g, 500g, 1kg).",
+      valueProps: [
+        "100% Fair-Trade & Organic Arabica beans sourced directly from small family co-ops",
+        "Roasted in small 15-lb batches every Monday & Thursday so beans never sit on a shelf",
+        "Shipped within 24 hours of roasting for peak aroma and crema",
+        "Whole bean and custom coarse/fine grind options available"
+      ],
+      fieldNotes: `“I visited Jenny's Artisan Roastery on a Tuesday morning. The smell of roasting coffee hits you the second you walk through the door, and there was already a line of 12 people waiting for fresh pour-overs.
+
+I sat down with Jenny in her back office next to stacked burlap sacks stamped 'Certified Organic Arabica — Guatemala & Ethiopia'. She showed me her roaster and explained:
+
+'We roast small 15-pound batches every morning and ship within 24 hours so the beans are at peak freshness. But last year my nephew threw together our website in 10 minutes. He just wrote generic filler like "We sell coffee beans." Our regular customers told me the site looks like a generic template from 2005 and doesn't even mention that our beans are 100% certified organic Arabica or single-origin. When people search Google for organic arabica coffee beans or fresh roasted specialty coffee, we don't even show up!'
+
+Walking through the roastery, the problem was crystal clear: Jenny has a world-class physical product, but search engine crawlers have zero idea what she actually sells because her title tags, H1 headings, and image alt tags are completely blank or generic.”`,
+      customerFeedback: [
+        "“Your coffee is the best organic roast in the state, but your website just says 'Buy Coffee'. Where are the origin details?” — Mark R., Regular Customer",
+        "“I tried searching Google for 'fresh roasted organic arabica beans' in WV and couldn't find your store anywhere.” — Sarah T., Coffee Enthusiast"
+      ]
+    },
     bestPractices: [
       {
         category: "title",
-        description: "Include primary keywords near the beginning of the title, keep it under 60 characters",
-        example: "Organic Arabica Coffee Beans | Fresh Roasted Specialty Coffee"
+        description: "Include primary search keywords at the start of the title, followed by brand or secondary USP. Keep under 60 characters.",
+        example: "Formula: [Primary Target Keyword] | [Secondary USP / Product Type] (e.g. 50-60 chars)"
       },
       {
         category: "meta",
-        description: "Write a compelling description that includes keywords and a call to action, keep it under 155 characters",
-        example: "Shop our premium single-origin, organic Arabica coffee beans, roasted fresh weekly. Free shipping on specialty coffee orders over $30!"
+        description: "Write an action-driven 120-155 character pitch with targeted keywords, core value proposition, and an active Call To Action.",
+        example: "Formula: [Shop/Discover] [Product Specs & Organic Claims] + [Benefit/Shipping offer] + [Call to Action]!"
       },
       {
         category: "headings",
-        description: "Use a clear hierarchy with H1 for the main title and H2/H3 for sections, include keywords naturally",
-        example: "H1: Organic Arabica Coffee Beans from Ethiopia\nH2: Single-Origin Specialty Coffee Characteristics\nH2: Fresh Roasted Beans: Shipping & Storage"
+        description: "Structure a clear hierarchy: One single H1 defining the main product offering, followed by H2s covering specific features, origin specs, and ordering details.",
+        example: "Hierarchy: H1 = Core Product & Keyword | H2 = Origin & Roasting Specs | H2 = Grind Sizes & Delivery"
       },
       {
         category: "content",
-        description: "Write detailed, unique content that provides value, naturally incorporating keywords",
-        example: "Our organic Arabica coffee beans are sourced directly from small farms in Ethiopia's Yirgacheffe region, known for producing some of the world's finest specialty coffee. Each batch of these single-origin beans is roasted in small batches to ensure peak freshness and flavor..."
+        description: "Expand content to 200-350 words detailing product origins, certifications, flavor profile, and brewing instructions. Include target keyword variations naturally (1-2% density).",
+        example: "Structure: Paragraph 1 (Overview & Bean Origins) -> Paragraph 2 (Roasting Method & Flavor Notes) -> Paragraph 3 (Grind Sizes & Ordering Information)."
       },
       {
         category: "images",
-        description: "Use descriptive, keyword-rich alt text that accurately describes the image",
-        example: "alt=\"Freshly roasted organic Arabica coffee beans from Ethiopia\""
+        description: "Write descriptive alt text detailing the exact subject matter of the photograph and relevant product traits for screen readers and search crawlers.",
+        example: "Pattern: [Subject matter] + [Key attribute / Bean type] (e.g. Bag of organic arabica whole beans)"
       },
       {
         category: "links",
-        description: "Use descriptive anchor text that gives users and search engines context",
-        example: "\"Browse our Ethiopian single-origin coffee selection\" instead of \"Click here\""
+        description: "Replace vague 'Click here' or 'Buy now' links with descriptive anchor text explaining the destination page topic.",
+        example: "Pattern: 'Browse Single-Origin Beans' or 'View Fresh Delivery Rates' instead of generic 'Click Here'"
       }
     ]
   },
@@ -144,6 +168,31 @@ const seoSimulationTemplates: InsertSeoSimulation[] = [
       links: [
         { href: "/services", text: "Services", isInternal: true },
         { href: "/contact", text: "Contact", isInternal: true }
+      ]
+    },
+    clientDossier: {
+      clientName: "BrightSmile Family & Cosmetic Dental",
+      founderName: "Dr. Michael Miller, DDS (Lead Dental Surgeon)",
+      businessModel: "Multi-Doctor Private Dental Practice & Cosmetic Clinic",
+      location: "Downtown Chicago, IL (Near Millennium Park)",
+      products: "Preventive Family Cleanings, Invisalign Orthodontics, Same-Day Emergency Tooth Extractions, Porcelain Veneers.",
+      valueProps: [
+        "In-house 3D digital imaging & same-day emergency dental appointments",
+        "Team of 4 specialized doctors: Orthodontist, Periodontist, General Dentists",
+        "Over 300+ 5-star verified local patient reviews",
+        "Direct insurance billing with most major Chicago PPO networks"
+      ],
+      fieldNotes: `“I met with Dr. Michael Miller at his dental practice in downtown Chicago on a Friday afternoon. The clinic has 6 state-of-the-art operatory rooms, 3 associate dentists, and a spotless modern waiting area.
+
+Dr. Miller sat down with me between patients and vented:
+'We just invested $80,000 in 3D panoramic imaging and same-day emergency dental equipment. But our website is a complete ghost town for local search. When someone in downtown Chicago chips a tooth or searches for emergency dental care near Millennium Park, our competitors down the street get all the calls.
+
+Our web developer built a homepage that just says "Welcome To Our Dental Office" with zero mention of Chicago, no local schema structured data, no NAP consistency, and no separate service categories for emergency dentistry, cosmetic veneers, or teeth cleanings.'
+
+Walking through the clinic, the problem was glaring: Dr. Miller runs an elite practice in the heart of Chicago, but search engines only see a generic 50-word webpage with no geotargeting, missing local schema, and generic headings.”`,
+      customerFeedback: [
+        "“I was looking for emergency tooth pain relief in the Loop and couldn't find your phone number on Google.” — David K.",
+        "“Do you guys do Invisalign? Your website only says 'cleanings and fillings'.” — Amanda L."
       ]
     },
     targetKeywords: ["family dentist", "dental services", "cosmetic dentistry", "emergency dental care", "teeth cleaning", "Chicago dentist"],
@@ -264,6 +313,31 @@ const seoSimulationTemplates: InsertSeoSimulation[] = [
         { href: "https://example.com", text: "Partner Site", isInternal: false }
       ],
       schemaMarkup: "{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"Store\",\n  \"name\": \"Furniture Shop\"\n}"
+    },
+    clientDossier: {
+      clientName: "Moderna Living Craft Furniture",
+      founderName: "Elena Rostova (Head of E-Commerce)",
+      businessModel: "Direct-to-Consumer Modern Hardwood & Living Room Furniture",
+      location: "Austin, TX (National Delivery)",
+      products: "Solid Oak Dining Tables, Custom Velvet Sofas, Modular Sectionals, Ergonomic Home Office Desks.",
+      valueProps: [
+        "100% Solid sustainably sourced American oak & walnut",
+        "Modular expandable sectionals built to order",
+        "White-glove inside delivery across the continental USA",
+        "10-year structural warranty on all frames"
+      ],
+      fieldNotes: `“I conducted an audit call with Elena Rostova, Head of E-Commerce at Moderna Living Craft. They manufacture premium solid-wood dining tables and modular sectionals in their Austin facility.
+
+Elena pulled up their Google Search Console and showed me the damage:
+'We have over 400 SKU variations—different wood finishes, fabric swatches, and sectional configurations. But our developer generated 400 separate URLs with thin, duplicated descriptions and no canonical tags. Google is penalizing us for keyword cannibalization, and our product schema markup is completely broken with missing prices, availability, and review ratings.
+
+When shoppers search for solid oak dining tables or modern luxury sectionals, Google doesn't know which page to rank, so we get buried on page 4.'
+
+Our mission: Repair the product schema markup, fix canonical URL routing, structure category silos (Living, Bedroom, Dining, Office), and write comprehensive keyword-rich category copy.”`,
+      customerFeedback: [
+        "“I couldn't find dimensions or wood species options on your sofa pages.” — Chris M.",
+        "“Your search results on Google show 'out of stock' because your schema markup is outdated.” — Lisa P."
+      ]
     },
     targetKeywords: ["modern furniture", "home furniture", "online furniture store", "affordable sofas", "quality bedroom furniture", "furniture delivery", "luxury dining sets"],
     seoIssues: [
@@ -405,6 +479,29 @@ const seoSimulationTemplates: InsertSeoSimulation[] = [
       ],
       schemaMarkup: "{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"Blog\",\n  \"name\": \"Travel Blog\"\n}"
     },
+    clientDossier: {
+      clientName: "Nomad Horizon Global Travel Guides",
+      founderName: "Marcus Vance (Managing Editor)",
+      businessModel: "Travel Editorial & Curated Adventure Booking Platform",
+      location: "Portland, OR & Global Remote (Est. 2018)",
+      products: "In-Depth Destination Guides, Curated Boutique Hotel Reviews, Budget Travel Itineraries, Adventure Gear Guides.",
+      valueProps: [
+        "Firsthand boots-on-the-ground travel writers across 40+ countries",
+        "Curated interactive budget and luxury itineraries",
+        "Zero sponsored rankings—unbiased independent travel reviews",
+        "Over 150,000+ monthly active adventurous travelers"
+      ],
+      fieldNotes: `“I sat down with Marcus Vance, managing editor of Nomad Horizon, over a Zoom call from Lisbon. They publish in-depth travel guides for destinations across 40 countries, with over 150,000 monthly readers.
+
+Marcus walked me through their recent organic traffic drop:
+'After Google's recent Helpful Content and Core algorithm update, our organic search traffic crashed by 55%. When I audited the site, I realized why: our writers published 200 short, automated 300-word destination listicles that all copy the same generic tips. We have massive duplicate content between our Paris, NYC, and Rome guides, broken internal links, zero schema markup for BlogPosting or BreadcrumbList, and unoptimized high-res photography causing 4-second load times.'
+
+Our mission: Execute a deep technical and content overhaul—fix broken internal links, implement canonical URL tags, inject Article and BreadcrumbList structured data, and write rich, keyword-optimized destination guides that deliver real value to travelers.”`,
+      customerFeedback: [
+        "“Your Paris link gave me a 404 broken page error when I clicked on packing tips.” — Chloe B.",
+        "“Why are there 3 different URLs for your New York guide?” — Liam S."
+      ]
+    },
     targetKeywords: ["travel blog", "travel tips", "destination guides", "best places to visit", "travel planning", "budget travel tips", "luxury travel experiences"],
     seoIssues: [
       {
@@ -543,6 +640,31 @@ const seoSimulationTemplates: InsertSeoSimulation[] = [
       ],
       schemaMarkup: "{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"LocalBusiness\",\n  \"name\": \"Consulting Firm\"\n}"
     },
+    clientDossier: {
+      clientName: "Apex Strategy & Enterprise Growth Partners",
+      founderName: "Arthur Vance, Senior Managing Partner",
+      businessModel: "B2B Management Consulting & M&A Advisory Firm",
+      location: "Chicago, IL (Midwest Headquarters)",
+      products: "C-Suite Strategic Planning, M&A Financial Due Diligence, Operations Optimization, Executive Leadership Coaching.",
+      valueProps: [
+        "Over $2.4B in client transaction volume advised across 15 years",
+        "Team of former Fortune 100 executives and McKinsey alumni",
+        "Average engagement ROI: 4.8x within 18 months",
+        "Retainers ranging from $15,000/mo to $100,000 per project"
+      ],
+      fieldNotes: `“I met with Arthur Vance, Senior Partner at Apex Strategy, on the 42nd floor of their Chicago headquarters. Apex advises mid-market companies on $50M+ mergers, financial restructuring, and operational scale.
+
+Arthur laid out the firm's digital growth bottleneck:
+'Our average client engagement is $35,000 to $100,000. When private equity firms, board members, or CEOs search Google for strategic planning consultants, financial analysis services, or M&A advisory in the Midwest, they find boutique competitors because our website is an outdated brochure from 2012.
+
+We have broken internal links, no structured ProfessionalService or OfferCatalog schema, generic 50-word service summaries, no canonical URL routing, and zero thought-leadership content. When high-value decision-makers land on our site, 75% bounce immediately because it looks completely unprofessional.'
+
+Our mission: Complete a master-level technical, on-page, and architectural overhaul—restructure service categories, implement comprehensive JSON-LD schema, eliminate crawl errors, and craft authoritative, conversion-engineered B2B copy.”`,
+      customerFeedback: [
+        "“We were looking for M&A due diligence in Chicago and your website had 3 broken links on the services page.” — Richard B., PE Managing Director",
+        "“Your search snippet on Google doesn't display your services or client reviews.” — Karen W., Corporate VP"
+      ]
+    },
     targetKeywords: ["business consulting services", "strategic planning consultants", "financial analysis services", "marketing strategy development", "operations improvement", "leadership development programs", "business growth consulting"],
     seoIssues: [
       {
@@ -661,34 +783,73 @@ const seoSimulationTemplates: InsertSeoSimulation[] = [
   }
 ];
 
+const inMemoryDynamicSimulations: any[] = [];
+
 export class SeoSimulationService {
+  // Add dynamic simulation to memory
+  addDynamicSimulation(data: any): any {
+    const newId = 1000 + inMemoryDynamicSimulations.length + 1;
+    const sim = {
+      id: newId,
+      ...data,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    inMemoryDynamicSimulations.push(sim);
+    return sim;
+  }
+
   // Get all available simulations
   async getSimulations(): Promise<SeoSimulation[]> {
     try {
       console.log('Querying seo_simulations table...');
-      // Use the imported schema type instead of a string
       const simulations = await db.select().from(schema.seoSimulations);
-      console.log('Found simulations:', simulations.length);
-      return simulations;
+      if (simulations && simulations.length > 0) {
+        return [...simulations, ...inMemoryDynamicSimulations];
+      }
     } catch (error) {
-      console.error('Error getting simulations:', error);
-      throw error;
+      console.warn('DB not connected for SEO simulations, using in-memory templates.');
     }
+    
+    // In-memory fallback
+    const staticSims = seoSimulationTemplates.map((t, idx) => ({
+      id: idx + 1,
+      ...t,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    })) as any;
+
+    return [...staticSims, ...inMemoryDynamicSimulations];
   }
   
   // Get simulation by ID
   async getSimulation(id: number): Promise<SeoSimulation | undefined> {
+    // Check dynamic simulations first
+    const dynamicSim = inMemoryDynamicSimulations.find(s => s.id === id);
+    if (dynamicSim) return dynamicSim;
+
     try {
       const [simulation] = await db
         .select()
         .from(schema.seoSimulations)
         .where(eq(schema.seoSimulations.id, id));
       
-      return simulation;
+      if (simulation) return simulation;
     } catch (error) {
-      console.error('Error getting simulation by ID:', error);
-      return undefined;
+      console.warn(`DB query failed for SEO simulation ID ${id}, using in-memory template.`);
     }
+
+    // In-memory fallback
+    const template = seoSimulationTemplates[id - 1];
+    if (template) {
+      return {
+        id: id,
+        ...template,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      } as any;
+    }
+    return undefined;
   }
   
   // Create a new simulation

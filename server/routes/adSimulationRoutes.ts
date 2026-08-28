@@ -320,7 +320,7 @@ const generateAdSimulation = async (req: Request, res: Response) => {
     const userId = req.user?.id || 1;
     const { level, targetWeakness, platform, industry } = req.body || {};
 
-    const generatedSim = dynamicSimulationGenerator.generateSimulation({
+    const generatedSim = await dynamicSimulationGenerator.generateSimulationAsync({
       userId,
       level,
       targetWeakness,

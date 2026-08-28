@@ -391,6 +391,80 @@ export class DynamicSimulationGenerator {
   }
 
   /**
+   * Generates a fully custom simulation scenario using local Ollama LLM
+   */
+  async generateSimulationAsync(params: {
+    userId: number;
+    level?: string;
+    targetWeakness?: string;
+    platform?: string;
+    industry?: string;
+  }): Promise<any> {
+    const fallback = this.generateSimulation(params);
+    try {
+      let host = process.env.OLLAMA_HOST || '127.0.0.1:11434';
+      if (host.startsWith('0.0.0.0')) host = host.replace('0.0.0.0', '127.0.0.1');
+      if (!host.startsWith('http://') && !host.startsWith('https://')) host = `http://${host}`;
+      const urlObj = new URL(host);
+      if (!urlObj.port) urlObj.port = '11434';
+      const baseUrl = urlObj.origin;
+      const model = process.env.OLLAMA_MODEL || 'qwen2.5:7b';
+
+      const prompt = `You are an expert digital marketing simulation designer.
+Student Level: ${fallback.difficulty}
+Target Weakness Gap: ${fallback.weaknessLabel}
+Platform: ${fallback.platform}
+Industry: ${fallback.industry}
+
+Generate a hyper-realistic marketing client simulation brief in JSON format with:
+{
+  "title": "Short punchy simulation title",
+  "scenarioDescription": "Detailed 2-3 sentence client brief explaining the exact problem (e.g. broad match query waste, missing schema, high bounce rate) and what the student must fix",
+  "objectives": ["string", "string", "string"],
+  "keywords": ["string", "string", "string", "string"],
+  "negativeKeywords": ["string", "string", "string", "string"],
+  "adCreativeSamples": ["string", "string", "string"]
+}`;
+
+      const res = await fetch(`${baseUrl}/api/chat`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model,
+          messages: [
+            { role: 'system', content: 'You are an advanced digital marketing simulation designer. Output ONLY valid JSON.' },
+            { role: 'user', content: prompt }
+          ],
+          stream: false,
+          options: { temperature: 0.7 }
+        }),
+        signal: AbortSignal.timeout(15000)
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        const content = data?.message?.content || '{}';
+        const jsonMatch = content.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          const parsed = JSON.parse(jsonMatch[0]);
+          return {
+            ...fallback,
+            title: `✨ [Ollama AI] ${parsed.title || fallback.title}`,
+            scenarioDescription: parsed.scenarioDescription || fallback.scenarioDescription,
+            objectives: parsed.objectives?.length > 0 ? parsed.objectives : fallback.objectives,
+            keywords: parsed.keywords?.length > 0 ? parsed.keywords : fallback.keywords,
+            negativeKeywords: parsed.negativeKeywords?.length > 0 ? parsed.negativeKeywords : fallback.negativeKeywords,
+            adCreativeSamples: parsed.adCreativeSamples?.length > 0 ? parsed.adCreativeSamples : fallback.adCreativeSamples,
+          };
+        }
+      }
+    } catch (err) {
+      console.warn("AI dynamic simulation generation fallback:", err);
+    }
+    return fallback;
+  }
+
+  /**
    * Generates a deep post-simulation diagnostic debrief after any single attempt
    */
   generatePostSimDebrief(attempt: SimulationAttemptRecord, simulation: any) {

@@ -333,23 +333,45 @@ export default function SeoSimulationPage() {
     }
   };
 
-  const handleAIGenerateWebsite = () => {
-    const template = nicheTemplates[builderNiche] || nicheTemplates.gym;
-    setContent({
-      title: template.title,
-      metaDescription: template.metaDescription,
-      headings: template.headings,
-      body: template.body,
-      images: template.images,
-      links: template.links,
-      schemaMarkup: template.schemaMarkup
-    });
-    setEditMode(true);
-    setIsBuilderOpen(false);
-    toast({
-      title: "✨ AI Sandbox Website Generated!",
-      description: `Loaded new dynamic sandbox for ${template.name}. Edit and run your audit!`,
-    });
+  const [isGeneratingAI, setIsGeneratingAI] = useState(false);
+
+  const handleAIGenerateWebsite = async () => {
+    setIsGeneratingAI(true);
+    try {
+      const res = await apiRequest("POST", "/api/seo-simulations/generate", {
+        niche: builderNiche,
+        difficulty: simulation?.difficulty || "Intermediate",
+        industry: builderNiche === "gym" ? "Health & Fitness" : builderNiche === "solar" ? "Trade Services" : "Legal Services"
+      });
+      const newSim = await res.json();
+      setIsBuilderOpen(false);
+      queryClient.invalidateQueries({ queryKey: ["/api/seo-simulations"] });
+      toast({
+        title: "✨ AI Dynamic Sandbox Generated!",
+        description: `Synthesized: ${newSim.title}. Loading your custom client sandbox...`,
+      });
+      setLocation(`/seo-simulation/${newSim.id}`);
+    } catch (e: any) {
+      // Fallback to local template
+      const template = nicheTemplates[builderNiche] || nicheTemplates.gym;
+      setContent({
+        title: template.title,
+        metaDescription: template.metaDescription,
+        headings: template.headings,
+        body: template.body,
+        images: template.images,
+        links: template.links,
+        schemaMarkup: template.schemaMarkup
+      });
+      setEditMode(true);
+      setIsBuilderOpen(false);
+      toast({
+        title: "✨ Sandbox Website Loaded!",
+        description: `Loaded new dynamic sandbox for ${template.name}. Edit and run your audit!`,
+      });
+    } finally {
+      setIsGeneratingAI(false);
+    }
   };
 
   const handleSaveToPortfolio = async () => {
@@ -732,15 +754,43 @@ export default function SeoSimulationPage() {
                               ))}
                             </div>
                             
-                            <div className="flex flex-wrap gap-4">
-                              {content.images.map((image, index) => (
-                                <div key={index} className="border p-2 text-center">
-                                  <div className="bg-gray-100 h-20 w-32 flex items-center justify-center text-gray-400">
-                                    [Image: {image.src.split('/').pop()}]
+                            <div className="flex flex-wrap gap-4 my-4">
+                              {content.images.map((image, index) => {
+                                const defaultCoffeeImgs = [
+                                  "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=500&auto=format&fit=crop&q=80",
+                                  "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=500&auto=format&fit=crop&q=80",
+                                  "https://images.unsplash.com/photo-1498804103079-a6351b050096?w=500&auto=format&fit=crop&q=80"
+                                ];
+                                const imgSrc = image.src.startsWith('http') 
+                                  ? image.src 
+                                  : defaultCoffeeImgs[index % defaultCoffeeImgs.length];
+
+                                return (
+                                  <div key={index} className="border border-border/70 rounded-xl overflow-hidden bg-card/80 p-2.5 text-center shadow-md hover:border-primary/50 transition-all max-w-[210px] flex flex-col justify-between">
+                                    <div className="relative h-32 w-full rounded-lg overflow-hidden bg-muted/40 flex items-center justify-center">
+                                      <img 
+                                        src={imgSrc}
+                                        alt={image.alt || "Product image"}
+                                        className="h-full w-full object-cover"
+                                        onError={(e) => {
+                                          (e.target as HTMLImageElement).src = defaultCoffeeImgs[index % defaultCoffeeImgs.length];
+                                        }}
+                                      />
+                                    </div>
+                                    <div className="mt-2 text-left bg-background/80 rounded-md p-1.5 border border-border/40">
+                                      <div className="text-[10px] uppercase font-bold tracking-wider text-muted-foreground flex items-center justify-between">
+                                        <span>Image Alt Tag</span>
+                                        <span className={image.alt ? "text-emerald-400 font-mono" : "text-amber-400 font-mono"}>
+                                          {image.alt ? "✓ Set" : "⚠ Missing"}
+                                        </span>
+                                      </div>
+                                      <div className="text-xs font-mono text-foreground truncate mt-0.5" title={image.alt}>
+                                        "{image.alt || <span className="text-muted-foreground italic">none</span>}"
+                                      </div>
+                                    </div>
                                   </div>
-                                  <div className="text-xs text-gray-500 mt-1">Alt: {image.alt}</div>
-                                </div>
-                              ))}
+                                );
+                              })}
                             </div>
                             
                             <div className="space-y-2">
@@ -1079,6 +1129,85 @@ export default function SeoSimulationPage() {
           </div>
           
           <div className="space-y-6">
+            {/* Client Intake Dossier & Business Background Card */}
+            <Card className="border-primary/30 bg-gradient-to-br from-card via-card/90 to-primary/5 shadow-md">
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <Badge className="bg-primary/20 text-primary border-primary/30 text-[10px] uppercase tracking-wider font-mono">
+                    <Briefcase className="h-3 w-3 mr-1 inline" /> Agency Client Dossier
+                  </Badge>
+                  <span className="text-xs text-muted-foreground font-medium">Discovery Brief</span>
+                </div>
+                <CardTitle className="text-base font-bold mt-1 text-foreground">
+                  {simulation.clientDossier?.clientName || "Jenny's Artisan Java & Roastery"}
+                </CardTitle>
+                <CardDescription className="text-xs text-muted-foreground">
+                  {simulation.clientDossier?.founderName || "Jenny Miller (Founder & Master Roaster)"} • {simulation.clientDossier?.location || "Morgantown, WV (Est. 2014)"}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3.5 pt-0 text-xs">
+                
+                {/* First-Person Marketer Field Notes Callout */}
+                <div className="p-3 rounded-lg bg-secondary/40 border border-border/70 space-y-1.5">
+                  <div className="flex items-center gap-1.5 text-xs font-semibold text-primary">
+                    <Sparkles className="h-3.5 w-3.5 text-amber-400" />
+                    <span>Your On-Site Field Notes (Client Discovery Visit)</span>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground italic leading-relaxed whitespace-pre-line">
+                    {simulation.clientDossier?.fieldNotes || `“I visited Jenny's Artisan Roastery on a Tuesday morning. The smell of roasting coffee hits you the second you walk through the door, and there was already a line of 12 people waiting for fresh pour-overs.
+
+I sat down with Jenny in her back office next to stacked burlap sacks stamped 'Certified Organic Arabica — Guatemala & Ethiopia'. She showed me her roaster and explained:
+
+'We roast small 15-pound batches every morning and ship within 24 hours so the beans are at peak freshness. But last year my nephew threw together our website in 10 minutes. He just wrote generic filler like "We sell coffee beans." Our regular customers told me the site looks like a generic template from 2005 and doesn't even mention that our beans are 100% certified organic Arabica or single-origin. When people search Google for organic arabica coffee beans or fresh roasted specialty coffee, we don't even show up!'
+
+Walking through the roastery, the problem was crystal clear: Jenny has a world-class physical product, but search engine crawlers have zero idea what she actually sells because her title tags, H1 headings, and image alt tags are completely blank or generic.”`}
+                  </p>
+                </div>
+
+                {/* Customer Quotes */}
+                <div className="p-2.5 rounded-lg bg-blue-500/10 border border-blue-500/20 space-y-1">
+                  <span className="font-semibold text-blue-400 block text-[11px]">Real Customer Feedback:</span>
+                  <div className="space-y-1">
+                    {(simulation.clientDossier?.customerFeedback || [
+                      "“We tried searching Google for your services and couldn't find your website anywhere.” — Verified Customer"
+                    ]).map((quote: string, qIdx: number) => (
+                      <p key={qIdx} className="text-[11px] text-muted-foreground italic">
+                        {quote}
+                      </p>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Products & Specs */}
+                <div>
+                  <span className="font-semibold text-foreground">Product Offerings: </span>
+                  <span className="text-muted-foreground">
+                    {simulation.clientDossier?.products || "100% Organic Certified Arabica Coffee Beans, Single-Origin roasts (Guatemala & Ethiopia), Specialty Espresso Blends (250g, 500g, 1kg)."}
+                  </span>
+                </div>
+
+                <div>
+                  <span className="font-semibold text-foreground block mb-1">Key Selling Points:</span>
+                  <ul className="space-y-1 pl-3 list-disc text-muted-foreground">
+                    {(simulation.clientDossier?.valueProps || [
+                      "100% Fair-Trade & Organic Arabica beans",
+                      "Roasted in small batches every Monday & Thursday",
+                      "Shipped within 24 hours of roasting for peak flavor",
+                      "Whole bean and custom coarse/fine grinds"
+                    ]).map((vp: string, idx: number) => (
+                      <li key={idx}>{vp}</li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Marketer Strategic Notice */}
+                <div className="p-2 rounded bg-muted/50 border border-border text-[11px] text-muted-foreground">
+                  <span className="font-semibold text-foreground">💡 Marketer Directive: </span>
+                  Do not copy-paste raw conversational quotes into your headings or titles. Translate Jenny's authentic story into concise, high-converting SEO tags matching the target keywords.
+                </div>
+              </CardContent>
+            </Card>
+
             <Card>
               <CardHeader>
                 <CardTitle>Target Keywords</CardTitle>

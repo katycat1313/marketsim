@@ -19,17 +19,13 @@ export const getStripe = () => {
 
 // Stripe API helper functions
 export const createCustomer = async (email: string, name?: string) => {
-  return apiRequest('/api/stripe/customers', {
-    method: 'POST',
-    body: JSON.stringify({ email, name }),
-  });
+  const res = await apiRequest('POST', '/api/stripe/customers', { email, name });
+  return res.json();
 };
 
 export const createSubscription = async (customerId: string, priceId: string) => {
-  return apiRequest('/api/stripe/subscriptions', {
-    method: 'POST',
-    body: JSON.stringify({ customerId, priceId }),
-  });
+  const res = await apiRequest('POST', '/api/stripe/subscriptions', { customerId, priceId });
+  return res.json();
 };
 
 export const createCheckoutSession = async (
@@ -38,22 +34,21 @@ export const createCheckoutSession = async (
   successUrl: string,
   cancelUrl: string
 ) => {
-  return apiRequest('/api/stripe/checkout', {
-    method: 'POST',
-    body: JSON.stringify({ customerId, priceId, successUrl, cancelUrl }),
-  });
+  const res = await apiRequest('POST', '/api/stripe/checkout', { customerId, priceId, successUrl, cancelUrl });
+  return res.json();
 };
 
 export const getCustomerSubscriptions = async (customerId: string) => {
-  return apiRequest(`/api/stripe/customers/${customerId}/subscriptions`);
+  const res = await apiRequest('GET', `/api/stripe/customers/${customerId}/subscriptions`);
+  return res.json();
 };
 
 export const cancelSubscription = async (subscriptionId: string) => {
-  return apiRequest(`/api/stripe/subscriptions/${subscriptionId}`, {
-    method: 'DELETE',
-  });
+  const res = await apiRequest('DELETE', `/api/stripe/subscriptions/${subscriptionId}`);
+  return res.json();
 };
 
 export const getCustomerPaymentMethods = async (customerId: string) => {
-  return apiRequest(`/api/stripe/customers/${customerId}/payment-methods`);
+  const res = await apiRequest('GET', `/api/stripe/customers/${customerId}/payment-methods`);
+  return res.json();
 };

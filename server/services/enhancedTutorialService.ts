@@ -130,7 +130,7 @@ export class EnhancedTutorialService {
         )
       });
       
-      return progress;
+      return progress || null;
     } catch (error) {
       console.error(`Error getting module progress for user ${userId}, module ${moduleId}:`, error);
       return null; // Return null instead of throwing to handle gracefully
@@ -293,9 +293,7 @@ export class EnhancedTutorialService {
         completedAt: null,
         completedSections: [],
         earnedXp: 0,
-        timeSpentMinutes: 0,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        timeSpentMinutes: 0
       };
     }
   }

@@ -36,6 +36,9 @@ import abTestRoutes from "./routes/abTestRoutes";
 import { authService } from "./services/authService";
 import { registerAICapabilitiesRoutes } from "./services/aiCapabilities";
 import { registerMicroFeedbackRoutes } from "./routes/microFeedbackRoutes";
+import { dynamicSimulationGenerator } from "./services/dynamicSimulationGenerator";
+import { registerCustomBusinessRoutes } from "./routes/customBusinessRoutes";
+import { registerWaitlistRoutes } from "./routes/waitlistRoutes";
 
 export async function registerRoutes(app: Express) {
   const httpServer = createServer(app);
@@ -649,6 +652,122 @@ export async function registerRoutes(app: Express) {
     }
   });
 
+  app.post("/api/seo-simulations/generate", async (req, res) => {
+    try {
+      const { industry, difficulty, niche } = req.body;
+      
+      const dynamicScenario = await dynamicSimulationGenerator.generateSimulation({
+        level: difficulty || "Intermediate",
+        platform: "seo_serp",
+        targetWeakness: "onPageOptimization"
+      });
+
+      const simData = {
+        title: dynamicScenario.title || `${niche || industry || 'Custom Business'} - AI Dynamic SEO Simulation`,
+        description: dynamicScenario.scenarioDescription || "Optimize on-page architecture and local search authority.",
+        difficulty: difficulty || "Intermediate",
+        industry: dynamicScenario.industry || industry || "E-Commerce",
+        originalContent: {
+          title: `Welcome to ${dynamicScenario.clientName || 'Our Business'} | Quality Services`,
+          metaDescription: `We offer top-rated services. Contact us today to learn more.`,
+          headings: [
+            { tag: "h1", content: `Welcome to ${dynamicScenario.clientName || 'Our Business'}` },
+            { tag: "h2", content: "Our Products & Services" },
+            { tag: "h2", content: "About Us" },
+            { tag: "h2", content: "Contact Us" }
+          ],
+          body: `Welcome to ${dynamicScenario.clientName || 'our business'}. We provide premium services for clients in our local market. Contact us today to get started.`,
+          images: [
+            { src: "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=500&auto=format&fit=crop&q=80", alt: "Business office" },
+            { src: "https://images.unsplash.com/photo-1556742049-0a67e55722c3?w=500&auto=format&fit=crop&q=80", alt: "Team meeting" }
+          ],
+          links: [
+            { href: "/services", text: "Services", isInternal: true },
+            { href: "/contact", text: "Contact", isInternal: true }
+          ]
+        },
+        clientDossier: {
+          clientName: dynamicScenario.clientName || "Dynamic Client Partner",
+          founderName: "Alex Morgan (Managing Director)",
+          businessModel: `Direct-to-Consumer & Local ${dynamicScenario.industry || 'Specialty Brand'}`,
+          location: "Austin, TX (Est. 2020)",
+          products: `Custom ${dynamicScenario.industry || 'Specialty'} offerings & dedicated service packages.`,
+          valueProps: [
+            "Industry certified and sustainably sourced",
+            "Rapid fulfillment & dedicated customer support",
+            "Over 250+ 5-star verified customer reviews"
+          ],
+          fieldNotes: `“I met with the founder on-site to inspect their operations. They have built an outstanding physical operation with glowing local reviews, but their website is an unoptimized generic stub with missing target keywords, non-descriptive H1 headings, and zero local schema structured data. Search crawlers are bypassing them completely.”`,
+          customerFeedback: [
+            "“Your services are fantastic, but your website was impossible to find on Google.” — Local Client",
+            "“Where are the service descriptions and pricing options?” — Verified Customer"
+          ]
+        },
+        targetKeywords: dynamicScenario.targetKeywords || [
+          `${(dynamicScenario.industry || 'specialty').toLowerCase()} services`,
+          `best ${dynamicScenario.industry || 'local'} company`,
+          `custom ${dynamicScenario.industry || 'service'} packages`,
+          `affordable ${dynamicScenario.industry || 'specialty'} store`
+        ],
+        seoIssues: [
+          {
+            type: "title",
+            description: "Title is generic and does not include primary target keywords",
+            severity: "high",
+            location: "title"
+          },
+          {
+            type: "meta",
+            description: "Meta description is too short and uninformative",
+            severity: "high",
+            location: "metaDescription"
+          },
+          {
+            type: "headings",
+            description: "Headings lack search keywords and clear hierarchy",
+            severity: "medium",
+            location: "headings"
+          },
+          {
+            type: "content",
+            description: "Thin content lacking specific product and service depth",
+            severity: "high",
+            location: "body"
+          },
+          {
+            type: "images",
+            description: "Image alt tags are generic or missing target keywords",
+            severity: "medium",
+            location: "images"
+          }
+        ],
+        bestPractices: [
+          {
+            category: "title",
+            description: "Include primary search keywords at the start of the title tag (50-60 chars).",
+            example: "Formula: [Primary Keyword] | [Secondary USP / Location] (50-60 chars)"
+          },
+          {
+            category: "meta",
+            description: "Write an action-driven 120-155 character description with a clear call to action.",
+            example: "Formula: [Shop/Discover] [Core Offering] + [Key Benefit] + [Call to Action]!"
+          },
+          {
+            category: "headings",
+            description: "Use one H1 for main offering and H2s for specific categories.",
+            example: "Hierarchy: H1 = Core Keyword Offering | H2 = Features | H2 = Ordering"
+          }
+        ]
+      };
+
+      const savedSim = seoSimulationService.addDynamicSimulation(simData);
+      res.status(201).json(savedSim);
+    } catch (error: any) {
+      console.error("Error generating dynamic SEO simulation:", error);
+      res.status(500).json({ error: "Failed to generate dynamic SEO simulation", details: error.message });
+    }
+  });
+
   app.get("/api/seo-simulations/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
@@ -1027,6 +1146,14 @@ export async function registerRoutes(app: Express) {
   // Register Micro-Feedback routes
   registerMicroFeedbackRoutes(app);
   console.log('Micro-Feedback routes registered');
+
+  // Register Custom Business Digital Twin routes
+  registerCustomBusinessRoutes(app);
+  console.log('Custom Business Digital Twin routes registered');
+
+  // Register Early-Bird Pre-Order Waitlist routes
+  registerWaitlistRoutes(app);
+  console.log('Early-Bird Pre-Order Waitlist routes registered');
 
   return httpServer;
 }

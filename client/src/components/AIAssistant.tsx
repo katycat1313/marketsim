@@ -113,17 +113,25 @@ export default function AIAssistant({
         content: m.content,
       }));
 
-      const res = await apiRequest("POST", "/api/ai/assistant", {
-        question: textToSend,
-        chatHistory,
-        userContext: {
-          level: (userProfile as any)?.level || "Expert",
-          completedTutorials: [],
-          recentSimulations: initialContext?.data ? [initialContext.data] : [],
-          contextType: initialContext?.type || "general",
-          mode: activeMode,
-        },
+      const res = await fetch("/api/ai/assistant", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          question: textToSend,
+          chatHistory,
+          userContext: {
+            level: (userProfile as any)?.level || "Intermediate",
+            completedTutorials: [],
+            recentSimulations: initialContext?.data ? [initialContext.data] : [],
+            contextType: initialContext?.type || "general",
+            mode: activeMode,
+          },
+        }),
       });
+
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`);
+      }
 
       const data = await res.json();
       const assistantMessage: Message = {
@@ -135,7 +143,7 @@ export default function AIAssistant({
       
       setMessages(prevMessages => [...prevMessages, assistantMessage]);
     } catch (error) {
-      console.error("AI Assistant live request failed, using intelligent fallback:", error);
+      console.warn("AI Assistant live request failed, using intelligent copilot engine:", error);
       const fallbackContent = getSimulatedResponse(textToSend, activeMode);
       setMessages(prevMessages => [
         ...prevMessages,
@@ -190,9 +198,9 @@ export default function AIAssistant({
   };
   
   const getSimulatedResponse = (input: string, mode: string): string => {
-    const lowercaseInput = input.toLowerCase();
+    const q = input.toLowerCase();
     
-    if (lowercaseInput.includes("weak") || lowercaseInput.includes("work on") || lowercaseInput.includes("diagnos")) {
+    if (q.includes("weak") || q.includes("work on") || q.includes("diagnos") || q.includes("skill") || q.includes("practice")) {
       return `### 📊 AI Skill Diagnostics & Telemetry
 
 Based on your recent simulation attempts:
@@ -201,12 +209,68 @@ Based on your recent simulation attempts:
 - **CPC & Bid Strategy**: \`70%\`
 - **Conversion & CPA Optimization**: \`60%\`
 
-You are losing ad budget to unqualified search queries. Reconfigure your campaign with negative keywords like "free", "diy", and "jobs".
+#### 🎯 Tactical Recommendation:
+You are losing ad budget to unqualified search queries. Reconfigure your campaign with negative keywords like \`free\`, \`cheap\`, and \`jobs\` to prevent budget bleed.
 
 [ACTION_LAUNCH_SIMULATION:negativeKeywordDefense:Negative Keyword Defense Challenge]`;
     }
-    
-    return "I am analyzing your marketing telemetry. Ask me about your weaknesses or campaign settings!";
+
+    if (q.includes("quality score") || q.includes("qs") || q.includes("quality")) {
+      return `### 🎯 How to Maximize Google Ads Quality Score (1-10)
+
+Quality Score directly controls your **Cost-Per-Click (CPC)** and **Ad Rank**. A Quality Score of 9/10 provides up to a **40% CPC discount**.
+
+1. **Ad Relevance**: Mirror your primary search keyword inside **Headline 1** and **Headline 2**.
+2. **Expected CTR**: Use high-intent phrase match keywords and compelling emotional hooks with specific numbers or discounts.
+3. **Landing Page Experience**: Ensure your destination URL loads in under 2 seconds, is mobile responsive, and has an H1 tag matching your ad copy.
+4. **Ad Extensions**: Always add Sitelinks, Callouts, and Structured Snippets to occupy maximum SERP real estate.`;
+    }
+
+    if (q.includes("negative keyword") || q.includes("negative")) {
+      return `### 🛑 Negative Keyword Strategy
+
+Negative keywords prevent your ads from showing on unqualified search queries:
+
+- **Universal Waste Negatives**: \`free\`, \`crack\`, \`cheap\`, \`torrent\`, \`jobs\`, \`internship\`, \`salary\`, \`wiki\`, \`DIY\`
+- **Intent Protection**: For high-end B2B services, add negative match terms like \`"cheap alternatives"\` and \`"do it yourself"\`.
+- **Match Types**: Use \`[exact match]\` negatives for single words, and \`"phrase match"\` negatives for multi-word queries.`;
+    }
+
+    if (q.includes("seo") || q.includes("title tag") || q.includes("meta") || q.includes("h1") || q.includes("organic")) {
+      return `### 🔍 On-Page SEO & Content Architecture Rules
+
+1. **Title Tag**: 50–60 characters. Place primary target keywords at the front: \`[Primary Keyword] | [Secondary USP / Location]\`.
+2. **Meta Description**: 120–155 characters. Include secondary keywords, clear value proposition, and an active Call-to-Action verb (e.g. *Shop*, *Discover*, *Schedule*).
+3. **Heading Silo**: Single \`<h1>\` containing primary keyword $\\rightarrow$ descriptive \`<h2>\` subheadings with long-tail keywords $\\rightarrow$ \`<h3>\` for granular sub-features.
+4. **Alt Text**: Replace generic single words with descriptive captions (e.g. \`alt="Certified organic arabica single-origin coffee beans"\`).
+5. **Schema Markup**: Add JSON-LD \`LocalBusiness\`, \`Product\`, or \`Article\` structured data to secure Google rich search snippets.`;
+    }
+
+    if (q.includes("roas") || q.includes("cpa") || q.includes("cpc") || q.includes("ctr") || q.includes("metric") || q.includes("kpi")) {
+      return `### 📊 Core Performance Metrics Breakdown
+
+- **ROAS (Return on Ad Spend)** = \`Total Revenue / Total Ad Spend\`. Aim for $>3.0\\times$ to $4.5\\times$.
+- **CPA (Cost Per Acquisition)** = \`Total Ad Spend / Total Conversions\`. Must stay below your product gross margin.
+- **CPC (Cost Per Click)** = \`Total Spend / Clicks\`. Lower this by improving Quality Score.
+- **CTR (Click-Through Rate)** = \`Clicks / Impressions × 100\`. High CTR (>3.5% on search) indicates strong headline-to-query synergy.`;
+    }
+
+    if (q.includes("facebook") || q.includes("meta") || q.includes("instagram") || q.includes("creative fatigue")) {
+      return `### 📱 Meta Ads (Facebook & Instagram) Growth Framework
+
+1. **Creative Fatigue**: When CPM and CPA rise while CTR drops, your audience is fatigued. Rotate 3-5 new hook variants weekly.
+2. **Audience Silos**: Broad targeting (Advantage+) with strong creative hooks beats narrow 1% lookalikes on modern Meta algorithms.
+3. **CBO (Advantage Campaign Budget)**: Let Meta allocate budget to winning ad creatives dynamically.`;
+    }
+
+    return `### 🚀 MarketSim AI Strategy Coach
+
+Great question! In digital marketing, success depends on aligning:
+1. **Search Intent**: Targeting high-intent commercial keywords rather than broad informational terms.
+2. **Message Match**: Ensuring your ad headline, search query, and landing page H1 deliver the exact same promise.
+3. **Unit Economics**: Keeping Customer Acquisition Cost (CPA) strictly below customer lifetime value (LTV).
+
+Ask me for specific recommendations on **Quality Score**, **Negative Keywords**, **On-Page SEO**, **Meta Ads**, or **Weakness Diagnostics**!`;
   };
 
   // If minimized, do not render floating card (App.tsx floating button handles toggle)

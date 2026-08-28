@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import express from 'express';
 import bodyParser from 'body-parser';
 import { log, setupVite, serveStatic } from './vite';
@@ -6,7 +7,7 @@ import { mockAuthMiddleware } from './auth/middleware';
 
 async function main() {
   const app = express();
-  const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 5000;
+  const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 5001;
 
   app.use(bodyParser.json());
   

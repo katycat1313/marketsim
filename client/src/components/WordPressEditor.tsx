@@ -327,11 +327,11 @@ const WordPressEditor: React.FC<WordPressEditorProps> = ({ content, onContentCha
                     <div className="my-2 h-40 flex items-center justify-center overflow-hidden">
                       {block.properties?.src ? (
                         <img 
-                          src={block.properties.src} 
-                          alt={block.properties?.alt || ''} 
-                          className="max-h-full" 
+                          src={block.properties.src.startsWith('http') || block.properties.src.startsWith('/images/') ? block.properties.src : 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=500&auto=format&fit=crop&q=80'} 
+                          alt={block.properties?.alt || 'Product photo'} 
+                          className="max-h-full object-contain rounded" 
                           onError={(e) => {
-                            (e.target as HTMLImageElement).src = 'https://via.placeholder.com/300x200?text=Image+Not+Found';
+                            (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=500&auto=format&fit=crop&q=80';
                           }}
                         />
                       ) : (

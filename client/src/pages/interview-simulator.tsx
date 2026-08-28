@@ -300,11 +300,8 @@ export default function InterviewSimulatorPage() {
 
   const evaluateMutation = useMutation({
     mutationFn: async (payload: { question: string; userAnswer: string; targetRole: string }) => {
-      const res = await apiRequest("/api/ai/interview-evaluate", {
-        method: "POST",
-        body: JSON.stringify(payload)
-      });
-      return res;
+      const res = await apiRequest("POST", "/api/ai/interview-evaluate", payload);
+      return res.json();
     },
     onSuccess: (data) => {
       setEvaluationResult(data);

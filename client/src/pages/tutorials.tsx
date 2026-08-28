@@ -304,9 +304,9 @@ export default function TutorialsPage() {
     <div className="container mx-auto py-6">
       <div className="flex flex-col space-y-6">
         <div className="flex flex-col space-y-2">
-          <h1 className="text-3xl font-bold tracking-tight text-[#ffd700] flex items-center">
-            <span className="w-8 h-8 rounded-full bg-[#ffd700] text-black flex items-center justify-center mr-3 text-sm">DZ</span>
-            DIGITAL ZOOM Marketing Academy
+          <h1 className="text-3xl font-bold tracking-tight text-primary flex items-center">
+            <span className="w-8 h-8 rounded-xl bg-primary text-primary-foreground flex items-center justify-center mr-3 text-sm font-black">MS</span>
+            MarketSim AI Flight Academy
           </h1>
           <p className="text-muted-foreground">
             Master digital marketing with our structured learning path. Complete tutorials to unlock simulations.

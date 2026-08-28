@@ -2,36 +2,37 @@ import React from "react";
 
 export const Logo: React.FC<{ className?: string }> = ({ className = "" }) => {
   return (
-    <div className={`flex items-center ${className}`}>
-      <svg
-        width="40"
-        height="40"
-        viewBox="0 0 40 40"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        className="mr-2"
-      >
-        <rect width="40" height="40" rx="8" fill="hsl(228, 44%, 12%)" />
-        <path
-          d="M8 20C8 13.3726 13.3726 8 20 8C26.6274 8 32 13.3726 32 20C32 26.6274 26.6274 32 20 32C13.3726 32 8 26.6274 8 20Z"
-          fill="hsl(216, 75%, 14%)"
-        />
-        <path
-          d="M12 20C12 15.5817 15.5817 12 20 12C24.4183 12 28 15.5817 28 20C28 24.4183 24.4183 28 20 28C15.5817 28 12 24.4183 12 20Z"
-          fill="hsl(216, 39%, 48%)"
-        />
-        <path
-          d="M16 20C16 17.7909 17.7909 16 20 16C22.2091 16 24 17.7909 24 20C24 22.2091 22.2091 24 20 24C17.7909 24 16 22.2091 16 20Z"
-          fill="hsl(215, 40%, 59%)"
-        />
-        <path
-          d="M32 12L36 8H28L32 12Z"
-          fill="hsl(45, 100%, 50%)"
-        />
-      </svg>
+    <div className={`flex items-center gap-2.5 ${className}`}>
+      <div className="relative flex items-center justify-center h-10 w-10 rounded-xl bg-gradient-to-br from-primary via-indigo-600 to-amber-500 p-0.5 shadow-lg shadow-primary/25">
+        <div className="h-full w-full bg-background/90 backdrop-blur-sm rounded-[10px] flex items-center justify-center">
+          <svg
+            width="22"
+            height="22"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="text-primary animate-pulse"
+          >
+            <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z" />
+            <path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z" />
+            <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0" />
+            <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5" />
+          </svg>
+        </div>
+      </div>
       <div>
-        <div className="font-bold text-primary text-xl tracking-tight">DIGITAL ZOOM</div>
-        <div className="text-xs text-muted-foreground">Marketing Mastery Platform</div>
+        <div className="font-extrabold text-foreground text-xl tracking-tight flex items-center gap-1.5">
+          <span>MarketSim</span>
+          <span className="text-[10px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded bg-primary/20 text-primary border border-primary/30">
+            PRO
+          </span>
+        </div>
+        <div className="text-[10px] font-medium tracking-wider text-muted-foreground uppercase">
+          AI Flight Academy
+        </div>
       </div>
     </div>
   );

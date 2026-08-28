@@ -24,11 +24,13 @@ import {
   Sparkles,
   Brain,
   ShieldAlert,
+  ShieldCheck,
   Zap,
   TrendingUp,
   RefreshCw,
   Target
 } from "lucide-react";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
 import { getQueryFn, apiRequest, queryClient } from "@/lib/queryClient";

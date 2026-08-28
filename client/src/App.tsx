@@ -27,6 +27,7 @@ import SignupPage from "@/pages/signup";
 import PortfolioViewPage from "@/pages/portfolio-view";
 import InterviewSimulatorPage from "@/pages/interview-simulator";
 import CapstoneSimulationPage from "@/pages/capstone-simulation";
+import CustomBusinessHub from "@/pages/custom-business-hub";
 import Achievements from "@/components/Achievements";
 import Posts from "@/components/Posts";
 import AIAssistant from "@/components/AIAssistant";
@@ -68,6 +69,7 @@ import {
   Mic,
   Trophy,
   Sparkles,
+  Building2,
   X
 } from "lucide-react";
 
@@ -237,6 +239,15 @@ function SideNav() {
                     ${isActive('/dashboard') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
                     <BarChart2 className="h-5 w-5" />
                     <span>Skills Radar & Analytics</span>
+                  </div>
+                </Link>
+
+                <Link href="/custom-sandbox" onClick={() => setIsMobileMenuOpen(false)}>
+                  <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
+                    ${isActive('/custom-sandbox') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
+                    <Building2 className="h-5 w-5 text-amber-400" />
+                    <span>My Business Sandbox</span>
+                    <span className="ml-auto text-[9px] px-1.5 py-0.5 rounded bg-primary/20 text-primary font-mono font-bold">PREMIUM</span>
                   </div>
                 </Link>
 
@@ -411,6 +422,12 @@ function Router() {
             <Route path="/campaign-creator">
               <ProtectedRoute component={CampaignCreator} />
             </Route>
+            <Route path="/custom-sandbox">
+              <ProtectedRoute component={CustomBusinessHub} />
+            </Route>
+            <Route path="/my-business">
+              <ProtectedRoute component={CustomBusinessHub} />
+            </Route>
             <Route path="/dashboard">
               <ProtectedRoute component={Dashboard} />
             </Route>
@@ -454,16 +471,16 @@ function Router() {
         </main>
 
         {/* Footer */}
-        <footer className="py-4 border-t">
+        <footer className="py-6 border-t bg-card/40">
           <div className="container mx-auto px-4 text-center">
             <div className="flex justify-center mb-2">
-              <Logo className="scale-75" />
+              <Logo className="scale-90" />
             </div>
-            <div className="text-sm text-muted-foreground">
-              © 2025 Digital Zoom Marketing Mastery Platform. All rights reserved.
+            <div className="text-xs text-muted-foreground">
+              © 2026 MarketSim AI Flight Academy. All rights reserved.
             </div>
-            <div className="text-xs text-muted-foreground mt-1">
-              Empowering marketers with intelligent simulations and skill development
+            <div className="text-[11px] text-muted-foreground/80 mt-1">
+              The AI-Native Flight Simulator for Digital Marketers & Growth Engineers
             </div>
           </div>
         </footer>

@@ -884,10 +884,10 @@ export function TutorialSystem() {
 
   return (
     <div className="p-4">
-      <div className="py-3 px-1 mb-6 border-b border-[#ffd700]/30">
-        <h2 className="text-2xl font-bold text-[#ffd700] flex items-center">
-          <span className="w-8 h-8 rounded-full bg-[#ffd700] text-black flex items-center justify-center mr-3 text-sm">DZ</span>
-          DIGITAL ZOOM Marketing Academy
+      <div className="py-3 px-1 mb-6 border-b border-primary/30">
+        <h2 className="text-2xl font-bold text-primary flex items-center">
+          <span className="w-8 h-8 rounded-xl bg-primary text-primary-foreground flex items-center justify-center mr-3 text-sm font-black">MS</span>
+          MarketSim AI Flight Academy
         </h2>
       </div>
       

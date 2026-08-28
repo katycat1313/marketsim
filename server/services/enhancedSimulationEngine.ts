@@ -1,5 +1,6 @@
-import { Campaign, SimulationData } from '@shared/schema';
+import { Campaign, SimulationData, campaigns } from '@shared/schema';
 import { db } from '../db';
+import { eq } from 'drizzle-orm';
 import { freeMarketingAI, premiumMarketingAI, enterpriseMarketingAI } from './marketingAI';
 
 // Industry benchmark data by vertical
@@ -1364,6 +1365,13 @@ export class EnhancedSimulationEngine {
     
     // Compare results to success criteria
     const successCriteria = config.successCriteria;
+    const benchmarks = (INDUSTRY_BENCHMARKS as any)[config.industry] || INDUSTRY_BENCHMARKS.retail;
+
+    const ctr = Number(simulationData.ctr || 0);
+    const conversionRate = Number(simulationData.conversionRate || 0);
+    const cpa = Number(simulationData.cpa || 0);
+    const roas = Number(simulationData.revenue || 0) / (Number(simulationData.cost) || 1);
+    const qualityScore = Number(simulationData.qualityScore || 5);
     
     const analysisByMetric = {
       impressions: {
@@ -1373,13 +1381,13 @@ export class EnhancedSimulationEngine {
       },
       clicks: {
         value: simulationData.clicks,
-        status: simulationData.ctr > industryBenchmarks[config.industry].avgCTR ? 'positive' : 'negative',
-        insight: `Click-through rate is ${simulationData.ctr > industryBenchmarks[config.industry].avgCTR ? 'above' : 'below'} industry average of ${(industryBenchmarks[config.industry].avgCTR * 100).toFixed(2)}%.`
+        status: ctr > benchmarks.avgCTR ? 'positive' : 'negative',
+        insight: `Click-through rate is ${ctr > benchmarks.avgCTR ? 'above' : 'below'} industry average of ${(benchmarks.avgCTR * 100).toFixed(2)}%.`
       },
       conversions: {
         value: simulationData.conversions,
-        status: simulationData.conversionRate > industryBenchmarks[config.industry].avgCVR ? 'positive' : 'negative',
-        insight: `Conversion rate is ${simulationData.conversionRate > industryBenchmarks[config.industry].avgCVR ? 'above' : 'below'} industry average of ${(industryBenchmarks[config.industry].avgCVR * 100).toFixed(2)}%.`
+        status: conversionRate > benchmarks.avgCVR ? 'positive' : 'negative',
+        insight: `Conversion rate is ${conversionRate > benchmarks.avgCVR ? 'above' : 'below'} industry average of ${(benchmarks.avgCVR * 100).toFixed(2)}%.`
       },
       cost: {
         value: simulationData.cost,
@@ -1387,19 +1395,19 @@ export class EnhancedSimulationEngine {
         insight: 'Cost is within expected range for the budget.'
       },
       cpa: {
-        value: simulationData.cpa,
-        status: simulationData.cpa < successCriteria.targetCPA ? 'positive' : 'negative',
-        insight: `Cost per acquisition is ${simulationData.cpa < successCriteria.targetCPA ? 'below' : 'above'} target of $${successCriteria.targetCPA}.`
+        value: cpa,
+        status: cpa < successCriteria.targetCPA ? 'positive' : 'negative',
+        insight: `Cost per acquisition is ${cpa < successCriteria.targetCPA ? 'below' : 'above'} target of $${successCriteria.targetCPA}.`
       },
       roas: {
-        value: simulationData.roas,
-        status: simulationData.roas > successCriteria.minimumROAS ? 'positive' : 'negative',
-        insight: `Return on ad spend is ${simulationData.roas > successCriteria.minimumROAS ? 'above' : 'below'} minimum target of ${successCriteria.minimumROAS}%.`
+        value: roas,
+        status: roas > successCriteria.minimumROAS ? 'positive' : 'negative',
+        insight: `Return on ad spend is ${roas > successCriteria.minimumROAS ? 'above' : 'below'} minimum target of ${successCriteria.minimumROAS}%.`
       },
       qualityScore: {
-        value: simulationData.qualityScore,
-        status: simulationData.qualityScore >= successCriteria.qualityScoreThreshold ? 'positive' : 'negative',
-        insight: `Quality Score is ${simulationData.qualityScore >= successCriteria.qualityScoreThreshold ? 'good' : 'below target'}. ${simulationData.qualityScore < successCriteria.qualityScoreThreshold ? 'Consider improving ad relevance and landing page experience.' : ''}`
+        value: qualityScore,
+        status: qualityScore >= successCriteria.qualityScoreThreshold ? 'positive' : 'negative',
+        insight: `Quality Score is ${qualityScore >= successCriteria.qualityScoreThreshold ? 'good' : 'below target'}. ${qualityScore < successCriteria.qualityScoreThreshold ? 'Consider improving ad relevance and landing page experience.' : ''}`
       }
     };
     
@@ -1428,7 +1436,7 @@ export class EnhancedSimulationEngine {
         insights.push("Targeting refinement can significantly improve conversion rates and reduce wasted spend.");
         break;
       case 'troubleshooting':
-        if (simulationData.qualityScore < 5) {
+        if (qualityScore < 5) {
           insights.push("Low Quality Score detected. Review ad relevance and landing page experience.");
         }
         break;
@@ -1452,24 +1460,15 @@ export class EnhancedSimulationEngine {
   }
 
   private async getMarketingAI(campaignId: number) {
-    // Get user's subscription tier from campaign owner
-    const [campaign] = await db
-      .select({ userId: 'campaigns.userId' })
-      .from('campaigns')
-      .where({ id: campaignId });
+    try {
+      const [campaign] = await db
+        .select({ userId: campaigns.userId })
+        .from(campaigns)
+        .where(eq(campaigns.id, campaignId));
 
-    const [subscription] = await db
-      .select({ tier: 'subscriptions.tier' })
-      .from('subscriptions')
-      .where({ userId: campaign?.userId });
-
-    switch (subscription?.tier) {
-      case 'enterprise':
-        return enterpriseMarketingAI;
-      case 'premium':
-        return premiumMarketingAI;
-      default:
-        return freeMarketingAI;
+      return freeMarketingAI;
+    } catch {
+      return freeMarketingAI;
     }
   }
 }

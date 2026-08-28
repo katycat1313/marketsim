@@ -18,6 +18,7 @@ import ErrorBoundary from '../components/ErrorBoundary';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import TutorialContentRenderer from '../components/TutorialContentRenderer';
 import { MicroFeedback } from '@/components/ui/micro-feedback';
+import { AITeacherLessonPanel } from '@/components/AITeacherLessonPanel';
 
 // Tutorial interface
 interface Tutorial {
@@ -620,6 +621,14 @@ export default function TutorialsPage() {
                   tutorialIndex={(currentTutorial as any).lessonNumber} 
                 />
               </div>
+
+              {/* Socratic AI Teacher Lesson Panel */}
+              <AITeacherLessonPanel
+                lessonTitle={currentTutorial.title}
+                lessonLevel={currentTutorial.level}
+                lessonContent={currentTutorial.content}
+                chapterNumber={(currentTutorial as any).chapterNumber || 1}
+              />
 
               <div className="mt-6 mb-2">
                 <MicroFeedback 
