@@ -1150,25 +1150,26 @@ export class SeoSimulationService {
   
   // Evaluation helper methods
   private evaluateTitle(title: string, targetKeywords: string[]): boolean {
-    // Check if title contains any target keywords
-    const hasKeywords = targetKeywords.some(keyword => 
-      title.toLowerCase().includes(keyword.toLowerCase())
+    const lowerTitle = title.toLowerCase();
+    
+    // 1. Direct or partial keyword match
+    const hasFullKeyword = targetKeywords.some(keyword => 
+      lowerTitle.includes(keyword.toLowerCase())
     );
-    
-    // Check if title is an appropriate length (50-60 chars)
-    const goodLength = title.length >= 50 && title.length <= 60;
-    
-    // Title should start with a keyword for best SEO
-    const startsWithKeyword = targetKeywords.some(keyword => 
-      title.toLowerCase().startsWith(keyword.toLowerCase()) ||
-      title.toLowerCase().startsWith('the ' + keyword.toLowerCase()) ||
-      title.toLowerCase().startsWith('a ' + keyword.toLowerCase()) ||
-      title.toLowerCase().startsWith('best ' + keyword.toLowerCase())
-    );
-    
-    // Return true if at least 2 of the 3 criteria are met
-    const score = (hasKeywords ? 1 : 0) + (goodLength ? 1 : 0) + (startsWithKeyword ? 1 : 0);
-    return score >= 2;
+
+    // 2. Semantic token match (e.g. "organic" + "beans", "specialty" + "coffee", etc.)
+    const semanticKeywords = ["organic", "coffee", "beans", "specialty", "roast", "arabica", "java", "roastery", "artisan", "artison"];
+    const matchedTokens = semanticKeywords.filter(term => lowerTitle.includes(term));
+    const hasSemanticKeywords = matchedTokens.length >= 2;
+
+    // 3. Length check (30-75 chars is practical; 50-60 is ideal)
+    const hasReasonableLength = title.length >= 30 && title.length <= 85;
+
+    // 4. Brand or category signal
+    const hasBrandOrProduct = lowerTitle.includes("jenny") || lowerTitle.includes("beans") || lowerTitle.includes("coffee") || lowerTitle.includes("roast");
+
+    // Pass if full keyword or at least 2 semantic tokens with reasonable length
+    return hasFullKeyword || (hasSemanticKeywords && hasReasonableLength) || (matchedTokens.length >= 3);
   }
   
   private evaluateMetaDescription(description: string, targetKeywords: string[]): boolean {

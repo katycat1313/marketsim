@@ -25,13 +25,13 @@ export const Logo: React.FC<{ className?: string }> = ({ className = "" }) => {
       </div>
       <div>
         <div className="font-extrabold text-foreground text-xl tracking-tight flex items-center gap-1.5">
-          <span>MarketSim</span>
-          <span className="text-[10px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded bg-primary/20 text-primary border border-primary/30">
-            PRO
+          <span>Krechet</span>
+          <span className="text-[10px] font-bold uppercase tracking-widest px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-400 border border-amber-500/30">
+            ACADEMY
           </span>
         </div>
         <div className="text-[10px] font-medium tracking-wider text-muted-foreground uppercase">
-          AI Flight Academy
+          AI Marketing Flight Simulator
         </div>
       </div>
     </div>

@@ -3,8 +3,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { useLocation } from "wouter";
+import { useLocation, Link } from "wouter";
 import { useToast } from "@/hooks/use-toast";
+import { useDeepgramVoice } from "@/hooks/useDeepgramVoice";
 import { 
   Sparkles, 
   Mic, 
@@ -16,7 +17,8 @@ import {
   Play, 
   ArrowRight, 
   Brain,
-  Radio
+  Radio,
+  BookOpen
 } from "lucide-react";
 
 interface AITeacherModalProps {
@@ -54,32 +56,29 @@ export function AITeacherModal({
     avatarUrl: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400",
   };
 
-  const briefingScript = `“Welcome to Flight Academy, Growth Associate. Today, you are stepping into a real account: Jenny's Artisan Java in Morgantown. Jenny has world-class 100% Organic Arabica beans, but her website was slapped together in 10 minutes and search engines have zero idea what she sells. Your mission is to restructure her on-page tags, fix her H1 hierarchy, and ensure real customers can find her on Google.
+  const briefingScript = `“Welcome to Krechet Academy, Growth Associate! Before we jump into the live website sandbox, let’s do a 60-second micro-lesson.
 
-Before you jump into the live CMS sandbox, answer my check-in question to ensure you understand the core strategy.”`;
+Think of a website just like a newspaper:
+1. The Title Tag is the headline printed in the library catalog and on Google search results.
+2. The H1 Headline is the giant front-page headline at the top of your webpage.
+3. The Meta Description is the 2-sentence summary under your title in Google that convinces people to click.
 
-  const socraticQuestion = `“Explain in your own words: Why is it a disaster to leave an organic coffee roastery's title tag as generic 'Buy Coffee', and what 3 structural elements must you fix first to rank on search engines?”`;
+Jenny's coffee roastery has world-class organic coffee, but her website currently just says 'Welcome to our site'—so search engines have zero idea what she sells! Let's do a quick check-in to make sure you've got the basics down before we launch the live CMS sandbox.”`;
 
-  // Speech synthesis
+  const socraticQuestion = `“Using the newspaper rule you just learned: If Jenny's website only says 'Welcome to our site', why does Google get confused, and what should her main H1 headline say instead to attract coffee lovers in Morgantown?”`;
+
+  const deepgramVoice = useDeepgramVoice({
+    defaultVoice: "aura-asteria-en"
+  });
+
+  // Speech synthesis with Deepgram Aura + Web Speech fallback
   const speakText = (text: string) => {
-    if (isMuted || !('speechSynthesis' in window)) return;
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.rate = 0.95;
-    utterance.pitch = 1.05;
-
-    utterance.onstart = () => setIsSpeaking(true);
-    utterance.onend = () => setIsSpeaking(false);
-    utterance.onerror = () => setIsSpeaking(false);
-
-    window.speechSynthesis.speak(utterance);
+    if (isMuted) return;
+    deepgramVoice.speak(text);
   };
 
   const stopSpeaking = () => {
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-    }
-    setIsSpeaking(false);
+    deepgramVoice.stop();
   };
 
   // Speak script on step change
@@ -170,21 +169,32 @@ Before you jump into the live CMS sandbox, answer my check-in question to ensure
       });
 
       const data = await res.json();
-      setEvaluationResult(data);
+      const score = data.score || 85;
+      const detectedTier = score >= 85 ? "Advanced Strategist 🚀" : score >= 70 ? "Intermediate Associate 📈" : "Beginner Cadet 🎓";
+      
+      setEvaluationResult({
+        ...data,
+        detectedTier
+      });
       setStep("evaluated");
 
-      const feedbackVoice = `Great effort. You scored ${data.score} out of 100. ${data.rating}. You are now ready to launch the mission.`;
+      const feedbackVoice = `Great effort. You scored ${score} out of 100. Evaluated as ${detectedTier}. You are now ready to launch the mission.`;
       speakText(feedbackVoice);
     } catch (err) {
-      const score = userAnswer.length > 50 ? 88 : 70;
+      const score = userAnswer.length > 60 ? 90 : userAnswer.length > 25 ? 78 : 65;
+      const detectedTier = score >= 85 ? "Advanced Strategist 🚀" : score >= 70 ? "Intermediate Associate 📈" : "Beginner Cadet 🎓";
       const fallbackData = {
         score,
-        rating: score >= 80 ? "Mastery Approved 🌟" : "Good Progress ✅",
-        feedback: [
-          "Strong understanding of search intent and heading hierarchy.",
-          "Remember to always check image alt tags and meta description lengths."
+        detectedTier,
+        rating: score >= 85 ? "Advanced Mastery Approved 🌟" : score >= 70 ? "Good Progress ✅" : "Foundations Building 💡",
+        feedback: score >= 85 ? [
+          "Demonstrated strong strategic fluency with search intent and heading hierarchy.",
+          "Clear understanding of commercial keyword targeting."
+        ] : [
+          "Understands the Newspaper Rule for website headings.",
+          "Keep practicing connecting search keywords to the main headline."
         ],
-        sampleModelAnswer: "Generic titles fail because search engines cannot infer organic bean sourcing. We must fix: 1) Title Tag with primary keywords, 2) Single H1 with organic claims, and 3) Meta description with an active CTA."
+        sampleModelAnswer: "If Jenny's website only says 'Welcome to our site', Google has no idea what she sells. Her H1 headline should say 'Fresh 100% Organic Arabica Beans Roasted Daily in Morgantown' so search engines and local coffee lovers immediately know what she offers."
       };
       setEvaluationResult(fallbackData);
       setStep("evaluated");
@@ -257,17 +267,54 @@ Before you jump into the live CMS sandbox, answer my check-in question to ensure
               <div className="p-4 rounded-xl bg-secondary/40 border border-border/70 space-y-2">
                 <div className="flex items-center gap-2 text-xs font-semibold text-primary">
                   <Sparkles className="h-4 w-4 text-amber-400" />
-                  <span>90-Second Tactical Flight Briefing</span>
+                  <span>60-Second Micro-Lesson: The Newspaper Rule</span>
                 </div>
                 <p className="text-xs text-foreground/90 leading-relaxed italic">
                   {briefingScript}
                 </p>
               </div>
 
-              <div className="flex justify-end pt-2">
+              {/* 3-Part Visual Micro-Lesson Card */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-[11px]">
+                <div className="p-2.5 rounded-lg bg-blue-500/10 border border-blue-500/20 space-y-1">
+                  <span className="font-bold text-blue-400 block flex items-center gap-1">
+                    🏷️ 1. Title Tag
+                  </span>
+                  <p className="text-muted-foreground text-[10px]">
+                    The blue search result link Google shows users. (e.g. <em>Jenny's Organic Coffee | Morgantown, WV</em>).
+                  </p>
+                </div>
+
+                <div className="p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 space-y-1">
+                  <span className="font-bold text-emerald-400 block flex items-center gap-1">
+                    📰 2. H1 Headline
+                  </span>
+                  <p className="text-muted-foreground text-[10px]">
+                    The giant front-page headline on the website itself. (e.g. <em>Fresh 100% Organic Arabica Roasted Daily</em>).
+                  </p>
+                </div>
+
+                <div className="p-2.5 rounded-lg bg-purple-500/10 border border-purple-500/20 space-y-1">
+                  <span className="font-bold text-purple-400 block flex items-center gap-1">
+                    📝 3. Meta Description
+                  </span>
+                  <p className="text-muted-foreground text-[10px]">
+                    The 2-sentence summary under the title that convinces real humans to click your link.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-2 pt-2">
+                <Link href="/tutorials-new" onClick={() => { stopSpeaking(); onClose(); }}>
+                  <Button variant="ghost" size="sm" className="text-xs text-muted-foreground hover:text-foreground">
+                    <BookOpen className="h-3.5 w-3.5 mr-1.5 text-primary" />
+                    Read Full Lesson 1 Playbook
+                  </Button>
+                </Link>
+
                 <Button 
                   onClick={() => setStep("socratic_question")}
-                  className="bg-primary text-primary-foreground hover:bg-primary/90 font-bold flex items-center gap-2"
+                  className="w-full sm:w-auto bg-primary text-primary-foreground hover:bg-primary/90 font-bold flex items-center justify-center gap-2 text-xs"
                 >
                   <span>Begin Socratic Check-In</span>
                   <ArrowRight className="h-4 w-4" />
@@ -355,9 +402,16 @@ Before you jump into the live CMS sandbox, answer my check-in question to ensure
                       <p className="text-xs text-emerald-400">{evaluationResult.rating}</p>
                     </div>
                   </div>
-                  <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/40 text-sm font-mono px-3 py-1 font-bold">
-                    {evaluationResult.score}/100 Score
-                  </Badge>
+                  <div className="flex items-center gap-2">
+                    {evaluationResult.detectedTier && (
+                      <Badge className="bg-primary/20 text-primary border-primary/30 text-xs font-semibold">
+                        {evaluationResult.detectedTier}
+                      </Badge>
+                    )}
+                    <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/40 text-sm font-mono px-3 py-1 font-bold">
+                      {evaluationResult.score}/100 Score
+                    </Badge>
+                  </div>
                 </div>
 
                 <div className="space-y-1.5 pt-1">

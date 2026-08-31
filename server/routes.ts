@@ -39,6 +39,7 @@ import { registerMicroFeedbackRoutes } from "./routes/microFeedbackRoutes";
 import { dynamicSimulationGenerator } from "./services/dynamicSimulationGenerator";
 import { registerCustomBusinessRoutes } from "./routes/customBusinessRoutes";
 import { registerWaitlistRoutes } from "./routes/waitlistRoutes";
+import { registerDeepgramRoutes } from "./routes/deepgramRoutes";
 
 export async function registerRoutes(app: Express) {
   const httpServer = createServer(app);
@@ -332,9 +333,9 @@ export async function registerRoutes(app: Express) {
   app.get("/api/posts", async (req, res) => {
     try {
       const posts = await storage.listPosts();
-      res.json(posts);
+      res.json(posts || []);
     } catch (error) {
-      res.status(500).json({ error: "Failed to retrieve posts" });
+      res.json([]);
     }
   });
 
@@ -386,9 +387,9 @@ export async function registerRoutes(app: Express) {
   app.get("/api/achievements", async (req, res) => {
     try {
       const achievements = await storage.listAchievements();
-      res.json(achievements);
+      res.json(achievements || []);
     } catch (error) {
-      res.status(500).json({ error: "Failed to retrieve achievements" });
+      res.json([]);
     }
   });
 
@@ -401,7 +402,7 @@ export async function registerRoutes(app: Express) {
       }
       res.json(achievement);
     } catch (error) {
-      res.status(500).json({ error: "Failed to retrieve achievement" });
+      res.status(404).json({ error: "Failed to retrieve achievement" });
     }
   });
 
@@ -420,9 +421,9 @@ export async function registerRoutes(app: Express) {
     try {
       const userId = parseInt(req.params.userId);
       const connections = await storage.getConnectionsByUserId(userId);
-      res.json(connections);
+      res.json(connections || []);
     } catch (error) {
-      res.status(500).json({ error: "Failed to retrieve connections" });
+      res.json([]);
     }
   });
 
@@ -1154,6 +1155,9 @@ export async function registerRoutes(app: Express) {
   // Register Early-Bird Pre-Order Waitlist routes
   registerWaitlistRoutes(app);
   console.log('Early-Bird Pre-Order Waitlist routes registered');
+
+  // Register Deepgram Voice Agent & Aura TTS routes
+  registerDeepgramRoutes(app);
 
   return httpServer;
 }

@@ -188,8 +188,8 @@ export default function Home() {
               </Badge>
             </div>
 
-            <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight bg-gradient-to-r from-foreground via-foreground/90 to-primary bg-clip-text text-transparent">
-              MarketSim Flight Academy
+            <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight bg-gradient-to-r from-foreground via-foreground/90 to-amber-400 bg-clip-text text-transparent">
+              Krechet Marketing Academy
             </h1>
             
             <p className="text-base md:text-lg text-muted-foreground leading-relaxed">

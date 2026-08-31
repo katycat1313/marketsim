@@ -205,10 +205,16 @@ export default function SeoSimulationsPage() {
                 </div>
               </CardContent>
 
-              <CardFooter className="border-t border-border/40 pt-3">
-                <Button asChild className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-xs h-9">
+              <CardFooter className="border-t border-border/40 pt-3 flex items-center gap-2">
+                <Button asChild variant="outline" size="sm" className="w-1/2 text-xs border-border hover:bg-secondary">
+                  <Link to={`/tutorials-new`}>
+                    <BookOpen className="mr-1.5 h-3.5 w-3.5 text-primary" />
+                    <span>View Lessons</span>
+                  </Link>
+                </Button>
+                <Button asChild size="sm" className="w-1/2 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold text-xs">
                   <Link to={`/seo-simulation/${sim.id}`}>
-                    <span>Enter Website Sandbox</span>
+                    <span>Enter Sandbox</span>
                     <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
                   </Link>
                 </Button>

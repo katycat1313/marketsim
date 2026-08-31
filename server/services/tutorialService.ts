@@ -76,9 +76,25 @@ export class TutorialService {
       chapterNumber: 1,
       title: "Understanding Digital Marketing Fundamentals",
       level: "Beginner",
-      content: "Introduction to digital marketing concepts, platforms, and key metrics.",
+      content: `# Digital Marketing Fundamentals & The Growth Flywheel
+
+Welcome to the Krechet Academy flight training. Before touching ad budgets or code, you must understand how modern digital ecosystems generate revenue.
+
+## 1. The Core Mental Model: The Growth Funnel
+Every profitable marketing system operates across 3 distinct stages:
+* **Top of Funnel (TOFU) - Awareness**: Introducing the brand to cold audiences via Organic Search (SEO), Social Ads, or Video Reels.
+* **Middle of Funnel (MOFU) - Consideration**: Educating prospects, building trust, collecting email/SMS leads, and showcasing social proof.
+* **Bottom of Funnel (BOFU) - Conversion**: High-intent search queries ('buy organic beans online', 'emergency dental clinic near me') that turn prospects into paying customers.
+
+## 2. Key Metrics You Must Master
+1. **CAC (Customer Acquisition Cost)**: Total Sales & Marketing Spend ÷ Total New Customers Acquired.
+2. **LTV (Customer Lifetime Value)**: Average Order Value × Purchase Frequency × Customer Lifespan.
+3. **The Golden Rule**: Your LTV must be at least **3x your CAC** ($LTV / CAC > 3.0$) for a business to scale profitably.
+
+## 3. The Wasted Budget Trap ⚠️
+Rookie marketers spend $1,000 on broad social ads driving traffic to a broken homepage with no clear Call-to-Action. Always build the landing page offer FIRST before buying traffic!`,
       estimatedTime: 30,
-      skillsLearned: ["Digital Marketing Basics", "Marketing Terminology"],
+      skillsLearned: ["Digital Marketing Basics", "Funnel Architecture", "CAC & LTV Modeling"],
       tasks: [{
         id: 1,
         description: "Complete the digital marketing concepts quiz",
@@ -93,9 +109,26 @@ export class TutorialService {
       chapterNumber: 1,
       title: "Setting Marketing Goals and KPIs",
       level: "Beginner",
-      content: "Learn how to set SMART marketing goals and select the right KPIs to track success.",
+      content: `# Setting Strategic Marketing Goals & North Star KPIs
+
+In professional agency marketing, you never run campaigns without clearly defined, mathematically sound Key Performance Indicators (KPIs).
+
+## 1. The SMART Goal Framework for Marketers
+* **Specific**: 'Increase organic search traffic to the Morgantown roastery product page by 35%.'
+* **Measurable**: Tracked via GA4 Organic Sessions and Google Search Console Impressions.
+* **Achievable**: Based on competitor keyword gap analysis and 15 optimized on-page tags.
+* **Relevant**: Drives high-margin coffee bag sales to local consumers.
+* **Time-Bound**: Completed within 60 days of CMS tag restructuring.
+
+## 2. Channel-Specific KPIs
+* **SEO**: Organic Clicks, Keyword SERP Rankings, CTR, Bounce Rate.
+* **Google Paid Search**: Impression Share, Cost Per Click (CPC), Quality Score, Conversion Rate (CVR).
+* **Meta/Paid Social**: Hook Rate (3s Video Views ÷ Impressions), Cost Per Acquisition (CPA), Return on Ad Spend (ROAS).
+
+## 3. The Rookie Trap ⚠️
+Setting vanity goals like 'get 10,000 Instagram likes'. Likes do not pay rent—focus on qualified leads, cost-per-acquisition, and bottom-line revenue!`,
       estimatedTime: 45,
-      skillsLearned: ["Goal Setting", "KPI Selection", "Marketing Measurement"],
+      skillsLearned: ["SMART Goal Setting", "KPI Matrix", "Marketing Measurement"],
       tasks: [{
         id: 1,
         description: "Create your first marketing goals document",
@@ -109,11 +142,29 @@ export class TutorialService {
     this.tutorials.push({
       id: 3,
       chapterNumber: 2,
-      title: "Google Ads Campaign Structure",
+      title: "Google Ads Campaign Structure & Account Hierarchy",
       level: "Beginner",
-      content: "Learn how to structure effective Google Ads campaigns for optimal performance.",
+      content: `# Google Ads Architecture: The 3-Tier Account Hierarchy
+
+Google Ads is not a slot machine—it is a mathematical auction engine. To win without wasting thousands of dollars, your account hierarchy must follow the Single-Theme principle.
+
+## 1. The 3-Tier Hierarchy
+1. **Campaign Level**: Defines your daily budget, bidding strategy (e.g., Maximize Conversions, Target CPA), location geo-targeting, and network placement.
+2. **Ad Group Level**: Groups tightly related keywords around a single specific search intent (e.g., 'Organic Whole Bean Coffee' vs. 'Coffee Roaster Subscription').
+3. **Ad & Asset Level**: Responsive Search Ads (RSAs) containing 15 headlines, 4 descriptions, and sitelink extensions that dynamically match search queries.
+
+## 2. The Quality Score Formula
+Your Cost Per Click (CPC) is determined by the Google Ad Rank auction:
+$$CPC = \\frac{AdRank_{competitor\\,below}}{Your\\,Quality\\,Score} + \\$0.01$$
+
+* **Expected CTR**: How often Google expects users to click your ad.
+* **Ad Relevance**: How closely your ad headlines match the searched keyword.
+* **Landing Page Experience**: Fast load speed, transparent pricing, and matching H1 copy.
+
+## 3. The Budget Bleed Trap ⚠️
+Throwing 50 different unrelated keywords into one ad group. When someone searches 'espresso beans' and sees an ad for 'french press filters', they won't click—and your Quality Score will crash to 2/10!`,
       estimatedTime: 60,
-      skillsLearned: ["Google Ads Basics", "Campaign Organization", "Account Structure"],
+      skillsLearned: ["Google Ads Basics", "Campaign Organization", "Quality Score Math"],
       hasSimulation: true,
       tasks: [{
         id: 1,
@@ -127,11 +178,26 @@ export class TutorialService {
     this.tutorials.push({
       id: 4,
       chapterNumber: 2,
-      title: "Google Ads Keyword Research",
+      title: "Google Ads Keyword Match Types & Negative Keyword Shields",
       level: "Intermediate",
-      content: "Master the art of keyword research for Google Ads campaigns.",
+      content: `# Keyword Match Types & Negative Keyword Budget Protection
+
+The single biggest reason small businesses lose money on Google Ads is improper match type selection.
+
+## 1. The 3 Match Types Explained
+* **Broad Match (coffee beans)**: Matches anything Google deems 'related'—including 'free coffee pictures' or 'coffee maker repair manual'. High risk of budget bleed!
+* **Phrase Match ("organic coffee beans")**: Matches searches that contain your core phrase in order, allowing words before or after (e.g., 'buy organic coffee beans online').
+* **Exact Match ([morgantown coffee roaster])**: Matches ONLY searches with the exact identical meaning and commercial intent. Lowest risk, highest conversion rate.
+
+## 2. Negative Keyword Shields 🛡️
+Negative keywords prevent your ads from showing on non-buying searches:
+* **Standard Negatives**: -free, -cheap, -jobs, -salary, -internship, -youtube, -diy, -craigslist.
+* Adding a robust list of 25+ negative keywords on Day 1 instantly saves $300 to $1,000/mo in wasted clicks!
+
+## 3. Search Term Report Audits
+Always audit your 'Search Terms' report weekly to find negative keyword leaks and promote high-converting queries into exact-match ad groups.`,
       estimatedTime: 75,
-      skillsLearned: ["Keyword Research", "Search Intent Analysis", "Competitor Analysis"],
+      skillsLearned: ["Keyword Research", "Search Intent Analysis", "Negative Keyword Shields"],
       tasks: [{
         id: 1,
         description: "Build a comprehensive keyword list for a sample business",
@@ -145,11 +211,26 @@ export class TutorialService {
     this.tutorials.push({
       id: 5,
       chapterNumber: 3,
-      title: "SEO Fundamentals: On-Page Optimization",
+      title: "SEO Fundamentals: The Newspaper Rule & On-Page Hierarchy",
       level: "Beginner",
-      content: "Learn the basics of on-page SEO to improve organic visibility.",
+      content: `# On-Page SEO Architecture: The Newspaper Rule
+
+Search engine crawlers cannot 'look' at your website design. They read HTML tags to understand what you sell, where you are located, and who should see your page.
+
+## 1. The Newspaper Rule for On-Page Tags
+1. **Title Tag (Library Index Card)**: 50-60 characters. Must start with your primary keyword + location (e.g., 'Organic Coffee Beans Morgantown | Jenny\'s Artisan Java').
+2. **H1 Headline (Giant Front-Page Banner)**: Exactly ONE H1 tag per page. Must declare the main product offering in bold clarity.
+3. **H2 & H3 Subheadings (Section Headlines)**: Break up content into clear thematic silos (e.g., H2: 'Single-Origin Ethiopian Roasts', H2: 'Wholesale Cafe Supply').
+4. **Meta Description (2-Sentence Newspaper Teaser)**: 150-160 characters. Does not rank directly, but includes a compelling CTA to maximize click-through rate from Google.
+
+## 2. Technical Image Alt Tags & Anchor Text
+* **Image Alt Text**: Tell Google and visually impaired screen readers what is in the image (e.g., alt='Freshly roasted Ethiopian Yirgacheffe organic coffee beans in brown burlap bag').
+* **Internal Anchor Text**: Use descriptive links ('browse our dark roast coffee catalog') instead of vague 'click here' links.
+
+## 3. The Fatal Mistake ⚠️
+Leaving your H1 as 'Welcome to Our Website' or 'Home'. Search engines have zero idea what you offer, and your rankings will stay invisible!`,
       estimatedTime: 90,
-      skillsLearned: ["On-Page SEO", "Content Optimization", "HTML SEO Elements"],
+      skillsLearned: ["On-Page SEO", "Heading Hierarchy", "Snippet CTR Optimization"],
       tasks: [{
         id: 1,
         description: "Optimize a sample webpage for SEO",

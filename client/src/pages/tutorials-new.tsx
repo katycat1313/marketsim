@@ -19,6 +19,7 @@ import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import TutorialContentRenderer from '../components/TutorialContentRenderer';
 import { MicroFeedback } from '@/components/ui/micro-feedback';
 import { AITeacherLessonPanel } from '@/components/AITeacherLessonPanel';
+import { SocraticChatClassroom } from '@/components/SocraticChatClassroom';
 
 // Tutorial interface
 interface Tutorial {
@@ -614,21 +615,27 @@ export default function TutorialsPage() {
                   Estimated Time: {currentTutorial.estimatedTime || 60} minutes
                 </span>
               </div>
-              <div className="prose prose-invert max-w-none mt-6">
+              {/* 1-on-1 Socratic Classroom with Director Atlas */}
+              <SocraticChatClassroom
+                lessonTitle={currentTutorial.title}
+                lessonLevel={currentTutorial.level}
+                chapterNumber={(currentTutorial as any).chapterNumber || 1}
+                simulationLink={(currentTutorial as any).chapterNumber === 2 ? "/ad-simulation/1" : (currentTutorial as any).chapterNumber >= 4 ? "/capstone-simulation" : "/seo-simulation/1"}
+                simulationName={(currentTutorial as any).chapterNumber === 2 ? "Dr. Miller Dental (Paid Search Auction)" : (currentTutorial as any).chapterNumber >= 4 ? "Apex Global Capstone Flight Simulator" : "Jenny's Artisan Java (CMS On-Page Repair)"}
+              />
+
+              {/* Tactical Reference Playbook */}
+              <div className="prose prose-invert max-w-none mt-6 p-5 rounded-xl bg-card/60 border border-border/60 shadow-md">
+                <div className="flex items-center gap-2 mb-4 border-b border-border/50 pb-2">
+                  <BookOpen className="h-4 w-4 text-primary" />
+                  <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Tactical Reference Playbook & Formulas</span>
+                </div>
                 <TutorialContentRenderer 
                   content={currentTutorial.content} 
                   chapterNumber={(currentTutorial as any).chapterNumber}
                   tutorialIndex={(currentTutorial as any).lessonNumber} 
                 />
               </div>
-
-              {/* Socratic AI Teacher Lesson Panel */}
-              <AITeacherLessonPanel
-                lessonTitle={currentTutorial.title}
-                lessonLevel={currentTutorial.level}
-                lessonContent={currentTutorial.content}
-                chapterNumber={(currentTutorial as any).chapterNumber || 1}
-              />
 
               <div className="mt-6 mb-2">
                 <MicroFeedback 
@@ -672,45 +679,90 @@ export default function TutorialsPage() {
                   </div>
                 </div>
               )}
-              
-              <div className="mt-8 flex justify-end">
-                <Button 
-                  onClick={() => setCurrentTutorial(null)} 
-                  className="mr-2"
-                  variant="outline"
-                >
-                  Back to List
-                </Button>
-                <Button 
-                  onClick={async () => {
-                    try {
-                      const response = await fetch('/api/tutorials/complete', {
-                        method: 'POST',
-                        body: JSON.stringify({ tutorialId: currentTutorial.id }),
-                        headers: { 'Content-Type': 'application/json' },
-                        credentials: 'include' 
-                      });
-                      
-                      if (!response.ok) {
-                        throw new Error('Failed to mark tutorial as complete');
-                      }
-                      
-                      // Update progress
-                      await fetchProgress();
-                      // Show success message or toast here
-                      
-                      // Go back to list
-                      setCurrentTutorial(null);
-                    } catch (error) {
-                      console.error('Error completing tutorial:', error);
-                      // Show error message or toast here
-                    }
-                  }}
-                  disabled={progress.includes(currentTutorial.id)}
-                >
-                  {progress.includes(currentTutorial.id) ? 'Completed ✓' : 'Mark as Complete'}
-                </Button>
-              </div>
+
+              {/* Seamless Course Flow: Previous / Simulation / Next Navigation Strip */}
+              {(() => {
+                const currentIndex = tutorials.findIndex(t => t.id === currentTutorial.id);
+                const prevTutorial = currentIndex > 0 ? tutorials[currentIndex - 1] : null;
+                const nextTutorial = currentIndex >= 0 && currentIndex < tutorials.length - 1 ? tutorials[currentIndex + 1] : null;
+                const currentChapterNum = (currentTutorial as any).chapterNumber || 1;
+                const weekSimLink = currentChapterNum === 2 ? "/ad-simulation/1" : currentChapterNum >= 4 ? "/capstone-simulation" : "/seo-simulation/1";
+                const weekSimName = currentChapterNum === 2 ? "Week 2: Dr. Miller Dental (Paid Search)" : currentChapterNum >= 4 ? "Week 5: Master Capstone Flight Simulator" : "Week 1: Jenny's Artisan Java (CMS SEO)";
+
+                return (
+                  <div className="mt-10 p-5 rounded-2xl bg-card border border-border/80 shadow-xl flex flex-col md:flex-row items-center justify-between gap-4">
+                    {/* Previous Lesson Button */}
+                    <Button 
+                      variant="outline"
+                      disabled={!prevTutorial}
+                      onClick={() => {
+                        if (prevTutorial) {
+                          setCurrentTutorial(prevTutorial);
+                          window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }
+                      }}
+                      className="w-full md:w-auto text-xs h-10 border-border hover:bg-secondary flex items-center gap-2"
+                    >
+                      <span>⬅️</span>
+                      <span className="truncate max-w-[160px]">
+                        {prevTutorial ? prevTutorial.title : "First Lesson"}
+                      </span>
+                    </Button>
+
+                    {/* Week's Simulation Workbench Runway */}
+                    <Button
+                      asChild
+                      className="w-full md:w-auto bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs h-10 px-5 shadow-lg flex items-center gap-2"
+                    >
+                      <Link href={weekSimLink}>
+                        <span>🚀</span>
+                        <span>Launch {weekSimName}</span>
+                      </Link>
+                    </Button>
+
+                    {/* Next Lesson / Complete Button */}
+                    {nextTutorial ? (
+                      <Button 
+                        onClick={async () => {
+                          try {
+                            await fetch('/api/tutorials/complete', {
+                              method: 'POST',
+                              body: JSON.stringify({ tutorialId: currentTutorial.id }),
+                              headers: { 'Content-Type': 'application/json' },
+                              credentials: 'include' 
+                            });
+                            await fetchProgress();
+                          } catch (e) {}
+                          setCurrentTutorial(nextTutorial);
+                          window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }}
+                        className="w-full md:w-auto bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs h-10 flex items-center gap-2"
+                      >
+                        <span className="truncate max-w-[160px]">Next: {nextTutorial.title}</span>
+                        <span>➡️</span>
+                      </Button>
+                    ) : (
+                      <Button 
+                        onClick={async () => {
+                          try {
+                            await fetch('/api/tutorials/complete', {
+                              method: 'POST',
+                              body: JSON.stringify({ tutorialId: currentTutorial.id }),
+                              headers: { 'Content-Type': 'application/json' },
+                              credentials: 'include' 
+                            });
+                            await fetchProgress();
+                          } catch (e) {}
+                          setCurrentTutorial(null);
+                        }}
+                        className="w-full md:w-auto bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs h-10"
+                      >
+                        <span>🎉 Complete & Return to Syllabus</span>
+                      </Button>
+                    )}
+                  </div>
+                );
+              })()}
             </div>
           ) : (
             <div className="space-y-12">

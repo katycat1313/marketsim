@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useRoute, useLocation } from 'wouter';
 import { apiRequest, queryClient } from '@/lib/queryClient';
@@ -182,12 +182,51 @@ export default function SeoSimulationPage() {
     }
   });
   
-  // Initialize content with original simulation content
+  const [autoSavedTime, setAutoSavedTime] = useState<string | null>(null);
+
+  // Initialize content with localStorage or original simulation content
   useEffect(() => {
     if (simulation && !content) {
+      try {
+        const savedDraft = localStorage.getItem(`krechet_seo_draft_${simulationId}`);
+        if (savedDraft) {
+          const parsed = JSON.parse(savedDraft);
+          setContent(parsed);
+          setAutoSavedTime(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+          return;
+        }
+      } catch (e) {
+        console.warn("Could not load draft from localStorage", e);
+      }
       setContent(JSON.parse(JSON.stringify(simulation.originalContent)));
     }
-  }, [simulation, content]);
+  }, [simulation, content, simulationId]);
+
+  // Auto-save whenever content changes
+  useEffect(() => {
+    if (content && simulationId) {
+      try {
+        localStorage.setItem(`krechet_seo_draft_${simulationId}`, JSON.stringify(content));
+        setAutoSavedTime(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+      } catch (e) {
+        console.warn("Could not auto-save to localStorage", e);
+      }
+    }
+  }, [content, simulationId]);
+
+  const handleResetToBaseline = () => {
+    if (!simulation) return;
+    if (window.confirm("Are you sure you want to reset all fields back to the client's original broken baseline?")) {
+      try {
+        localStorage.removeItem(`krechet_seo_draft_${simulationId}`);
+      } catch (e) {}
+      setContent(JSON.parse(JSON.stringify(simulation.originalContent)));
+      toast({
+        title: "🔄 Reset to Baseline",
+        description: "Restored original client content."
+      });
+    }
+  };
   
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!content) return;
@@ -234,6 +273,89 @@ export default function SeoSimulationPage() {
     if (!content) return;
     submitMutation.mutate(content);
   };
+
+  // Section Diagnostics (Educational guidance without giving raw answers)
+  const titleDiag = React.useMemo(() => {
+    if (!content) return { pass: false, hint: "Title cannot be empty" };
+    const len = content.title.length;
+    const lower = content.title.toLowerCase();
+    const hasKeywords = (simulation?.targetKeywords || []).some((k: string) => lower.includes(k.toLowerCase())) || 
+                        ["organic", "coffee", "beans", "specialty", "roast", "arabica", "java"].filter(w => lower.includes(w)).length >= 2;
+    if (len > 65) {
+      return { pass: false, hint: `Your title is ${len} characters (Google cuts off at 60). Shorten by removing conversational phrases or question words and lead with the target product phrase.` };
+    }
+    if (len < 35) {
+      return { pass: false, hint: `Your title is only ${len} characters. Add a core brand or unique selling proposition (Target: 45-60 characters).` };
+    }
+    if (!hasKeywords) {
+      return { pass: false, hint: "Missing primary search keywords. Ensure terms like 'organic', 'arabica', 'specialty', or 'coffee beans' appear clearly." };
+    }
+    return { pass: true, hint: `Optimal length (${len} chars) with targeted keywords included!` };
+  }, [content, simulation]);
+
+  const metaDiag = React.useMemo(() => {
+    if (!content) return { pass: false, hint: "Meta description cannot be empty" };
+    const len = content.metaDescription.length;
+    const hasCTA = /shop|buy|order|discover|learn|taste|visit|call|explore|get/i.test(content.metaDescription);
+    const hasKeywords = ["organic", "coffee", "beans", "specialty", "roast", "arabica", "fresh"].some(w => content.metaDescription.toLowerCase().includes(w));
+    
+    if (len < 100) {
+      return { pass: false, hint: `Meta description is only ${len} characters (Target: 120-155). Explain what makes the beans unique and add an active Call to Action.` };
+    }
+    if (len > 165) {
+      return { pass: false, hint: `Meta description is ${len} characters (Google cuts off at ~155). Trim unnecessary words to prevent truncation.` };
+    }
+    if (!hasCTA) {
+      return { pass: false, hint: "Missing a clear Call To Action (e.g. 'Order fresh roasted beans today' or 'Shop 100% organic Arabica now')." };
+    }
+    return { pass: true, hint: `Great length (${len} chars) with clear search incentives and Call to Action!` };
+  }, [content]);
+
+  const headingsDiag = React.useMemo(() => {
+    if (!content || !content.headings) return { pass: false, hint: "No headings found" };
+    const h1 = content.headings.find(h => h.tag.toLowerCase() === "h1");
+    if (!h1 || !h1.content.trim()) {
+      return { pass: false, hint: "Missing an H1 tag. Every webpage requires exactly one primary H1 headline." };
+    }
+    if (h1.content.toLowerCase().includes("welcome to") || h1.content.toLowerCase() === "coffee beans for sale") {
+      return { pass: false, hint: "H1 is too generic. Replace with a specific, compelling headline highlighting Jenny's organic specialty beans." };
+    }
+    return { pass: true, hint: "H1 headline is well-defined and establishes clear thematic relevance." };
+  }, [content]);
+
+  const contentDiag = React.useMemo(() => {
+    if (!content || !content.body) return { pass: false, hint: "Body copy cannot be empty" };
+    const words = content.body.split(/\s+/).filter(Boolean).length;
+    if (words < 100) {
+      return { pass: false, hint: `Body content is only ${words} words. Expand to 150-300 words explaining roasting schedules, origin co-ops, and flavor notes.` };
+    }
+    const keywordMatches = (content.body.match(/organic|arabica|coffee|beans|roast|specialty/gi) || []).length;
+    const density = (keywordMatches / words) * 100;
+    if (density < 0.6) {
+      return { pass: false, hint: "Keyword density is low. Mention your organic certifications and bean origins naturally 2-3 more times." };
+    }
+    return { pass: true, hint: `Rich content (${words} words) with balanced, natural keyword coverage!` };
+  }, [content]);
+
+  const imagesDiag = React.useMemo(() => {
+    if (!content || !content.images || content.images.length === 0) return { pass: true, hint: "No images to check" };
+    const genericAlts = content.images.filter(img => !img.alt.trim() || img.alt.toLowerCase() === "coffee" || img.alt.toLowerCase() === "beans" || img.alt.toLowerCase() === "image");
+    if (genericAlts.length > 0) {
+      return { pass: false, hint: `You have ${genericAlts.length} image(s) with generic alt tags (like 'coffee'). Describe the actual subject (e.g. 'Burlap sack of organic Arabica beans').` };
+    }
+    return { pass: true, hint: "All images have descriptive alt text for search crawlers and screen readers!" };
+  }, [content]);
+
+  const linksDiag = React.useMemo(() => {
+    if (!content || !content.links || content.links.length === 0) return { pass: true, hint: "No links to check" };
+    const genericLinks = content.links.filter(l => l.text.toLowerCase().includes("click here") || l.text.toLowerCase() === "buy now");
+    if (genericLinks.length > 0) {
+      return { pass: false, hint: "Replace vague link text like 'Buy Now' or 'Click Here' with descriptive destinations like 'Order 500g Whole Bean' or 'View Roasting Schedule'." };
+    }
+    return { pass: true, hint: "Internal links use descriptive, context-rich anchor text!" };
+  }, [content]);
+
+  const passedSectionsCount = [titleDiag.pass, metaDiag.pass, headingsDiag.pass, contentDiag.pass, imagesDiag.pass, linksDiag.pass].filter(Boolean).length;
   
   const [, setLocation] = useLocation();
   const [isSavingPortfolio, setIsSavingPortfolio] = useState(false);
@@ -534,116 +656,268 @@ export default function SeoSimulationPage() {
               <TabsContent value="editor" className="space-y-6">
                 {content && (
                   <>
+                    {/* Live Section Verification Strip */}
+                    <div className="p-3.5 rounded-xl bg-card border border-border/80 shadow flex flex-wrap items-center justify-between gap-3">
+                      <div className="flex items-center gap-2.5">
+                        <div className={`h-7 px-2.5 rounded-lg flex items-center gap-1.5 text-xs font-bold ${
+                          passedSectionsCount === 6 
+                            ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30" 
+                            : "bg-primary/20 text-primary border border-primary/30"
+                        }`}>
+                          <ShieldCheck className="h-4 w-4" />
+                          <span>Audit Readiness: {passedSectionsCount}/6 Sections Passing</span>
+                        </div>
+                        {passedSectionsCount === 6 && (
+                          <Badge className="bg-emerald-500 text-black font-bold text-[10px]">
+                            ⭐ All Green - Ready to Submit!
+                          </Badge>
+                        )}
+                      </div>
+
+                      <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                        {autoSavedTime && (
+                          <span className="flex items-center gap-1 text-[11px] text-emerald-400/90 font-mono">
+                            <CheckCircle2 className="h-3 w-3 inline" /> Auto-saved ({autoSavedTime})
+                          </span>
+                        )}
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          onClick={handleResetToBaseline}
+                          className="text-[11px] h-7 text-muted-foreground hover:text-destructive"
+                        >
+                          <RotateCcw className="h-3 w-3 mr-1" /> Reset to Baseline
+                        </Button>
+                      </div>
+                    </div>
+
                     {simulation.difficulty === 'Beginner' ? (
-                      // Beginner mode - Form-based editor
+                      // Beginner mode - Form-based editor with Real-Time Diagnostics
                       <div className="space-y-6">
-                        <Card>
-                          <CardHeader>
-                            <CardTitle>Page Title</CardTitle>
-                            <CardDescription>The title tag is a critical SEO element (50-60 characters ideal)</CardDescription>
+                        {/* Page Title Card */}
+                        <Card className={`border transition-all ${titleDiag.pass ? "border-emerald-500/40 bg-card" : "border-amber-500/40 bg-amber-500/5"}`}>
+                          <CardHeader className="pb-2 flex flex-row items-center justify-between">
+                            <div>
+                              <CardTitle className="text-sm font-bold flex items-center gap-2">
+                                <span>Page Title Tag</span>
+                                <Badge variant={titleDiag.pass ? "secondary" : "outline"} className={titleDiag.pass ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30 text-[10px]" : "border-amber-500/40 text-amber-400 text-[10px]"}>
+                                  {titleDiag.pass ? "✅ PASS" : "⚠️ NEEDS ADJUSTMENT"}
+                                </Badge>
+                              </CardTitle>
+                              <CardDescription className="text-xs">The clickable headline printed in Google search results (50-60 characters ideal)</CardDescription>
+                            </div>
+                            <span className={`text-xs font-mono font-bold ${content.title.length > 65 || content.title.length < 35 ? "text-amber-400" : "text-emerald-400"}`}>
+                              {content.title.length}/60 chars
+                            </span>
                           </CardHeader>
-                          <CardContent>
+                          <CardContent className="space-y-2">
                             <Input 
                               value={content.title} 
                               onChange={handleTitleChange}
                               disabled={!editMode}
-                              className={editMode ? "border-blue-300" : ""}
+                              className={editMode ? "border-blue-300 font-medium text-sm" : ""}
+                              placeholder="e.g. Organic Arabica Coffee Beans | Jenny's Artisan Roastery"
                             />
-                            <div className="mt-2 text-xs text-gray-500">
-                              {content.title.length} characters
+                            <div className={`p-2.5 rounded-lg text-xs leading-relaxed flex items-start gap-2 ${
+                              titleDiag.pass ? "bg-emerald-950/30 border border-emerald-500/30 text-emerald-300" : "bg-secondary/60 border border-border/80 text-foreground"
+                            }`}>
+                              <Lightbulb className={`h-4 w-4 shrink-0 mt-0.5 ${titleDiag.pass ? "text-emerald-400" : "text-amber-400"}`} />
+                              <span><strong>Diagnostic Hint:</strong> {titleDiag.hint}</span>
                             </div>
                           </CardContent>
                         </Card>
                     
-                        <Card>
-                          <CardHeader>
-                            <CardTitle>Meta Description</CardTitle>
-                            <CardDescription>Appears in search results (150-160 characters ideal)</CardDescription>
+                        {/* Meta Description Card */}
+                        <Card className={`border transition-all ${metaDiag.pass ? "border-emerald-500/40 bg-card" : "border-amber-500/40 bg-amber-500/5"}`}>
+                          <CardHeader className="pb-2 flex flex-row items-center justify-between">
+                            <div>
+                              <CardTitle className="text-sm font-bold flex items-center gap-2">
+                                <span>Meta Description</span>
+                                <Badge variant={metaDiag.pass ? "secondary" : "outline"} className={metaDiag.pass ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30 text-[10px]" : "border-amber-500/40 text-amber-400 text-[10px]"}>
+                                  {metaDiag.pass ? "✅ PASS" : "⚠️ NEEDS ADJUSTMENT"}
+                                </Badge>
+                              </CardTitle>
+                              <CardDescription className="text-xs">The 2-sentence teaser under your Google headline that drives clicks (120-155 characters ideal)</CardDescription>
+                            </div>
+                            <span className={`text-xs font-mono font-bold ${content.metaDescription.length > 165 || content.metaDescription.length < 100 ? "text-amber-400" : "text-emerald-400"}`}>
+                              {content.metaDescription.length}/155 chars
+                            </span>
                           </CardHeader>
-                          <CardContent>
+                          <CardContent className="space-y-2">
                             <Textarea 
                               value={content.metaDescription} 
                               onChange={handleMetaDescriptionChange}
                               disabled={!editMode}
-                              className={editMode ? "border-blue-300" : ""}
+                              className={editMode ? "border-blue-300 text-xs" : ""}
                               rows={3}
+                              placeholder="e.g. Taste the difference of small-batch roasted 100% organic Arabica beans. Sourced from fair-trade family co-ops and shipped within 24 hours. Shop fresh roasts today!"
                             />
-                            <div className="mt-2 text-xs text-gray-500">
-                              {content.metaDescription.length} characters
+                            <div className={`p-2.5 rounded-lg text-xs leading-relaxed flex items-start gap-2 ${
+                              metaDiag.pass ? "bg-emerald-950/30 border border-emerald-500/30 text-emerald-300" : "bg-secondary/60 border border-border/80 text-foreground"
+                            }`}>
+                              <Lightbulb className={`h-4 w-4 shrink-0 mt-0.5 ${metaDiag.pass ? "text-emerald-400" : "text-amber-400"}`} />
+                              <span><strong>Diagnostic Hint:</strong> {metaDiag.hint}</span>
                             </div>
                           </CardContent>
                         </Card>
                         
-                        <Card>
-                          <CardHeader>
-                            <CardTitle>Headings</CardTitle>
-                            <CardDescription>Heading structure is important for SEO and accessibility</CardDescription>
+                        {/* Headings Structure Card */}
+                        <Card className={`border transition-all ${headingsDiag.pass ? "border-emerald-500/40 bg-card" : "border-amber-500/40 bg-amber-500/5"}`}>
+                          <CardHeader className="pb-2 flex flex-row items-center justify-between">
+                            <div>
+                              <CardTitle className="text-sm font-bold flex items-center gap-2">
+                                <span>Heading Hierarchy (H1 & H2 Tags)</span>
+                                <Badge variant={headingsDiag.pass ? "secondary" : "outline"} className={headingsDiag.pass ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30 text-[10px]" : "border-amber-500/40 text-amber-400 text-[10px]"}>
+                                  {headingsDiag.pass ? "✅ PASS" : "⚠️ NEEDS ADJUSTMENT"}
+                                </Badge>
+                              </CardTitle>
+                              <CardDescription className="text-xs">Establish the page's main front-page banner (H1) and supporting sections (H2)</CardDescription>
+                            </div>
                           </CardHeader>
-                          <CardContent className="space-y-4">
+                          <CardContent className="space-y-3">
                             {content.headings.map((heading, index) => (
-                              <div key={index} className="space-y-2">
+                              <div key={index} className="space-y-1">
                                 <div className="flex items-center gap-2">
-                                  <Badge variant="outline">{heading.tag}</Badge>
+                                  <Badge variant={heading.tag === "h1" ? "default" : "outline"} className="w-10 justify-center text-xs uppercase font-mono">
+                                    {heading.tag}
+                                  </Badge>
                                   <Input 
                                     value={heading.content} 
                                     onChange={(e) => handleHeadingChange(index, e.target.value)}
                                     disabled={!editMode}
-                                    className={editMode ? "border-blue-300" : ""}
+                                    className={editMode ? "border-blue-300 text-xs" : ""}
+                                    placeholder={heading.tag === "h1" ? "e.g. Small-Batch 100% Organic Arabica Specialty Coffee" : "Section Subtitle"}
                                   />
                                 </div>
                               </div>
                             ))}
-                          </CardContent>
-                        </Card>
-                        
-                        <Card>
-                          <CardHeader>
-                            <CardTitle>Body Content</CardTitle>
-                            <CardDescription>Main content of the page (300+ words recommended)</CardDescription>
-                          </CardHeader>
-                          <CardContent>
-                            <Textarea 
-                              value={content.body} 
-                              onChange={handleBodyChange}
-                              disabled={!editMode}
-                              className={editMode ? "border-blue-300" : ""}
-                              rows={8}
-                            />
-                            <div className="mt-2 text-xs text-gray-500">
-                              {content.body.split(/\s+/).length} words
+                            <div className={`p-2.5 rounded-lg text-xs leading-relaxed flex items-start gap-2 ${
+                              headingsDiag.pass ? "bg-emerald-950/30 border border-emerald-500/30 text-emerald-300" : "bg-secondary/60 border border-border/80 text-foreground"
+                            }`}>
+                              <Lightbulb className={`h-4 w-4 shrink-0 mt-0.5 ${headingsDiag.pass ? "text-emerald-400" : "text-amber-400"}`} />
+                              <span><strong>Diagnostic Hint:</strong> {headingsDiag.hint}</span>
                             </div>
                           </CardContent>
                         </Card>
                         
-                        <Card>
-                          <CardHeader>
-                            <CardTitle>Images</CardTitle>
-                            <CardDescription>Images should have descriptive alt text</CardDescription>
+                        {/* Body Copy & Keyword Density Card */}
+                        <Card className={`border transition-all ${contentDiag.pass ? "border-emerald-500/40 bg-card" : "border-amber-500/40 bg-amber-500/5"}`}>
+                          <CardHeader className="pb-2 flex flex-row items-center justify-between">
+                            <div>
+                              <CardTitle className="text-sm font-bold flex items-center gap-2">
+                                <span>Body Content & Keyword Density</span>
+                                <Badge variant={contentDiag.pass ? "secondary" : "outline"} className={contentDiag.pass ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30 text-[10px]" : "border-amber-500/40 text-amber-400 text-[10px]"}>
+                                  {contentDiag.pass ? "✅ PASS" : "⚠️ NEEDS ADJUSTMENT"}
+                                </Badge>
+                              </CardTitle>
+                              <CardDescription className="text-xs">Explain product origins, roasting specs, and brewing instructions (150-300 words recommended)</CardDescription>
+                            </div>
+                            <span className="text-xs font-mono font-bold text-muted-foreground">
+                              {content.body.split(/\s+/).filter(Boolean).length} words
+                            </span>
                           </CardHeader>
-                          <CardContent className="space-y-4">
+                          <CardContent className="space-y-2">
+                            <Textarea 
+                              value={content.body} 
+                              onChange={handleBodyChange}
+                              disabled={!editMode}
+                              className={editMode ? "border-blue-300 text-xs" : ""}
+                              rows={7}
+                            />
+                            <div className={`p-2.5 rounded-lg text-xs leading-relaxed flex items-start gap-2 ${
+                              contentDiag.pass ? "bg-emerald-950/30 border border-emerald-500/30 text-emerald-300" : "bg-secondary/60 border border-border/80 text-foreground"
+                            }`}>
+                              <Lightbulb className={`h-4 w-4 shrink-0 mt-0.5 ${contentDiag.pass ? "text-emerald-400" : "text-amber-400"}`} />
+                              <span><strong>Diagnostic Hint:</strong> {contentDiag.hint}</span>
+                            </div>
+                          </CardContent>
+                        </Card>
+                        
+                        {/* Images & Alt Text Card */}
+                        <Card className={`border transition-all ${imagesDiag.pass ? "border-emerald-500/40 bg-card" : "border-amber-500/40 bg-amber-500/5"}`}>
+                          <CardHeader className="pb-2 flex flex-row items-center justify-between">
+                            <div>
+                              <CardTitle className="text-sm font-bold flex items-center gap-2">
+                                <span>Image Alt Attributes</span>
+                                <Badge variant={imagesDiag.pass ? "secondary" : "outline"} className={imagesDiag.pass ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30 text-[10px]" : "border-amber-500/40 text-amber-400 text-[10px]"}>
+                                  {imagesDiag.pass ? "✅ PASS" : "⚠️ NEEDS ADJUSTMENT"}
+                                </Badge>
+                              </CardTitle>
+                              <CardDescription className="text-xs">Describe photo contents accurately for search crawlers and accessibility</CardDescription>
+                            </div>
+                          </CardHeader>
+                          <CardContent className="space-y-3">
                             {content.images.map((image, index) => (
-                              <div key={index} className="space-y-2">
+                              <div key={index} className="space-y-1.5">
                                 <div className="flex items-center gap-2">
                                   <div className="w-1/4">
-                                    <Badge variant="outline">Image src</Badge>
-                                    <div className="text-sm mt-1 truncate">{image.src}</div>
+                                    <Badge variant="outline" className="text-[10px] truncate max-w-full">Image {index + 1}</Badge>
+                                    <div className="text-[10px] text-muted-foreground truncate">{image.src}</div>
                                   </div>
                                   <div className="w-3/4">
-                                    <Badge variant="outline">Alt Text</Badge>
                                     <Input 
                                       value={image.alt} 
                                       onChange={(e) => handleImageAltChange(index, e.target.value)}
                                       disabled={!editMode}
-                                      className={editMode ? "border-blue-300" : ""}
-                                      placeholder="Descriptive alt text for the image"
+                                      className={editMode ? "border-blue-300 text-xs" : ""}
+                                      placeholder="e.g. Burlap sack of freshly roasted 100% organic Arabica beans"
                                     />
                                   </div>
                                 </div>
                               </div>
                             ))}
+                            <div className={`p-2.5 rounded-lg text-xs leading-relaxed flex items-start gap-2 ${
+                              imagesDiag.pass ? "bg-emerald-950/30 border border-emerald-500/30 text-emerald-300" : "bg-secondary/60 border border-border/80 text-foreground"
+                            }`}>
+                              <Lightbulb className={`h-4 w-4 shrink-0 mt-0.5 ${imagesDiag.pass ? "text-emerald-400" : "text-amber-400"}`} />
+                              <span><strong>Diagnostic Hint:</strong> {imagesDiag.hint}</span>
+                            </div>
                           </CardContent>
                         </Card>
                         
+                        {/* Links & Anchor Text Card */}
+                        <Card className={`border transition-all ${linksDiag.pass ? "border-emerald-500/40 bg-card" : "border-amber-500/40 bg-amber-500/5"}`}>
+                          <CardHeader className="pb-2 flex flex-row items-center justify-between">
+                            <div>
+                              <CardTitle className="text-sm font-bold flex items-center gap-2">
+                                <span>Internal Links & Anchor Text</span>
+                                <Badge variant={linksDiag.pass ? "secondary" : "outline"} className={linksDiag.pass ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30 text-[10px]" : "border-amber-500/40 text-amber-400 text-[10px]"}>
+                                  {linksDiag.pass ? "✅ PASS" : "⚠️ NEEDS ADJUSTMENT"}
+                                </Badge>
+                              </CardTitle>
+                              <CardDescription className="text-xs">Use descriptive anchor text explaining where the link goes</CardDescription>
+                            </div>
+                          </CardHeader>
+                          <CardContent className="space-y-3">
+                            {content.links.map((link, index) => (
+                              <div key={index} className="space-y-1.5">
+                                <div className="flex items-center gap-2">
+                                  <div className="w-1/4">
+                                    <Badge variant="outline" className="text-[10px]">{link.href}</Badge>
+                                  </div>
+                                  <div className="w-3/4">
+                                    <Input 
+                                      value={link.text} 
+                                      onChange={(e) => handleLinkTextChange(index, e.target.value)}
+                                      disabled={!editMode}
+                                      className={editMode ? "border-blue-300 text-xs" : ""}
+                                      placeholder="e.g. Order 500g Whole Bean Roast"
+                                    />
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                            <div className={`p-2.5 rounded-lg text-xs leading-relaxed flex items-start gap-2 ${
+                              linksDiag.pass ? "bg-emerald-950/30 border border-emerald-500/30 text-emerald-300" : "bg-secondary/60 border border-border/80 text-foreground"
+                            }`}>
+                              <Lightbulb className={`h-4 w-4 shrink-0 mt-0.5 ${linksDiag.pass ? "text-emerald-400" : "text-amber-400"}`} />
+                              <span><strong>Diagnostic Hint:</strong> {linksDiag.hint}</span>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </div>
+                    ) : simulation.difficulty === 'Intermediate' ? (
+                      <div className="space-y-6">
                         <Card>
                           <CardHeader>
                             <CardTitle>Links</CardTitle>
@@ -1224,10 +1498,14 @@ Walking through the roastery, the problem was crystal clear: Jenny has a world-c
               </CardContent>
             </Card>
             
-            <Card>
+            <Card className="border-amber-500/30 bg-card/60">
               <CardHeader>
-                <CardTitle>SEO Issues to Fix</CardTitle>
-                <CardDescription>Problems identified in the original content</CardDescription>
+                <CardTitle className="flex items-center gap-2 text-sm font-bold text-amber-400">
+                  <span>Client Baseline Defects (To Fix)</span>
+                </CardTitle>
+                <CardDescription className="text-xs text-muted-foreground">
+                  Original defects in Jenny's website before your optimization
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 {simulation.seoIssues.map((issue: {
