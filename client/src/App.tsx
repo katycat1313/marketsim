@@ -137,7 +137,7 @@ function SideNav() {
 
       {/* Sidebar Navigation */}
       <aside className={`
-        fixed inset-0 z-40 bg-background border-r
+        fixed inset-0 z-40 bg-card/85 backdrop-blur-xl border-r border-border/60
         transform transition-transform duration-200 ease-in-out
         md:relative md:translate-x-0 md:w-64 md:shrink-0 md:block
         ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
@@ -321,7 +321,7 @@ function Router() {
   };
 
   return (
-    <div className="flex min-h-screen bg-background">
+    <div className="flex min-h-screen bg-transparent">
       {/* Sidebar */}
       <div className={`fixed md:relative transition-all duration-300 ease-in-out h-full z-40 
         ${sidebarVisible ? 'translate-x-0' : '-translate-x-full md:w-0'}`}>
@@ -331,7 +331,7 @@ function Router() {
       {/* Main Content */}
       <div className="flex-1 flex flex-col w-full">
         {/* Mobile Top Bar */}
-        <div className="md:hidden flex items-center justify-between p-2 border-b bg-background sticky top-0 z-30">
+        <div className="md:hidden flex items-center justify-between p-2 border-b border-border/60 bg-background/80 backdrop-blur-md sticky top-0 z-30">
           <div className="flex items-center">
             <button onClick={toggleSidebar} className="p-2 mr-2 rounded-md hover:bg-secondary">
               <Menu className="h-5 w-5" />
@@ -366,7 +366,7 @@ function Router() {
         </div>
 
         {/* Desktop Top Bar */}
-        <div className="hidden md:flex items-center justify-between p-2 border-b bg-background sticky top-0 z-30">
+        <div className="hidden md:flex items-center justify-between p-2 border-b border-border/60 bg-background/80 backdrop-blur-md sticky top-0 z-30">
           <div className="flex items-center">
             <button onClick={toggleSidebar} className="p-2 mr-2 rounded-md hover:bg-secondary">
               <Menu className="h-5 w-5" />
