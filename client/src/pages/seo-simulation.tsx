@@ -33,7 +33,8 @@ import {
   Wand2,
   Bot,
   Layers,
-  Layout
+  Layout,
+  Target
 } from 'lucide-react';
 import { 
   ResponsiveContainer, 
@@ -545,22 +546,35 @@ export default function SeoSimulationPage() {
   };
 
   const latestAttempt = attempts && attempts.length > 0 ? attempts[0] : null;
-  const score = latestAttempt ? latestAttempt.score : 42;
-  const organicTraffic = Math.round(1200 + (score / 100) * 3600);
-  const baselineTraffic = 1200;
-  const trafficDeltaPct = Math.round(((organicTraffic - baselineTraffic) / baselineTraffic) * 100);
-  const bounceRate = Math.max(28, Math.round(76 - (score / 100) * 44));
-  const baselineBounceRate = 76;
+  const score = latestAttempt ? latestAttempt.score : (passedSectionsCount * 16 + 4);
+
+  // Real-World Weekly Growth Objective Engine: 2 -> 50 Clicks/Week
+  const baselineWeeklyClicks = 2;
+  let accumulatedClicks = baselineWeeklyClicks;
+  if (titleDiag.pass) accumulatedClicks += 10;
+  if (headingsDiag.pass) accumulatedClicks += 10;
+  if (metaDiag.pass) accumulatedClicks += 10;
+  if (contentDiag.pass) accumulatedClicks += 10;
+  if (imagesDiag.pass && linksDiag.pass) accumulatedClicks += 10;
+
+  const weeklyClicks = accumulatedClicks;
+  const targetWeeklyClicks = 50;
+  const weeklyGrowthPct = Math.round(((weeklyClicks - baselineWeeklyClicks) / baselineWeeklyClicks) * 100);
+  const organicTraffic = weeklyClicks;
+  const baselineTraffic = baselineWeeklyClicks;
+  const trafficDeltaPct = weeklyGrowthPct;
+  const bounceRate = Math.max(26, Math.round(88 - (passedSectionsCount / 6) * 56));
+  const baselineBounceRate = 88;
   const bounceDelta = baselineBounceRate - bounceRate;
-  const convRate = (1.1 + (score / 100) * 2.7).toFixed(1);
-  const serpRank = score >= 85 ? "#3 (Page 1)" : score >= 70 ? "#6 (Page 1)" : score >= 50 ? "#14 (Page 2)" : "#28 (Page 3)";
+  const convRate = (0.5 + (passedSectionsCount / 6) * 3.3).toFixed(1);
+  const serpRank = passedSectionsCount >= 6 ? "#3 (Page 1)" : passedSectionsCount >= 4 ? "#7 (Page 1)" : passedSectionsCount >= 2 ? "#16 (Page 2)" : "#48 (Page 5)";
+
   const trafficTrendData = [
-    { month: 'Month 1', baseline: 1150, optimized: 1150 },
-    { month: 'Month 2', baseline: 1180, optimized: 1240 },
-    { month: 'Month 3', baseline: 1200, optimized: Math.round(1200 + (score / 100) * 900) },
-    { month: 'Month 4', baseline: 1210, optimized: Math.round(1210 + (score / 100) * 1850) },
-    { month: 'Month 5', baseline: 1220, optimized: Math.round(1220 + (score / 100) * 2700) },
-    { month: 'Month 6', baseline: 1250, optimized: organicTraffic },
+    { day: 'Mon (Baseline)', oldSite: 2, optimized: 2 },
+    { day: 'Tue (Title & Meta)', oldSite: 2, optimized: titleDiag.pass ? 12 : 2 },
+    { day: 'Wed (Headings)', oldSite: 2, optimized: (titleDiag.pass && headingsDiag.pass) ? 22 : titleDiag.pass ? 12 : 2 },
+    { day: 'Thu (Copy & Alts)', oldSite: 2, optimized: Math.max(2, accumulatedClicks - 10) },
+    { day: 'Fri (Full Launch)', oldSite: 2, optimized: weeklyClicks },
   ];
   
   if (simulationLoading) {
@@ -636,6 +650,39 @@ export default function SeoSimulationPage() {
           </div>
         </div>
         
+        {/* Real-World Weekly Growth Objective Bar: Scale from 2 to 50 Clicks/Week */}
+        <div className="mb-6 p-4 rounded-2xl bg-gradient-to-r from-card via-card/90 to-primary/10 border border-primary/30 shadow-xl">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 mb-2.5">
+            <div>
+              <div className="flex items-center gap-2">
+                <Target className="h-4 w-4 text-primary" />
+                <span className="text-xs font-bold uppercase tracking-wider text-primary">Week 1 Growth SLA Objective</span>
+                <Badge variant={weeklyClicks >= 50 ? "default" : "outline"} className={weeklyClicks >= 50 ? "bg-emerald-600 text-white text-[10px]" : "border-amber-500/40 text-amber-400 text-[10px]"}>
+                  {weeklyClicks >= 50 ? "🎉 SLA Target Smashed!" : "Overnight Crawl Cycle Active"}
+                </Badge>
+              </div>
+              <h3 className="text-sm font-semibold text-foreground mt-1">
+                Client Campaign: Scale Jenny's Coffee from <span className="text-muted-foreground line-through">2 visitors/wk</span> to <strong className="text-emerald-400">50+ visitors/wk</strong>
+              </h3>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="text-right">
+                <div className="text-2xl font-black text-foreground">
+                  {weeklyClicks} <span className="text-xs font-normal text-muted-foreground">/ 50 clicks/wk</span>
+                </div>
+                <div className="text-[10px] text-emerald-400 font-medium">
+                  +{weeklyGrowthPct}% Weekly Traffic Growth
+                </div>
+              </div>
+            </div>
+          </div>
+          <Progress value={Math.min(100, (weeklyClicks / 50) * 100)} className="h-2.5 bg-secondary" />
+          <div className="flex items-center justify-between text-[11px] text-muted-foreground mt-2">
+            <span>Baseline: 2 clicks/wk (Old broken site)</span>
+            <span>{weeklyClicks >= 50 ? "🏆 All 50 clicks achieved! Ready for Friday checkride." : `Each section you fix unlocks +10 clicks. Need ${Math.max(0, 50 - weeklyClicks)} more clicks to clear Week 1.`}</span>
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2">
             <Tabs defaultValue="preview" className="w-full">
@@ -1149,16 +1196,16 @@ export default function SeoSimulationPage() {
                   <Card className="bg-card/60 border-primary/20">
                     <CardContent className="p-4 space-y-1">
                       <div className="text-xs text-muted-foreground flex items-center justify-between">
-                        <span>Organic Traffic</span>
+                        <span>Weekly Search Clicks</span>
                         <TrendingUp className="h-3.5 w-3.5 text-emerald-400" />
                       </div>
                       <div className="text-2xl font-bold text-foreground">
-                        {organicTraffic.toLocaleString()}<span className="text-xs font-normal text-muted-foreground">/mo</span>
+                        {weeklyClicks} <span className="text-xs font-normal text-muted-foreground">/ 50 clicks/wk</span>
                       </div>
                       <div className="flex items-center gap-1.5 text-xs">
-                        <span className="text-muted-foreground line-through">{baselineTraffic.toLocaleString()}</span>
+                        <span className="text-muted-foreground line-through">2 clicks/wk</span>
                         <Badge className="bg-emerald-500/15 text-emerald-400 border-emerald-500/30 text-[10px] px-1.5 py-0">
-                          +{trafficDeltaPct}%
+                          +{weeklyGrowthPct}%
                         </Badge>
                       </div>
                     </CardContent>
@@ -1226,10 +1273,10 @@ export default function SeoSimulationPage() {
                       <div>
                         <CardTitle className="text-base flex items-center gap-2">
                           <BarChart3 className="h-4 w-4 text-emerald-400" />
-                          6-Month Organic Traffic Trajectory
+                          Weekly Traffic Growth Curve (2 → 50 Clicks/Wk Target)
                         </CardTitle>
                         <CardDescription className="text-xs">
-                          Comparing pre-optimization baseline against post-audit ranking momentum
+                          Daily telemetry: tracking Google re-crawl momentum as each on-page section is optimized
                         </CardDescription>
                       </div>
                       <Badge variant="outline" className="text-xs font-normal">
@@ -1252,15 +1299,15 @@ export default function SeoSimulationPage() {
                             </linearGradient>
                           </defs>
                           <CartesianGrid strokeDasharray="3 3" stroke="#334155" opacity={0.3} />
-                          <XAxis dataKey="month" tick={{ fontSize: 11 }} stroke="#64748b" />
+                          <XAxis dataKey="day" tick={{ fontSize: 10 }} stroke="#64748b" />
                           <YAxis tick={{ fontSize: 11 }} stroke="#64748b" />
                           <Tooltip 
                             contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '8px', fontSize: '12px' }}
-                            formatter={(value: any) => [`${value.toLocaleString()} visitors`, '']}
+                            formatter={(value: any) => [`${value} clicks/week`, '']}
                           />
                           <Legend wrapperStyle={{ fontSize: '12px', paddingTop: '8px' }} />
-                          <Area type="monotone" dataKey="baseline" name="Baseline (Old Site)" stroke="#64748b" strokeWidth={2} fillOpacity={1} fill="url(#baselineGrad)" strokeDasharray="4 4" />
-                          <Area type="monotone" dataKey="optimized" name="Optimized Site Trajectory" stroke="#10b981" strokeWidth={2.5} fillOpacity={1} fill="url(#optimizedGrad)" />
+                          <Area type="monotone" dataKey="oldSite" name="Baseline (Old Broken Site: 2 clicks/wk)" stroke="#64748b" strokeWidth={2} fillOpacity={1} fill="url(#baselineGrad)" strokeDasharray="4 4" />
+                          <Area type="monotone" dataKey="optimized" name="Campaign Traffic Generated" stroke="#10b981" strokeWidth={2.5} fillOpacity={1} fill="url(#optimizedGrad)" />
                         </AreaChart>
                       </ResponsiveContainer>
                     </div>
