@@ -10,7 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { useQuery } from "@tanstack/react-query";
-import { Sparkles, Send, BarChart2, GraduationCap, MousePointer, Search, BookOpen, Timer, Copy, ThumbsUp, ThumbsDown } from "lucide-react";
+import { Sparkles, Send, BarChart2, GraduationCap, MousePointer, Search, BookOpen, Timer, Copy, ThumbsUp, ThumbsDown, X } from "lucide-react";
 
 interface Message {
   id: string;

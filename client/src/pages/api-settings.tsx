@@ -24,14 +24,19 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ChevronLeft, Key, User, CreditCard, Settings, Upload, Bell } from "lucide-react";
+import { ChevronLeft, Key, User, CreditCard, Settings, Upload, Bell, Bot, Sparkles, Building2, Mic, Flame, Smile, ShieldAlert, Award } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
+import { Badge } from "@/components/ui/badge";
+import { getInstructorConfig, saveInstructorConfig, type InstructorConfig } from "@/lib/instructorConfig";
 
 export default function SettingsPage() {
   const { toast } = useToast();
   const [, navigate] = useLocation();
   const [selectedProvider, setSelectedProvider] = useState("anthropic");
   const [avatarUrl, setAvatarUrl] = useState("");
+  const [instructorSettings, setInstructorSettings] = useState<InstructorConfig>(getInstructorConfig);
 
   const form = useForm({
     defaultValues: {
@@ -94,20 +99,24 @@ export default function SettingsPage() {
           <p className="text-muted-foreground mb-8">Customize your experience and manage your account</p>
 
           <Tabs defaultValue="profile" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-4 gap-4 bg-muted/50 p-1">
-              <TabsTrigger value="profile" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+            <TabsList className="grid w-full grid-cols-2 md:grid-cols-5 gap-2 bg-muted/50 p-1">
+              <TabsTrigger value="profile" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-xs md:text-sm">
                 <User className="h-4 w-4" />
                 Profile
               </TabsTrigger>
-              <TabsTrigger value="ai" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-                <Key className="h-4 w-4" />
-                AI Settings
+              <TabsTrigger value="instructor" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-xs md:text-sm">
+                <Bot className="h-4 w-4" />
+                AI Instructor
               </TabsTrigger>
-              <TabsTrigger value="billing" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              <TabsTrigger value="ai" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-xs md:text-sm">
+                <Key className="h-4 w-4" />
+                API Keys
+              </TabsTrigger>
+              <TabsTrigger value="billing" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-xs md:text-sm">
                 <CreditCard className="h-4 w-4" />
                 Billing
               </TabsTrigger>
-              <TabsTrigger value="preferences" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              <TabsTrigger value="preferences" className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-xs md:text-sm">
                 <Settings className="h-4 w-4" />
                 Preferences
               </TabsTrigger>
@@ -208,6 +217,264 @@ export default function SettingsPage() {
                           </FormItem>
                         )}
                       />
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+
+                {/* AI Flight Instructor & Small Business Twin Tab */}
+                <TabsContent value="instructor" className="space-y-6">
+                  <Card className="border border-border/80 bg-card/60 shadow-lg">
+                    <CardHeader className="pb-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="p-2.5 rounded-xl bg-primary/10 border border-primary/20 text-primary">
+                            <Bot className="h-6 w-6" />
+                          </div>
+                          <div>
+                            <CardTitle className="text-xl font-bold flex items-center gap-2">
+                              <span>AI Flight Instructor & Persona</span>
+                              <Badge variant="outline" className="text-[10px] bg-primary/10 border-primary/30 text-primary">
+                                Deepgram Aura Studio
+                              </Badge>
+                            </CardTitle>
+                            <CardDescription>
+                              Configure your dedicated AI flight director, teaching style, and studio voice.
+                            </CardDescription>
+                          </div>
+                        </div>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* Preferred Instructor */}
+                        <div className="space-y-2">
+                          <label className="text-sm font-semibold flex items-center gap-1.5">
+                            <User className="h-4 w-4 text-primary" />
+                            <span>Preferred Instructor</span>
+                          </label>
+                          <Select 
+                            value={instructorSettings.preferredInstructor} 
+                            onValueChange={(val: any) => setInstructorSettings(prev => ({ ...prev, preferredInstructor: val }))}
+                          >
+                            <SelectTrigger className="bg-background">
+                              <SelectValue placeholder="Choose instructor" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="auto">
+                                🔄 Auto-Switch (Sarah for SEO/CMS, Atlas for Ads/Search)
+                              </SelectItem>
+                              <SelectItem value="sarah">
+                                👩‍💼 Sarah Jenkins (Female — Content & SEO Lead)
+                              </SelectItem>
+                              <SelectItem value="atlas">
+                                👨‍💼 Director Atlas (Male — Performance Flight Director)
+                              </SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <p className="text-xs text-muted-foreground">
+                            Default instructors carry specialized domain mastery for on-page repair vs. auction bidding.
+                          </p>
+                        </div>
+
+                        {/* Teaching Style */}
+                        <div className="space-y-2">
+                          <label className="text-sm font-semibold flex items-center gap-1.5">
+                            <Flame className="h-4 w-4 text-amber-500" />
+                            <span>Teaching Style & Persona</span>
+                          </label>
+                          <Select 
+                            value={instructorSettings.teachingStyle} 
+                            onValueChange={(val: any) => setInstructorSettings(prev => ({ ...prev, teachingStyle: val }))}
+                          >
+                            <SelectTrigger className="bg-background">
+                              <SelectValue placeholder="Choose teaching style" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="drill_sergeant">
+                                💥 Agency Drill Sergeant (Tough love, roasts bad copy, demands perfection)
+                              </SelectItem>
+                              <SelectItem value="supportive">
+                                🍯 Supportive Coach (Gentle, patient, warm analogies)
+                              </SelectItem>
+                              <SelectItem value="executive">
+                                📊 High-Stakes CMO (Strict, data-driven, demands CAC & ROAS proof)
+                              </SelectItem>
+                              <SelectItem value="witty">
+                                😂 Witty Mentor (Humorous, sarcastic banter, marketing memes)
+                              </SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <p className="text-xs text-muted-foreground">
+                            Controls the agent's feedback severity and Socratic coaching tone.
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+                        {/* Voice Model Selection */}
+                        <div className="space-y-2">
+                          <label className="text-sm font-semibold flex items-center gap-1.5">
+                            <Mic className="h-4 w-4 text-primary" />
+                            <span>Studio Voice Model</span>
+                          </label>
+                          <Select 
+                            value={instructorSettings.voiceModel} 
+                            onValueChange={(val: any) => setInstructorSettings(prev => ({ ...prev, voiceModel: val }))}
+                          >
+                            <SelectTrigger className="bg-background">
+                              <SelectValue placeholder="Select voice model" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="aura-orion-en">Aura Orion (Male — Authoritative, Executive)</SelectItem>
+                              <SelectItem value="aura-asteria-en">Aura Asteria (Female — Articulate, Confident)</SelectItem>
+                              <SelectItem value="aura-luna-en">Aura Luna (Female — Warm, Editorial)</SelectItem>
+                              <SelectItem value="aura-arcas-en">Aura Arcas (Male — Dynamic, Fast-Paced)</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        {/* Voice Default Toggle */}
+                        <div className="flex items-center justify-between p-4 rounded-xl border border-border/60 bg-secondary/30 mt-1">
+                          <div className="space-y-0.5">
+                            <div className="text-sm font-semibold flex items-center gap-2">
+                              <span>Auto-Speak Lessons</span>
+                              <Badge variant="outline" className="text-[10px]">Aura TTS</Badge>
+                            </div>
+                            <p className="text-xs text-muted-foreground">
+                              Automatically speak the instructor's opening dialogue out loud when opening lessons.
+                            </p>
+                          </div>
+                          <Switch 
+                            checked={instructorSettings.voiceEnabledByDefault}
+                            onCheckedChange={(checked) => setInstructorSettings(prev => ({ ...prev, voiceEnabledByDefault: checked }))}
+                          />
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Small Business Digital Twin Card */}
+                  <Card className="border border-border/80 bg-card/60 shadow-lg">
+                    <CardHeader className="pb-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+                            <Building2 className="h-6 w-6" />
+                          </div>
+                          <div>
+                            <CardTitle className="text-xl font-bold flex items-center gap-2">
+                              <span>Small Business Digital Twin</span>
+                              <Badge variant="secondary" className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30 text-[10px]">
+                                Dynamic Curriculum Customizer
+                              </Badge>
+                            </CardTitle>
+                            <CardDescription>
+                              Input your real business info. The AI instructor will tailor lesson scenarios and audits to your real company!
+                            </CardDescription>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-medium text-muted-foreground">Activate Twin:</span>
+                          <Switch 
+                            checked={instructorSettings.hasCustomBusiness}
+                            onCheckedChange={(checked) => setInstructorSettings(prev => ({ ...prev, hasCustomBusiness: checked }))}
+                          />
+                        </div>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      {instructorSettings.hasCustomBusiness ? (
+                        <div className="space-y-4 pt-1">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="space-y-1.5">
+                              <label className="text-xs font-semibold">Business Name</label>
+                              <Input 
+                                placeholder="e.g. Mile High Solar & Roofing"
+                                value={instructorSettings.businessName}
+                                onChange={(e) => setInstructorSettings(prev => ({ ...prev, businessName: e.target.value }))}
+                              />
+                            </div>
+                            <div className="space-y-1.5">
+                              <label className="text-xs font-semibold">Industry / Niche</label>
+                              <Input 
+                                placeholder="e.g. Residential Solar & Roofing Contractor"
+                                value={instructorSettings.industry}
+                                onChange={(e) => setInstructorSettings(prev => ({ ...prev, industry: e.target.value }))}
+                              />
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="space-y-1.5">
+                              <label className="text-xs font-semibold">Location / Service Area</label>
+                              <Input 
+                                placeholder="e.g. Denver Metro & Boulder, CO"
+                                value={instructorSettings.location}
+                                onChange={(e) => setInstructorSettings(prev => ({ ...prev, location: e.target.value }))}
+                              />
+                            </div>
+                            <div className="space-y-1.5">
+                              <label className="text-xs font-semibold">Website URL (Optional)</label>
+                              <Input 
+                                placeholder="https://milehighroofing.com"
+                                value={instructorSettings.websiteUrl}
+                                onChange={(e) => setInstructorSettings(prev => ({ ...prev, websiteUrl: e.target.value }))}
+                              />
+                            </div>
+                          </div>
+
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold">Primary Offer / Core Product</label>
+                            <Input 
+                              placeholder="e.g. Emergency hail damage drone inspections & $0-down solar installs"
+                              value={instructorSettings.primaryOffer}
+                              onChange={(e) => setInstructorSettings(prev => ({ ...prev, primaryOffer: e.target.value }))}
+                            />
+                          </div>
+
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-semibold">Target Customer & Unique Selling Proposition (USP)</label>
+                            <Textarea 
+                              rows={2}
+                              placeholder="e.g. Single-family homeowners with roofs older than 10 years. We handle all insurance paperwork with a 25-year transferable warranty."
+                              value={instructorSettings.targetAudience}
+                              onChange={(e) => setInstructorSettings(prev => ({ ...prev, targetAudience: e.target.value }))}
+                            />
+                          </div>
+
+                          <div className="p-3 rounded-lg bg-emerald-950/20 border border-emerald-500/20 text-xs text-emerald-300 leading-relaxed flex items-center gap-2">
+                            <Sparkles className="h-4 w-4 shrink-0 text-emerald-400" />
+                            <span>
+                              <strong>Live Injection Active:</strong> In all lesson briefings, Atlas and Sarah will teach search intent and ad bidding using <strong>{instructorSettings.businessName || "your company"}</strong> as the case study!
+                            </span>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="p-6 text-center rounded-xl border border-dashed border-border/80 bg-secondary/20">
+                          <Building2 className="h-8 w-8 mx-auto text-muted-foreground/60 mb-2" />
+                          <h4 className="text-sm font-semibold text-foreground">Standard Curriculum Active</h4>
+                          <p className="text-xs text-muted-foreground mt-1 max-w-md mx-auto">
+                            Lessons currently use calibrated benchmark businesses (Jenny's Artisan Java, Dr. Miller Dental). Toggle the switch above to train on your own real-world company!
+                          </p>
+                        </div>
+                      )}
+
+                      <div className="pt-2">
+                        <Button 
+                          type="button"
+                          onClick={() => {
+                            saveInstructorConfig(instructorSettings);
+                            toast({
+                              title: "Flight Instructor & Digital Twin Saved 🎙️",
+                              description: `Instructor preferences and business settings updated successfully.`
+                            });
+                          }}
+                          className="w-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 text-primary-foreground font-semibold shadow-md"
+                        >
+                          <Sparkles className="h-4 w-4 mr-2" />
+                          Save Flight Instructor & Digital Twin
+                        </Button>
+                      </div>
                     </CardContent>
                   </Card>
                 </TabsContent>

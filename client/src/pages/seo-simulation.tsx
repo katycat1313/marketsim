@@ -50,6 +50,7 @@ import {
 import WordPressEditor from '@/components/WordPressEditor';
 import WebsitePreview from '@/components/WebsitePreview';
 import '@/components/WebsitePreview.css';
+import { FlightInstructorCopilot } from '@/components/FlightInstructorCopilot';
 import { 
   Dialog, 
   DialogContent, 
@@ -1690,6 +1691,13 @@ Walking through the roastery, the problem was crystal clear: Jenny has a world-c
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Floating Ask Flight Instructor Copilot Side Drawer */}
+      <FlightInstructorCopilot 
+        track="seo"
+        pageTitle="Jenny's Artisan Java CMS Repair"
+        currentDraft={content}
+      />
     </div>
   );
 }

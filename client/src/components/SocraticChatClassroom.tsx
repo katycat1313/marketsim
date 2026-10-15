@@ -25,8 +25,10 @@ import {
   RotateCcw,
   Bot,
   User,
-  Lightbulb
+  Lightbulb,
+  Building2
 } from "lucide-react";
+import { getActiveInstructor } from "@/lib/instructorConfig";
 
 interface ChatMessage {
   id: string;
@@ -65,36 +67,58 @@ export function SocraticChatClassroom({
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const recognitionRef = useRef<any>(null);
 
-  const instructorVoice = useDeepgramVoice({
-    defaultVoice: "aura-orion-en"
-  });
+  const track = (chapterNumber === 1 || lessonTitle.toLowerCase().includes("seo") || lessonTitle.toLowerCase().includes("fundamentals"))
+    ? "seo"
+    : (chapterNumber === 2 || lessonTitle.toLowerCase().includes("google ads") || lessonTitle.toLowerCase().includes("bidding"))
+    ? "ads"
+    : "general";
 
-  const instructor = {
-    name: "Director Atlas",
-    role: "Lead Academy Flight Director",
-    avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=400"
-  };
+  const instructor = getActiveInstructor(track);
+
+  const instructorVoice = useDeepgramVoice({
+    defaultVoice: instructor.voice
+  });
 
   // Initial teacher kick-off message per chapter
   useEffect(() => {
     let initialPrompt = "";
+    const hasBiz = instructor.config.hasCustomBusiness && instructor.config.businessName;
 
-    if (chapterNumber === 1 || lessonTitle.toLowerCase().includes("seo") || lessonTitle.toLowerCase().includes("fundamentals")) {
-      initialPrompt = `Welcome to the flight briefing for ${lessonTitle}. 
+    if (hasBiz) {
+      if (track === "seo") {
+        initialPrompt = `Welcome to the flight briefing for ${lessonTitle}. I am ${instructor.name}. 
 
-Here is our first scenario: A local coffee roaster in Morgantown has world-class 100% organic beans, but her website only has a generic title tag and the H1 says 'Welcome to our site'. 
+Today we're auditing your real business: ${instructor.config.businessName} (${instructor.config.industry} in ${instructor.config.location || 'your market'}). 
+
+A local competitor is targeting search intent for ${instructor.config.primaryOffer || 'your core services'}, but your homepage currently has a generic title tag and the H1 says 'Welcome'. In your own words, why does Google fail to rank you for commercial buyers, and how does the 'Newspaper Rule' (Title Tag, H1, Meta Description) fix this?`;
+      } else if (track === "ads") {
+        initialPrompt = `Welcome to the Paid Search flight deck for ${instructor.config.businessName}. I am ${instructor.name}.
+
+Suppose we set up a $1,500 monthly budget to acquire new clients for ${instructor.config.primaryOffer || 'your business'}. If we mistakenly set broad match keywords like '${instructor.config.industry ? instructor.config.industry.split(' ')[0].toLowerCase() : 'service'}', what kind of wasteful search queries will eat your budget, and what Negative Keywords would you deploy right away?`;
+      } else {
+        initialPrompt = `Welcome to the tactical briefing for ${lessonTitle}. I am ${instructor.name}. We're applying this directly to ${instructor.config.businessName}.
+
+Before we unlock the simulation, explain: what is the #1 mistake marketers in the ${instructor.config.industry || 'service'} space make when executing this, and what metric proves your strategy worked?`;
+      }
+    } else {
+      // Standard calibrated scenarios
+      if (track === "seo") {
+        initialPrompt = `Welcome to the flight briefing for ${lessonTitle}. I am ${instructor.name}. 
+
+Here is our first scenario: A local coffee roaster in Morgantown (Jenny's Artisan Java) has world-class 100% organic beans, but her website only has a generic title tag and the H1 says 'Welcome to our site'. 
 
 In your own words, why does Google fail to rank her, and how does the 'Newspaper Rule' (Title Tag, H1 Headline, Meta Description) fix this?`;
-    } else if (chapterNumber === 2 || lessonTitle.toLowerCase().includes("google ads") || lessonTitle.toLowerCase().includes("bidding")) {
-      initialPrompt = `Welcome to the Paid Search flight deck. 
+      } else if (track === "ads") {
+        initialPrompt = `Welcome to the Paid Search flight deck. I am ${instructor.name}.
 
-Let's dive into ${lessonTitle}. A local emergency clinic spent $2,000 last month on Broad Match keywords like 'dentist' and blew 60% of their budget on people searching for 'dental assistant salary' and 'free tooth pulling videos'. 
+Let's dive into ${lessonTitle}. A local emergency clinic (Dr. Miller Dental) spent $2,000 last month on Broad Match keywords like 'dentist' and blew 60% of their budget on people searching for 'dental assistant salary' and 'free tooth pulling videos'. 
 
 How would you restructure their match types and deploy Negative Keywords to immediately stop this budget bleed?`;
-    } else {
-      initialPrompt = `Welcome to the tactical briefing for ${lessonTitle}. 
+      } else {
+        initialPrompt = `Welcome to the tactical briefing for ${lessonTitle}. I am ${instructor.name}.
 
 Before we unlock the full playbook and live simulation, explain the core strategy behind this module: what is the #1 mistake junior marketers make when executing this, and what metric (CAC, ROAS, or Quality Score) proves your fix worked?`;
+      }
     }
 
     const firstMessage: ChatMessage = {
@@ -109,7 +133,7 @@ Before we unlock the full playbook and live simulation, explain the core strateg
     if (isVoiceEnabled) {
       instructorVoice.speak(initialPrompt);
     }
-  }, [lessonTitle, chapterNumber]);
+  }, [lessonTitle, chapterNumber, track]);
 
   // Auto-scroll to bottom of chat
   useEffect(() => {
@@ -203,21 +227,32 @@ Before we unlock the full playbook and live simulation, explain the core strateg
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          question: `You are Director Atlas, an elite marketing flight instructor at Krechet Academy.
+          question: `You are ${instructor.name}, an elite marketing flight instructor at Krechet Academy.
+Your teaching persona is: '${instructor.teachingStyle}'.
 The student is in lesson '${lessonTitle}' (Chapter ${chapterNumber}).
 The current conversation history is:
 ${updatedMessages.map(m => `${m.sender.toUpperCase()}: ${m.text}`).join("\n")}
+
+${instructor.config.hasCustomBusiness && instructor.config.businessName ? `The student is training on their real small business: ${instructor.config.businessName} (${instructor.config.industry} in ${instructor.config.location}). Primary offer: ${instructor.config.primaryOffer}. Target customer: ${instructor.config.targetAudience}.` : ""}
 
 Assess the student's understanding dynamically:
 1. IF the student demonstrates clear understanding or strategic mastery (e.g. explaining the Newspaper rule, search intent, negative keywords, or Quality Score):
    - Conclude warmly with this exact closing sentiment: "Well, I think you have mastered today's lesson! Go apply what you learned today to the weekly simulation. Good luck, and if you have any questions, just ask!"
 2. IF the student is on the right track but missed a detail:
-   - Provide a 1-2 sentence coaching tip and ask 1 quick clarifying question to help them reach full understanding.
+   - Provide a 1-2 sentence coaching tip matching your persona ('${instructor.teachingStyle}') and ask 1 quick clarifying question to help them reach full understanding.
 3. IF the student is a beginner or confused:
    - Use a simple, relatable real-world analogy to explain the concept and ask a gentle check-in.
 
-Keep your response natural, conversational, and encouraging (2-3 sentences max).`,
+Persona Guidelines for '${instructor.teachingStyle}':
+- drill_sergeant: Tough love, roasts bad copy, calls out weak points directly, pushes for excellence.
+- supportive: Warm, patient, breaks down fear with gentle analogies.
+- executive: C-Suite focus, reminds them of customer acquisition economics.
+- witty: Sarcastic, funny, drops memorable analogies and memes.
+
+Keep your response natural, conversational, and punchy (2-3 sentences max).`,
           userContext: {
+            instructor: instructor.name,
+            style: instructor.teachingStyle,
             level: lessonLevel,
             contextType: "socratic_lesson",
             lessonTitle
@@ -297,14 +332,20 @@ Keep your response natural, conversational, and encouraging (2-3 sentences max).
             <span className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full bg-emerald-500 border-2 border-background animate-pulse" />
           </div>
           <div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <CardTitle className="text-sm font-bold text-foreground">{instructor.name}</CardTitle>
-              <Badge className="bg-primary/20 text-primary border-primary/30 text-[10px] uppercase font-mono">
-                1-on-1 Socratic Classroom
+              <Badge variant="outline" className="text-[10px] capitalize bg-primary/10 border-primary/20 text-primary">
+                {instructor.teachingStyle.replace('_', ' ')}
               </Badge>
+              {instructor.config.hasCustomBusiness && instructor.config.businessName && (
+                <Badge variant="secondary" className="text-[10px] bg-emerald-500/20 text-emerald-400 border-emerald-500/30 flex items-center gap-1">
+                  <Building2 className="h-2.5 w-2.5" />
+                  <span>{instructor.config.businessName}</span>
+                </Badge>
+              )}
             </div>
             <CardDescription className="text-xs text-muted-foreground">
-              Conversational Mastery Check • Chapter {chapterNumber}: {lessonTitle}
+              {instructor.role} • Chapter {chapterNumber}: {lessonTitle}
             </CardDescription>
           </div>
         </div>
