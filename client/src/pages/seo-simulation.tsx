@@ -56,6 +56,7 @@ import WordPressEditor from '@/components/WordPressEditor';
 import WebsitePreview from '@/components/WebsitePreview';
 import '@/components/WebsitePreview.css';
 import { FlightInstructorCopilot } from '@/components/FlightInstructorCopilot';
+import { EmergencyCrisisModal } from '@/components/EmergencyCrisisModal';
 import { 
   Dialog, 
   DialogContent, 
@@ -367,6 +368,22 @@ export default function SeoSimulationPage() {
   const [isSavingPortfolio, setIsSavingPortfolio] = useState(false);
   const [isBuilderOpen, setIsBuilderOpen] = useState(false);
   const [builderNiche, setBuilderNiche] = useState("gym");
+  
+  // Mid-Campaign Surprise Client Crisis State
+  const [isCrisisOpen, setIsCrisisOpen] = useState(false);
+  const [hasTriggeredCrisis, setHasTriggeredCrisis] = useState(false);
+  const [crisisResolved, setCrisisResolved] = useState(false);
+
+  // Trigger surprise client crisis call when student fixes 2+ sections (catches them off-guard!)
+  useEffect(() => {
+    if (passedSectionsCount >= 2 && !hasTriggeredCrisis && !crisisResolved) {
+      const timer = setTimeout(() => {
+        setIsCrisisOpen(true);
+        setHasTriggeredCrisis(true);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [passedSectionsCount, hasTriggeredCrisis, crisisResolved]);
 
   const nicheTemplates: Record<string, any> = {
     gym: {
@@ -1686,7 +1703,25 @@ export default function SeoSimulationPage() {
                   <Badge className="bg-primary/20 text-primary border-primary/30 text-[10px] uppercase tracking-wider font-mono">
                     <Briefcase className="h-3 w-3 mr-1 inline" /> Agency Client Dossier
                   </Badge>
-                  <span className="text-xs text-muted-foreground font-medium">Discovery Brief</span>
+                  <div className="flex items-center gap-2">
+                    {crisisResolved ? (
+                      <Badge className="bg-emerald-500/20 text-emerald-300 border-emerald-500/40 text-[10px] flex items-center gap-1">
+                        <Check className="h-3 w-3" />
+                        <span>Crisis Averted (+15 Rep)</span>
+                      </Badge>
+                    ) : (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setIsCrisisOpen(true)}
+                        className="h-6 px-2 text-[10px] text-amber-400 hover:text-amber-300 hover:bg-amber-500/10 border border-amber-500/30 rounded"
+                        title="Simulate surprise incoming emergency client call"
+                      >
+                        🚨 Test Crisis Call
+                      </Button>
+                    )}
+                    <span className="text-xs text-muted-foreground font-medium">Discovery Brief</span>
+                  </div>
                 </div>
                 <CardTitle className="text-base font-bold mt-1 text-foreground">
                   {simulation.clientDossier?.clientName || "Jenny's Artisan Java & Roastery"}
@@ -1972,6 +2007,22 @@ Walking through the roastery, the problem was crystal clear: Jenny has a world-c
         track="seo"
         pageTitle="Jenny's Artisan Java CMS Repair"
         currentDraft={content}
+      />
+
+      {/* Mid-Campaign Surprise Client Crisis Incoming Call & Decision Modal */}
+      <EmergencyCrisisModal
+        isOpen={isCrisisOpen}
+        onClose={() => setIsCrisisOpen(false)}
+        onResolved={() => {
+          setCrisisResolved(true);
+          toast({
+            title: "🎉 Crisis Averted!",
+            description: "Jenny confirmed the in-store dispute was smoothed over. +15 Reputation Points logged to your agency portfolio!",
+          });
+        }}
+        callerName="Sarah Jenkins"
+        callerRole="Lead Account Director"
+        clientName={simulation?.clientDossier?.clientName || "Jenny's Artisan Java"}
       />
     </div>
   );
