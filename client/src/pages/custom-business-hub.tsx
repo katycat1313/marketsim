@@ -213,12 +213,16 @@ export default function CustomBusinessHub() {
   const channels = profile?.discoveredChannels || [];
   const missions = profile?.customMissions || [];
 
+  const mentorAvatar = mentorName.toLowerCase().includes("atlas")
+    ? "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=400"
+    : "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400";
+
   return (
-    <div className="min-h-screen bg-background text-foreground space-y-8 pb-16">
+    <div className="min-h-screen bg-transparent text-foreground space-y-8 pb-16">
       
-      {/* Top Hero Banner */}
-      <div className="relative overflow-hidden rounded-2xl border border-primary/30 bg-gradient-to-br from-card via-background to-secondary/40 p-6 md:p-8 shadow-2xl">
-        <div className="absolute top-0 right-0 -mt-8 -mr-8 w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
+      {/* Top Hero Banner with Glassmorphism */}
+      <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-slate-900/60 backdrop-blur-xl p-6 md:p-8 shadow-2xl">
+        <div className="absolute top-0 right-0 -mt-8 -mr-8 w-96 h-96 bg-primary/15 rounded-full blur-3xl pointer-events-none" />
 
         <div className="relative z-10 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
           <div className="space-y-3 max-w-3xl">
@@ -241,12 +245,12 @@ export default function CustomBusinessHub() {
             </p>
           </div>
 
-          {/* AI Mentor Quick Card */}
-          <div className="bg-card/90 backdrop-blur-md border border-primary/30 rounded-xl p-4 shadow-lg min-w-[280px] space-y-3">
+          {/* AI Mentor Quick Card with Glass Styling & Correct Avatar */}
+          <div className="bg-slate-950/80 backdrop-blur-xl border border-white/15 rounded-xl p-4 shadow-xl min-w-[280px] space-y-3">
             <div className="flex items-center gap-3">
               <div className="relative">
                 <img 
-                  src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400" 
+                  src={mentorAvatar} 
                   alt={mentorName}
                   className="h-12 w-12 rounded-full object-cover border-2 border-emerald-500 shadow-md"
                 />
@@ -260,7 +264,7 @@ export default function CustomBusinessHub() {
                   {mentorName}
                 </p>
                 <p className="text-xs text-primary font-mono">{mentorTone}</p>
-                <p className="text-[10px] text-muted-foreground">Personal Flight Instructor</p>
+                <p className="text-[10px] text-muted-foreground">Lead Growth Director</p>
               </div>
             </div>
 

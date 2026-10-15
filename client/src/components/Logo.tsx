@@ -31,7 +31,7 @@ export const Logo: React.FC<{ className?: string }> = ({ className = "" }) => {
           </span>
         </div>
         <div className="text-[10px] font-medium tracking-wider text-muted-foreground uppercase">
-          AI Marketing Flight Simulator
+          AI Marketing Growth Lab
         </div>
       </div>
     </div>
