@@ -88,7 +88,7 @@ export function getActiveInstructor(track: "seo" | "ads" | "general" = "general"
   return {
     id: "atlas",
     name: "Director Atlas",
-    role: "Lead Performance Flight Director",
+    role: "Lead Performance Growth Director",
     voice: "aura-orion-en",
     gender: "male",
     avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=400",

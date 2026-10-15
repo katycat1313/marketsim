@@ -34,7 +34,11 @@ import {
   Bot,
   Layers,
   Layout,
-  Target
+  Target,
+  Activity,
+  Users,
+  Radio,
+  Filter
 } from 'lucide-react';
 import { 
   ResponsiveContainer, 
@@ -1310,6 +1314,230 @@ export default function SeoSimulationPage() {
                           <Area type="monotone" dataKey="optimized" name="Campaign Traffic Generated" stroke="#10b981" strokeWidth={2.5} fillOpacity={1} fill="url(#optimizedGrad)" />
                         </AreaChart>
                       </ResponsiveContainer>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Google Analytics 4 (GA4) Live Telemetry Console */}
+                <Card className="border-border/80 bg-card/70 overflow-hidden shadow-lg">
+                  <CardHeader className="bg-muted/30 border-b border-border/60 pb-3">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                      <div className="flex items-center gap-2.5">
+                        <div className="h-8 w-8 rounded-lg bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400 font-bold text-xs">
+                          GA4
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <CardTitle className="text-sm font-bold flex items-center gap-1.5">
+                              <span>Google Analytics 4 • Acquisition Telemetry</span>
+                            </CardTitle>
+                            <Badge variant="outline" className="text-[10px] font-mono text-muted-foreground">
+                              G-JENNY-WV14
+                            </Badge>
+                          </div>
+                          <CardDescription className="text-xs">
+                            Live telemetry stream tracking session quality and conversion attribution
+                          </CardDescription>
+                        </div>
+                      </div>
+
+                      {/* Realtime Active Pulse */}
+                      <div className="flex items-center gap-2 self-start sm:self-auto bg-emerald-500/10 border border-emerald-500/25 px-2.5 py-1 rounded-full text-emerald-400 text-xs">
+                        <span className="relative flex h-2 w-2">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                          <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                        </span>
+                        <span className="font-semibold text-[11px]">
+                          {Math.max(2, Math.round(weeklyClicks / 10))} Active Users Right Now
+                        </span>
+                      </div>
+                    </div>
+                  </CardHeader>
+
+                  <CardContent className="p-4 space-y-4">
+                    {/* Top GA4 Stat Strip */}
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                      <div className="p-2.5 rounded-lg bg-background/60 border border-border/50">
+                        <div className="text-[10px] text-muted-foreground uppercase font-semibold">Total Sessions</div>
+                        <div className="text-xl font-bold text-foreground mt-0.5">{weeklyClicks + 28}</div>
+                        <div className="text-[10px] text-emerald-400 font-medium">+{weeklyGrowthPct}% vs baseline</div>
+                      </div>
+
+                      <div className="p-2.5 rounded-lg bg-background/60 border border-border/50">
+                        <div className="text-[10px] text-muted-foreground uppercase font-semibold">Organic Search Share</div>
+                        <div className="text-xl font-bold text-emerald-400 mt-0.5">
+                          {Math.round((weeklyClicks / (weeklyClicks + 28)) * 100)}%
+                        </div>
+                        <div className="text-[10px] text-muted-foreground">Was 6% before fixes</div>
+                      </div>
+
+                      <div className="p-2.5 rounded-lg bg-background/60 border border-border/50">
+                        <div className="text-[10px] text-muted-foreground uppercase font-semibold">Engagement Rate</div>
+                        <div className="text-xl font-bold text-foreground mt-0.5">
+                          {Math.min(92, 24 + passedSectionsCount * 11)}%
+                        </div>
+                        <div className="text-[10px] text-emerald-400 font-medium">
+                          {passedSectionsCount >= 5 ? "High Search Intent" : "Improving relevance"}
+                        </div>
+                      </div>
+
+                      <div className="p-2.5 rounded-lg bg-background/60 border border-border/50">
+                        <div className="text-[10px] text-muted-foreground uppercase font-semibold">Avg Engagement Time</div>
+                        <div className="text-xl font-bold text-purple-400 mt-0.5">
+                          {1 + Math.floor(passedSectionsCount * 0.3)}m {14 + passedSectionsCount * 8}s
+                        </div>
+                        <div className="text-[10px] text-muted-foreground">Up from 28s</div>
+                      </div>
+                    </div>
+
+                    {/* GA4 Default Channel Grouping Table */}
+                    <div className="border border-border/70 rounded-xl overflow-hidden bg-background/40">
+                      <div className="px-3.5 py-2 bg-muted/40 border-b border-border/60 flex items-center justify-between text-xs font-semibold text-muted-foreground">
+                        <div className="flex items-center gap-1.5">
+                          <Filter className="h-3.5 w-3.5" />
+                          <span>Session Default Channel Grouping</span>
+                        </div>
+                        <span className="text-[11px] font-normal">Last 7 Days (Client Telemetry)</span>
+                      </div>
+
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-xs text-left">
+                          <thead className="bg-muted/20 text-muted-foreground border-b border-border/40 text-[11px]">
+                            <tr>
+                              <th className="py-2 px-3 font-semibold">Channel</th>
+                              <th className="py-2 px-3 font-semibold text-right">Sessions</th>
+                              <th className="py-2 px-3 font-semibold text-right">Engaged</th>
+                              <th className="py-2 px-3 font-semibold text-right">Engagement Rate</th>
+                              <th className="py-2 px-3 font-semibold text-right">Key Events (Conversions)</th>
+                              <th className="py-2 px-3 font-semibold text-right">Channel Status</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-border/30">
+                            {/* Organic Search Row (Dynamic!) */}
+                            <tr className="bg-emerald-500/5 hover:bg-emerald-500/10 transition-colors font-medium">
+                              <td className="py-2.5 px-3 flex items-center gap-2">
+                                <span className="h-2 w-2 rounded-full bg-emerald-400"></span>
+                                <span className="font-semibold text-foreground">Organic Search (Google)</span>
+                              </td>
+                              <td className="py-2.5 px-3 text-right font-bold text-emerald-400">
+                                {weeklyClicks}
+                              </td>
+                              <td className="py-2.5 px-3 text-right">
+                                {Math.max(1, Math.round(weeklyClicks * 0.78))}
+                              </td>
+                              <td className="py-2.5 px-3 text-right">
+                                {Math.min(92, 25 + passedSectionsCount * 11)}%
+                              </td>
+                              <td className="py-2.5 px-3 text-right font-semibold text-foreground">
+                                {Math.max(0, Math.round(weeklyClicks * 0.12))}
+                              </td>
+                              <td className="py-2.5 px-3 text-right">
+                                <Badge className={`text-[10px] px-1.5 py-0 ${
+                                  weeklyClicks >= 50 ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/40" :
+                                  weeklyClicks > 12 ? "bg-blue-500/20 text-blue-300 border-blue-500/40" :
+                                  "bg-amber-500/20 text-amber-300 border-amber-500/40"
+                                }`}>
+                                  {weeklyClicks >= 50 ? "🌟 #1 Revenue Driver" : weeklyClicks > 12 ? "📈 Scaling Traffic" : "⚠️ Needs Tag Fixes"}
+                                </Badge>
+                              </td>
+                            </tr>
+
+                            {/* Direct */}
+                            <tr className="hover:bg-muted/20 transition-colors text-muted-foreground">
+                              <td className="py-2.5 px-3 flex items-center gap-2">
+                                <span className="h-2 w-2 rounded-full bg-blue-400"></span>
+                                <span className="text-foreground">Direct Traffic</span>
+                              </td>
+                              <td className="py-2.5 px-3 text-right font-medium text-foreground">14</td>
+                              <td className="py-2.5 px-3 text-right">6</td>
+                              <td className="py-2.5 px-3 text-right">42.8%</td>
+                              <td className="py-2.5 px-3 text-right">1</td>
+                              <td className="py-2.5 px-3 text-right">
+                                <span className="text-[10px] text-muted-foreground">Local Regulars</span>
+                              </td>
+                            </tr>
+
+                            {/* Referral */}
+                            <tr className="hover:bg-muted/20 transition-colors text-muted-foreground">
+                              <td className="py-2.5 px-3 flex items-center gap-2">
+                                <span className="h-2 w-2 rounded-full bg-amber-400"></span>
+                                <span className="text-foreground">Referral (morgantownchamber.org)</span>
+                              </td>
+                              <td className="py-2.5 px-3 text-right font-medium text-foreground">6</td>
+                              <td className="py-2.5 px-3 text-right">4</td>
+                              <td className="py-2.5 px-3 text-right">66.7%</td>
+                              <td className="py-2.5 px-3 text-right">1</td>
+                              <td className="py-2.5 px-3 text-right">
+                                <span className="text-[10px] text-muted-foreground">Chamber Directory</span>
+                              </td>
+                            </tr>
+
+                            {/* Organic Social */}
+                            <tr className="hover:bg-muted/20 transition-colors text-muted-foreground">
+                              <td className="py-2.5 px-3 flex items-center gap-2">
+                                <span className="h-2 w-2 rounded-full bg-pink-400"></span>
+                                <span className="text-foreground">Organic Social (Instagram Bio)</span>
+                              </td>
+                              <td className="py-2.5 px-3 text-right font-medium text-foreground">8</td>
+                              <td className="py-2.5 px-3 text-right">3</td>
+                              <td className="py-2.5 px-3 text-right">37.5%</td>
+                              <td className="py-2.5 px-3 text-right">0</td>
+                              <td className="py-2.5 px-3 text-right">
+                                <span className="text-[10px] text-muted-foreground">Social Bio Link</span>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+
+                    {/* GA4 Realtime Event Stream & Educational Callout */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
+                      {/* Live Event Stream */}
+                      <div className="p-3 rounded-lg bg-background/50 border border-border/60 space-y-2">
+                        <div className="text-[11px] font-semibold text-foreground flex items-center gap-1.5">
+                          <Activity className="h-3.5 w-3.5 text-blue-400" />
+                          <span>Realtime Event Stream (Live Telemetry)</span>
+                        </div>
+                        <div className="space-y-1 font-mono text-[11px]">
+                          <div className="flex items-center justify-between text-muted-foreground py-0.5 border-b border-border/30">
+                            <span className="text-emerald-400">page_view</span>
+                            <span className="text-foreground text-[10px]">/shop/organic-arabica</span>
+                            <span className="text-[9px] text-muted-foreground/60">2s ago</span>
+                          </div>
+                          <div className="flex items-center justify-between text-muted-foreground py-0.5 border-b border-border/30">
+                            <span className="text-blue-400">session_start</span>
+                            <span className="text-foreground text-[10px]">google / organic</span>
+                            <span className="text-[9px] text-muted-foreground/60">18s ago</span>
+                          </div>
+                          <div className="flex items-center justify-between text-muted-foreground py-0.5 border-b border-border/30">
+                            <span className="text-purple-400">user_engagement</span>
+                            <span className="text-foreground text-[10px]">scroll_depth: 90%</span>
+                            <span className="text-[9px] text-muted-foreground/60">45s ago</span>
+                          </div>
+                          <div className="flex items-center justify-between text-muted-foreground py-0.5">
+                            <span className="text-amber-400">view_item</span>
+                            <span className="text-foreground text-[10px]">Ethiopian Single Origin 500g</span>
+                            <span className="text-[9px] text-muted-foreground/60">1m ago</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Educational Strategy Callout */}
+                      <div className="p-3 rounded-lg bg-primary/5 border border-primary/20 space-y-1.5 flex flex-col justify-between">
+                        <div>
+                          <div className="text-[11px] font-semibold text-primary flex items-center gap-1.5">
+                            <Sparkles className="h-3.5 w-3.5 text-amber-400" />
+                            <span>Agency Insight: Reading GA4 Channels</span>
+                          </div>
+                          <p className="text-[11px] text-muted-foreground leading-relaxed mt-1">
+                            In real agency reporting, clients care about <strong>Attribution</strong>. When Jenny opens GA4, she wants to know if her SEO investment is actually generating revenue compared to her Instagram profile.
+                          </p>
+                        </div>
+                        <div className="text-[10px] text-emerald-400 bg-emerald-500/10 p-2 rounded border border-emerald-500/20">
+                          ✓ Your on-page optimizations have driven Organic Search from <strong>6%</strong> of Jenny's total traffic up to <strong>{Math.round((weeklyClicks / (weeklyClicks + 28)) * 100)}%</strong>.
+                        </div>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
