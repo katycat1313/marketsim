@@ -74,7 +74,7 @@ export const registerCustomBusinessRoutes = (app: Express) => {
           location: "Morgantown, WV",
           monthlyBudget: 500,
           mentorName: "Director Atlas",
-          mentorTitle: "Senior Growth Director & Flight Instructor",
+          mentorTitle: "Senior Growth Director & Campaign Mentor",
           mentorTone: "Strategic & Socratic",
           personas: [],
           discoveredChannels: [],
@@ -102,7 +102,7 @@ export const registerCustomBusinessRoutes = (app: Express) => {
         ...req.body,
         userId,
         mentorName: req.body.mentorName || existing.mentorName || "Director Atlas",
-        mentorTitle: req.body.mentorTitle || existing.mentorTitle || "Senior Growth Director & Flight Instructor",
+        mentorTitle: req.body.mentorTitle || existing.mentorTitle || "Senior Growth Director & Campaign Mentor",
         mentorTone: req.body.mentorTone || existing.mentorTone || "Strategic & Socratic",
         updatedAt: new Date().toISOString()
       };
@@ -115,19 +115,27 @@ export const registerCustomBusinessRoutes = (app: Express) => {
     }
   });
 
-  // 3. Ethical Website Parser / Sandbox Ingestion
+  // 3. Ethical Website & UI Code Parser / Sandbox Ingestion
   app.post("/api/custom-business/analyze-website", async (req: Request, res: Response) => {
     try {
-      const { url, rawText, businessName, niche } = req.body;
+      const { url, rawText, rawHtml, businessName, niche, imageDataUrl, imageName } = req.body;
 
       let extractedTitle = `${businessName || 'My Business'} | Official Site`;
       let extractedDescription = `Welcome to ${businessName || 'our business'}. Discover our specialized products and services.`;
-      let extractedH1 = [businessName || "Welcome to Our Business"];
-      let extractedH2 = ["Our Menu & Services", "About Us", "Contact & Location"];
-      let extractedServices = ["Core Offering", "Premium Service", "Specialty Product"];
+      let extractedH1: string[] = [businessName || "Welcome to Our Business"];
+      let extractedH2: string[] = ["Our Menu & Services", "About Us", "Contact & Location"];
+      let extractedServices: string[] = ["Core Offering", "Premium Service", "Specialty Product"];
+      let extractedImages: { src: string; alt: string }[] = [];
       let detectedIssues: string[] = [];
+      let sourceMode: "live_url" | "html_code" | "image_upload" | "manual" = "manual";
 
-      if (url && (url.startsWith("http://") || url.startsWith("https://"))) {
+      let htmlToParse = "";
+
+      if (rawHtml && rawHtml.trim().length > 0) {
+        htmlToParse = rawHtml;
+        sourceMode = "html_code";
+      } else if (url && (url.startsWith("http://") || url.startsWith("https://"))) {
+        sourceMode = "live_url";
         try {
           const controller = new AbortController();
           const timeout = setTimeout(() => controller.abort(), 6000);
@@ -141,38 +149,69 @@ export const registerCustomBusinessRoutes = (app: Express) => {
           clearTimeout(timeout);
 
           if (response.ok) {
-            const html = await response.text();
-
-            // Extract Title
-            const titleMatch = html.match(/<title[^>]*>([^<]+)<\/title>/i);
-            if (titleMatch && titleMatch[1]) extractedTitle = titleMatch[1].trim();
-
-            // Extract Meta Description
-            const metaMatch = html.match(/<meta[^>]*name=["']description["'][^>]*content=["']([^"']+)["'][^>]*>/i);
-            if (metaMatch && metaMatch[1]) extractedDescription = metaMatch[1].trim();
-
-            // Extract H1s
-            const h1Matches = [...html.matchAll(/<h1[^>]*>([\s\S]*?)<\/h1>/gi)];
-            if (h1Matches.length > 0) {
-              extractedH1 = h1Matches.map(m => m[1].replace(/<[^>]+>/g, '').trim()).filter(Boolean);
-            }
-
-            // Extract H2s
-            const h2Matches = [...html.matchAll(/<h2[^>]*>([\s\S]*?)<\/h2>/gi)];
-            if (h2Matches.length > 0) {
-              extractedH2 = h2Matches.slice(0, 6).map(m => m[1].replace(/<[^>]+>/g, '').trim()).filter(Boolean);
-            }
-
-            // Audit issues
-            if (extractedH1.length === 0) detectedIssues.push("Missing <h1> primary heading tag");
-            if (extractedH1.length > 1) detectedIssues.push(`Found multiple (${extractedH1.length}) <h1> tags (violates single-topic semantic hierarchy)`);
-            if (extractedTitle.length < 20 || extractedTitle.toLowerCase().includes("home")) detectedIssues.push("Generic or under-optimized title tag");
-            if (!extractedDescription || extractedDescription.length < 50) detectedIssues.push("Meta description is missing or too short for SERP snippet display");
+            htmlToParse = await response.text();
+          } else {
+            detectedIssues.push(`Remote website returned HTTP ${response.status}. Switched to local fallback structure.`);
           }
         } catch (fetchErr) {
           console.warn("Website fetch error (using fallback parser):", fetchErr);
-          detectedIssues.push("Could not reach remote URL directly; generated baseline semantic structure.");
+          detectedIssues.push("Could not reach remote URL directly (likely CORS or firewall); generated baseline semantic structure.");
         }
+      }
+
+      if (htmlToParse) {
+        // Extract Title
+        const titleMatch = htmlToParse.match(/<title[^>]*>([^<]+)<\/title>/i);
+        if (titleMatch && titleMatch[1]) extractedTitle = titleMatch[1].trim();
+
+        // Extract Meta Description
+        const metaMatch = htmlToParse.match(/<meta[^>]*name=["']description["'][^>]*content=["']([^"']+)["'][^>]*>/i) ||
+                           htmlToParse.match(/<meta[^>]*content=["']([^"']+)["'][^>]*name=["']description["'][^>]*>/i) ||
+                           htmlToParse.match(/<meta[^>]*property=["']og:description["'][^>]*content=["']([^"']+)["'][^>]*>/i);
+        if (metaMatch && metaMatch[1]) extractedDescription = metaMatch[1].trim();
+
+        // Extract H1s
+        const h1Matches = [...htmlToParse.matchAll(/<h1[^>]*>([\s\S]*?)<\/h1>/gi)];
+        if (h1Matches.length > 0) {
+          extractedH1 = h1Matches.map(m => m[1].replace(/<[^>]+>/g, '').trim()).filter(Boolean);
+        }
+
+        // Extract H2s
+        const h2Matches = [...htmlToParse.matchAll(/<h2[^>]*>([\s\S]*?)<\/h2>/gi)];
+        if (h2Matches.length > 0) {
+          extractedH2 = h2Matches.slice(0, 8).map(m => m[1].replace(/<[^>]+>/g, '').trim()).filter(Boolean);
+        }
+
+        // Extract Images & Alt tags
+        const imgMatches = [...htmlToParse.matchAll(/<img[^>]*src=["']([^"']+)["'][^>]*>/gi)];
+        if (imgMatches.length > 0) {
+          extractedImages = imgMatches.slice(0, 6).map(m => {
+            const tag = m[0];
+            const altMatch = tag.match(/alt=["']([^"']*)["']/i);
+            return {
+              src: m[1],
+              alt: altMatch ? altMatch[1] : ""
+            };
+          });
+        }
+
+        // Extract potential service list items (li or headings)
+        const listItems = [...htmlToParse.matchAll(/<li[^>]*>([\s\S]*?)<\/li>/gi)]
+          .map(m => m[1].replace(/<[^>]+>/g, '').trim())
+          .filter(t => t.length > 3 && t.length < 80);
+        if (listItems.length >= 3) {
+          extractedServices = listItems.slice(0, 8);
+        } else if (extractedH2.length >= 3) {
+          extractedServices = extractedH2.slice(0, 6);
+        }
+
+        // Audit issues
+        if (extractedH1.length === 0) detectedIssues.push("Missing <h1> primary heading tag (Google requires a clear primary topic indicator).");
+        if (extractedH1.length > 1) detectedIssues.push(`Found multiple (${extractedH1.length}) <h1> tags (violates single-topic semantic hierarchy).`);
+        if (extractedTitle.length < 20 || extractedTitle.toLowerCase().includes("home")) detectedIssues.push("Generic or under-optimized <title> tag (add location and primary niche).");
+        if (extractedTitle.length > 65) detectedIssues.push(`<title> tag is ${extractedTitle.length} chars (exceeds Google's 60-character SERP cutoff).`);
+        if (!extractedDescription || extractedDescription.length < 50) detectedIssues.push("Meta description is missing or under 50 characters (snippet will be truncated or auto-generated).");
+        if (extractedImages.some(img => !img.alt)) detectedIssues.push("One or more images are missing 'alt' text (fails accessibility and image search SEO).");
       }
 
       if (rawText && rawText.trim().length > 0) {
@@ -182,15 +221,23 @@ export const registerCustomBusinessRoutes = (app: Express) => {
         }
       }
 
+      if (imageDataUrl) {
+        sourceMode = "image_upload";
+      }
+
       const analyzedData = {
-        url: url || "https://example-business.com",
+        url: url || (sourceMode === "html_code" ? "Direct HTML Code Ingestion" : "https://example-business.com"),
+        sourceMode,
         title: extractedTitle,
         description: extractedDescription,
         h1List: extractedH1,
         h2List: extractedH2,
+        images: extractedImages,
         detectedIssues,
         services: extractedServices,
-        hasLocalSchema: false,
+        hasLocalSchema: htmlToParse.includes("schema.org") || htmlToParse.includes("application/ld+json"),
+        imageAsset: imageDataUrl || null,
+        imageName: imageName || null,
         analyzedAt: new Date().toISOString()
       };
 
@@ -198,6 +245,13 @@ export const registerCustomBusinessRoutes = (app: Express) => {
       const userId = (req.user as any)?.id || 1;
       const profile = customBusinessProfiles.get(userId) || ({} as CustomBusinessProfile);
       profile.analyzedWebsiteData = analyzedData;
+      if (rawHtml) (profile as any).uploadedHtmlCode = rawHtml.substring(0, 50000);
+      if (imageDataUrl) {
+        profile.uploadedPhotos = [imageDataUrl, ...(profile.uploadedPhotos || []).slice(0, 4)];
+      }
+      if (extractedServices.length > 0 && (!profile.uploadedMenu || profile.uploadedMenu === "Handmade Fettuccine Alfredo, Wood-Fired Margherita Pizza, Truffle Risotto, Catering Platters, VIP Wine Tastings, Gluten-Free Pasta")) {
+        profile.uploadedMenu = extractedServices.join(", ");
+      }
       customBusinessProfiles.set(userId, profile);
 
       res.json(analyzedData);
@@ -213,7 +267,7 @@ export const registerCustomBusinessRoutes = (app: Express) => {
       const { businessName, niche, location, targetNotes, menuServices, mentorName } = req.body;
       const mentor = mentorName || "Director Atlas";
 
-      const prompt = `You are ${mentor}, an elite Senior Marketing Director and Flight Instructor.
+      const prompt = `You are ${mentor}, an elite Senior Marketing Director and Campaign Mentor.
 Generate exactly 3 hyper-targeted, highly actionable CUSTOMER PERSONAS for this specific business:
 - Business: ${businessName || "Local Business"}
 - Niche/Industry: ${niche || "Restaurant & Retail"}

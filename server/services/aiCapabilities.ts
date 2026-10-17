@@ -587,19 +587,52 @@ export class AICapabilities {
     userContext: {
       level: string,
       completedTutorials: number[],
-      recentSimulations: any[]
+      recentSimulations: any[],
+      contextType?: string,
+      instructor?: string,
+      style?: string,
+      isSplitView?: boolean,
+      playbookContent?: string,
+      lessonTitle?: string,
+      chapterNumber?: number,
+      studentMessage?: string,
+      businessName?: string,
+      industry?: string
     },
     provider: 'anthropic' | 'openai' | 'gemini' = 'anthropic'
   ) {
     // Extract relevant knowledge from the knowledge base
     const relevantKnowledge = this.getRelevantKnowledge(question);
     
-    const systemPrompt = `
+    const isSocratic = userContext?.contextType === 'socratic_lesson';
+    const instructorName = userContext?.instructor || "Director Atlas";
+    const teachingStyle = userContext?.style || "supportive";
+    const isSplitView = userContext?.isSplitView;
+    const playbookContent = userContext?.playbookContent || "";
+
+    const systemPrompt = isSocratic ? `
+    You are ${instructorName}, an experienced, encouraging digital marketing instructor at Krechet Academy.
+    Your teaching style is: '${teachingStyle}'.
+    The student is learning in split-screen interactive mode.
+    ${isSplitView ? "The student has the lesson guide visible on the RIGHT side of their screen." : "The student has the lesson guide open."}
+
+    LESSON GUIDE CONTENT (ON THE STUDENT'S RIGHT SIDE):
+    ${playbookContent}
+
+    Guidelines:
+    - Speak directly, warmly, and respectfully like a real mentor teaching an ambitious adult student. No corporate roleplay, no military jargon, and no condescension.
+    - ACTIVELY reference the lesson guide on the right (e.g. 'Look at Section 1 on your right...', 'Notice the formula in Section 2 on your right...', 'Remember the common mistake in Section 3...').
+    - If the student asks a question or is confused, explain the concept simply using a clear real-world analogy, and point to the section on the right.
+    - If the student demonstrates clear understanding or good reasoning, warmly praise their strategic logic, point to what they got right, and conclude with:
+      "Well, I think you have mastered today's lesson! Go apply what you learned today to the weekly simulation. Good luck, and if you have any questions along the way, just ask!"
+    - If the student gives a partial answer, point them directly to the relevant section on their right, give a helpful 1-2 sentence tip, and ask 1 quick follow-up question.
+    - Keep answers conversational, punchy (2-3 sentences max).
+    ` : `
     You are ZOOMi, the Digital Zoom marketing assistant. You help users with marketing questions, 
     provide advice, and guide them through learning digital marketing concepts. 
     
     User Level: ${userContext.level}
-    Completed Tutorials: ${userContext.completedTutorials.length}
+    Completed Tutorials: ${userContext.completedTutorials?.length || 0}
     
     Use the following knowledge when answering:
     ${JSON.stringify(relevantKnowledge, null, 2)}
@@ -712,9 +745,138 @@ export class AICapabilities {
   }
 
   /**
+   * Evaluates student comprehension in Socratic Classroom / Split View mode
+   * actively referencing the Tactical Playbook sections, formulas, and warnings
+   */
+  private generateSocraticLessonResponse(question: string, userContext: any): string {
+    const isSplitView = userContext?.isSplitView ?? true;
+    const rightSideText = isSplitView ? "in the guide on your right" : "in the lesson guide";
+    const rightPanelText = isSplitView ? "on your right" : "in your guide";
+
+    // Extract student's text
+    let studentText = userContext?.studentMessage || "";
+    if (!studentText && question) {
+      const match = question.match(/STUDENT:\s*([^\n]+)/i);
+      studentText = match ? match[1] : question;
+    }
+    const lower = studentText.toLowerCase();
+    const len = studentText.trim().length;
+
+    // Detect lesson topic/chapter
+    const title = (userContext?.lessonTitle || "").toLowerCase();
+    const ch = userContext?.chapterNumber || 1;
+
+    // Chapter 1 / Lesson 1: Fundamentals & Funnel
+    if (ch === 1 && (title.includes("fundamental") || title.includes("flywheel") || title.includes("funnel") || !title.includes("goal"))) {
+      const hasCAC = lower.includes("cac") || lower.includes("acquisition cost") || lower.includes("50") || lower.includes("1000/20") || lower.includes("1,000");
+      const hasLTV = lower.includes("ltv") || lower.includes("lifetime") || lower.includes("3x") || lower.includes("ratio") || lower.includes("35") || lower.includes("40") || lower.includes("3.0") || lower.includes("<");
+      const hasTrap = lower.includes("trap") || lower.includes("landing page") || lower.includes("offer") || lower.includes("repeat") || lower.includes("spend") || lower.includes("funnel");
+
+      if ((hasCAC && hasLTV) || (hasLTV && hasTrap) || len > 70) {
+        return `Spot on! You grasped the economics immediately.\n\nAs Section 2 ${rightSideText} demonstrates with the $LTV/CAC > 3.0$ formula, spending $50 to acquire a customer who only spends $35 once guarantees insolvency. And as Section 3 warns, pouring ad spend into a funnel without repeat purchases or an optimized landing page is just throwing money away. You're thinking like a seasoned marketer.\n\nWell, I think you have mastered today's lesson! Go apply what you learned today to the weekly simulation. Good luck, and if you have any questions along the way, just ask!`;
+      } else {
+        return `You're on the right track, but take another close look at **Section 2 and Section 3 ${rightPanelText}**.\n\nNotice the formula: $LTV / CAC > 3.0$. If they spend $1,000 to get 20 buyers who only spend $35 once, calculate their CAC ($1,000 ÷ 20 = $50) versus their LTV ($35). Does that pass the 3.0 ratio in Section 2, and what should they have fixed before buying ads?`;
+      }
+    }
+
+    // Chapter 1 / Lesson 2: Goals & KPIs
+    if (title.includes("goal") || title.includes("kpi")) {
+      const hasSMART = lower.includes("smart") || lower.includes("specific") || lower.includes("measurable") || lower.includes("lead") || lower.includes("revenue") || lower.includes("conversion") || lower.includes("cpa");
+      const hasVanity = lower.includes("vanity") || lower.includes("like") || lower.includes("follower") || lower.includes("rent") || lower.includes("payroll") || lower.includes("trap");
+
+      if ((hasSMART && hasVanity) || len > 60) {
+        return `Outstanding work! You cut through the noise with clarity.\n\nAs highlighted in Section 3 ${rightSideText}, vanity metrics like follower counts don't pay the bills. By using the SMART framework from Section 1 with measurable targets (conversions, CPA, and revenue), you ensure every marketing dollar is accountable.\n\nWell, I think you have mastered today's lesson! Go apply what you learned today to the weekly simulation. Good luck, and if you have any questions along the way, just ask!`;
+      } else {
+        return `You're heading in the right direction, but check **Section 1 and Section 3 ${rightPanelText}**.\n\nWhy is 'getting 10,000 followers' considered a vanity trap, and what specific SMART goal metric from Section 2 (like conversion rate or CPA) would you present to the owner instead?`;
+      }
+    }
+
+    // Chapter 2 / Lesson 3: Google Ads Hierarchy & Quality Score
+    if ((ch === 2 && !title.includes("match")) || title.includes("google ads") || (title.includes("campaign") && title.includes("structure")) || (title.includes("hierarchy") && !title.includes("seo") && !title.includes("on-page"))) {
+      const hasQS = lower.includes("quality score") || lower.includes("qs") || lower.includes("relevance") || lower.includes("cpc") || lower.includes("ad rank") || lower.includes("penalty") || lower.includes("discount");
+      const hasGroup = lower.includes("ad group") || lower.includes("single theme") || lower.includes("unrelated") || lower.includes("bleed") || lower.includes("split");
+
+      if ((hasQS && hasGroup) || len > 65) {
+        return `Masterful analysis! You understand how the auction works.\n\nLooking at Section 2's Quality Score formula ${rightSideText}, when Quality Score drops because of mixed keywords, your Cost Per Click skyrockets. Using single-theme ad groups from Section 1 is how marketers win profitable clicks.\n\nWell, I think you have mastered today's lesson! Go apply what you learned today to the weekly simulation. Good luck, and if you have any questions along the way, just ask!`;
+      } else {
+        return `Good instinct, but glance back over at **Section 2 ${rightPanelText}**.\n\nLook at where Quality Score sits in the denominator of the CPC formula. If unrelated keywords crash Ad Relevance to 2/10, what happens to their CPC, and how does Section 1's 3-Tier Hierarchy prevent this?`;
+      }
+    }
+
+    // Chapter 2 / Lesson 4: Match Types & Negative Keywords
+    if (title.includes("match type") || title.includes("negative")) {
+      const hasMatch = lower.includes("broad") || lower.includes("phrase") || lower.includes("exact") || lower.includes("intent");
+      const hasNeg = lower.includes("negative") || lower.includes("free") || lower.includes("salary") || lower.includes("jobs") || lower.includes("shield") || lower.includes("diy");
+
+      if ((hasMatch && hasNeg) || len > 65) {
+        return `Sharp strategy! You just saved that client thousands of dollars.\n\nAs detailed in Sections 1 and 2 ${rightSideText}, running Broad Match without negative keyword shields lets Google burn budget on low-intent clicks. Switching to Phrase/Exact match and adding standard negatives like -free and -jobs protects the ad budget from waste.\n\nWell, I think you have mastered today's lesson! Go apply what you learned today to the weekly simulation. Good luck, and if you have any questions along the way, just ask!`;
+      } else {
+        return `You're close, but check **Section 1 and Section 2 ${rightPanelText}**.\n\nNotice how Broad Match triggers on queries with zero buying intent. What specific match types from Section 1 and which 3 negative keywords from Section 2 would you install immediately to protect the budget?`;
+      }
+    }
+
+    // Chapter 3 / Lesson 5: SEO Newspaper Rule
+    if (title.includes("seo") || title.includes("newspaper") || ch === 3) {
+      const hasTags = lower.includes("title tag") || lower.includes("h1") || lower.includes("meta description") || lower.includes("headline") || lower.includes("alt");
+      const hasCrawler = lower.includes("crawler") || lower.includes("google") || lower.includes("rank") || lower.includes("intent") || lower.includes("welcome") || lower.includes("morgantown") || lower.includes("coffee");
+
+      if ((hasTags && hasCrawler) || len > 65) {
+        return `Brilliant execution! That is textbook on-page structure.\n\nAs Section 1 ${rightSideText} outlines in the Newspaper Rule, crawlers depend on tag hierarchy. Replacing a meaningless H1 'Welcome' with your primary offering and city lets Google immediately index and rank the business for local buyers.\n\nWell, I think you have mastered today's lesson! Go apply what you learned today to the weekly simulation. Good luck, and if you have any questions along the way, just ask!`;
+      } else {
+        return `You're on the right trail, but look over at the **Newspaper Rule in Section 1 ${rightPanelText}**.\n\nWhy does an H1 tag saying 'Welcome to our site' confuse search crawlers, and how should Jenny rewrite her Title Tag and H1 with her primary keyword and city?`;
+      }
+    }
+
+    // Chapter 4 / Lesson 6: Ethical AI Prompting
+    if (title.includes("ai") || title.includes("prompt") || ch === 4) {
+      const hasPrompt = lower.includes("role") || lower.includes("context") || lower.includes("constraint") || lower.includes("emotion") || lower.includes("30") || lower.includes("character") || lower.includes("limit");
+      const hasEthics = lower.includes("slop") || lower.includes("edit") || lower.includes("helpful") || lower.includes("generic") || lower.includes("director") || lower.includes("intern");
+
+      if ((hasPrompt || hasEthics) && len > 60) {
+        return `Exceptional response! You understand prompt engineering like a pro.\n\nAs Section 1 ${rightSideText} demonstrates with the 4-Part Formula, giving AI a clear role, context, character limits, and emotional goal prevents robotic fluff. You're using free tools with real precision.\n\nWell, I think you have mastered today's lesson! Go apply what you learned today to the weekly simulation. Good luck, and if you have any questions along the way, just ask!`;
+      } else {
+        return `Good thinking, but review the **4-Part Formula in Section 1 ${rightPanelText}**.\n\nWhy is an unconstrained prompt like 'write an ad' a rookie mistake, and what exact constraint from Section 1 must you enforce for Google Ads headlines?`;
+      }
+    }
+
+    // Chapter 5 / Lesson 7: Make.com Speed-to-Lead
+    if (title.includes("make") || title.includes("speed") || title.includes("automation") || ch === 5) {
+      const hasSpeed = lower.includes("speed") || lower.includes("minute") || lower.includes("second") || lower.includes("21x") || lower.includes("391") || lower.includes("lead") || lower.includes("cold");
+      const hasModules = lower.includes("webhook") || lower.includes("sms") || lower.includes("email") || lower.includes("blueprint") || lower.includes("filter") || lower.includes("notification");
+
+      if ((hasSpeed && hasModules) || len > 60) {
+        return `Spot on! You understand modern lead conversion.\n\nAs the data in Section 1 ${rightSideText} proves, every minute of delay destroys conversion probability. Setting up the 3-step automation from Section 2 ensures immediate response and turns cold inquiries into paying customers.\n\nWell, I think you have mastered today's lesson! Go apply what you learned today to the weekly simulation. Good luck, and if you have any questions along the way, just ask!`;
+      } else {
+        return `You're close, but check **Section 1 and Section 2 ${rightPanelText}**.\n\nWhy does a 30-minute delay drop lead qualification rates by 21x, and what are the 3 modules in our Make.com blueprint that solve this automatically?`;
+      }
+    }
+
+    // Chapter 6 / Lesson 8: Capstone & SLA
+    if (title.includes("capstone") || title.includes("audit") || title.includes("sla") || ch === 6) {
+      if (lower.includes("pillar") || lower.includes("sla") || lower.includes("audit") || lower.includes("seo") || lower.includes("revenue") || len > 60) {
+        return `Exemplary leadership! You have synthesized the entire academy curriculum.\n\nAs Section 1 and Section 2 ${rightSideText} lay out in the 4-Pillar Framework and Client SLA, protecting client ad spend while establishing rigorous accountability is what differentiates an elite Growth Director from an amateur.\n\nWell, I think you have mastered today's lesson! Go apply what you learned today to the weekly simulation. Good luck, and if you have any questions along the way, just ask!`;
+      } else {
+        return `Good thoughts, but take a look at the **4-Pillar Diagnostic Framework in Section 1 ${rightPanelText}**.\n\nWhich pillar do you audit first when onboarding a new client, and how does the Client SLA in Section 2 protect both parties?`;
+      }
+    }
+
+    // General fallback
+    if (len > 50) {
+      return `Strong reasoning! You're connecting the tactical principles with real-world execution.\n\nAs emphasized ${rightSideText}, grounding your strategy in concrete data and systematic frameworks prevents costly mistakes and accelerates client growth.\n\nWell, I think you have mastered today's lesson! Go apply what you learned today to the weekly simulation. Good luck, and if you have any questions along the way, just ask!`;
+    }
+
+    return `You're on the right track. Take another look at the key concepts ${rightSideText}.\n\nHow would you apply these specific principles and formulas to ensure this strategy scales profitably?`;
+  }
+
+  /**
    * Generates a context-aware marketing assistant response without requiring external API keys
    */
   private generateDynamicMarketingAssistantResponse(question: string, userContext: any): string {
+    // Socratic Classroom Lesson Response (Instructor in Split View)
+    if (userContext?.contextType === 'socratic_lesson') {
+      return this.generateSocraticLessonResponse(question, userContext);
+    }
+
     const q = question.toLowerCase();
     const userLevel = userContext?.level || "Beginner";
 

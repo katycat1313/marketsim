@@ -887,7 +887,7 @@ export function TutorialSystem() {
       <div className="py-3 px-1 mb-6 border-b border-primary/30">
         <h2 className="text-2xl font-bold text-primary flex items-center">
           <span className="w-8 h-8 rounded-xl bg-primary text-primary-foreground flex items-center justify-center mr-3 text-sm font-black">MS</span>
-          MarketSim AI Flight Academy
+          MarketSim AI Marketing Academy
         </h2>
       </div>
       

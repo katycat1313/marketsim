@@ -79,7 +79,7 @@ export function FlightInstructorCopilot({
         ? ` (keeping your company ${instructor.config.businessName} in mind)`
         : "";
 
-      let intro = `Flight Instructor ${instructor.name} on comms. I'm monitoring your live work on ${pageTitle}${biz}.`;
+      let intro = `Growth Director ${instructor.name} here. I'm reviewing your live campaign work on ${pageTitle}${biz}.`;
 
       if (instructor.teachingStyle === "drill_sergeant") {
         intro += " Don't expect me to write your copy for you. If a tag is weak or leaking intent, I will call it out. What section are we fixing first?";
@@ -178,7 +178,7 @@ export function FlightInstructorCopilot({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          question: `You are ${instructor.name}, a master marketing flight director at Krechet Academy.
+          question: `You are ${instructor.name}, a master Growth & Marketing Director at Krechet Academy.
 Your teaching persona is: '${instructor.teachingStyle}'.
 The user is currently inside the simulation workbench: '${pageTitle}'.
 The current draft elements they have entered on their screen are:
@@ -235,7 +235,7 @@ STRICT PEDAGOGICAL POLICY:
         {
           id: `msg-err-${Date.now()}`,
           sender: "instructor",
-          text: "Lost comms with flight tower for a second. Review your target keywords and character counts, then ask again.",
+          text: "Connection briefly paused. Review your target keywords and character counts, then ask again.",
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         }
       ]);
@@ -252,12 +252,12 @@ STRICT PEDAGOGICAL POLICY:
 
   return (
     <>
-      {/* Floating Trigger Button (Always visible on right edge) */}
+      {/* Floating Trigger Button (Positioned safely above global AI coach) */}
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 px-4 py-2.5 rounded-full bg-gradient-to-r from-primary to-amber-600 text-primary-foreground font-bold text-xs shadow-2xl hover:scale-105 active:scale-95 transition-all duration-200 border border-primary-foreground/20 group"
-          title={`Open Flight Instructor Comms (${instructor.name})`}
+          className="fixed bottom-22 right-6 z-50 flex items-center gap-2.5 px-4 py-2.5 rounded-full bg-gradient-to-r from-primary to-amber-600 text-primary-foreground font-bold text-xs shadow-2xl hover:scale-105 active:scale-95 transition-all duration-200 border border-primary-foreground/20 group"
+          title={`Ask Growth Director (${instructor.name})`}
         >
           <div className="relative">
             <Avatar className="h-6 w-6 border border-white/40">
@@ -271,12 +271,12 @@ STRICT PEDAGOGICAL POLICY:
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
             </span>
           </div>
-          <span>Comms: {instructor.name}</span>
+          <span>Director: {instructor.name}</span>
           <Sparkles className="h-3.5 w-3.5 text-amber-200 group-hover:rotate-12 transition-transform" />
         </button>
       )}
 
-      {/* Slide-Out Flight Copilot Drawer */}
+      {/* Slide-Out Growth Director Copilot Drawer */}
       {isOpen && (
         <div 
           className={`fixed bottom-0 right-0 z-50 flex flex-col bg-background/95 backdrop-blur-xl border-l border-t md:border-t-0 border-border/80 shadow-2xl transition-all duration-300 ${
@@ -318,7 +318,7 @@ STRICT PEDAGOGICAL POLICY:
                   if (isVoiceActive) {
                     instructorVoice.stop();
                     setIsVoiceActive(false);
-                    toast({ title: "Voice Off 🔇", description: "Text-only comms active." });
+                    toast({ title: "Voice Off 🔇", description: "Text-only chat active." });
                   } else {
                     setIsVoiceActive(true);
                     toast({ title: "Voice Active 🎙️", description: `${instructor.name} will speak using Deepgram Aura.` });
@@ -352,7 +352,7 @@ STRICT PEDAGOGICAL POLICY:
                   setIsOpen(false);
                 }}
                 className="h-7 w-7 text-muted-foreground hover:text-foreground"
-                title="Close Comms"
+                title="Close Mentor"
               >
                 <X className="h-4 w-4" />
               </Button>

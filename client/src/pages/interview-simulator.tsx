@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { cleanTextForSpeech } from "@/lib/utils";
 import { 
   Mic, 
   MicOff,
@@ -211,7 +212,8 @@ export default function InterviewSimulatorPage() {
     }
 
     window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
+    const clean = cleanTextForSpeech(text);
+    const utterance = new SpeechSynthesisUtterance(clean);
     utterance.rate = 0.95;
     utterance.pitch = selectedInterviewer.gender === "female" ? 1.05 : 0.95;
 

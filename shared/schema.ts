@@ -546,6 +546,7 @@ export const seoSimulations = pgTable("seo_simulations", {
     description: string,
     example: string
   }[]>().notNull(),
+  clientDossier: json("client_dossier").$type<Record<string, any>>(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });

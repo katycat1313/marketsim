@@ -150,7 +150,7 @@ export default function CapstoneSimulationPage() {
       clientName: "Apex Athletics",
       industry: "E-Commerce Athletics",
       platform: "Google Search & Meta Ads",
-      difficulty: "Master Capstone",
+      difficulty: "Agency Capstone",
       challengeSummary: "Client needed an end-to-end full funnel campaign launching both Search capture and Meta acquisition under a strict $30 CPA limit.",
       strategySummary: `Defined core durability angle (${persona.hookAngle}), deployed phrase/exact search pairs with ${negativeKeywords.length} negative filters, and aligned landing page messaging.`,
       keyTactics: [
@@ -184,7 +184,7 @@ export default function CapstoneSimulationPage() {
                 Agency Capstone: Full Omnichannel Campaign
               </h1>
               <p className="text-xs text-amber-400 font-semibold">
-                The Master Agency Simulation • Build Strategy $\rightarrow$ Search $\rightarrow$ Social $\rightarrow$ Landing Page
+                The Agency Capstone Simulation • Build Strategy → Search → Social → Landing Page
               </p>
             </div>
           </div>

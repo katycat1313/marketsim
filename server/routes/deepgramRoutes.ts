@@ -30,13 +30,27 @@ export function registerDeepgramRoutes(app: Express) {
         return res.status(503).json({ error: "Deepgram API key not configured" });
       }
 
-      const audioBuffer = await deepgramService.generateSpeech(text, voice);
+      // Clean text to prevent TTS reading "star star", markdown, or code punctuation
+      const cleanText = text
+        .replace(/\$\$CPC\s*=\s*\\frac\{[^}]+\}\{[^}]+\}\s*\+\s*\\?\$?0?\.01\$\$/gi, "Cost Per Click equals Competitor Ad Rank divided by your Quality Score, plus one cent.")
+        .replace(/\$LTV\s*\/\s*CAC\s*>\s*3\.0\$/gi, "Lifetime Value to Customer Acquisition Cost ratio greater than three point zero")
+        .replace(/\$\$([^\$]+)\$\$/g, "$1")
+        .replace(/\$([^\$]+)\$/g, "$1")
+        .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+        .replace(/[*_`#~]/g, "")
+        .replace(/[👉⚠️🛡️💼☕🚀🎯📊💡📈💰🔥✨]/gu, "")
+        .replace(/^[\s]*[•\-\*]\s+/gm, "")
+        .replace(/\s+/g, " ")
+        .trim();
+
+      const audioBuffer = await deepgramService.generateSpeech(cleanText || text, voice);
       if (!audioBuffer) {
         return res.status(500).json({ error: "Failed to generate audio stream from Deepgram" });
       }
 
       res.setHeader("Content-Type", "audio/mp3");
       res.setHeader("Content-Length", audioBuffer.length);
+      res.setHeader("Cache-Control", "public, max-age=86400, stale-while-revalidate=604800");
       res.send(audioBuffer);
     } catch (error) {
       console.error("Deepgram speak route error:", error);

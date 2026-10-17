@@ -241,7 +241,7 @@ Negative keywords prevent your ads from showing on unqualified search queries:
 
 1. **Title Tag**: 50–60 characters. Place primary target keywords at the front: \`[Primary Keyword] | [Secondary USP / Location]\`.
 2. **Meta Description**: 120–155 characters. Include secondary keywords, clear value proposition, and an active Call-to-Action verb (e.g. *Shop*, *Discover*, *Schedule*).
-3. **Heading Silo**: Single \`<h1>\` containing primary keyword $\\rightarrow$ descriptive \`<h2>\` subheadings with long-tail keywords $\\rightarrow$ \`<h3>\` for granular sub-features.
+3. **Heading Silo**: Single `<h1>` containing primary keyword → descriptive `<h2>` subheadings with long-tail keywords → `<h3>` for granular sub-features.
 4. **Alt Text**: Replace generic single words with descriptive captions (e.g. \`alt="Certified organic arabica single-origin coffee beans"\`).
 5. **Schema Markup**: Add JSON-LD \`LocalBusiness\`, \`Product\`, or \`Article\` structured data to secure Google rich search snippets.`;
     }

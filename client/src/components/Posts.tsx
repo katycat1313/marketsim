@@ -85,22 +85,37 @@ const PostCard: React.FC<PostCardProps> = ({ post, onLike, onComment }) => {
     }
   };
 
+  const author = (post as any).authorName || `Growth Student #${post.userId}`;
+  const isInstructor = author.includes('Director') || author.includes('Sarah') || author.includes('Atlas');
+
   return (
-    <Card className="mb-6">
-      <CardHeader className="pb-2">
-        <div className="flex justify-between items-start">
+    <Card className="mb-6 rounded-2xl border border-white/10 bg-slate-900/60 backdrop-blur-xl shadow-xl overflow-hidden">
+      <CardHeader className="pb-3 border-b border-white/5">
+        <div className="flex justify-between items-start gap-3">
           <div className="flex items-center gap-3">
-            <Avatar>
-              <AvatarFallback>{getInitials(post.userId.toString())}</AvatarFallback>
+            <Avatar className="h-10 w-10 border border-white/20">
+              {isInstructor ? (
+                <AvatarImage src={author.includes('Atlas') ? "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=400" : "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400"} />
+              ) : null}
+              <AvatarFallback className="bg-primary/20 text-primary font-bold text-xs">{getInitials(author)}</AvatarFallback>
             </Avatar>
             <div>
-              <CardTitle className="text-lg">User #{post.userId}</CardTitle>
-              <CardDescription className="text-xs">
+              <div className="flex items-center gap-2 flex-wrap">
+                <CardTitle className="text-sm font-bold text-foreground">{author}</CardTitle>
+                {isInstructor && (
+                  <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30 text-[10px]">
+                    ⭐ Verified Mentor
+                  </Badge>
+                )}
+              </div>
+              <CardDescription className="text-xs text-muted-foreground">
                 {formatDate(post.createdAt)}
               </CardDescription>
             </div>
           </div>
-          <Badge variant="outline">{post.type}</Badge>
+          <Badge variant="outline" className="text-[10px] uppercase tracking-wider bg-primary/10 text-primary border-primary/20 font-bold">
+            {post.type}
+          </Badge>
         </div>
       </CardHeader>
       <CardContent>

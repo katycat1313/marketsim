@@ -26,7 +26,7 @@ export async function setupVite(app: Express, server: Server) {
   const serverOptions = {
     middlewareMode: true,
     hmr: { server },
-    allowedHosts: ["localhost", "127.0.0.1", "0.0.0.0"] as string[] | true,
+    allowedHosts: true,
   };
 
   const vite = await createViteServer({
@@ -62,7 +62,10 @@ export async function setupVite(app: Express, server: Server) {
         `src="/src/main.tsx?v=${nanoid()}"`,
       );
       const page = await vite.transformIndexHtml(url, template);
-      res.status(200).set({ "Content-Type": "text/html" }).end(page);
+      res.status(200).set({ 
+        "Content-Type": "text/html",
+        "Cache-Control": "no-cache, no-store, must-revalidate"
+      }).end(page);
     } catch (e) {
       vite.ssrFixStacktrace(e as Error);
       next(e);
@@ -71,7 +74,9 @@ export async function setupVite(app: Express, server: Server) {
 }
 
 export function serveStatic(app: Express) {
-  const distPath = path.resolve(__dirname, "public");
+  const distPath = fs.existsSync(path.resolve(__dirname, "public"))
+    ? path.resolve(__dirname, "public")
+    : path.resolve(__dirname, "..", "dist", "public");
 
   if (!fs.existsSync(distPath)) {
     throw new Error(
@@ -79,10 +84,23 @@ export function serveStatic(app: Express) {
     );
   }
 
-  app.use(express.static(distPath));
+  // Immutable caching for hashed assets (JS, CSS, media) for ultra-fast page loads
+  app.use(
+    express.static(distPath, {
+      maxAge: "1y",
+      immutable: true,
+      setHeaders: (res, filePath) => {
+        // HTML and worklet processor files must not be cached so new releases take effect instantly
+        if (filePath.endsWith(".html") || filePath.endsWith("pcm-processor.js")) {
+          res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        }
+      },
+    })
+  );
 
-  // fall through to index.html if the file doesn't exist
+  // Fall through to index.html with no-cache for client-side routing
   app.use("*", (_req, res) => {
+    res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
     res.sendFile(path.resolve(distPath, "index.html"));
   });
 }

@@ -91,7 +91,7 @@ export function EarlyBirdModal({ isOpen, onClose }: EarlyBirdModalProps) {
             Reserve Your Early-Bird Beta Pass
           </DialogTitle>
           <DialogDescription className="text-xs text-muted-foreground mt-1">
-            Get instant access to the AI Flight Simulator, Director Atlas Socratic coaching, and lock in 50% off for life.
+            Get instant access to the AI Campaign Simulator, Director Atlas Socratic coaching, and lock in 50% off for life.
           </DialogDescription>
         </div>
 

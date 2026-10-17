@@ -1,10 +1,30 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'wouter';
 import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import { 
+  BookOpen, 
+  Search, 
+  BarChart3, 
+  Globe, 
+  Megaphone, 
+  FileText, 
+  HelpCircle,
+  CheckCircle2,
+  Cpu,
+  MessageSquare,
+  Columns,
+  Sparkles,
+  Headphones
+} from 'lucide-react';
 import ErrorBoundary from '../components/ErrorBoundary';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
+import TutorialContentRenderer from '../components/TutorialContentRenderer';
+import { MicroFeedback } from '@/components/ui/micro-feedback';
+import { SocraticChatClassroom } from '@/components/SocraticChatClassroom';
 
 // Tutorial interface
 interface Tutorial {
@@ -22,15 +42,23 @@ interface Tutorial {
   estimatedTime: number;
   skillsLearned: string[];
   hasSimulation?: boolean;
-  chapterNumber?: number;
-  isPremium?: boolean; // Flag to indicate premium content
-  isLocked?: boolean; // Flag to indicate if premium content is locked (user doesn't have access)
+}
+
+// Chapter interface
+interface Chapter {
+  number: number;
+  title: string;
+  description: string;
+  image: string;
+  icon: React.ReactNode;
+  tutorials: Tutorial[];
 }
 
 export default function TutorialsPage() {
   const [tutorials, setTutorials] = useState<Tutorial[]>([]);
   const [progress, setProgress] = useState<number[]>([]);
   const [currentTutorial, setCurrentTutorial] = useState<Tutorial | null>(null);
+  const [learningMode, setLearningMode] = useState<'study_guide' | 'listen' | 'conversational'>('conversational');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -42,6 +70,8 @@ export default function TutorialsPage() {
   const fetchTutorials = async () => {
     try {
       setLoading(true);
+      console.log('Fetching tutorials...');
+      
       const response = await fetch('/api/tutorials', {
         credentials: 'include',
         headers: {
@@ -49,22 +79,42 @@ export default function TutorialsPage() {
         }
       });
       
+      console.log('Tutorial API response status:', response.status);
+      
       if (!response.ok) {
         throw new Error(`Server responded with status: ${response.status}`);
       }
       
       const data = await response.json();
+      console.log(`Retrieved ${data.length} tutorials from API`);
       
       if (Array.isArray(data)) {
+        // Make sure we have at least some tutorials
+        if (data.length === 0) {
+          console.warn('No tutorials were returned from the API');
+          setError('No tutorials found. Please check back later.');
+          setTutorials([]);
+          return;
+        }
+        
         // Sort tutorials by chapter number and subchapter number
         const sortedTutorials = sortTutorialsByChapter(data);
+        console.log(`Sorted ${sortedTutorials.length} tutorials by chapter`);
+        
+        // Log first few tutorials for debugging
+        sortedTutorials.slice(0, 3).forEach((t, i) => {
+          console.log(`Tutorial ${i + 1}:`, t.id, t.title);
+        });
+        
         setTutorials(sortedTutorials);
       } else {
+        console.error('API response is not an array:', data);
         throw new Error('Tutorials API did not return an array');
       }
     } catch (error) {
       console.error('Error fetching tutorials:', error);
       setError(error instanceof Error ? error.message : 'Failed to load tutorials');
+      setTutorials([]); // Set empty array to avoid undefined errors
     } finally {
       setLoading(false);
     }
@@ -103,139 +153,322 @@ export default function TutorialsPage() {
     }
   };
 
+  // Helper function to extract a chapter number from a tutorial
+  const extractChapterNumber = (tutorial: Tutorial): number => {
+    const titleLower = tutorial.title.toLowerCase();
+    const contentLower = tutorial.content.toLowerCase();
+    
+    // Try to extract chapter numbers from tutorial titles or content
+    const titleMatch = titleLower.match(/chapter\s*(\d+)[\-\.]?(\d+)?/i);
+    const contentMatch = contentLower.match(/chapter\s*(\d+)[\-\.]?(\d+)?/i);
+    
+    if (titleMatch) {
+      return parseInt(titleMatch[1]);
+    }
+    
+    if (contentMatch) {
+      return parseInt(contentMatch[1]);
+    }
+    
+    // If no explicit chapter number, use content-based heuristics to assign chapters
+    if (titleLower.includes('content marketing') || 
+        titleLower.includes('ai-powered') || 
+        contentLower.includes('content marketing') ||
+        contentLower.includes('ai-powered seo')) {
+      return 9; // Content Marketing & AI belongs to Chapter 9
+    } else if (titleLower.includes('ai in digital marketing') || 
+              titleLower.includes('ai marketing') || 
+              titleLower.includes('artificial intelligence') || 
+              contentLower.includes('ai revolution') || 
+              contentLower.includes('ai shift') || 
+              contentLower.includes('democratization of technology') ||
+              contentLower.includes('ai benefits') ||
+              contentLower.includes('ai in marketing')) {
+      return 10; // AI in Digital Marketing belongs to Chapter 10
+    } else if (titleLower.includes('advanced analytics') || 
+              titleLower.includes('attribution') || 
+              contentLower.includes('advanced analytics') ||
+              contentLower.includes('attribution model')) {
+      return 11; // Advanced Analytics & Attribution belongs to Chapter 11
+    } else if (titleLower.includes('seo') || contentLower.includes('search engine optimization')) {
+      return 7; // SEO belongs to Chapter 7
+    } else if (titleLower.includes('troubleshoot') || contentLower.includes('troubleshoot')) {
+      return 8; // Troubleshooting to Chapter 8
+    } else if (titleLower.includes('analytics') || 
+               titleLower.includes('data') || 
+               contentLower.includes('analytics') || 
+               contentLower.includes('measurement')) {
+      return 5; // Analytics to Chapter 5
+    } else if (titleLower.includes('email') || 
+               titleLower.includes('social media') || 
+               contentLower.includes('email marketing') || 
+               contentLower.includes('social media')) {
+      return 6; // Marketing Channels to Chapter 6
+    } else if (titleLower.includes('advanced') && 
+              (titleLower.includes('google ads') || titleLower.includes('campaign'))) {
+      return 3; // Advanced Google Ads to Chapter 3
+    } else if (titleLower.includes('google ads') || 
+               titleLower.includes('campaign') || 
+               contentLower.includes('google ads')) {
+      return 2; // Google Ads Fundamentals to Chapter 2
+    } else if (titleLower.includes('goal') || 
+               titleLower.includes('testing') || 
+               contentLower.includes('goal setting') || 
+               contentLower.includes('testing methodologies')) {
+      return 4; // Marketing Objectives to Chapter 4
+    }
+    
+    // Default to Introduction chapter if no specific category is found
+    return 1;
+  };
+
   // Function to sort tutorials by chapter and subchapter
   const sortTutorialsByChapter = (tutorials: Tutorial[]): Tutorial[] => {
     return tutorials.sort((a, b) => {
-      // Extract chapter numbers from titles
+      // First sort by chapter number
+      const aChapter = extractChapterNumber(a);
+      const bChapter = extractChapterNumber(b);
+      
+      if (aChapter !== bChapter) {
+        return aChapter - bChapter;
+      }
+      
+      // If same chapter, try to extract subchapter numbers
       const aTitle = a.title.toLowerCase();
       const bTitle = b.title.toLowerCase();
       
-      // Try to extract chapter numbers from tutorial titles
-      const aMatch = aTitle.match(/chapter\s*(\d+)[\-\.]?(\d+)?/i);
-      const bMatch = bTitle.match(/chapter\s*(\d+)[\-\.]?(\d+)?/i);
+      const aMatch = aTitle.match(/chapter\s*\d+[\-\.](\d+)/i) || 
+                     a.content.toLowerCase().match(/chapter\s*\d+[\-\.](\d+)/i);
+      const bMatch = bTitle.match(/chapter\s*\d+[\-\.](\d+)/i) ||
+                     b.content.toLowerCase().match(/chapter\s*\d+[\-\.](\d+)/i);
       
-      // If both have chapter numbers, compare them
+      // If both have subchapter numbers, compare them
       if (aMatch && bMatch) {
-        const aChapter = parseInt(aMatch[1]);
-        const bChapter = parseInt(bMatch[1]);
-        
-        if (aChapter !== bChapter) {
-          return aChapter - bChapter;
-        }
-        
-        // If same chapter, compare subchapter
-        const aSubChapter = aMatch[2] ? parseInt(aMatch[2]) : 0;
-        const bSubChapter = bMatch[2] ? parseInt(bMatch[2]) : 0;
-        
+        const aSubChapter = parseInt(aMatch[1]);
+        const bSubChapter = parseInt(bMatch[1]);
         return aSubChapter - bSubChapter;
       }
       
-      // If one has chapter number and the other doesn't, prioritize the one with chapter number
+      // If one has subchapter number and the other doesn't, prioritize the one with subchapter number
       if (aMatch) return -1;
       if (bMatch) return 1;
       
-      // If neither has chapter number, sort by ID
+      // If neither has subchapter number, sort by ID
       return a.id - b.id;
     });
   };
 
-  // Group tutorials by chapter
-  const tutorialsByChapter = () => {
-    const chapters: Record<string, Tutorial[]> = {};
+  // Organize tutorials into structured chapters
+  const getChapters = (): Chapter[] => {
+    console.log('Generating chapters structure...');
     
+    // Define chapter structure with consistent images and descriptions
+    const chapterStructure: Chapter[] = [
+      {
+        number: 1,
+        title: "Introduction to Digital Marketing",
+        description: "Basic concepts and fundamentals of digital marketing for beginners",
+        image: "attached_assets/smallbusinessspelled.jpeg",
+        icon: <BookOpen className="h-6 w-6 text-blue-500" />,
+        tutorials: []
+      },
+      {
+        number: 2,
+        title: "Google Ads Fundamentals",
+        description: "Core concepts of Google Ads platform and campaign types",
+        image: "attached_assets/ad-image.jpeg",
+        icon: <Megaphone className="h-6 w-6 text-red-500" />,
+        tutorials: []
+      },
+      {
+        number: 3,
+        title: "Advanced Google Ads",
+        description: "Advanced strategies and optimization techniques for Google Ads",
+        image: "attached_assets/womanwork.jpeg",
+        icon: <Globe className="h-6 w-6 text-green-500" />,
+        tutorials: []
+      },
+      {
+        number: 4,
+        title: "Ethical AI Prompting & Co-Piloting",
+        description: "Prompt engineering, anti-hallucination guardrails, and free AI co-pilots (Gemini & ChatGPT)",
+        image: "attached_assets/small business.jpeg",
+        icon: <Sparkles className="h-6 w-6 text-purple-400" />,
+        tutorials: []
+      },
+      {
+        number: 5,
+        title: "Speed-to-Lead Automation (Make.com)",
+        description: "Automating 60-second lead responses with free Make.com 1-click blueprints",
+        image: "attached_assets/group-thinking.jpeg",
+        icon: <Cpu className="h-6 w-6 text-amber-400" />,
+        tutorials: []
+      },
+      {
+        number: 6,
+        title: "Verified Growth Audit & Capstone",
+        description: "Live client crisis simulation, end-to-end growth audit, and verified portfolio generation",
+        image: "attached_assets/wiered-headshot.jpeg",
+        icon: <CheckCircle2 className="h-6 w-6 text-emerald-400" />,
+        tutorials: []
+      },
+      {
+        number: 7,
+        title: "SEO Mastery",
+        description: "Search engine optimization from basic to advanced techniques",
+        image: "attached_assets/seo-visual.jpeg", 
+        icon: <Search className="h-6 w-6 text-teal-500" />,
+        tutorials: []
+      },
+      {
+        number: 8,
+        title: "Troubleshooting & Best Practices",
+        description: "Problem-solving techniques and industry best practices",
+        image: "attached_assets/cart-with-packages.jpeg",
+        icon: <HelpCircle className="h-6 w-6 text-orange-500" />,
+        tutorials: []
+      },
+      {
+        number: 9,
+        title: "Content Marketing & AI",
+        description: "Content strategy and using AI for SEO content optimization",
+        image: "attached_assets/seo-visual.jpeg",
+        icon: <FileText className="h-6 w-6 text-blue-500" />,
+        tutorials: []
+      },
+      {
+        number: 10,
+        title: "AI in Digital Marketing",
+        description: "Leveraging artificial intelligence to transform your marketing strategy",
+        image: "attached_assets/group-thinking.jpeg",
+        icon: <Cpu className="h-6 w-6 text-green-500" />,
+        tutorials: []
+      },
+      {
+        number: 11,
+        title: "Advanced Analytics & Attribution",
+        description: "Master advanced analytics including multi-touch attribution models",
+        image: "attached_assets/group-thinking.jpeg",
+        icon: <BarChart3 className="h-6 w-6 text-purple-500" />,
+        tutorials: []
+      }
+    ];
+    
+    // Log each tutorial for debugging
+    tutorials.forEach((tutorial, idx) => {
+      console.log(`DEBUG - Tutorial ${idx+1}:`, {
+        id: tutorial.id,
+        title: tutorial.title,
+        chapterNumber: (tutorial as any).chapterNumber,
+      });
+    });
+    
+    // Sort all tutorials using their chapter classification from backend
     tutorials.forEach(tutorial => {
-      // Try to extract chapter number from title
-      const match = tutorial.title.toLowerCase().match(/chapter\s*(\d+)/i) || 
-                   tutorial.content.toLowerCase().match(/chapter\s*(\d+)/i);
+      // Try to use the chapterNumber property first (added by backend)
+      let chapterNum = (tutorial as any).chapterNumber;
       
-      let chapterKey = 'Other';
-      
-      if (match) {
-        chapterKey = `Chapter ${match[1]}`;
-      } else if (tutorial.title.toLowerCase().includes('seo')) {
-        chapterKey = 'SEO';
-      } else if (tutorial.title.toLowerCase().includes('google ads') || tutorial.title.toLowerCase().includes('campaign')) {
-        chapterKey = 'Google Ads';
-      } else if (tutorial.title.toLowerCase().includes('analytics') || tutorial.title.toLowerCase().includes('data')) {
-        chapterKey = 'Analytics';
+      // If no chapterNumber from backend, extract from content
+      if (!chapterNum) {
+        const titleLower = tutorial.title.toLowerCase();
+        const contentLower = tutorial.content.toLowerCase();
+        
+        // Try to match chapter patterns in title or content
+        const chapterMatch = titleLower.match(/chapter\s*(\d+)[\-\.]?(\d+)?/i) || 
+                           contentLower.match(/chapter\s*(\d+)[\-\.]?(\d+)?/i);
+        
+        if (chapterMatch) {
+          chapterNum = parseInt(chapterMatch[1]);
+        }
       }
       
-      if (!chapters[chapterKey]) {
-        chapters[chapterKey] = [];
+      // If we have a chapter number, try to place in matching chapter
+      if (chapterNum) {
+        const chapter = chapterStructure.find(c => c.number === chapterNum);
+        if (chapter) {
+          chapter.tutorials.push(tutorial);
+          return; // Skip further checks after assigning to chapter
+        }
       }
       
-      chapters[chapterKey].push(tutorial);
+      // If no chapter number found or matching chapter, use content-based heuristics
+      const titleLower = tutorial.title.toLowerCase();
+      const contentLower = tutorial.content.toLowerCase();
+      
+      if (titleLower.includes('content marketing') || 
+          titleLower.includes('ai-powered') || 
+          contentLower.includes('content marketing') ||
+          contentLower.includes('ai-powered seo')) {
+        chapterStructure[8].tutorials.push(tutorial); // Content Marketing & AI - Chapter 9
+      } else if (titleLower.includes('ai in digital marketing') || 
+                titleLower.includes('ai marketing') || 
+                titleLower.includes('artificial intelligence') || 
+                contentLower.includes('ai revolution') || 
+                contentLower.includes('ai shift') || 
+                contentLower.includes('democratization of technology') ||
+                contentLower.includes('ai benefits') ||
+                contentLower.includes('ai in marketing')) {
+        chapterStructure[9].tutorials.push(tutorial); // AI in Digital Marketing - Chapter 10
+      } else if (titleLower.includes('advanced analytics') || 
+                titleLower.includes('attribution') || 
+                contentLower.includes('advanced analytics') ||
+                contentLower.includes('attribution model')) {
+        chapterStructure[10].tutorials.push(tutorial); // Advanced Analytics - Chapter 11
+      } else if (titleLower.includes('seo') || contentLower.includes('search engine optimization')) {
+        chapterStructure[6].tutorials.push(tutorial); // SEO - Chapter 7
+      } else if (titleLower.includes('troubleshoot') || contentLower.includes('troubleshoot')) {
+        chapterStructure[7].tutorials.push(tutorial); // Troubleshooting - Chapter 8
+      } else if (titleLower.includes('analytics') || titleLower.includes('data') || 
+                 contentLower.includes('analytics') || contentLower.includes('measurement')) {
+        chapterStructure[4].tutorials.push(tutorial); // Analytics - Chapter 5
+      } else if (titleLower.includes('email') || titleLower.includes('social media') || 
+                 contentLower.includes('email marketing') || contentLower.includes('social media')) {
+        chapterStructure[5].tutorials.push(tutorial); // Marketing Channels - Chapter 6
+      } else if (titleLower.includes('advanced') && 
+                (titleLower.includes('google ads') || titleLower.includes('campaign'))) {
+        chapterStructure[2].tutorials.push(tutorial); // Advanced Google Ads - Chapter 3
+      } else if (titleLower.includes('google ads') || titleLower.includes('campaign') || 
+                 contentLower.includes('google ads')) {
+        chapterStructure[1].tutorials.push(tutorial); // Google Ads Fundamentals - Chapter 2
+      } else if (titleLower.includes('goal') || titleLower.includes('testing') || 
+                 contentLower.includes('goal setting') || contentLower.includes('testing methodologies')) {
+        chapterStructure[3].tutorials.push(tutorial); // Marketing Objectives - Chapter 4
+      } else {
+        // Default to Introduction chapter for unmatched content
+        chapterStructure[0].tutorials.push(tutorial);
+      }
     });
     
-    // Sort each chapter's tutorials
-    Object.keys(chapters).forEach(key => {
-      chapters[key] = sortTutorialsByChapter(chapters[key]);
+    // Add console debug to check tutorial distribution
+    console.log('Tutorial distribution by chapter:');
+    chapterStructure.forEach(chapter => {
+      console.log(`Chapter ${chapter.number}: ${chapter.tutorials.length} tutorials`);
     });
     
-    return chapters;
+    // Return all chapters, even if empty (for debugging purposes)
+    return chapterStructure
+      .map(chapter => ({
+        ...chapter,
+        tutorials: sortTutorialsByChapter(chapter.tutorials)
+      }));
   };
 
-  // Fetch a single tutorial with detailed content
-  const fetchSingleTutorial = async (tutorialId: number) => {
-    try {
-      // Make a request to the single tutorial endpoint
-      const response = await fetch(`/api/tutorials/${tutorialId}`, {
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-      
-      if (!response.ok) {
-        // If the endpoint is not available or returns an error, just use the tutorial from the list
-        console.log(`Single tutorial endpoint failed, using cached tutorial data`);
-        return false;
-      }
-      
-      const tutorialData = await response.json();
-      
-      if (tutorialData) {
-        setCurrentTutorial(tutorialData);
-        return true;
-      }
-      
-      return false;
-    } catch (error) {
-      console.error('Error fetching single tutorial:', error);
-      return false;
-    }
-  };
-  
   // Start tutorial function
-  const startTutorial = async (tutorial: Tutorial) => {
-    // Try to fetch detailed tutorial content first
-    const success = await fetchSingleTutorial(tutorial.id);
-    
-    // If fetch fails, fall back to using the tutorial from the list
-    if (!success) {
-      setCurrentTutorial(tutorial);
-    }
+  const startTutorial = (tutorial: Tutorial) => {
+    setCurrentTutorial(tutorial);
+    window.scrollTo(0, 0);
   };
 
   // Render a tutorial card
   const renderTutorialCard = (tutorial: Tutorial) => {
     const isCompleted = progress.includes(tutorial.id);
-    const isPremium = tutorial.isPremium === true;
-    const isLocked = tutorial.isLocked === true;
     
     return (
-      <Card key={tutorial.id} className={`flex flex-col h-full border ${isPremium ? 'border-purple-500/40' : 'border-[#ffd700]/20'} bg-[#111]/80 shadow-md overflow-hidden relative`}>
-        {isPremium && (
-          <div className="absolute top-0 right-0">
-            <span className="inline-block bg-purple-600 text-white text-xs px-2 py-1 font-bold shadow-lg transform rotate-0 translate-x-2 -translate-y-0">
-              {isLocked ? 'PREMIUM 🔒' : 'PREMIUM'}
-            </span>
-          </div>
-        )}
-        <CardHeader>
+      <Card key={tutorial.id} className="flex flex-col h-full border border-[#ffd700]/20 bg-[#111]/80 shadow-md overflow-hidden relative hover:border-[#ffd700]/50 transition-all duration-300">
+        <CardHeader className="p-4 pb-2">
           <div className="flex items-start justify-between">
-            <div>
-              <div className="mb-1 flex flex-wrap gap-2">
+            <div className="w-full">
+              <div className="flex justify-between mb-1">
                 {tutorial.level && (
                   <span className={`inline-block text-xs font-medium px-2 py-1 rounded-full mb-2 ${
                     tutorial.level.toLowerCase().includes('beginner') ? 'bg-green-100 text-green-800' :
@@ -246,28 +479,31 @@ export default function TutorialsPage() {
                     {tutorial.level}
                   </span>
                 )}
+                {isCompleted && (
+                  <CheckCircle2 className="h-5 w-5 text-green-500" />
+                )}
               </div>
-              <h3 className={`text-lg font-semibold ${isPremium ? 'text-purple-400' : 'text-[#ffd700]'}`}>{tutorial.title}</h3>
+              <h3 className="text-lg font-semibold text-[#ffd700] line-clamp-2">{tutorial.title}</h3>
             </div>
           </div>
         </CardHeader>
-        <CardContent className="flex-grow">
+        <CardContent className="flex-grow p-4 pt-0">
           <div className="text-xs text-gray-400 mb-2">
             Estimated time: {tutorial.estimatedTime || 60} min
           </div>
           
           {tutorial.skillsLearned && tutorial.skillsLearned.length > 0 && (
             <div className="mb-3">
-              <div className="text-xs text-gray-400 mb-1">Skills learned:</div>
+              <div className="text-xs text-gray-400 mb-1">Skills:</div>
               <div className="flex flex-wrap gap-1">
-                {tutorial.skillsLearned.slice(0, 3).map((skill, idx) => (
+                {tutorial.skillsLearned.slice(0, 2).map((skill, idx) => (
                   <span key={idx} className="text-xs px-2 py-1 bg-[#ffd700]/10 text-[#ffd700] rounded">
-                    {skill}
+                    {skill.length > 20 ? skill.substring(0, 20) + '...' : skill}
                   </span>
                 ))}
-                {tutorial.skillsLearned.length > 3 && (
+                {tutorial.skillsLearned.length > 2 && (
                   <span className="text-xs px-2 py-1 bg-[#ffd700]/10 text-[#ffd700] rounded">
-                    +{tutorial.skillsLearned.length - 3} more
+                    +{tutorial.skillsLearned.length - 2} more
                   </span>
                 )}
               </div>
@@ -279,12 +515,9 @@ export default function TutorialsPage() {
               value={isCompleted ? 100 : 0} 
               className={isCompleted ? "bg-green-100" : "bg-gray-100"}
             />
-            {isCompleted && (
-              <span className="absolute right-0 -top-1 text-xs text-green-600">✓ Completed</span>
-            )}
           </div>
         </CardContent>
-        <CardFooter>
+        <CardFooter className="p-4 pt-2">
           <Button
             onClick={() => startTutorial(tutorial)}
             className="w-full relative overflow-hidden group"
@@ -300,19 +533,41 @@ export default function TutorialsPage() {
     );
   };
 
+  // Calculate overall progress percentage
+  const getOverallProgress = () => {
+    if (tutorials.length === 0) return 0;
+    return Math.round((progress.length / tutorials.length) * 100);
+  };
+
   return (
     <div className="container mx-auto py-6">
       <div className="flex flex-col space-y-6">
-        <div className="flex flex-col space-y-2">
-          <h1 className="text-3xl font-bold tracking-tight text-primary flex items-center">
-            <span className="w-8 h-8 rounded-xl bg-primary text-primary-foreground flex items-center justify-center mr-3 text-sm font-black">MS</span>
-            MarketSim AI Flight Academy
-          </h1>
-          <p className="text-muted-foreground">
-            Master digital marketing with our structured learning path. Complete tutorials to unlock simulations.
-          </p>
-          <Separator className="my-4 border-[#ffd700]/20" />
+        <div className="flex flex-col md:flex-row md:justify-between md:items-center space-y-2 md:space-y-0">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight text-[#ffd700] flex items-center">
+              <span className="w-8 h-8 rounded-full bg-[#ffd700] text-black flex items-center justify-center mr-3 text-sm">DZ</span>
+              Marketing Academy
+            </h1>
+            <p className="text-muted-foreground mt-2">
+              Follow our structured learning path from fundamentals to mastery
+            </p>
+          </div>
+          
+          <div className="flex flex-col items-end">
+            <div className="flex items-center space-x-2 mb-2">
+              <span className="text-sm font-medium">Your Progress:</span>
+              <span className="text-[#ffd700] font-semibold">{getOverallProgress()}%</span>
+            </div>
+            <div className="w-48">
+              <Progress value={getOverallProgress()} className="h-2" />
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">
+              {progress.length}/{tutorials.length} tutorials completed
+            </p>
+          </div>
         </div>
+
+        <Separator className="my-4 border-[#ffd700]/20" />
         
         <ErrorBoundary
           fallback={
@@ -347,145 +602,376 @@ export default function TutorialsPage() {
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           ) : currentTutorial ? (
-            <div className={`bg-[#111]/80 p-6 rounded-lg border ${currentTutorial.isPremium ? 'border-purple-500/40' : 'border-[#ffd700]/20'} mb-6 shadow-lg relative`}>
-              {currentTutorial.isPremium && (
-                <div className="absolute top-0 right-0 -mt-4 -mr-2">
-                  <span className="inline-block bg-purple-600 text-white text-xs px-3 py-1 font-bold shadow-lg">
-                    {currentTutorial.isLocked ? 'PREMIUM CONTENT (LOCKED)' : 'PREMIUM CONTENT'}
-                  </span>
+            <div className="rounded-2xl border border-white/10 bg-slate-900/60 backdrop-blur-xl p-3 sm:p-5 md:p-6 mb-6 shadow-2xl">
+              {/* Header with Title and Mode Switcher */}
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4 mb-4 sm:mb-6 border-b border-white/10 pb-4">
+                <div>
+                  <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                    <Badge variant="outline" className="text-[11px] font-semibold px-2.5 py-0.5 bg-primary/10 text-primary border-primary/30">
+                      Level: {currentTutorial.level}
+                    </Badge>
+                    <span className="text-xs px-2.5 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-white/10">
+                      ⏱️ {currentTutorial.estimatedTime || 45} mins
+                    </span>
+                  </div>
+                  <h2 className="text-lg sm:text-xl md:text-2xl font-extrabold text-foreground tracking-tight">
+                    {currentTutorial.title}
+                  </h2>
                 </div>
-              )}
-              <div className="flex justify-between items-center mb-4">
-                <h2 className={`text-xl font-bold ${currentTutorial.isPremium ? 'text-purple-400' : 'text-[#ffd700]'}`}>
-                  {currentTutorial.title}
-                </h2>
-                <Button 
-                  variant="outline" 
-                  onClick={() => setCurrentTutorial(null)}
-                  className={`${currentTutorial.isPremium ? 'border-purple-500/40 text-purple-400 hover:bg-purple-500/10' : 'border-[#ffd700]/40 text-[#ffd700] hover:bg-[#ffd700]/10'}`}
-                >
-                  Back to Tutorials
-                </Button>
+
+                <div className="flex items-center gap-2 self-stretch sm:self-start md:self-auto justify-end">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => setCurrentTutorial(null)}
+                    className="border-white/10 text-muted-foreground hover:text-foreground text-xs h-8"
+                  >
+                    Back to Syllabus
+                  </Button>
+                </div>
               </div>
-              <div className="mb-4 flex flex-wrap gap-2">
-                <span className="text-sm px-3 py-1 bg-[#333] text-[#ffd700] rounded-full">
-                  Level: {currentTutorial.level}
-                </span>
-                <span className="text-sm px-3 py-1 bg-[#333] text-[#ffd700] rounded-full">
-                  Estimated Time: {currentTutorial.estimatedTime || 60} minutes
-                </span>
-                {currentTutorial.isPremium && (
-                  <span className="text-sm px-3 py-1 bg-purple-900/50 text-purple-300 rounded-full">
-                    Premium Content
-                  </span>
-                )}
-              </div>
-              <div className="prose prose-invert max-w-none mt-6">
-                <div dangerouslySetInnerHTML={{ __html: currentTutorial.content.replace(/\n/g, '<br />') }} />
-                
-                {currentTutorial.isLocked && (
-                  <div className="mt-8 bg-purple-900/30 border border-purple-500/30 p-6 rounded-lg text-center">
-                    <h3 className="text-xl font-bold text-purple-400 mb-2">Unlock Premium Content</h3>
-                    <p className="text-gray-300 mb-4">
-                      Subscribe to our premium plan to access this content and all other premium features.
+
+              {/* Learning Style Chooser: "How do you learn best? Pick an option below. This can be switched whenever." */}
+              <div className="mb-6 p-4 sm:p-5 rounded-2xl bg-slate-950/70 border border-white/10 shadow-lg">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+                  <div>
+                    <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
+                      <Sparkles className="h-4 w-4 text-primary" />
+                      <span>How do you learn best? Pick an option below.</span>
+                    </h3>
+                    <p className="text-xs text-muted-foreground">
+                      This can be switched whenever.
                     </p>
-                    <Button 
-                      onClick={() => window.location.href = '/pricing'}
-                      className="bg-purple-600 hover:bg-purple-700 text-white font-bold"
-                    >
-                      Upgrade Subscription
-                    </Button>
                   </div>
-                )}
+                  <Badge variant="outline" className="text-[11px] font-mono text-primary border-primary/30 bg-primary/10 self-start sm:self-auto">
+                    {learningMode === 'study_guide' && '📖 Study Guide Active'}
+                    {learningMode === 'listen' && '🎧 Listen to the Lesson Active'}
+                    {learningMode === 'conversational' && '🎙️ Conversational Active'}
+                  </Badge>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                  {/* Option 1: Study Guide */}
+                  <button
+                    type="button"
+                    onClick={() => setLearningMode('study_guide')}
+                    className={`p-3 rounded-xl border text-left transition-all flex flex-col justify-between gap-1.5 ${
+                      learningMode === 'study_guide'
+                        ? 'bg-primary/15 border-primary text-foreground shadow-md ring-1 ring-primary/50'
+                        : 'bg-card/40 border-border/70 text-muted-foreground hover:bg-card/80 hover:text-foreground'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2 font-bold text-xs text-foreground">
+                      <BookOpen className="h-4 w-4 text-primary shrink-0" />
+                      <span>Study Guide</span>
+                    </div>
+                    <p className="text-[11px] text-muted-foreground leading-snug">
+                      Self-paced written notes, key formulas, diagrams & tactical steps.
+                    </p>
+                  </button>
+
+                  {/* Option 2: Listen to the Lesson */}
+                  <button
+                    type="button"
+                    onClick={() => setLearningMode('listen')}
+                    className={`p-3 rounded-xl border text-left transition-all flex flex-col justify-between gap-1.5 ${
+                      learningMode === 'listen'
+                        ? 'bg-primary/15 border-primary text-foreground shadow-md ring-1 ring-primary/50'
+                        : 'bg-card/40 border-border/70 text-muted-foreground hover:bg-card/80 hover:text-foreground'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2 font-bold text-xs text-foreground">
+                      <Headphones className="h-4 w-4 text-primary shrink-0" />
+                      <span>Listen to the Lesson</span>
+                    </div>
+                    <p className="text-[11px] text-muted-foreground leading-snug">
+                      Read-aloud audio narration of the lesson powered by Deepgram Aura.
+                    </p>
+                  </button>
+
+                  {/* Option 3: Conversational */}
+                  <button
+                    type="button"
+                    onClick={() => setLearningMode('conversational')}
+                    className={`p-3 rounded-xl border text-left transition-all flex flex-col justify-between gap-1.5 ${
+                      learningMode === 'conversational'
+                        ? 'bg-primary/15 border-primary text-foreground shadow-md ring-1 ring-primary/50'
+                        : 'bg-card/40 border-border/70 text-muted-foreground hover:bg-card/80 hover:text-foreground'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2 font-bold text-xs text-foreground">
+                      <MessageSquare className="h-4 w-4 text-primary shrink-0" />
+                      <span>Conversational</span>
+                    </div>
+                    <p className="text-[11px] text-muted-foreground leading-snug">
+                      1-on-1 talk with your instructor via Gemini Live bidirectional voice or chat.
+                    </p>
+                  </button>
+                </div>
               </div>
-              
-              {currentTutorial.tasks && currentTutorial.tasks.length > 0 && (
-                <div className="mt-8">
-                  <h3 className="text-xl font-bold text-[#ffd700] mb-4">Tasks & Practice</h3>
-                  <div className="space-y-4">
-                    {currentTutorial.tasks.map((task, index) => (
-                      <div key={task.id} className="bg-[#222] p-4 rounded-lg border border-[#ffd700]/10">
-                        <h4 className="text-lg font-semibold text-[#ffd700] mb-2">
-                          Task {index + 1}: {task.description}
-                        </h4>
-                        <p className="text-sm text-gray-400 mb-3">Type: {task.type}</p>
-                        
-                        <div className="mb-3">
-                          <h5 className="text-sm font-medium text-gray-300 mb-1">Requirements:</h5>
-                          <ul className="list-disc pl-5 text-sm text-gray-400">
-                            {task.requirements.map((req, idx) => (
-                              <li key={idx}>{req}</li>
-                            ))}
-                          </ul>
-                        </div>
-                        
-                        <div>
-                          <h5 className="text-sm font-medium text-gray-300 mb-1">Verification Criteria:</h5>
-                          <ul className="list-disc pl-5 text-sm text-gray-400">
-                            {task.verificationCriteria.map((crit, idx) => (
-                              <li key={idx}>{crit}</li>
-                            ))}
-                          </ul>
-                        </div>
-                      </div>
-                    ))}
+
+              {/* Dynamic Learning Modes */}
+              {learningMode === 'study_guide' && (
+                <div className="prose prose-invert max-w-none p-4 sm:p-6 rounded-xl bg-slate-950/60 border border-white/10 text-slate-200 shadow-xl">
+                  <div className="flex items-center justify-between mb-4 border-b border-white/10 pb-3">
+                    <div className="flex items-center gap-2">
+                      <BookOpen className="h-4 w-4 text-primary" />
+                      <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Study Guide & Reference Notes</span>
+                    </div>
+                    <Badge variant="outline" className="text-[10px] border-emerald-500/30 text-emerald-400 bg-emerald-500/10">
+                      Self-Paced Reading
+                    </Badge>
                   </div>
+                  <TutorialContentRenderer 
+                    content={currentTutorial.content} 
+                    chapterNumber={(currentTutorial as any).chapterNumber}
+                    tutorialIndex={(currentTutorial as any).lessonNumber}
+                    hideAudioBar={true}
+                  />
                 </div>
               )}
-              
-              <div className="mt-8 flex justify-end">
-                <Button 
-                  onClick={() => setCurrentTutorial(null)} 
-                  className="mr-2"
-                  variant="outline"
-                >
-                  Back to List
-                </Button>
-                <Button 
-                  onClick={async () => {
-                    try {
-                      const response = await fetch('/api/tutorials/complete', {
-                        method: 'POST',
-                        body: JSON.stringify({ tutorialId: currentTutorial.id }),
-                        headers: { 'Content-Type': 'application/json' },
-                        credentials: 'include' 
-                      });
-                      
-                      if (!response.ok) {
-                        throw new Error('Failed to mark tutorial as complete');
-                      }
-                      
-                      // Update progress
-                      await fetchProgress();
-                      // Show success message or toast here
-                      
-                      // Go back to list
-                      setCurrentTutorial(null);
-                    } catch (error) {
-                      console.error('Error completing tutorial:', error);
-                      // Show error message or toast here
-                    }
-                  }}
-                  disabled={progress.includes(currentTutorial.id)}
-                >
-                  {progress.includes(currentTutorial.id) ? 'Completed ✓' : 'Mark as Complete'}
-                </Button>
+
+              {learningMode === 'listen' && (
+                <div className="prose prose-invert max-w-none p-4 sm:p-6 rounded-xl bg-slate-950/60 border border-white/10 text-slate-200 shadow-xl">
+                  <div className="flex items-center justify-between mb-4 border-b border-white/10 pb-3">
+                    <div className="flex items-center gap-2">
+                      <Headphones className="h-4 w-4 text-primary" />
+                      <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Listen to the Lesson</span>
+                    </div>
+                    <Badge variant="outline" className="text-[10px] border-primary/30 text-primary bg-primary/10">
+                      Read-Aloud Narration
+                    </Badge>
+                  </div>
+                  <TutorialContentRenderer 
+                    content={currentTutorial.content} 
+                    chapterNumber={(currentTutorial as any).chapterNumber}
+                    tutorialIndex={(currentTutorial as any).lessonNumber}
+                    hideAudioBar={false}
+                  />
+                </div>
+              )}
+
+              {learningMode === 'conversational' && (
+                <div className="space-y-4">
+                  <SocraticChatClassroom
+                    lessonTitle={currentTutorial.title}
+                    lessonLevel={currentTutorial.level}
+                    chapterNumber={(currentTutorial as any).chapterNumber || 1}
+                    simulationLink={(currentTutorial as any).chapterNumber === 2 ? "/ad-simulation/1" : (currentTutorial as any).chapterNumber >= 4 ? "/capstone-simulation" : "/seo-simulation/1"}
+                    simulationName={(currentTutorial as any).chapterNumber === 2 ? "Dr. Miller Dental (Paid Search Auction)" : (currentTutorial as any).chapterNumber >= 4 ? "Apex Global Growth Capstone Simulation" : "Jenny's Artisan Java (CMS On-Page Repair)"}
+                    playbookContent={currentTutorial.content}
+                    isSplitView={false}
+                  />
+                </div>
+              )}
+
+              <div className="mt-6 mb-2">
+                <MicroFeedback 
+                  contentType="tutorial"
+                  contentId={currentTutorial.id}
+                  context={`Tutorial: ${currentTutorial.title}`}
+                  className="justify-end"
+                />
               </div>
+
+              {/* Seamless Course Flow: Previous / Simulation / Next Navigation Strip */}
+              {(() => {
+                const currentIndex = tutorials.findIndex(t => t.id === currentTutorial.id);
+                const prevTutorial = currentIndex > 0 ? tutorials[currentIndex - 1] : null;
+                const nextTutorial = currentIndex >= 0 && currentIndex < tutorials.length - 1 ? tutorials[currentIndex + 1] : null;
+                const currentChapterNum = (currentTutorial as any).chapterNumber || 1;
+                const chapterTutorials = tutorials.filter(t => ((t as any).chapterNumber || 1) === currentChapterNum);
+                const isLastLessonOfWeek = chapterTutorials.length > 0 && chapterTutorials[chapterTutorials.length - 1].id === currentTutorial.id;
+                const isWeekCompleted = chapterTutorials.length > 0 && chapterTutorials.every(t => progress.includes(t.id));
+                const weekSimLink = currentChapterNum === 2 ? "/ad-simulation/1" : currentChapterNum >= 4 ? "/capstone-simulation" : "/seo-simulation/1";
+                const weekSimName = currentChapterNum === 2 ? "Week 2: Dr. Miller Dental (Paid Search)" : currentChapterNum >= 4 ? "Week 6: Apex Global Growth Capstone" : "Week 1: Jenny's Artisan Java (CMS SEO)";
+
+                return (
+                  <div className="mt-10 p-5 rounded-2xl bg-card border border-border/80 shadow-xl flex flex-col md:flex-row items-center justify-between gap-4">
+                    {/* Previous Lesson Button */}
+                    <Button 
+                      variant="outline"
+                      disabled={!prevTutorial}
+                      onClick={() => {
+                        if (prevTutorial) {
+                          setCurrentTutorial(prevTutorial);
+                          window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }
+                      }}
+                      className="w-full md:w-auto text-xs h-10 border-border hover:bg-secondary flex items-center gap-2"
+                    >
+                      <span>⬅️</span>
+                      <span className="truncate max-w-[160px]">
+                        {prevTutorial ? prevTutorial.title : "First Lesson"}
+                      </span>
+                    </Button>
+
+                    {/* Week's Simulation Workbench (Available throughout the week) */}
+                    <Button
+                      asChild
+                      className="w-full md:w-auto bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs h-10 px-5 shadow-lg flex items-center gap-2"
+                      title="Practice client simulation workbench — available throughout the week"
+                    >
+                      <Link href={weekSimLink}>
+                        <span>🛠️</span>
+                        <span>{weekSimName} (Open All Week)</span>
+                      </Link>
+                    </Button>
+
+                    {/* Weekly Assessment Quiz Button - Only unlocked at end of week once week's lessons are completed */}
+                    {(isLastLessonOfWeek || isWeekCompleted) ? (
+                      <Button
+                        asChild
+                        className="w-full md:w-auto bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black font-extrabold text-xs h-10 px-4 shadow-md flex items-center gap-1.5 animate-pulse"
+                        title="End-of-Week Assessment Quiz"
+                      >
+                        <Link href="/seo-quiz">
+                          <span>📝</span>
+                          <span>Take Week {currentChapterNum} Assessment Quiz</span>
+                        </Link>
+                      </Button>
+                    ) : (
+                      <div className="hidden lg:flex items-center gap-1.5 text-[11px] text-muted-foreground/80 italic px-3 py-2 bg-secondary/30 rounded-lg border border-border/50">
+                        <span>🔒</span>
+                        <span>Weekly Assessment unlocks after Lesson {chapterTutorials.length}</span>
+                      </div>
+                    )}
+
+                    {/* Next Lesson / Complete Button */}
+                    {nextTutorial ? (
+                      <Button 
+                        onClick={async () => {
+                          try {
+                            await fetch('/api/tutorials/complete', {
+                              method: 'POST',
+                              body: JSON.stringify({ tutorialId: currentTutorial.id }),
+                              headers: { 'Content-Type': 'application/json' },
+                              credentials: 'include' 
+                            });
+                            await fetchProgress();
+                          } catch (e) {}
+                          setCurrentTutorial(nextTutorial);
+                          window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }}
+                        className="w-full md:w-auto bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs h-10 flex items-center gap-2"
+                      >
+                        <span className="truncate max-w-[160px]">Next: {nextTutorial.title}</span>
+                        <span>➡️</span>
+                      </Button>
+                    ) : (
+                      <Button 
+                        onClick={async () => {
+                          try {
+                            await fetch('/api/tutorials/complete', {
+                              method: 'POST',
+                              body: JSON.stringify({ tutorialId: currentTutorial.id }),
+                              headers: { 'Content-Type': 'application/json' },
+                              credentials: 'include' 
+                            });
+                            await fetchProgress();
+                          } catch (e) {}
+                          setCurrentTutorial(null);
+                        }}
+                        className="w-full md:w-auto bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs h-10"
+                      >
+                        <span>🎉 Complete & Return to Syllabus</span>
+                      </Button>
+                    )}
+                  </div>
+                );
+              })()}
             </div>
           ) : (
-            <div className="space-y-10">
-              {Object.entries(tutorialsByChapter()).map(([chapterName, chapterTutorials]) => (
-                <div key={chapterName} className="mb-8 p-2 rounded-lg bg-[#111]/40 shadow-md border border-[#ffd700]/10">
-                  <div className="mb-4 pl-2 border-l-4 border-[#ffd700]">
-                    <h3 className="text-xl font-bold text-[#ffd700]">
-                      {chapterName}
-                    </h3>
-                    <p className="text-[#f5f5f5]/70 text-sm mb-2">
-                      {chapterTutorials.length} {chapterTutorials.length === 1 ? 'lesson' : 'lessons'} available
-                    </p>
+            <div className="space-y-12">
+              {getChapters().map((chapter) => (
+                <div key={chapter.number} className="rounded-xl overflow-hidden bg-[#111]/60 shadow-lg border border-[#ffd700]/10 hover:border-[#ffd700]/20 transition-all duration-300">
+                  <div className="relative h-48 md:h-60 overflow-hidden">
+                    <img 
+                      src={chapter.image} 
+                      alt={`Chapter ${chapter.number}: ${chapter.title}`} 
+                      className="w-full h-full object-cover opacity-80 hover:opacity-100 transition-opacity duration-300"
+                    />
+                    <div className="absolute inset-0 bg-black/50 flex items-center justify-center flex-col p-6 hover:bg-black/40 transition-all duration-300">
+                      <div className="mb-2 rounded-full bg-[#ffd700] p-2">
+                        {chapter.icon}
+                      </div>
+                      <h2 className="text-2xl md:text-3xl font-bold text-white text-center">
+                        Chapter {chapter.number}: {chapter.title}
+                      </h2>
+                      <p className="text-white/80 text-center mt-2 max-w-2xl">
+                        {chapter.description}
+                      </p>
+                    </div>
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-2">
-                    {chapterTutorials.map(renderTutorialCard)}
+                  <div className="p-6">
+                    <div className="flex justify-between items-center mb-4">
+                      <h3 className="text-xl font-semibold text-[#ffd700]">Lessons in This Chapter</h3>
+                      <span className="text-sm text-gray-400">
+                        {chapter.tutorials.length} {chapter.tutorials.length === 1 ? 'lesson' : 'lessons'}
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {chapter.tutorials.length > 0 ? 
+                        chapter.tutorials.map(tutorial => renderTutorialCard(tutorial)) : 
+                        <div className="col-span-3 p-8 text-center bg-[#222]/50 rounded-lg border border-dashed border-[#ffd700]/20">
+                          <h4 className="text-[#ffd700] font-medium mb-2">Coming Soon</h4>
+                          <p className="text-gray-400 text-sm">New tutorials for this chapter are being prepared and will be available soon!</p>
+                        </div>
+                      }
+                    </div>
+
+                    {/* Chapter Weekly Simulation & Assessment Action Strip */}
+                    {chapter.tutorials.length > 0 && (() => {
+                      const simLink = chapter.number === 2 ? "/ad-simulation/1" : chapter.number >= 4 ? "/capstone-simulation" : "/seo-simulation/1";
+                      const simName = chapter.number === 2 ? "Dr. Miller Dental (Paid Search)" : chapter.number >= 4 ? "Apex Global Growth Capstone" : "Jenny's Artisan Java (CMS SEO)";
+                      const completedCount = chapter.tutorials.filter(t => progress.includes(t.id)).length;
+                      const allCompleted = completedCount === chapter.tutorials.length && chapter.tutorials.length > 0;
+
+                      return (
+                        <div className="mt-6 pt-4 border-t border-[#ffd700]/15 flex flex-wrap items-center justify-between gap-3 bg-black/40 p-3.5 sm:p-4 rounded-xl">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <Badge variant="outline" className="text-xs border-[#ffd700]/30 text-[#ffd700] bg-[#ffd700]/10 font-bold">
+                              Week {chapter.number} Progress: {completedCount}/{chapter.tutorials.length} Lessons
+                            </Badge>
+                            <span className="text-xs text-muted-foreground hidden sm:inline">
+                              Simulations are open all week for hands-on practice.
+                            </span>
+                          </div>
+
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <Button
+                              asChild
+                              size="sm"
+                              className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs h-8 shadow"
+                              title="Practice hands-on simulation workbench anytime throughout the week"
+                            >
+                              <Link href={simLink}>
+                                <span className="mr-1">🛠️</span>
+                                <span>Practice in {simName}</span>
+                              </Link>
+                            </Button>
+
+                            {allCompleted ? (
+                              <Button
+                                asChild
+                                size="sm"
+                                className="bg-amber-500 hover:bg-amber-400 text-black font-extrabold text-xs h-8 shadow animate-pulse"
+                                title="Week complete! Take the weekly assessment quiz"
+                              >
+                                <Link href="/seo-quiz">
+                                  <span className="mr-1">📝</span>
+                                  <span>Take Week {chapter.number} Assessment Quiz</span>
+                                </Link>
+                              </Button>
+                            ) : (
+                              <Badge variant="outline" className="text-[11px] text-muted-foreground border-border bg-secondary/20 py-1.5 px-2.5">
+                                🔒 Assessment unlocks after Week {chapter.number} lessons
+                              </Badge>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })()}
                   </div>
                 </div>
               ))}

@@ -321,7 +321,7 @@ VERIFIED PERFORMANCE METRICS:
           </div>
         )}
 
-        {/* Agency Interview Positioning Masterclass Guide */}
+        {/* Agency Interview Positioning Strategy Guide */}
         <Card className="border-border/60 bg-gradient-to-r from-primary/10 via-card to-background p-6 space-y-4">
           <div className="flex items-center gap-2 text-primary font-bold text-base">
             <Sparkles className="h-5 w-5" />

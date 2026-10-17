@@ -12,13 +12,14 @@ import CampaignCreator from "@/pages/campaign-creator";
 import Dashboard from "@/pages/dashboard";
 import ApiSettings from "@/pages/api-settings";
 import NetworkPage from "@/pages/network";
+import CommunityPage from "@/pages/community";
 import SeoSimulationsPage from "@/pages/seo-simulations";
 import SeoSimulationPage from "@/pages/seo-simulation";
 import SeoQuizPage from "@/pages/seo-quiz";
 import AdSimulationsPage from "@/pages/ad-simulations";
 import AdSimulationPage from "@/pages/ad-simulation";
 import DataVisualizationPage from "@/pages/data-visualization";
-import TutorialsPage from "@/pages/tutorials-new";
+import TutorialsPage from "@/pages/tutorials";
 import SubscriptionPage from "@/pages/subscription";
 import SubscriptionSuccessPage from "@/pages/subscription/success";
 import SubscriptionCancelPage from "@/pages/subscription/cancel";
@@ -28,6 +29,7 @@ import PortfolioViewPage from "@/pages/portfolio-view";
 import InterviewSimulatorPage from "@/pages/interview-simulator";
 import CapstoneSimulationPage from "@/pages/capstone-simulation";
 import CustomBusinessHub from "@/pages/custom-business-hub";
+import ABTestWorkshop from "@/pages/ab-test-workshop";
 import Achievements from "@/components/Achievements";
 import Posts from "@/components/Posts";
 import AIAssistant from "@/components/AIAssistant";
@@ -70,6 +72,7 @@ import {
   Trophy,
   Sparkles,
   Building2,
+  Split,
   X
 } from "lucide-react";
 
@@ -101,9 +104,12 @@ function ProtectedRoute({ component: Component }: { component: React.ComponentTy
   ) : null;
 }
 
-function SideNav() {
+interface SideNavProps {
+  onClose?: () => void;
+}
+
+function SideNav({ onClose }: SideNavProps) {
   const [location] = useLocation();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
 
   const isActive = (path: string) => {
@@ -112,65 +118,45 @@ function SideNav() {
     return false;
   };
 
+  const handleLinkClick = () => {
+    if (onClose) onClose();
+  };
+
   const toggleDropdown = (dropdown: string) => {
     setActiveDropdown(activeDropdown === dropdown ? null : dropdown);
   };
 
   return (
-    <>
-      {/* Mobile Header */}
-      <header className="md:hidden border-b bg-background sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-3 flex justify-between items-center">
-          <Link href="/">
-            <div className="font-bold text-xl">
-              <span className="text-primary">MarketSim</span>
-            </div>
-          </Link>
+    <aside className="w-64 h-full bg-card/95 backdrop-blur-xl border-r border-border/60 flex flex-col shrink-0 shadow-2xl md:shadow-none">
+      {/* Logo and Close button */}
+      <div className="flex items-center justify-between p-4 border-b border-border/60 shrink-0">
+        <Link href="/" onClick={handleLinkClick}>
+          <Logo className="scale-90" />
+        </Link>
+        {onClose && (
           <button 
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="p-2 rounded-md hover:bg-secondary"
+            className="md:hidden p-2 rounded-md hover:bg-secondary text-muted-foreground hover:text-foreground"
+            onClick={onClose}
+            aria-label="Close navigation"
           >
-            <Menu className="h-6 w-6" />
+            <X className="h-5 w-5" />
           </button>
-        </div>
-      </header>
+        )}
+      </div>
 
-      {/* Sidebar Navigation */}
-      <aside className={`
-        fixed inset-0 z-40 bg-card/85 backdrop-blur-xl border-r border-border/60
-        transform transition-transform duration-200 ease-in-out
-        md:relative md:translate-x-0 md:w-64 md:shrink-0 md:block
-        ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
-      `}>
-        {/* Logo and Close button for mobile */}
-        <div className="flex items-center justify-between p-4 border-b md:border-b">
-          <Link href="/" onClick={() => setIsMobileMenuOpen(false)}>
-            <Logo className="scale-90" />
-          </Link>
-          <button 
-            className="md:hidden p-2 rounded-md hover:bg-secondary"
-            onClick={() => setIsMobileMenuOpen(false)}
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="18" y1="6" x2="6" y2="18"></line>
-              <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-          </button>
-        </div>
-
-        {/* Sidebar content */}
-        <div className="p-4 h-[calc(100vh-4rem)] overflow-y-auto">
-          <nav className="space-y-6">
-            {/* Home */}
-            <div>
-              <Link href="/" onClick={() => setIsMobileMenuOpen(false)}>
-                <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
-                  ${isActive('/') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
-                  <HomeIcon className="h-5 w-5" />
-                  <span>Home</span>
-                </div>
-              </Link>
-            </div>
+      {/* Sidebar content */}
+      <div className="p-4 flex-1 overflow-y-auto">
+        <nav className="space-y-6">
+          {/* Home */}
+          <div>
+            <Link href="/" onClick={handleLinkClick}>
+              <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
+                ${isActive('/') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
+                <HomeIcon className="h-5 w-5" />
+                <span>Home</span>
+              </div>
+            </Link>
+          </div>
 
             {/* Simulations Section */}
             <div className="space-y-2">
@@ -178,7 +164,7 @@ function SideNav() {
                 AGENCY SIMULATIONS
               </div>
               <div className="space-y-1 pl-2">
-                <Link href="/ad-simulations" onClick={() => setIsMobileMenuOpen(false)}>
+                <Link href="/ad-simulations" onClick={handleLinkClick}>
                   <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
                     ${isActive('/ad-simulation') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
                     <MousePointer className="h-5 w-5 text-primary" />
@@ -186,15 +172,15 @@ function SideNav() {
                   </div>
                 </Link>
 
-                <Link href="/capstone-simulation" onClick={() => setIsMobileMenuOpen(false)}>
+                <Link href="/capstone-simulation" onClick={handleLinkClick}>
                   <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
                     ${isActive('/capstone-simulation') ? 'bg-amber-500/15 text-amber-400 font-medium border border-amber-500/30' : 'text-amber-400/90 hover:bg-amber-500/10'}`}>
                     <Trophy className="h-5 w-5 text-amber-400" />
-                    <span>🏆 Master Capstone</span>
+                    <span>🏆 Agency Capstone</span>
                   </div>
                 </Link>
 
-                <Link href="/seo-simulations" onClick={() => setIsMobileMenuOpen(false)}>
+                <Link href="/seo-simulations" onClick={handleLinkClick}>
                   <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
                     ${isActive('/seo-simulation') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
                     <Search className="h-5 w-5" />
@@ -210,7 +196,7 @@ function SideNav() {
                 CAREER PROOF OF WORK
               </div>
               <div className="space-y-1 pl-2">
-                <Link href="/portfolio" onClick={() => setIsMobileMenuOpen(false)}>
+                <Link href="/portfolio" onClick={handleLinkClick}>
                   <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
                     ${isActive('/portfolio') ? 'bg-emerald-500/15 text-emerald-400 font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
                     <Briefcase className="h-5 w-5 text-emerald-400" />
@@ -218,11 +204,36 @@ function SideNav() {
                   </div>
                 </Link>
 
-                <Link href="/interview-prep" onClick={() => setIsMobileMenuOpen(false)}>
+                <Link href="/interview-prep" onClick={handleLinkClick}>
                   <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
                     ${isActive('/interview-prep') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
                     <Mic className="h-5 w-5 text-primary" />
                     <span>AI Interview Prep</span>
+                  </div>
+                </Link>
+              </div>
+            </div>
+
+            {/* Community & Peer Network Section */}
+            <div className="space-y-2">
+              <div className="text-xs uppercase text-muted-foreground font-semibold tracking-wider pl-2 flex items-center justify-between">
+                <span>COMMUNITY & NETWORK</span>
+                <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold mr-2">LIVE</span>
+              </div>
+              <div className="space-y-1 pl-2">
+                <Link href="/community" onClick={handleLinkClick}>
+                  <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
+                    ${isActive('/community') ? 'bg-indigo-500/15 text-indigo-400 font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
+                    <MessageSquare className="h-5 w-5 text-indigo-400" />
+                    <span>Growth Feed & Debriefs</span>
+                  </div>
+                </Link>
+
+                <Link href="/network" onClick={handleLinkClick}>
+                  <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
+                    ${isActive('/network') ? 'bg-teal-500/15 text-teal-400 font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
+                    <Users className="h-5 w-5 text-teal-400" />
+                    <span>Peer Network & Mentors</span>
                   </div>
                 </Link>
               </div>
@@ -234,7 +245,7 @@ function SideNav() {
                 STRATEGY & SKILLS
               </div>
               <div className="space-y-1 pl-2">
-                <Link href="/dashboard" onClick={() => setIsMobileMenuOpen(false)}>
+                <Link href="/dashboard" onClick={handleLinkClick}>
                   <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
                     ${isActive('/dashboard') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
                     <BarChart2 className="h-5 w-5" />
@@ -242,7 +253,7 @@ function SideNav() {
                   </div>
                 </Link>
 
-                <Link href="/custom-sandbox" onClick={() => setIsMobileMenuOpen(false)}>
+                <Link href="/custom-sandbox" onClick={handleLinkClick}>
                   <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
                     ${isActive('/custom-sandbox') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
                     <Building2 className="h-5 w-5 text-amber-400" />
@@ -251,7 +262,7 @@ function SideNav() {
                   </div>
                 </Link>
 
-                <Link href="/persona-builder-template" onClick={() => setIsMobileMenuOpen(false)}>
+                <Link href="/persona-builder-template" onClick={handleLinkClick}>
                   <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
                     ${isActive('/persona-builder-template') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
                     <Users className="h-5 w-5" />
@@ -259,7 +270,7 @@ function SideNav() {
                   </div>
                 </Link>
 
-                <Link href="/data-visualization" onClick={() => setIsMobileMenuOpen(false)}>
+                <Link href="/data-visualization" onClick={handleLinkClick}>
                   <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
                     ${isActive('/data-visualization') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
                     <LineChart className="h-5 w-5" />
@@ -267,7 +278,15 @@ function SideNav() {
                   </div>
                 </Link>
 
-                <Link href="/tutorials-new" onClick={() => setIsMobileMenuOpen(false)}>
+                <Link href="/ab-test-workshop" onClick={handleLinkClick}>
+                  <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
+                    ${isActive('/ab-test-workshop') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
+                    <Split className="h-5 w-5 text-indigo-400" />
+                    <span>A/B Testing Lab</span>
+                  </div>
+                </Link>
+
+                <Link href="/tutorials-new" onClick={handleLinkClick}>
                   <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
                     ${isActive('/tutorials-new') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
                     <GraduationCap className="h-5 w-5" />
@@ -283,14 +302,14 @@ function SideNav() {
                 ACCOUNT
               </div>
               <div className="space-y-1 pl-2">
-                <Link href="/subscription" onClick={() => setIsMobileMenuOpen(false)}>
+                <Link href="/subscription" onClick={handleLinkClick}>
                   <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
                     ${isActive('/subscription') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
                     <CreditCard className="h-5 w-5" />
                     <span>Subscription</span>
                   </div>
                 </Link>
-                <Link href="/api-settings" onClick={() => setIsMobileMenuOpen(false)}>
+                <Link href="/api-settings" onClick={handleLinkClick}>
                   <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
                     ${isActive('/api-settings') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
                     <Settings className="h-5 w-5" />
@@ -302,18 +321,14 @@ function SideNav() {
           </nav>
         </div>
       </aside>
-    </>
   );
 }
 
 function Router() {
-  const [sidebarVisible, setSidebarVisible] = useState(true);
+  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
+  const [desktopSidebarVisible, setDesktopSidebarVisible] = useState(true);
   const { isAuthenticated, user, logout } = useAuth();
   const [, navigate] = useLocation();
-
-  const toggleSidebar = () => {
-    setSidebarVisible(!sidebarVisible);
-  };
 
   const handleLogout = () => {
     logout();
@@ -322,18 +337,38 @@ function Router() {
 
   return (
     <div className="flex min-h-screen bg-transparent">
-      {/* Sidebar */}
-      <div className={`fixed md:relative transition-all duration-300 ease-in-out h-full z-40 
-        ${sidebarVisible ? 'translate-x-0' : '-translate-x-full md:w-0'}`}>
+      {/* Mobile Backdrop Overlay */}
+      {mobileDrawerOpen && (
+        <div 
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 md:hidden animate-in fade-in duration-200"
+          onClick={() => setMobileDrawerOpen(false)}
+        />
+      )}
+
+      {/* Mobile Drawer */}
+      <div className={`fixed inset-y-0 left-0 z-50 md:hidden transition-transform duration-300 ease-in-out ${
+        mobileDrawerOpen ? 'translate-x-0' : '-translate-x-full'
+      }`}>
+        <SideNav onClose={() => setMobileDrawerOpen(false)} />
+      </div>
+
+      {/* Desktop Persistent Sidebar */}
+      <div className={`hidden md:block transition-all duration-300 ease-in-out h-full shrink-0 ${
+        desktopSidebarVisible ? 'w-64' : 'w-0 overflow-hidden'
+      }`}>
         <SideNav />
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col w-full">
+      <div className="flex-1 flex flex-col min-w-0 w-full">
         {/* Mobile Top Bar */}
-        <div className="md:hidden flex items-center justify-between p-2 border-b border-border/60 bg-background/80 backdrop-blur-md sticky top-0 z-30">
-          <div className="flex items-center">
-            <button onClick={toggleSidebar} className="p-2 mr-2 rounded-md hover:bg-secondary">
+        <div className="md:hidden flex items-center justify-between p-2.5 px-4 border-b border-border/60 bg-background/80 backdrop-blur-md sticky top-0 z-30">
+          <div className="flex items-center gap-2">
+            <button 
+              onClick={() => setMobileDrawerOpen(true)} 
+              className="p-1.5 -ml-1 rounded-lg hover:bg-secondary text-foreground"
+              aria-label="Open menu"
+            >
               <Menu className="h-5 w-5" />
             </button>
             <Link href="/">
@@ -344,19 +379,19 @@ function Router() {
             {isAuthenticated ? (
               <button 
                 onClick={handleLogout}
-                className="px-3 py-1 text-sm rounded-md border hover:bg-secondary"
+                className="px-3 py-1 text-xs font-medium rounded-md border hover:bg-secondary"
               >
                 Logout
               </button>
             ) : (
               <>
                 <Link href="/login">
-                  <button className="px-3 py-1 text-sm rounded-md border hover:bg-secondary">
+                  <button className="px-2.5 py-1 text-xs rounded-md border hover:bg-secondary">
                     Login
                   </button>
                 </Link>
                 <Link href="/signup">
-                  <button className="px-3 py-1 text-sm rounded-md bg-primary text-primary-foreground hover:bg-primary/90">
+                  <button className="px-2.5 py-1 text-xs rounded-md bg-primary text-primary-foreground font-medium hover:bg-primary/90">
                     Sign up
                   </button>
                 </Link>
@@ -368,7 +403,11 @@ function Router() {
         {/* Desktop Top Bar */}
         <div className="hidden md:flex items-center justify-between p-2 border-b border-border/60 bg-background/80 backdrop-blur-md sticky top-0 z-30">
           <div className="flex items-center">
-            <button onClick={toggleSidebar} className="p-2 mr-2 rounded-md hover:bg-secondary">
+            <button 
+              onClick={() => setDesktopSidebarVisible(!desktopSidebarVisible)} 
+              className="p-2 mr-2 rounded-md hover:bg-secondary text-muted-foreground hover:text-foreground"
+              title="Toggle Sidebar"
+            >
               <Menu className="h-5 w-5" />
             </button>
             <Link href="/">
@@ -443,6 +482,12 @@ function Router() {
             <Route path="/interview-prep">
               <ProtectedRoute component={InterviewSimulatorPage} />
             </Route>
+            <Route path="/community">
+              <ProtectedRoute component={CommunityPage} />
+            </Route>
+            <Route path="/network">
+              <ProtectedRoute component={NetworkPage} />
+            </Route>
             <Route path="/capstone-simulation">
               <ProtectedRoute component={CapstoneSimulationPage} />
             </Route>
@@ -451,6 +496,12 @@ function Router() {
             </Route>
             <Route path="/seo-simulation/:id">
               <ProtectedRoute component={SeoSimulationPage} />
+            </Route>
+            <Route path="/seo-quiz">
+              <ProtectedRoute component={SeoQuizPage} />
+            </Route>
+            <Route path="/ab-test-workshop">
+              <ProtectedRoute component={ABTestWorkshop} />
             </Route>
             <Route path="/ad-simulations">
               <ProtectedRoute component={AdSimulationsPage} />
@@ -477,10 +528,10 @@ function Router() {
               <Logo className="scale-90" />
             </div>
             <div className="text-xs text-muted-foreground">
-              © 2026 MarketSim AI Flight Academy. All rights reserved.
+              © 2026 MarketSim AI Academy. All rights reserved.
             </div>
             <div className="text-[11px] text-muted-foreground/80 mt-1">
-              The AI-Native Flight Simulator for Digital Marketers & Growth Engineers
+              The Interactive Campaign Simulator for Digital Marketers & Small Businesses
             </div>
           </div>
         </footer>

@@ -131,7 +131,7 @@ Throughout the course, you'll have access to:
 
 - Downloadable templates and checklists
 - Campaign planning worksheets
-- Optimization cheat sheets
+- Optimization study guides and reference frameworks
 - Glossary of key terms and metrics
 - Implementation roadmaps
 

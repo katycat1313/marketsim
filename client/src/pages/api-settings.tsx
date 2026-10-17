@@ -221,7 +221,7 @@ export default function SettingsPage() {
                   </Card>
                 </TabsContent>
 
-                {/* AI Flight Instructor & Small Business Twin Tab */}
+                {/* AI Marketing Director & Small Business Twin Tab */}
                 <TabsContent value="instructor" className="space-y-6">
                   <Card className="border border-border/80 bg-card/60 shadow-lg">
                     <CardHeader className="pb-4">
@@ -232,13 +232,13 @@ export default function SettingsPage() {
                           </div>
                           <div>
                             <CardTitle className="text-xl font-bold flex items-center gap-2">
-                              <span>AI Flight Instructor & Persona</span>
+                              <span>AI Growth Director & Persona</span>
                               <Badge variant="outline" className="text-[10px] bg-primary/10 border-primary/30 text-primary">
                                 Deepgram Aura Studio
                               </Badge>
                             </CardTitle>
                             <CardDescription>
-                              Configure your dedicated AI flight director, teaching style, and studio voice.
+                              Configure your dedicated AI Growth Director, teaching style, and studio voice.
                             </CardDescription>
                           </div>
                         </div>
@@ -267,7 +267,7 @@ export default function SettingsPage() {
                                 👩‍💼 Sarah Jenkins (Female — Content & SEO Lead)
                               </SelectItem>
                               <SelectItem value="atlas">
-                                👨‍💼 Director Atlas (Male — Performance Flight Director)
+                                👨‍💼 Director Atlas (Male — Lead Growth Director)
                               </SelectItem>
                             </SelectContent>
                           </Select>
@@ -465,14 +465,14 @@ export default function SettingsPage() {
                           onClick={() => {
                             saveInstructorConfig(instructorSettings);
                             toast({
-                              title: "Flight Instructor & Digital Twin Saved 🎙️",
+                              title: "Growth Director & Digital Twin Saved 🎙️",
                               description: `Instructor preferences and business settings updated successfully.`
                             });
                           }}
                           className="w-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 text-primary-foreground font-semibold shadow-md"
                         >
                           <Sparkles className="h-4 w-4 mr-2" />
-                          Save Flight Instructor & Digital Twin
+                          Save Growth Director & Digital Twin
                         </Button>
                       </div>
                     </CardContent>

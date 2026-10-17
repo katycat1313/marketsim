@@ -286,7 +286,7 @@ export function EmergencyCrisisModal({
                   className="bg-emerald-600 hover:bg-emerald-500 text-white text-xs flex items-center gap-1.5"
                 >
                   <CheckCircle2 className="h-4 w-4" />
-                  <span>Resume SEO Flight</span>
+                  <span>Resume Campaign Workbench</span>
                 </Button>
               ) : (
                 <Button 

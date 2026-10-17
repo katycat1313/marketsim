@@ -38,7 +38,9 @@ import {
   Activity,
   Users,
   Radio,
-  Filter
+  Filter,
+  Lightbulb,
+  CheckCircle2
 } from 'lucide-react';
 import { 
   ResponsiveContainer, 
@@ -700,7 +702,7 @@ export default function SeoSimulationPage() {
           <Progress value={Math.min(100, (weeklyClicks / 50) * 100)} className="h-2.5 bg-secondary" />
           <div className="flex items-center justify-between text-[11px] text-muted-foreground mt-2">
             <span>Baseline: 2 clicks/wk (Old broken site)</span>
-            <span>{weeklyClicks >= 50 ? "🏆 All 50 clicks achieved! Ready for Friday checkride." : `Each section you fix unlocks +10 clicks. Need ${Math.max(0, 50 - weeklyClicks)} more clicks to clear Week 1.`}</span>
+            <span>{weeklyClicks >= 50 ? "🏆 All 50 clicks achieved! Ready for Friday assessment quiz." : `Each section you fix unlocks +10 clicks. Need ${Math.max(0, 50 - weeklyClicks)} more clicks to clear Week 1.`}</span>
           </div>
         </div>
 
@@ -2002,7 +2004,7 @@ Walking through the roastery, the problem was crystal clear: Jenny has a world-c
         </DialogContent>
       </Dialog>
 
-      {/* Floating Ask Flight Instructor Copilot Side Drawer */}
+      {/* Floating Ask Growth Director Mentor Side Drawer */}
       <FlightInstructorCopilot 
         track="seo"
         pageTitle="Jenny's Artisan Java CMS Repair"

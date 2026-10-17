@@ -441,7 +441,7 @@ export default function AdSimulationsPage() {
               <div className="flex items-center gap-2">
                 <Trophy className="h-5 w-5 text-amber-400" />
                 <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/40 text-xs">
-                  The Master Agency Challenge
+                  The Agency Capstone Challenge
                 </Badge>
                 <Badge variant="outline" className="text-xs">
                   Full Omnichannel
@@ -451,7 +451,7 @@ export default function AdSimulationsPage() {
                 Agency Capstone: End-to-End Client Campaign
               </h2>
               <p className="text-xs text-muted-foreground max-w-2xl">
-                Take complete ownership of a $5,000/mo client account. Build the Buyer Persona $\rightarrow$ Google Search Match Strategy $\rightarrow$ Meta Ads Creative $\rightarrow$ Landing Page Synergy $\rightarrow$ Save Verified Case Study to Portfolio!
+                Take complete ownership of a $5,000/mo client account. Build the Buyer Persona → Google Search Match Strategy → Meta Ads Creative → Landing Page Synergy → Save Verified Case Study to Portfolio!
               </p>
             </div>
             <Button 

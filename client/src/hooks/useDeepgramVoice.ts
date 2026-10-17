@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
+import { cleanTextForSpeech } from '@/lib/utils';
 
 interface UseDeepgramVoiceOptions {
   defaultVoice?: 'aura-orion-en' | 'aura-asteria-en' | 'aura-arcas-en' | 'aura-luna-en';
@@ -33,10 +34,12 @@ export function useDeepgramVoice(options: UseDeepgramVoiceOptions = {}) {
   }, []);
 
   /**
-   * Play speech using Deepgram Aura TTS with Web Speech API fallback
+   * Play speech using Deepgram Aura TTS with Web Speech API fallback.
+   * Strips markdown/symbols so voice never says "star star" or code tags.
    */
   const speak = useCallback(async (text: string, voiceOverride?: string) => {
-    if (!text.trim()) return;
+    const spokenText = cleanTextForSpeech(text);
+    if (!spokenText.trim()) return;
 
     // Cancel existing audio/speech
     if (audioRef.current) {
@@ -55,7 +58,7 @@ export function useDeepgramVoice(options: UseDeepgramVoiceOptions = {}) {
       const response = await fetch('/api/deepgram/speak', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text, voice })
+        body: JSON.stringify({ text: spokenText, voice })
       });
 
       if (response.ok) {
@@ -90,14 +93,15 @@ export function useDeepgramVoice(options: UseDeepgramVoiceOptions = {}) {
     }
 
     // 2. Fallback to browser Web Speech API
-    fallbackWebSpeech(text);
+    fallbackWebSpeech(spokenText);
   }, [defaultVoice, onStart, onEnd, onError]);
 
   const fallbackWebSpeech = useCallback((text: string) => {
     setIsLoading(false);
     if (!('speechSynthesis' in window)) return;
 
-    const utterance = new SpeechSynthesisUtterance(text);
+    const clean = cleanTextForSpeech(text);
+    const utterance = new SpeechSynthesisUtterance(clean);
     utterance.rate = 0.95;
     utterance.pitch = 1.0;
 

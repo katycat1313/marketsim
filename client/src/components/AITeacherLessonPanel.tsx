@@ -57,7 +57,7 @@ export function AITeacherLessonPanel({
 
   const instructor = {
     name: "Director Atlas & Sarah Jenkins",
-    title: "Lead Academy Flight Mentors",
+    title: "Lead Academy Growth Mentors",
     agency: "Krechet Academy Executive Board",
     avatarUrl: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400"
   };
@@ -133,7 +133,7 @@ export function AITeacherLessonPanel({
         conceptName: "Omnichannel Growth & Performance Telemetry",
         diagramImg: "https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&q=80&w=800",
         simulationLink: "/capstone-simulation",
-        simulationName: "Apex Global Master Capstone Flight Simulator",
+        simulationName: "Apex Global Master Capstone Simulation",
         cards: [
           {
             icon: "⚡",
@@ -540,7 +540,7 @@ export function AITeacherLessonPanel({
                   <Button asChild size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs">
                     <Link href={visualData.simulationLink}>
                       <Play className="h-3 w-3 mr-1 fill-current" />
-                      <span>Launch Flight Simulation Mission</span>
+                      <span>Launch Campaign Simulation</span>
                     </Link>
                   </Button>
                 </div>

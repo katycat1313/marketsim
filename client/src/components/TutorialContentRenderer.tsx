@@ -4,7 +4,11 @@ import { Slider } from "@/components/ui/slider";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
-import { InfoIcon, AlertTriangleIcon, CheckCircleIcon, LightbulbIcon } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { useDeepgramVoice } from "@/hooks/useDeepgramVoice";
+import { getActiveInstructor } from "@/lib/instructorConfig";
+import { InfoIcon, AlertTriangleIcon, CheckCircleIcon, LightbulbIcon, Headphones, Play, Square, Loader2 } from 'lucide-react';
 
 // Define image metadata with topic tags for more intelligent content matching
 interface ImageMetadata {
@@ -162,6 +166,7 @@ interface TutorialContentRendererProps {
   content: string;
   chapterNumber?: number; // Optional chapter number for better image selection
   tutorialIndex?: number; // Optional tutorial index within chapter for precise image mapping
+  hideAudioBar?: boolean; // When true, hides the audio narration bar for pure text study
 }
 
 /**
@@ -171,20 +176,59 @@ interface TutorialContentRendererProps {
 const TutorialContentRenderer: React.FC<TutorialContentRendererProps> = ({ 
   content, 
   chapterNumber,
-  tutorialIndex
+  tutorialIndex,
+  hideAudioBar = false
 }) => {
   const [sliderValues, setSliderValues] = useState<Record<string, number[]>>({});
   
+  const track = (chapterNumber === 1) ? "seo" : (chapterNumber === 2) ? "ads" : "general";
+  const instructor = getActiveInstructor(track);
+  const deepgramVoice = useDeepgramVoice({
+    defaultVoice: instructor.voice
+  });
+
+  const handlePlayStudyGuideAudio = () => {
+    // Extract clean readable text from markdown/HTML content
+    const cleanContent = content
+      .replace(/\[IMAGE:.*?\]/g, '')
+      .replace(/\[ACCORDION:.*?\]/g, '')
+      .replace(/\[SLIDER:.*?\]/g, '')
+      .replace(/\[TABS:.*?\]/g, '')
+      .replace(/\[INFO\](.*?)\[\/INFO\]/gs, '$1')
+      .replace(/\[WARNING\](.*?)\[\/WARNING\]/gs, '$1')
+      .replace(/\[TIP\](.*?)\[\/TIP\]/gs, '$1')
+      .replace(/\[SUCCESS\](.*?)\[\/SUCCESS\]/gs, '$1')
+      .replace(/<[^>]*>/g, ' ')
+      .replace(/#+\s*/g, '')
+      .replace(/[*_`]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    const narrativeText = cleanContent.length > 2500
+      ? cleanContent.slice(0, 2500) + "... Please review the full written guide below for detailed examples and figures."
+      : cleanContent;
+
+    deepgramVoice.speak(narrativeText, instructor.voice);
+  };
+  
   // Process special tags in the content
   const processContent = () => {
-    // Start with basic markdown to HTML conversion for paragraphs, headings, etc.
+    // Start with comprehensive markdown to HTML conversion for headings, lists, bold, etc.
     const processedContent = content
-      .replace(/\n\n/g, '</p><p class="text-black mb-4 font-medium">')
+      .replace(/^# (.*?)$/gm, (_, heading) => `</p><h1 class="text-xl sm:text-2xl font-black text-white mb-4 sm:mb-6 border-b border-white/20 pb-2 sm:pb-3">${heading}</h1><p class="text-slate-200 text-sm sm:text-base mb-3 sm:mb-4 font-medium leading-relaxed">`)
+      .replace(/^## (.*?)$/gm, (_, heading) => `</p><h2 class="text-lg sm:text-xl font-bold text-[#ffd700] mt-5 sm:mt-6 mb-2 sm:mb-3">${heading}</h2><p class="text-slate-200 text-sm sm:text-base mb-3 sm:mb-4 font-medium leading-relaxed">`)
+      .replace(/^### (.*?)$/gm, (_, heading) => `</p><h3 class="text-base sm:text-lg font-semibold text-[#ffd700] mt-4 sm:mt-5 mb-2">${heading}</h3><p class="text-slate-200 text-sm sm:text-base mb-3 sm:mb-4 font-medium leading-relaxed">`)
+      .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-white">$1</strong>')
+      .replace(/\*([^\*\n]+)\*/g, '<em class="text-amber-200/90">$1</em>')
+      .replace(/`([^`\n]+)`/g, '<code class="bg-black/50 text-amber-300 px-1.5 py-0.5 rounded text-xs font-mono">$1</code>')
+      .replace(/^[*-•]\s+(.*?)$/gm, '<li class="ml-4 list-disc text-slate-200 my-1 leading-relaxed text-sm sm:text-base">$1</li>')
+      .replace(/^(\d+)\.\s+(.*?)$/gm, '<li class="ml-4 list-decimal text-slate-200 my-1 leading-relaxed text-sm sm:text-base"><span class="text-amber-400 font-semibold">$1.</span> $2</li>')
+      .replace(/<\/li>\n/g, '</li>')
+      .replace(/\n\n/g, '</p><p class="text-slate-200 text-sm sm:text-base mb-3 sm:mb-4 font-medium leading-relaxed">')
       .replace(/\n/g, '<br />')
-      .replace(/^/, '<p class="text-black mb-4 font-medium">')
+      .replace(/^/, '<p class="text-slate-200 text-sm sm:text-base mb-3 sm:mb-4 font-medium leading-relaxed">')
       .replace(/$/, '</p>')
-      .replace(/## (.*?)$/gm, (_, heading) => `</p><h2 class="text-xl font-bold text-[#ffd700] mt-6 mb-3">${heading}</h2><p class="text-black mb-4 font-medium">`)
-      .replace(/### (.*?)$/gm, (_, heading) => `</p><h3 class="text-lg font-semibold text-[#ffd700] mt-5 mb-2">${heading}</h3><p class="text-black mb-4 font-medium">`);
+      .replace(/<p[^>]*><\/p>/g, '');
     
     // Parse special tags and return the result
     return processSpecialTags(processedContent);
@@ -229,7 +273,7 @@ const TutorialContentRenderer: React.FC<TutorialContentRendererProps> = ({
                 <AccordionTrigger className="px-4 text-[#ffd700] hover:text-[#ffd700]/80 hover:no-underline">
                   {section.title}
                 </AccordionTrigger>
-                <AccordionContent className="px-4 pt-2 text-black font-medium">
+                <AccordionContent className="px-4 pt-2 text-slate-200 font-medium">
                   <div dangerouslySetInnerHTML={{ __html: section.content }} />
                 </AccordionContent>
               </AccordionItem>
@@ -305,7 +349,7 @@ const TutorialContentRenderer: React.FC<TutorialContentRendererProps> = ({
           <Alert key={`info-${index}`} className="my-4 bg-blue-950/30 border-blue-500/30">
             <InfoIcon className="h-5 w-5 text-blue-500" />
             <AlertTitle className="text-blue-400">Information</AlertTitle>
-            <AlertDescription className="text-black font-semibold">
+            <AlertDescription className="text-slate-200 font-medium">
               <div dangerouslySetInnerHTML={{ __html: infoContent }} />
             </AlertDescription>
           </Alert>
@@ -319,7 +363,7 @@ const TutorialContentRenderer: React.FC<TutorialContentRendererProps> = ({
           <Alert key={`warning-${index}`} className="my-4 bg-red-950/30 border-red-500/30">
             <AlertTriangleIcon className="h-5 w-5 text-red-500" />
             <AlertTitle className="text-red-400">Warning</AlertTitle>
-            <AlertDescription className="text-black font-semibold">
+            <AlertDescription className="text-slate-200 font-medium">
               <div dangerouslySetInnerHTML={{ __html: warningContent }} />
             </AlertDescription>
           </Alert>
@@ -333,7 +377,7 @@ const TutorialContentRenderer: React.FC<TutorialContentRendererProps> = ({
           <Alert key={`tip-${index}`} className="my-4 bg-yellow-950/30 border-yellow-500/30">
             <LightbulbIcon className="h-5 w-5 text-yellow-500" />
             <AlertTitle className="text-yellow-400">Tip</AlertTitle>
-            <AlertDescription className="text-black font-semibold">
+            <AlertDescription className="text-slate-200 font-medium">
               <div dangerouslySetInnerHTML={{ __html: tipContent }} />
             </AlertDescription>
           </Alert>
@@ -347,7 +391,7 @@ const TutorialContentRenderer: React.FC<TutorialContentRendererProps> = ({
           <Alert key={`success-${index}`} className="my-4 bg-green-950/30 border-green-500/30">
             <CheckCircleIcon className="h-5 w-5 text-green-500" />
             <AlertTitle className="text-green-400">Success</AlertTitle>
-            <AlertDescription className="text-black font-semibold">
+            <AlertDescription className="text-slate-200 font-medium">
               <div dangerouslySetInnerHTML={{ __html: successContent }} />
             </AlertDescription>
           </Alert>
@@ -458,8 +502,8 @@ const TutorialContentRenderer: React.FC<TutorialContentRendererProps> = ({
     console.log('Selected image path:', imagePath, 'for chapter:', chapterNumber, 'tutorial:', tutorialIndex);
     
     enhancedContent.push(
-      <div key="auto-image" className="my-4 rounded-lg overflow-hidden border-2 border-[#ffd700]/20 bg-gradient-to-r from-yellow-900/30 to-gray-900/50 relative z-10">
-        <div className="w-full h-48 flex items-center justify-center">
+      <div key="auto-image" className="my-3 sm:my-4 rounded-lg overflow-hidden border-2 border-[#ffd700]/20 bg-gradient-to-r from-yellow-900/30 to-gray-900/50 relative z-10">
+        <div className="w-full h-36 sm:h-48 md:h-56 flex items-center justify-center">
           <img 
             src={imagePath} 
             alt="Tutorial illustration" 
@@ -467,7 +511,7 @@ const TutorialContentRenderer: React.FC<TutorialContentRendererProps> = ({
             onError={(e) => {
               console.log('Image failed to load:', imagePath);
               e.currentTarget.src = fallbackImage;
-              e.currentTarget.className = "w-auto h-32 object-contain my-4";
+              e.currentTarget.className = "w-auto h-28 sm:h-32 object-contain my-3";
             }}
           />
         </div>
@@ -478,12 +522,20 @@ const TutorialContentRenderer: React.FC<TutorialContentRendererProps> = ({
     enhancedContent.push(
       <div key="main-content" dangerouslySetInnerHTML={{ 
         __html: content
-          .replace(/\n\n/g, '</p><p class="text-black text-lg mb-4 font-semibold">')
+          .replace(/^# (.*?)$/gm, (_, heading) => `</p><h1 class="text-xl sm:text-2xl font-black text-white mb-4 sm:mb-6 border-b border-white/20 pb-2 sm:pb-3">${heading}</h1><p class="text-slate-200 text-sm sm:text-base mb-3 sm:mb-4 font-normal leading-relaxed">`)
+          .replace(/^## (.*?)$/gm, (_, heading) => `</p><h2 class="text-lg sm:text-xl font-bold text-amber-400 mt-6 sm:mt-8 mb-3 sm:mb-4 border-b border-white/10 pb-2">${heading}</h2><p class="text-slate-200 text-sm sm:text-base mb-3 sm:mb-4 font-normal leading-relaxed">`)
+          .replace(/^### (.*?)$/gm, (_, heading) => `</p><h3 class="text-base sm:text-lg font-semibold text-emerald-400 mt-5 sm:mt-6 mb-2 sm:mb-3">${heading}</h3><p class="text-slate-200 text-sm sm:text-base mb-3 sm:mb-4 font-normal leading-relaxed">`)
+          .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-white">$1</strong>')
+          .replace(/\*([^\*\n]+)\*/g, '<em class="text-amber-200/90">$1</em>')
+          .replace(/`([^`\n]+)`/g, '<code class="bg-black/50 text-amber-300 px-1.5 py-0.5 rounded text-xs font-mono">$1</code>')
+          .replace(/^[*-•]\s+(.*?)$/gm, '<li class="ml-4 list-disc text-slate-200 my-1 leading-relaxed text-sm sm:text-base">$1</li>')
+          .replace(/^(\d+)\.\s+(.*?)$/gm, '<li class="ml-4 list-decimal text-slate-200 my-1 leading-relaxed text-sm sm:text-base"><span class="text-amber-400 font-semibold">$1.</span> $2</li>')
+          .replace(/<\/li>\n/g, '</li>')
+          .replace(/\n\n/g, '</p><p class="text-slate-200 text-sm sm:text-base mb-3 sm:mb-4 font-normal leading-relaxed">')
           .replace(/\n/g, '<br />')
-          .replace(/^/, '<p class="text-black text-lg mb-4 font-semibold">')
+          .replace(/^/, '<p class="text-slate-200 text-sm sm:text-base mb-3 sm:mb-4 font-normal leading-relaxed">')
           .replace(/$/, '</p>')
-          .replace(/## (.*?)$/gm, (_, heading) => `</p><h2 class="text-2xl font-bold text-[#ffd700] mt-8 mb-4">${heading}</h2><p class="text-black text-lg mb-4 font-semibold">`)
-          .replace(/### (.*?)$/gm, (_, heading) => `</p><h3 class="text-xl font-semibold text-[#ffd700] mt-6 mb-3">${heading}</h3><p class="text-black text-lg mb-4 font-semibold">`)
+          .replace(/<p[^>]*><\/p>/g, '')
       }} />
     );
     
@@ -495,17 +547,20 @@ const TutorialContentRenderer: React.FC<TutorialContentRendererProps> = ({
         h.includes('concept'))) {
       
       enhancedContent.push(
-        <div key="auto-accordion" className="mt-6">
-          <h3 className="text-lg font-semibold text-[#ffd700] mt-5 mb-4">Key Concepts Review</h3>
-          <Accordion type="single" collapsible className="border border-[#ffd700]/20 rounded-lg">
+        <div key="auto-accordion" className="mt-5 sm:mt-6">
+          <h3 className="text-base sm:text-lg font-semibold text-amber-400 mt-4 sm:mt-5 mb-3 sm:mb-4">Key Concepts Review</h3>
+          <Accordion type="single" collapsible className="border border-white/10 rounded-lg">
             {/* Extract key concepts based on content */}
             {generateKeyConceptsFromContent(content).map((item, idx) => (
               <AccordionItem key={idx} value={`item-${idx}`}>
-                <AccordionTrigger className="px-4 text-[#ffd700] hover:text-[#ffd700]/80 hover:no-underline">
+                <AccordionTrigger className="px-3 sm:px-4 py-2.5 sm:py-3 text-amber-400 hover:text-amber-300 hover:no-underline text-xs sm:text-sm text-left">
                   {item.question}
                 </AccordionTrigger>
-                <AccordionContent className="px-4 pt-2 text-black text-base font-semibold">
-                  {item.answer}
+                <AccordionContent className="px-3 sm:px-4 pt-1 sm:pt-2 pb-3 text-slate-200 text-xs sm:text-sm font-normal">
+                  <div 
+                    className="space-y-1.5 leading-relaxed"
+                    dangerouslySetInnerHTML={{ __html: renderAccordionAnswer(item.answer) }}
+                  />
                 </AccordionContent>
               </AccordionItem>
             ))}
@@ -523,7 +578,7 @@ const TutorialContentRenderer: React.FC<TutorialContentRendererProps> = ({
         <Alert key="auto-tip" className="my-6 bg-yellow-950/30 border-yellow-500/30">
           <LightbulbIcon className="h-5 w-5 text-yellow-500" />
           <AlertTitle className="text-yellow-400">Pro Tip</AlertTitle>
-          <AlertDescription className="text-black text-base font-semibold">
+          <AlertDescription className="text-slate-200 text-sm font-normal">
             Start with small tests before scaling up your marketing efforts. This approach allows you to refine your strategy based on real data while minimizing risk.
           </AlertDescription>
         </Alert>
@@ -533,30 +588,56 @@ const TutorialContentRenderer: React.FC<TutorialContentRendererProps> = ({
     return enhancedContent;
   };
   
+  // Helper to format accordion answers with proper markdown support (bold, lists, code)
+  const renderAccordionAnswer = (text: string): string => {
+    if (!text) return '';
+    return text
+      .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-white">$1</strong>')
+      .replace(/\*([^\*\n]+)\*/g, '<em class="text-amber-200/90">$1</em>')
+      .replace(/`([^`\n]+)`/g, '<code class="bg-black/50 text-amber-300 px-1.5 py-0.5 rounded text-xs font-mono">$1</code>')
+      .replace(/^[*-•]\s+(.*?)$/gm, '<li class="ml-4 list-disc text-slate-200 my-1 leading-relaxed">$1</li>')
+      .replace(/^(\d+)\.\s+(.*?)$/gm, '<li class="ml-4 list-decimal text-slate-200 my-1 leading-relaxed"><span class="text-amber-400 font-semibold">$1.</span> $2</li>')
+      .replace(/<\/li>\n/g, '</li>')
+      .replace(/\n\n+/g, '</p><p class="mt-2 text-slate-200 text-sm font-normal leading-relaxed">')
+      .replace(/\n/g, '<br />')
+      .replace(/^/, '<p class="text-slate-200 text-sm font-normal leading-relaxed">')
+      .replace(/$/, '</p>')
+      .replace(/<p[^>]*><\/p>/g, '');
+  };
+
   // Helper function to generate Q&A items from content
   const generateKeyConceptsFromContent = (content: string): Array<{question: string, answer: string}> => {
     const contentLower = content.toLowerCase();
-    const concepts = [];
+    const concepts: Array<{question: string, answer: string}> = [];
     
     // Extract headings and use them to generate questions
     const headings = content.match(/##\s+(.*?)$/gm) || [];
     headings.forEach(heading => {
-      const title = heading.replace(/^## /, '');
-      concepts.push({
-        question: `What is meant by "${title}"?`,
-        answer: generateAnswerForHeading(title, content)
-      });
+      const rawTitle = heading.replace(/^##\s+/, '').trim();
+      const cleanTitle = rawTitle
+        .replace(/^[\d\.\s\-\:]+/, '')
+        .replace(/[\u{1F300}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}⚠️🛡️⚡🎯💡🚀]/gu, '')
+        .replace(/[:\s]+$/, '')
+        .trim();
+
+      const answer = generateAnswerForHeading(rawTitle, content);
+      if (answer && answer.trim().length > 0) {
+        concepts.push({
+          question: `What is meant by "${cleanTitle || rawTitle}"?`,
+          answer: answer
+        });
+      }
     });
     
     // Add platform-specific questions based on content
-    if (contentLower.includes('google ads')) {
+    if (contentLower.includes('google ads') && concepts.length < 4) {
       concepts.push({
         question: "What are the main Google Ads campaign types?",
         answer: "Google Ads offers various campaign types including Search, Display, Video, Shopping, and App campaigns. Each type is optimized for different marketing objectives and customer touchpoints."
       });
     }
     
-    if (contentLower.includes('seo')) {
+    if (contentLower.includes('seo') && concepts.length < 4) {
       concepts.push({
         question: "What are the core elements of SEO?",
         answer: "Search Engine Optimization consists of on-page optimization (content, meta tags, headings), technical SEO (site speed, mobile-friendliness, structured data), and off-page factors (backlinks, social signals). All these elements work together to improve search rankings."
@@ -581,26 +662,78 @@ const TutorialContentRenderer: React.FC<TutorialContentRendererProps> = ({
   };
   
   // Helper function to generate an answer based on heading and content
-  const generateAnswerForHeading = (heading: string, content: string): string => {
-    // Extract the paragraph that follows the heading
-    const headingPattern = new RegExp(`## ${heading}\\s*([\\s\\S]*?)(?=##|$)`, 'i');
+  const generateAnswerForHeading = (rawHeading: string, content: string): string => {
+    // Escape regex special characters in the heading to prevent RegExp errors
+    const escapedHeading = rawHeading.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const headingPattern = new RegExp(`(?:^|\\n)##\\s*${escapedHeading}\\s*\\n+([\\s\\S]*?)(?=\\n##\\s+|$)`, 'i');
     const match = content.match(headingPattern);
     
     if (match && match[1]) {
-      // Take the first 250 characters as the answer
-      const paragraphText = match[1].trim();
-      const summary = paragraphText.length > 250 ? 
-        paragraphText.substring(0, 250) + '...' : 
-        paragraphText;
-      return summary;
+      const sectionText = match[1].trim();
+      if (sectionText.length > 0) {
+        return sectionText;
+      }
     }
     
     // Fallback if we couldn't extract content
-    return `${heading} is a key concept in this tutorial. Review the section above for a detailed explanation.`;
+    return `${rawHeading} is a key concept in this tutorial. Review the section above for a detailed explanation.`;
   };
   
   return (
     <div className="tutorial-content">
+      {/* Study Guide Audio Narration Bar (Deepgram Aura) */}
+      {!hideAudioBar && (
+        <div className="not-prose mb-6 p-3.5 sm:p-4 rounded-xl bg-gradient-to-r from-primary/10 via-background to-secondary/30 border border-primary/20 flex flex-wrap items-center justify-between gap-3 shadow-md">
+          <div className="flex items-center gap-3">
+            <div className="h-9 w-9 rounded-full bg-primary/20 text-primary flex items-center justify-center font-bold shrink-0">
+              <Headphones className="h-4 w-4" />
+            </div>
+            <div>
+              <div className="text-xs sm:text-sm font-bold text-foreground flex items-center gap-2">
+                <span>Listen to the Lesson</span>
+                <Badge variant="outline" className="text-[10px] bg-primary/10 text-primary border-primary/30">
+                  Deepgram Aura
+                </Badge>
+              </div>
+              <p className="text-[11px] text-muted-foreground">
+                {deepgramVoice.isSpeaking 
+                  ? `Narration in progress (${instructor.name}'s voice)...` 
+                  : "Listen to the complete audio narration of today's lesson notes, read aloud."}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            {deepgramVoice.isSpeaking ? (
+              <Button
+                size="sm"
+                variant="destructive"
+                onClick={() => deepgramVoice.stop()}
+                className="h-8 text-xs gap-1.5 font-bold shadow"
+              >
+                <Square className="h-3.5 w-3.5 fill-current" />
+                <span>Stop Narration</span>
+              </Button>
+            ) : (
+              <Button
+                size="sm"
+                variant="default"
+                onClick={handlePlayStudyGuideAudio}
+                disabled={deepgramVoice.isLoading}
+                className="h-8 text-xs gap-1.5 bg-primary hover:bg-primary/90 text-primary-foreground font-bold shadow"
+              >
+                {deepgramVoice.isLoading ? (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                ) : (
+                  <Play className="h-3.5 w-3.5 fill-current" />
+                )}
+                <span>{deepgramVoice.isLoading ? "Loading Audio..." : "Start Listening"}</span>
+              </Button>
+            )}
+          </div>
+        </div>
+      )}
+
       {enhanceBasicContent()}
     </div>
   );

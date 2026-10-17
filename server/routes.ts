@@ -40,6 +40,7 @@ import { dynamicSimulationGenerator } from "./services/dynamicSimulationGenerato
 import { registerCustomBusinessRoutes } from "./routes/customBusinessRoutes";
 import { registerWaitlistRoutes } from "./routes/waitlistRoutes";
 import { registerDeepgramRoutes } from "./routes/deepgramRoutes";
+import { registerGeminiLiveRoutes } from "./routes/geminiLiveRoutes";
 
 export async function registerRoutes(app: Express) {
   const httpServer = createServer(app);
@@ -330,12 +331,51 @@ export async function registerRoutes(app: Express) {
     }
   });
 
+  const seedCommunityPosts = [
+    {
+      id: 101,
+      userId: 1,
+      authorName: "Director Atlas (Lead Performance Director)",
+      title: "Week 1 Debrief: The #1 Title Tag Mistake Everyone Makes on Jenny's Coffee",
+      content: "Welcome to the Growth Lab cohort! Auditing early student runs on Jenny's Artisan Java: 40% of you are putting the brand name first ('Jenny's Artisan Java | Fresh Coffee') instead of the high-intent commercial keyword ('Organic Coffee Beans Morgantown | Jenny's Artisan Java'). Google ranks left-to-right keyword weight. Test this change in your simulator and watch your GA4 organic clicks surge.",
+      type: "Tactical Debrief",
+      tags: ["SEO", "Week 1", "Search Intent", "Jenny's Java"],
+      likes: 24,
+      createdAt: new Date(Date.now() - 3600000 * 4).toISOString()
+    },
+    {
+      id: 102,
+      userId: 2,
+      authorName: "Sarah Jenkins (Senior Growth Director)",
+      title: "How to Handle the Emergency Client Dispatch Call Without Giving Away Free Work",
+      content: "When Jenny calls in a panic about counter coffee prices, the rookie move is to apologize and offer a 20% discount. That destroys client margin. Look at Option 2 in the modal: anchor your response in commercial foot traffic data from the local campaign. Let me know what reputation score you landed after the call!",
+      type: "Client Escalations",
+      tags: ["Client Retention", "Emergency Dispatch", "Pricing Strategy"],
+      likes: 19,
+      createdAt: new Date(Date.now() - 3600000 * 18).toISOString()
+    },
+    {
+      id: 103,
+      userId: 3,
+      authorName: "Marcus Vance (Beta Student)",
+      title: "Finally got 100% on Dr. Miller Dental PPC match types!",
+      content: "Took me three tries to realize that Broad Match 'dentist' was pulling in queries for 'dental hygienist salary' and eating $45 a click. Adding -salary and -jobs as negative keywords immediately cut wasted ad spend by 45%. If anyone is stuck on Ad Group 2, check your exact match phrase brackets.",
+      type: "Student Win",
+      tags: ["Google Ads", "Negative Keywords", "Quality Score", "Dr. Miller"],
+      likes: 31,
+      createdAt: new Date(Date.now() - 3600000 * 36).toISOString()
+    }
+  ];
+
   app.get("/api/posts", async (req, res) => {
     try {
-      const posts = await storage.listPosts();
-      res.json(posts || []);
+      let posts = await storage.listPosts();
+      if (!posts || posts.length === 0) {
+        posts = seedCommunityPosts as any;
+      }
+      res.json(posts);
     } catch (error) {
-      res.json([]);
+      res.json(seedCommunityPosts);
     }
   });
 
@@ -455,7 +495,8 @@ export async function registerRoutes(app: Express) {
       
       // Check user level if user is logged in, otherwise use query parameter or default to Beginner
       let userLevel = 'Beginner';
-      let hasPremiumAccess = false;
+      // In local dev/beta testing, default to premium access so all tutorials and simulations can be tested
+      let hasPremiumAccess = !process.env.DATABASE_URL || process.env.NODE_ENV !== 'production';
       
       if (req.user?.id) {
         try {
@@ -469,14 +510,11 @@ export async function registerRoutes(app: Express) {
           const [userWithSubscription] = await storage.getUserSubscription(req.user.id);
           if (userWithSubscription?.subscription) {
             // Premium or Enterprise subscribers get premium content access
-            hasPremiumAccess = ['premium', 'enterprise'].includes(userWithSubscription.subscription.tier);
+            hasPremiumAccess = hasPremiumAccess || ['premium', 'enterprise'].includes(userWithSubscription.subscription.tier);
             console.log(`User has ${userWithSubscription.subscription.tier} subscription, premium access: ${hasPremiumAccess}`);
-          } else {
-            console.log('User has no active subscription, no premium access');
           }
         } catch (error) {
           console.error("Error fetching user data:", error);
-          // Continue with default access if user data can't be fetched
         }
       } 
       
@@ -492,13 +530,22 @@ export async function registerRoutes(app: Express) {
       let processedTutorials = tutorials;
       
       if (!hasPremiumAccess) {
-        // For non-premium users, modify premium content to show locked status
+        // For non-premium users, provide structured lock notice with high readability
         processedTutorials = tutorials.map(tutorial => {
           if (tutorial.isPremium) {
-            // Keep the tutorial visible but mark content as locked
             return {
               ...tutorial,
-              content: `# Premium Content (Subscription Required)\n\nThis advanced tutorial is available exclusively to premium subscribers. Upgrade your subscription to access this content and unlock all premium features.`,
+              content: `## 🔒 Pro Track Specialization (Upgrade Required)
+
+This module is part of the **Pro & Agency Track ($199/mo)**.
+
+### What You Unlock in This Module:
+* Advanced multi-channel automation architectures.
+* Client-ready enterprise SOPs, contract templates, and pitch decks.
+* Direct checkride simulation with lead agency director evaluation.
+
+> [!TIP]
+> Are you testing the platform during our Early Beta? Use promo code **BETA7** at checkout to unlock full 7-day Pro access for free!`,
               isLocked: true,
             };
           }
@@ -522,6 +569,26 @@ export async function registerRoutes(app: Express) {
     } catch (error) {
       console.error("Error retrieving tutorials:", error);
       res.status(500).json({ error: "Failed to retrieve tutorials" });
+    }
+  });
+
+  app.get("/api/tutorials/progress", async (req, res) => {
+    try {
+      // Require authentication
+      if (!req.user?.id) {
+        return res.status(401).json({ error: "Authentication required" });
+      }
+      
+      const userId = req.user.id;
+      console.log(`API request to get tutorial progress for user ${userId}`);
+      
+      // For backward compatibility, we'll use the original TutorialService for now
+      const tutorialService = new TutorialService();
+      const progress = await tutorialService.getUserProgress(userId);
+      res.json(progress);
+    } catch (error) {
+      console.error("Error retrieving tutorial progress:", error);
+      res.status(500).json({ error: "Failed to retrieve tutorial progress" });
     }
   });
 
@@ -578,26 +645,6 @@ export async function registerRoutes(app: Express) {
     } catch (error) {
       console.error("Error retrieving tutorial:", error);
       res.status(500).json({ error: "Failed to retrieve tutorial" });
-    }
-  });
-
-  app.get("/api/tutorials/progress", async (req, res) => {
-    try {
-      // Require authentication
-      if (!req.user?.id) {
-        return res.status(401).json({ error: "Authentication required" });
-      }
-      
-      const userId = req.user.id;
-      console.log(`API request to get tutorial progress for user ${userId}`);
-      
-      // For backward compatibility, we'll use the original TutorialService for now
-      const tutorialService = new TutorialService();
-      const progress = await tutorialService.getUserProgress(userId);
-      res.json(progress);
-    } catch (error) {
-      console.error("Error retrieving tutorial progress:", error);
-      res.status(500).json({ error: "Failed to retrieve tutorial progress" });
     }
   });
 
@@ -1158,6 +1205,10 @@ export async function registerRoutes(app: Express) {
 
   // Register Deepgram Voice Agent & Aura TTS routes
   registerDeepgramRoutes(app);
+
+  // Register Gemini Live Bidirectional WebSocket API routes
+  registerGeminiLiveRoutes(app);
+  console.log('Gemini Live routes registered');
 
   return httpServer;
 }

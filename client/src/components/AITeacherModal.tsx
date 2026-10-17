@@ -51,7 +51,7 @@ export function AITeacherModal({
 
   const instructor = {
     name: "Sarah Jenkins",
-    title: "Senior Director of Performance & Flight Instructor",
+    title: "Senior Director of Performance & Growth Mentor",
     agency: "Apex Omnicom Media",
     avatarUrl: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400",
   };

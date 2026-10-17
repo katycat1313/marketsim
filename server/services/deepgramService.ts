@@ -21,6 +21,8 @@ export class DeepgramVoiceService {
     return Boolean(key && key !== "apiKEY");
   }
 
+  private ttsCache: Map<string, Buffer> = new Map();
+
   /**
    * Convert Text to Lifelike Speech using Deepgram Aura (TTS)
    * Voice models: 'aura-asteria-en' (female/Sarah), 'aura-orion-en' (male/Atlas), 'aura-arcas-en', 'aura-luna-en'
@@ -30,6 +32,11 @@ export class DeepgramVoiceService {
     if (!key || key === "apiKEY") {
       console.warn("Cannot generate Deepgram speech: missing or placeholder API key");
       return null;
+    }
+
+    const cacheKey = `${voice}:${text.trim()}`;
+    if (this.ttsCache.has(cacheKey)) {
+      return this.ttsCache.get(cacheKey)!;
     }
 
     try {
@@ -51,7 +58,16 @@ export class DeepgramVoiceService {
       }
 
       const arrayBuffer = await response.arrayBuffer();
-      return Buffer.from(arrayBuffer);
+      const buffer = Buffer.from(arrayBuffer);
+
+      // Cache up to 250 generated audio segments
+      if (this.ttsCache.size > 250) {
+        const oldestKey = this.ttsCache.keys().next().value;
+        if (oldestKey) this.ttsCache.delete(oldestKey);
+      }
+      this.ttsCache.set(cacheKey, buffer);
+
+      return buffer;
     } catch (error) {
       console.error("Deepgram TTS Generation Error:", error);
       return null;
@@ -105,8 +121,8 @@ export class DeepgramVoiceService {
       name: "Director Atlas",
       voice: "aura-orion-en",
       model: "nova-2",
-      prompt: `You are Director Atlas, the Lead Flight Instructor and Marketing Director at Krechet Academy (AI Marketing Flight Simulator).
-You are conducting a live conversational training debrief with a Marketing Cadet.
+      prompt: `You are Director Atlas, the Senior Marketing Director and Lead Campaign Mentor at Krechet Academy (Interactive Digital Marketing Simulator).
+You are conducting a live conversational strategy debrief with a marketing student.
 Your tone is professional, encouraging, sharp, and grounded in real-world performance marketing (CAC, ROAS, Quality Score, Heading hierarchy, and Negative keywords).
 Keep your spoken responses concise (1-3 sentences per turn) so the student has room to respond naturally.
 ${missionContext ? `Current Mission Context: ${missionContext}` : ""}`

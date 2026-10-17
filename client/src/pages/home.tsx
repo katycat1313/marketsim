@@ -88,7 +88,7 @@ export default function Home() {
     }
   ];
 
-  const flightSimulators = [
+  const campaignSimulators = [
     {
       title: "My Business Sandbox & Persona Studio",
       category: "Digital Twin & Strategy",
@@ -134,12 +134,12 @@ export default function Home() {
       badgeClass: "bg-purple-500/10 text-purple-400 border-purple-500/20"
     },
     {
-      title: "Master Omnichannel Capstone",
+      title: "Agency Omnichannel Capstone",
       category: "Executive Crisis",
       description: "Fix a failing agency client simultaneously across Google Ads, Meta creative fatigue, and landing page conversion friction.",
       icon: <Trophy className="h-6 w-6 text-amber-400" />,
       link: "/capstone-simulation",
-      actionText: "Enter Master Capstone",
+      actionText: "Enter Agency Capstone",
       gradient: "from-amber-500/10 to-orange-500/5 hover:border-amber-500/50",
       badge: "Omnichannel Crisis",
       badgeClass: "bg-amber-500/10 text-amber-400 border-amber-500/20"
@@ -181,7 +181,7 @@ export default function Home() {
             <div className="flex flex-wrap items-center gap-2.5">
               <Badge className="bg-primary/20 text-primary hover:bg-primary/30 border-primary/30 px-3 py-1 font-mono uppercase tracking-wider text-xs">
                 <Zap className="h-3.5 w-3.5 mr-1.5 inline animate-pulse text-amber-400" />
-                Flight Deck • Active Session
+                Growth Lab • Active Session
               </Badge>
               <Badge variant="outline" className="text-muted-foreground border-border text-xs">
                 Asus ROG Zephyrus G14 • RTX GPU Offline Mode
@@ -193,7 +193,7 @@ export default function Home() {
             </h1>
             
             <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
-              Welcome to the AI-native flight simulator for growth engineers. Repair broken client accounts, audit live CMS websites, structure Google/Meta auctions, and defend your decisions in front of the AI Director.
+              Welcome to the interactive campaign simulator for digital marketers and business owners. Repair broken client accounts, audit live CMS websites, structure Google/Meta auctions, and defend your decisions in front of your AI Growth Director.
             </p>
           </div>
 
@@ -278,7 +278,7 @@ export default function Home() {
           <div>
             <h2 className="text-2xl font-bold tracking-tight flex items-center gap-2">
               <GraduationCap className="h-6 w-6 text-primary" />
-              4-Tier Career Mastery Roadmap
+              4-Tier Career Progression Roadmap
             </h2>
             <p className="text-sm text-muted-foreground">
               Complete the 50 in-depth curriculum playbooks and pass the hardcore gated benchmarks to level up.
@@ -338,12 +338,12 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Flight Simulator Sandboxes Grid */}
+      {/* Marketing Simulator Sandboxes Grid */}
       <div className="space-y-4">
         <div>
           <h2 className="text-2xl font-bold tracking-tight flex items-center gap-2">
             <Layers className="h-6 w-6 text-primary" />
-            Active Flight Simulator Workbenches
+            Active Campaign Simulator Workbenches
           </h2>
           <p className="text-sm text-muted-foreground">
             Hands-on sandboxes where you audit live code, configure campaigns, and measure real benchmark lift.
@@ -351,7 +351,7 @@ export default function Home() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {flightSimulators.map((sim, index) => (
+          {campaignSimulators.map((sim, index) => (
             <Card 
               key={index}
               className={`bg-gradient-to-br ${sim.gradient} border border-border/80 rounded-xl transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5 flex flex-col justify-between`}
@@ -423,7 +423,7 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Socratic AI Teacher & Flight Instructor Modal */}
+      {/* Socratic AI Teacher & Growth Director Modal */}
       <AITeacherModal 
         isOpen={isTeacherModalOpen}
         onClose={() => setIsTeacherModalOpen(false)}
