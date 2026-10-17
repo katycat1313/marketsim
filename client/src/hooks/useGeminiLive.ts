@@ -9,16 +9,45 @@ interface GeminiLiveOptions {
   onError?: (err: Error) => void;
 }
 
+export type PipelineStage = 
+  | "idle"
+  | "requesting_mic"
+  | "connecting_ws"
+  | "waiting_setup"
+  | "live"
+  | "ai_speaking"
+  | "interrupted"
+  | "error";
+
+export interface LiveDiagnosticInfo {
+  micSampleRate: number;
+  packetsSent: number;
+  setupAcknowledged: boolean;
+  lastCloseCode: number | null;
+  lastCloseReason: string | null;
+}
+
 export function useGeminiLive() {
   const [isConnected, setIsConnected] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
   const [isAiSpeaking, setIsAiSpeaking] = useState(false);
   const [isMicMuted, setIsMicMuted] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [volumeLevel, setVolumeLevel] = useState<number>(0);
+  const [pipelineStage, setPipelineStage] = useState<PipelineStage>("idle");
+  const [diagnosticInfo, setDiagnosticInfo] = useState<LiveDiagnosticInfo>({
+    micSampleRate: 0,
+    packetsSent: 0,
+    setupAcknowledged: false,
+    lastCloseCode: null,
+    lastCloseReason: null
+  });
 
   const wsRef = useRef<WebSocket | null>(null);
   const micStreamRef = useRef<MediaStream | null>(null);
   const micAudioContextRef = useRef<AudioContext | null>(null);
+  const analyserRef = useRef<AnalyserNode | null>(null);
+  const volumeTimerRef = useRef<any>(null);
   const micWorkletNodeRef = useRef<AudioWorkletNode | null>(null);
   const micProcessorRef = useRef<ScriptProcessorNode | null>(null);
   
@@ -28,6 +57,9 @@ export function useGeminiLive() {
   const currentAssistantTextRef = useRef<string>("");
 
   const isMicMutedRef = useRef(false);
+  const isAiSpeakingRef = useRef(false);
+  const isSetupCompleteRef = useRef(false);
+  const packetsSentCountRef = useRef(0);
 
   // Helper: Resample from inputRate down to 16kHz and convert Float32Array to 16-bit linear PCM Little-Endian
   const downsampleAndConvertToPCM16 = (input: Float32Array, inputRate: number): ArrayBuffer => {
@@ -88,6 +120,7 @@ export function useGeminiLive() {
     if (playbackAudioContextRef.current) {
       scheduledTimeRef.current = playbackAudioContextRef.current.currentTime;
     }
+    isAiSpeakingRef.current = false;
     setIsAiSpeaking(false);
   }, []);
 
@@ -137,12 +170,16 @@ export function useGeminiLive() {
       scheduledTimeRef.current += buffer.duration;
 
       activeAudioSourcesRef.current.push(source);
+      isAiSpeakingRef.current = true;
       setIsAiSpeaking(true);
+      setPipelineStage("ai_speaking");
 
       source.onended = () => {
         activeAudioSourcesRef.current = activeAudioSourcesRef.current.filter(s => s !== source);
         if (activeAudioSourcesRef.current.length === 0) {
+          isAiSpeakingRef.current = false;
           setIsAiSpeaking(false);
+          setPipelineStage("live");
         }
       };
     } catch (err) {
@@ -153,6 +190,12 @@ export function useGeminiLive() {
   // Disconnect & cleanup
   const endSession = useCallback(() => {
     stopAllPlayback();
+
+    if (volumeTimerRef.current) {
+      clearInterval(volumeTimerRef.current);
+      volumeTimerRef.current = null;
+    }
+    setVolumeLevel(0);
 
     // Stop mic stream
     if (micStreamRef.current) {
@@ -171,6 +214,11 @@ export function useGeminiLive() {
       micProcessorRef.current = null;
     }
 
+    if (analyserRef.current) {
+      analyserRef.current.disconnect();
+      analyserRef.current = null;
+    }
+
     if (micAudioContextRef.current) {
       micAudioContextRef.current.close().catch(() => {});
       micAudioContextRef.current = null;
@@ -184,6 +232,8 @@ export function useGeminiLive() {
       wsRef.current = null;
     }
 
+    isSetupCompleteRef.current = false;
+    isAiSpeakingRef.current = false;
     setIsConnected(false);
     setIsConnecting(false);
     setIsAiSpeaking(false);
@@ -278,6 +328,7 @@ export function useGeminiLive() {
         ws.send(JSON.stringify(setupMessage));
         setIsConnected(true);
         setIsConnecting(false);
+        setPipelineStage("waiting_setup");
 
         // 5. Connect Mic to running micAudioContext
         const micAudioCtx = micAudioContextRef.current!;
@@ -285,8 +336,33 @@ export function useGeminiLive() {
           await micAudioCtx.resume().catch(() => {});
         }
         console.log(`[Gemini Live] Recording AudioContext state: ${micAudioCtx.state}, hardware rate: ${micAudioCtx.sampleRate}Hz`);
+        setDiagnosticInfo(prev => ({ ...prev, micSampleRate: micAudioCtx.sampleRate }));
 
         const source = micAudioCtx.createMediaStreamSource(micStream);
+
+        // Connect AnalyserNode for live volume feedback (green bars)
+        try {
+          const analyser = micAudioCtx.createAnalyser();
+          analyser.fftSize = 256;
+          analyser.smoothingTimeConstant = 0.3;
+          source.connect(analyser);
+          analyserRef.current = analyser;
+
+          const freqData = new Uint8Array(analyser.frequencyBinCount);
+          if (volumeTimerRef.current) clearInterval(volumeTimerRef.current);
+          volumeTimerRef.current = setInterval(() => {
+            if (!analyserRef.current) return;
+            analyserRef.current.getByteFrequencyData(freqData);
+            let sum = 0;
+            for (let i = 0; i < freqData.length; i++) sum += freqData[i];
+            const avg = sum / freqData.length;
+            // Map typical speaking range (~8-60) to 0.0 - 1.0
+            const norm = Math.min(1, Math.max(0, (avg - 2) / 45));
+            setVolumeLevel(norm);
+          }, 80);
+        } catch (analyserErr) {
+          console.warn("[Gemini Live] Failed to attach analyser:", analyserErr);
+        }
 
         // Muted gain node acts as a pull sink so Chrome keeps processing audio without echoing to speakers
         const muteGain = micAudioCtx.createGain();
@@ -295,8 +371,12 @@ export function useGeminiLive() {
 
         let sentPacketCount = 0;
         const sendPcmChunk = (float32Data: Float32Array) => {
+          // STRICT PROTOCOL: Do NOT stream audio packets until server sends setupComplete ACK
+          if (!isSetupCompleteRef.current) return;
           if (ws.readyState !== WebSocket.OPEN) return;
           if (isMicMutedRef.current) return;
+          // Prevent laptop speaker acoustic feedback into mic while Sarah speaks
+          if (isAiSpeakingRef.current) return;
 
           // Downsample from hardware rate (e.g. 48kHz) down to 16kHz PCM16 for Gemini Live
           const pcm16Buffer = downsampleAndConvertToPCM16(float32Data, micAudioCtx.sampleRate);
@@ -315,8 +395,13 @@ export function useGeminiLive() {
 
           ws.send(JSON.stringify(audioPayload));
 
+          sentPacketCount++;
+          packetsSentCountRef.current = sentPacketCount;
+          if (sentPacketCount % 20 === 0) {
+            setDiagnosticInfo(prev => ({ ...prev, packetsSent: sentPacketCount }));
+          }
+
           if (sentPacketCount < 5 || sentPacketCount % 40 === 0) {
-            sentPacketCount++;
             let sumSq = 0;
             for (let i = 0; i < float32Data.length; i++) sumSq += float32Data[i] * float32Data[i];
             const rms = Math.sqrt(sumSq / float32Data.length);
@@ -426,6 +511,9 @@ export function useGeminiLive() {
           // Handle server setup acknowledgment
           if (data.setupComplete) {
             console.log("Gemini Live session setup acknowledged by server");
+            isSetupCompleteRef.current = true;
+            setPipelineStage("live");
+            setDiagnosticInfo(prev => ({ ...prev, setupAcknowledged: true }));
             return;
           }
 
@@ -436,6 +524,7 @@ export function useGeminiLive() {
             // Handle Barge-in Interruption (User spoke while AI was speaking)
             if (content.interrupted) {
               stopAllPlayback();
+              setPipelineStage("interrupted");
               if (options.onInterrupted) {
                 options.onInterrupted();
               }
@@ -488,11 +577,24 @@ export function useGeminiLive() {
         console.error("Gemini Live WebSocket error:", errEvent);
         const err = new Error("Gemini Live connection error");
         setError("Gemini Live encountered a connection issue");
+        setPipelineStage("error");
         if (options.onError) options.onError(err);
       };
 
       ws.onclose = (closeEvent) => {
         console.log("Gemini Live WebSocket closed:", closeEvent.code, closeEvent.reason);
+        setDiagnosticInfo(prev => ({
+          ...prev,
+          lastCloseCode: closeEvent.code,
+          lastCloseReason: closeEvent.reason || null
+        }));
+        if (closeEvent.code !== 1000) {
+          const detail = closeEvent.code === 1011
+            ? "Gemini Live service temporarily unavailable (1011). Ready to reconnect."
+            : `WebSocket closed (code ${closeEvent.code}): ${closeEvent.reason || "Connection dropped"}`;
+          setError(detail);
+          setPipelineStage("error");
+        }
         endSession();
       };
 
@@ -501,6 +603,7 @@ export function useGeminiLive() {
       setError(err.message || "Failed to start live session");
       setIsConnecting(false);
       setIsConnected(false);
+      setPipelineStage("error");
       if (options.onError) options.onError(err);
     }
   }, [endSession, downsampleAndConvertToPCM16, arrayBufferToBase64, playAudioChunk, stopAllPlayback]);
@@ -544,6 +647,9 @@ export function useGeminiLive() {
     isAiSpeaking,
     isMicMuted,
     error,
+    volumeLevel,
+    pipelineStage,
+    diagnosticInfo,
     startSession,
     endSession,
     sendClientText,

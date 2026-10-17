@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Link } from "wouter";
 import { useDeepgramVoice } from "@/hooks/useDeepgramVoice";
 import { useGeminiLive } from "@/hooks/useGeminiLive";
+import { VoiceLevelIndicator } from "./VoiceLevelIndicator";
 import { 
   Sparkles, 
   Mic, 
@@ -29,9 +30,199 @@ import {
   Lightbulb,
   Building2,
   PhoneCall,
-  PhoneOff
+  PhoneOff,
+  Target
 } from "lucide-react";
 import { getActiveInstructor } from "@/lib/instructorConfig";
+
+export interface LessonTarget {
+  id: string;
+  label: string;
+  description: string;
+  keywords: string[];
+}
+
+/**
+ * Returns the exact 3-5 core competency targets for the current lesson
+ */
+export function getLessonCoreTargets(chapterNumber: number, title: string, playbookContent?: string): LessonTarget[] {
+  const t = title.toLowerCase();
+
+  // Lesson 1: Fundamentals & Funnel Economics
+  if (chapterNumber === 1 && (t.includes("fundamental") || t.includes("flywheel") || !t.includes("goal"))) {
+    return [
+      {
+        id: "target_1",
+        label: "Growth Funnel Stages",
+        description: "Differentiate TOFU awareness, MOFU consideration, and BOFU high-intent conversion.",
+        keywords: ["tofu", "mofu", "bofu", "funnel", "awareness", "consideration", "conversion", "intent"]
+      },
+      {
+        id: "target_2",
+        label: "CAC Calculation & Payback",
+        description: "Calculate Customer Acquisition Cost (CAC) by dividing total spend by acquired customers.",
+        keywords: ["cac", "spend", "cost", "customer", "divided", "acquisition", "50", "ratio"]
+      },
+      {
+        id: "target_3",
+        label: "LTV-to-CAC Viability Rule",
+        description: "Apply the Golden Rule: LTV must be >= 3x CAC to sustain profitability and overhead.",
+        keywords: ["ltv", "golden rule", "3x", "ratio", "margin", "profit", "repeat", "viability", "overhead"]
+      }
+    ];
+  }
+
+  // Lesson 2: Marketing Goals & KPIs
+  if (chapterNumber === 1 || t.includes("goal") || t.includes("kpi")) {
+    return [
+      {
+        id: "target_1",
+        label: "Revenue KPIs vs Vanity Metrics",
+        description: "Differentiate vanity metrics (likes, views) from revenue-driving KPIs (CPL, ROAS, conversions).",
+        keywords: ["vanity", "kpi", "cpl", "roas", "revenue", "conversion", "sales", "lead", "like", "view"]
+      },
+      {
+        id: "target_2",
+        label: "SMART Marketing Framework",
+        description: "Construct a Specific, Measurable, Achievable, Relevant, and Time-bound business target.",
+        keywords: ["smart", "specific", "measurable", "achievable", "relevant", "time", "bound", "30 days", "target"]
+      },
+      {
+        id: "target_3",
+        label: "Acquisition Economics",
+        description: "Connect campaign budget pacing to target cost per customer acquisition.",
+        keywords: ["budget", "margin", "profit", "acquisition", "cost", "lifetime", "value", "ratio", "payback"]
+      }
+    ];
+  }
+
+  // Lesson 3: Google Ads Hierarchy & Quality Score
+  if (chapterNumber === 2 && (t.includes("structure") || t.includes("hierarchy") || t.includes("quality score"))) {
+    return [
+      {
+        id: "target_1",
+        label: "3-Tier Account Structure",
+        description: "Distinguish Campaign budget & geo-targeting from Ad Group single-theme keyword clusters.",
+        keywords: ["campaign", "ad group", "hierarchy", "theme", "cluster", "budget", "single-theme"]
+      },
+      {
+        id: "target_2",
+        label: "Quality Score Auction Math",
+        description: "Explain how Quality Score acts as an inverse multiplier discounting CPC (CPC = AdRank / QS + $0.01).",
+        keywords: ["quality score", "cpc", "discount", "formula", "adrank", "ctr", "ad relevance", "landing page"]
+      },
+      {
+        id: "target_3",
+        label: "Ad Group Theming & Relevance",
+        description: "Diagnose how mixed, non-relevant keywords degrade Quality Score and double click costs.",
+        keywords: ["relevance", "theme", "split", "different services", "bounce", "double", "tight"]
+      }
+    ];
+  }
+
+  // Lesson 4: Match Types & Negative Keyword Shields
+  if (chapterNumber === 2 || t.includes("match") || t.includes("negative")) {
+    return [
+      {
+        id: "target_1",
+        label: "Match Type Precision",
+        description: "Differentiate Broad Match, Phrase Match (\"quotes\"), and Exact Match ([brackets]).",
+        keywords: ["broad", "phrase", "exact", "match", "brackets", "quotes", "loose", "trigger"]
+      },
+      {
+        id: "target_2",
+        label: "Negative Keyword Budget Shield",
+        description: "Deploy negative keywords to prevent budget waste on free seekers, job seekers, and competitor mismatch.",
+        keywords: ["negative", "shield", "free", "jobs", "diy", "waste", "drain", "filter", "block"]
+      },
+      {
+        id: "target_3",
+        label: "Search Terms Auditing",
+        description: "Inspect actual search queries and add negative exact or phrase exclusions.",
+        keywords: ["search terms", "query", "audit", "exclude", "leakage", "intent"]
+      }
+    ];
+  }
+
+  // SEO / On-Page Architecture
+  if (chapterNumber === 1 || t.includes("seo") || t.includes("on-page") || t.includes("newspaper")) {
+    return [
+      {
+        id: "target_1",
+        label: "The Newspaper Rule Hierarchy",
+        description: "Enforce exactly one primary H1 header above the fold, followed by structured H2/H3 subsections.",
+        keywords: ["newspaper", "h1", "single", "h2", "h3", "hierarchy", "heading", "above the fold"]
+      },
+      {
+        id: "target_2",
+        label: "Title Tag & Meta CTR Optimization",
+        description: "Write compelling title tags under 60 characters with high-intent primary keywords and branding.",
+        keywords: ["title tag", "meta", "ctr", "60 characters", "click-through", "intent"]
+      },
+      {
+        id: "target_3",
+        label: "Search Intent Alignment",
+        description: "Match page content directly to commercial and transactional search intent rather than informational fluff.",
+        keywords: ["intent", "transactional", "commercial", "buyer", "service", "conversion"]
+      }
+    ];
+  }
+
+  // Dynamic Fallback: 3 core targets for any other lesson
+  return [
+    {
+      id: "target_1",
+      label: "Core Principles & Framework",
+      description: `Demonstrate understanding of the key concepts in ${title}.`,
+      keywords: ["concept", "principle", "understand", "core", "foundation", "framework"]
+    },
+    {
+      id: "target_2",
+      label: "Tactical Application",
+      description: `Apply the strategic playbook tactics for ${title}.`,
+      keywords: ["strategy", "apply", "tactic", "execution", "section", "guide"]
+    },
+    {
+      id: "target_3",
+      label: "Optimization & Quality Control",
+      description: "Diagnose pitfalls, protect budget, and ensure high-conversion execution.",
+      keywords: ["mistake", "avoid", "protect", "optimize", "quality", "result"]
+    }
+  ];
+}
+
+/**
+ * Checks if student has demonstrated a specific pending competency target
+ */
+export function evaluateTargetDemonstration(
+  userText: string,
+  replyText: string,
+  pendingTargets: LessonTarget[]
+): LessonTarget | null {
+  const userLower = userText.toLowerCase();
+  const replyLower = replyText.toLowerCase();
+
+  // If instructor explicitly declares mastery of the lesson
+  if (/mastered today's lesson|good luck|simulation clearance|clear understanding/i.test(replyLower)) {
+    return pendingTargets[0] || null;
+  }
+
+  for (const target of pendingTargets) {
+    // Check keyword hits in user's response
+    const userKeywordHits = target.keywords.filter(kw => userLower.includes(kw.toLowerCase()));
+    
+    // Check if instructor explicitly praises this topic
+    const targetLabelWords = target.label.toLowerCase().split(/\s+/).filter(w => w.length > 3);
+    const instructorMentionsTarget = targetLabelWords.some(w => replyLower.includes(w));
+    const isAffirmative = /great|exactly|spot on|correct|sharp|good analysis|well said|nice job|right on|good reasoning/i.test(replyLower);
+    
+    if ((userKeywordHits.length >= 2 && userText.length >= 20) || (userKeywordHits.length >= 1 && isAffirmative && instructorMentionsTarget)) {
+      return target;
+    }
+  }
+
+  return null;
+}
 
 interface ChatMessage {
   id: string;
@@ -273,6 +464,22 @@ export function SocraticChatClassroom({
   const [isVoiceEnabled, setIsVoiceEnabled] = useState(false);
   const [isListening, setIsListening] = useState(false);
 
+  // Lesson Core Targets (3-5 measurable milestones)
+  const coreTargets = useMemo(() => {
+    return getLessonCoreTargets(chapterNumber, lessonTitle, playbookContent);
+  }, [chapterNumber, lessonTitle, playbookContent]);
+
+  const [achievedTargetIds, setAchievedTargetIds] = useState<string[]>([]);
+  const [studentWeaknesses, setStudentWeaknesses] = useState<string[]>(() => {
+    try {
+      const stored = localStorage.getItem("krechet_student_weaknesses");
+      return stored ? JSON.parse(stored) : ["budget_pacing", "cac_payback_math"];
+    } catch {
+      return ["budget_pacing"];
+    }
+  });
+
+  const lastUserTextRef = useRef<string>("");
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const recognitionRef = useRef<any>(null);
 
@@ -292,6 +499,37 @@ export function SocraticChatClassroom({
 
   // Voice name for Gemini Live (Aoede for female / Charon or Puck for male)
   const geminiVoice = instructor.gender === "female" ? "Aoede" : "Charon";
+
+  // Check and reward demonstration of competency targets
+  const checkAndRewardTarget = (userText: string, instructorReply: string) => {
+    const pendingTargets = coreTargets.filter(t => !achievedTargetIds.includes(t.id));
+    if (pendingTargets.length === 0) return;
+
+    const matched = evaluateTargetDemonstration(userText, instructorReply, pendingTargets);
+    if (matched) {
+      setAchievedTargetIds(prev => {
+        if (prev.includes(matched.id)) return prev;
+        const next = [...prev, matched.id];
+        const newScore = Math.round((next.length / coreTargets.length) * 100);
+        setMasteryScore(newScore);
+
+        toast({
+          title: `🎯 Competency Mastered: ${matched.label}`,
+          description: `Comprehension increased to ${newScore}% (${next.length} of ${coreTargets.length} targets cleared).`
+        });
+
+        if (next.length === coreTargets.length) {
+          setIsUnlocked(true);
+          onMasteryAchieved?.();
+          toast({
+            title: "🏆 Lesson 100% Mastered!",
+            description: "All core competency targets cleared. Weekly simulation is unlocked!"
+          });
+        }
+        return next;
+      });
+    }
+  };
 
   // Toggle Gemini Live bidirectional voice call
   const handleToggleGeminiLive = async () => {
@@ -313,6 +551,7 @@ export function SocraticChatClassroom({
         description: `Starting real-time bidirectional call with ${instructor.name}.`
       });
 
+      const pendingTargets = coreTargets.filter(t => !achievedTargetIds.includes(t.id));
       const systemInstruction = `You are ${instructor.name}, an encouraging, expert digital marketing instructor at Krechet Academy.
 Your teaching style: '${instructor.teachingStyle}'.
 The student is working through lesson '${lessonTitle}' (Chapter ${chapterNumber}).
@@ -323,12 +562,18 @@ ${playbookContent || "Standard curriculum guide"}
 
 ${instructor.config.hasCustomBusiness && instructor.config.businessName ? `The student is training for their real business: ${instructor.config.businessName} (${instructor.config.industry} in ${instructor.config.location}). Primary offer: ${instructor.config.primaryOffer}. Target customer: ${instructor.config.targetAudience}.` : ""}
 
+STUDENT ACTIVE WEAK AREAS TO WEAVE IN AS EXAMPLES:
+${studentWeaknesses.map(w => w.replace(/_/g, " ")).join(", ")}
+
+CURRICULUM COMPETENCY TARGETS TO ASSESS:
+${coreTargets.map((t, idx) => `${idx + 1}. [${achievedTargetIds.includes(t.id) ? "COMPLETED" : "PENDING"}] ${t.label}: ${t.description}`).join("\n")}
+
 CRITICAL LIVE VOICE TEACHING GUIDELINES:
 1. Speak warmly, concisely, and naturally like an encouraging senior mentor on a real audio call. Keep every voice turn to 1-3 spoken sentences. Avoid monologues.
 2. Direct the student to look at specific sections, formulas, and warnings in their guide on the right side (e.g., 'Look at Section 2 on your right...', 'Notice the formula for CAC...').
 3. No aviation terminology (never say cockpit, copilot, runway, checkride, comms).
 4. Do not use the phrase "master class" or "master" as a level label.
-5. If the student answers well, enthusiastically praise them and let them know they are ready for the weekly hands-on simulation!
+5. If the student answers a pending target well (${pendingTargets.map(t => t.label).join(", ")}), explicitly validate and praise their reasoning so they know they nailed that objective.
 6. If the student interrupts you or asks a question, immediately pivot and answer their question directly.`;
 
       await geminiLive.startSession({
@@ -351,18 +596,12 @@ CRITICAL LIVE VOICE TEACHING GUIDELINES:
           });
 
           if (isFinal) {
-            const isMastery = /mastered today's lesson|good luck|simulation clearance|clear understanding/i.test(text);
-            if (isMastery) {
-              setMasteryScore(100);
-              setIsUnlocked(true);
-              onMasteryAchieved?.();
-            } else {
-              setMasteryScore(prev => Math.min(100, Math.max(prev, 60) + 20));
-            }
+            checkAndRewardTarget(lastUserTextRef.current, text);
           }
         },
         onUserTranscript: (text, isFinal) => {
           if (!text) return;
+          lastUserTextRef.current = text;
           setMessages(prev => {
             const last = prev[prev.length - 1];
             if (last && last.sender === "student" && last.id.startsWith("gemini-live-user-")) {
@@ -407,6 +646,7 @@ CRITICAL LIVE VOICE TEACHING GUIDELINES:
 
   // Initial teacher kick-off message per chapter using the Tactical Playbook
   useEffect(() => {
+    setAchievedTargetIds([]);
     setMasteryScore(0);
     setIsUnlocked(false);
 
@@ -554,14 +794,22 @@ ${instructor.config.hasCustomBusiness && instructor.config.businessName ? `The s
 
 STUDENT: ${userText}
 
+STUDENT WEAKNESSES TO REINFORCE AS EXAMPLES:
+${studentWeaknesses.map(w => w.replace(/_/g, " ")).join(", ")}
+
+CURRICULUM COMPETENCY TARGETS TO ASSESS:
+${coreTargets.map((t, idx) => `${idx + 1}. [${achievedTargetIds.includes(t.id) ? "ACHIEVED" : "PENDING"}] ${t.label}: ${t.description}`).join("\n")}
+
 Respond to the student naturally and respectfully:
 1. Speak directly and warmly like a real mentor teaching an ambitious adult student. No corporate roleplay, no military jargon, and no condescension.
 2. Actively reference the guide on their right side (e.g., 'As shown in Section 2 on your right...', 'Notice the formula in Section 2...', 'Remember the common mistake in Section 3...').
-3. IF the student demonstrates clear understanding or good reasoning (e.g. explaining the Newspaper rule, search intent, negative keywords, Quality Score, LTV/CAC, or speed-to-lead automation):
-   - Conclude warmly with this exact closing sentiment: "Well, I think you have mastered today's lesson! Go apply what you learned today to the weekly simulation. Good luck, and if you have any questions along the way, just ask!"
-4. IF the student is on the right track but missed a detail:
+3. IF the student demonstrates clear understanding or good reasoning on a pending target:
+   - Validate and praise that specific milestone!
+4. IF all core targets are mastered, conclude warmly:
+   - "Well, I think you have mastered today's lesson! Go apply what you learned today to the weekly simulation. Good luck, and if you have any questions along the way, just ask!"
+5. IF the student is on the right track but missed a detail:
    - Point them specifically to the exact section in the guide on their right, provide a clear, supportive 1-2 sentence coaching tip, and ask 1 quick follow-up question.
-5. IF the student is confused or asks a question:
+6. IF the student is confused or asks a question:
    - Answer their question directly with a simple real-world analogy, point them to the relevant section on the right, and check in with them.
 
 Keep your response natural, conversational, and punchy (2-3 sentences max).`,
@@ -576,7 +824,9 @@ Keep your response natural, conversational, and punchy (2-3 sentences max).`,
             playbookContent: playbookContent || "",
             studentMessage: userText,
             businessName: instructor.config.businessName,
-            industry: instructor.config.industry
+            industry: instructor.config.industry,
+            weaknesses: studentWeaknesses,
+            pendingTargets: coreTargets.filter(t => !achievedTargetIds.includes(t.id)).map(t => t.label)
           }
         })
       });
@@ -584,17 +834,8 @@ Keep your response natural, conversational, and punchy (2-3 sentences max).`,
       const data = await res.json();
       let replyText = data.response || data.message || "Good reasoning. Let's make sure you ground this in concrete keyword intent and heading hierarchy.";
 
-      // Determine mastery progress dynamically
-      const isMastery = /mastered today's lesson|good luck|simulation clearance|workbench unlocked|clear understanding/i.test(replyText) || 
-                        userText.length > 50 || 
-                        /intent|negative|quality score|h1|title tag|cpc|cac|roas|newspaper rule|smart|webhook|speed-to-lead/i.test(userText);
-      
-      const newScore = isMastery ? Math.max(85, masteryScore + 50) : Math.min(75, masteryScore + 30);
-      setMasteryScore(Math.min(100, newScore));
-
-      if (newScore >= 80 && !replyText.includes("mastered today's lesson")) {
-        replyText += "\n\nWell, I think you have mastered today's lesson! Go apply what you learned today to the weekly simulation. Good luck, and if you have any questions along the way, just ask!";
-      }
+      // Incrementally evaluate competency targets achieved
+      checkAndRewardTarget(userText, replyText);
 
       const instructorMsg: ChatMessage = {
         id: `msg-${Date.now() + 1}`,
@@ -608,20 +849,10 @@ Keep your response natural, conversational, and punchy (2-3 sentences max).`,
       if (isVoiceEnabled) {
         instructorVoice.speak(replyText);
       }
-
-      if (newScore >= 80 && !isUnlocked) {
-        setIsUnlocked(true);
-        onMasteryAchieved?.();
-        toast({
-          title: "🎯 Lesson Mastered!",
-          description: "Simulation clearance granted! Weekly client workbench unlocked."
-        });
-      }
     } catch (err) {
       // Fallback response if offline
       const replyText = "Sharp analysis. You understand how the Tactical Playbook sections work together to protect budget and scale conversions.\n\nWell, I think you have mastered today's lesson! Go apply what you learned today to the weekly simulation. Good luck, and if you have any questions along the way, just ask!";
-      setMasteryScore(90);
-      setIsUnlocked(true);
+      checkAndRewardTarget(userText, replyText);
 
       const instructorMsg: ChatMessage = {
         id: `msg-${Date.now() + 1}`,
@@ -704,6 +935,19 @@ Keep your response natural, conversational, and punchy (2-3 sentences max).`,
 
         {/* Actions: Live Voice Call, Voice Toggle, Restart Briefing */}
         <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 ml-auto flex-wrap sm:flex-nowrap justify-end">
+          {/* Button-Sized Live Voice Level & Diagnostics Meter */}
+          {(geminiLive.isConnected || geminiLive.isConnecting || geminiLive.error) && (
+            <VoiceLevelIndicator
+              volumeLevel={geminiLive.volumeLevel}
+              pipelineStage={geminiLive.pipelineStage}
+              isAiSpeaking={geminiLive.isAiSpeaking}
+              isMicMuted={geminiLive.isMicMuted}
+              diagnosticInfo={geminiLive.diagnosticInfo}
+              error={geminiLive.error}
+              onRetry={handleToggleGeminiLive}
+            />
+          )}
+
           <Button
             size="sm"
             variant={geminiLive.isConnected ? "destructive" : "default"}
@@ -762,25 +1006,58 @@ Keep your response natural, conversational, and punchy (2-3 sentences max).`,
         </div>
       </CardHeader>
 
-      {/* Mastery Progress Bar */}
-      <div className="bg-secondary/30 px-3 sm:px-4 py-2 border-b border-border/60 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 sm:gap-4 text-xs">
-        <div className="flex items-center gap-2 w-full sm:flex-1">
-          <span className="font-semibold text-muted-foreground text-[10px] sm:text-[11px] shrink-0">Comprehension Mastery:</span>
-          <Progress value={masteryScore} className="h-2 flex-1 bg-secondary" />
-          <span className={`font-mono font-bold text-[10px] sm:text-[11px] shrink-0 ${masteryScore >= 80 ? "text-emerald-400" : "text-amber-400"}`}>
-            {masteryScore}%
-          </span>
+      {/* Competency Mastery Progress Bar & Milestone Targets Strip */}
+      <div className="bg-secondary/30 px-3 sm:px-4 py-2.5 border-b border-border/60 space-y-2 text-xs">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 sm:gap-4">
+          <div className="flex items-center gap-2 w-full sm:flex-1">
+            <span className="font-semibold text-muted-foreground text-[10px] sm:text-[11px] shrink-0">Comprehension Mastery:</span>
+            <Progress value={masteryScore} className="h-2 flex-1 bg-secondary" />
+            <span className={`font-mono font-bold text-[10px] sm:text-[11px] shrink-0 ${masteryScore >= 100 ? "text-emerald-400" : "text-amber-400"}`}>
+              {masteryScore}% ({achievedTargetIds.length}/{coreTargets.length} targets)
+            </span>
+          </div>
+
+          {masteryScore >= 100 ? (
+            <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/40 text-[9px] sm:text-[10px] font-bold shrink-0 self-start sm:self-auto">
+              <CheckCircle2 className="h-3 w-3 mr-1 inline" /> All Core Targets Mastered
+            </Badge>
+          ) : (
+            <span className="text-[10px] text-muted-foreground italic shrink-0 self-start sm:self-auto">
+              Clear all {coreTargets.length} targets to unlock simulation clearance
+            </span>
+          )}
         </div>
 
-        {masteryScore >= 80 ? (
-          <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/40 text-[9px] sm:text-[10px] font-bold shrink-0 self-start sm:self-auto">
-            <CheckCircle2 className="h-3 w-3 mr-1 inline" /> Lesson Mastered (80%+)
-          </Badge>
-        ) : (
-          <span className="text-[10px] text-muted-foreground italic shrink-0 self-start sm:self-auto">
-            Simulation open all week • Aim for 80%+ comprehension
-          </span>
-        )}
+        {/* Milestone Targets Checklist Pills */}
+        <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
+          {coreTargets.map((target, idx) => {
+            const isDone = achievedTargetIds.includes(target.id);
+            return (
+              <span
+                key={target.id}
+                className={`px-2 py-0.5 rounded-full text-[10px] font-medium flex items-center gap-1 border transition-all ${
+                  isDone
+                    ? "bg-emerald-500/15 text-emerald-300 border-emerald-500/40 shadow-xs"
+                    : "bg-secondary/40 text-muted-foreground border-border/60"
+                }`}
+                title={target.description}
+              >
+                {isDone ? (
+                  <CheckCircle2 className="h-2.5 w-2.5 text-emerald-400 shrink-0" />
+                ) : (
+                  <span className="h-1.5 w-1.5 rounded-full bg-muted-foreground/60 shrink-0" />
+                )}
+                <span>Target {idx + 1}: {target.label}</span>
+              </span>
+            );
+          })}
+
+          {studentWeaknesses.length > 0 && (
+            <Badge variant="outline" className="text-[9px] px-1.5 py-0 border-amber-500/30 text-amber-300 bg-amber-950/20 ml-auto">
+              Weakness Focus: {studentWeaknesses[0].replace(/_/g, " ")}
+            </Badge>
+          )}
+        </div>
       </div>
 
       {/* Interactive Chat Messages Thread */}
@@ -797,8 +1074,8 @@ Keep your response natural, conversational, and punchy (2-3 sentences max).`,
                 <div className="font-semibold text-emerald-400 text-xs flex items-center gap-1.5 flex-wrap">
                   <span>● LIVE CALL ACTIVE — {instructor.name}</span>
                   {geminiLive.isAiSpeaking && (
-                    <Badge variant="outline" className="text-[9px] bg-emerald-500/20 text-emerald-300 border-emerald-500/30 animate-pulse">
-                      Speaking...
+                    <Badge variant="outline" className="text-[9px] bg-purple-500/20 text-purple-300 border-purple-500/30 animate-pulse">
+                      Sarah Speaking...
                     </Badge>
                   )}
                 </div>
@@ -809,11 +1086,21 @@ Keep your response natural, conversational, and punchy (2-3 sentences max).`,
             </div>
 
             <div className="flex items-center gap-1.5 shrink-0">
+              <VoiceLevelIndicator
+                volumeLevel={geminiLive.volumeLevel}
+                pipelineStage={geminiLive.pipelineStage}
+                isAiSpeaking={geminiLive.isAiSpeaking}
+                isMicMuted={geminiLive.isMicMuted}
+                diagnosticInfo={geminiLive.diagnosticInfo}
+                error={geminiLive.error}
+                onRetry={handleToggleGeminiLive}
+              />
+
               <Button
                 size="sm"
                 variant="outline"
                 onClick={geminiLive.toggleMicMute}
-                className={`h-7 px-2 text-[11px] border-border ${geminiLive.isMicMuted ? "bg-amber-500/20 text-amber-400 border-amber-500/40" : "text-muted-foreground hover:text-foreground"}`}
+                className={`h-8 px-2 text-[11px] border-border ${geminiLive.isMicMuted ? "bg-amber-500/20 text-amber-400 border-amber-500/40" : "text-muted-foreground hover:text-foreground"}`}
               >
                 {geminiLive.isMicMuted ? <MicOff className="h-3 w-3 mr-1 text-amber-400" /> : <Mic className="h-3 w-3 mr-1 text-emerald-400" />}
                 <span>{geminiLive.isMicMuted ? "Unmute" : "Mute"}</span>
@@ -823,7 +1110,7 @@ Keep your response natural, conversational, and punchy (2-3 sentences max).`,
                 size="sm"
                 variant="destructive"
                 onClick={geminiLive.endSession}
-                className="h-7 px-2 text-[11px] bg-rose-600 hover:bg-rose-500 text-white font-medium shadow"
+                className="h-8 px-2.5 text-[11px] bg-rose-600 hover:bg-rose-500 text-white font-medium shadow"
               >
                 <PhoneOff className="h-3 w-3 mr-1" />
                 <span>End Call</span>

@@ -761,6 +761,19 @@ export default function TutorialsPage() {
                     simulationName={(currentTutorial as any).chapterNumber === 2 ? "Dr. Miller Dental (Paid Search Auction)" : (currentTutorial as any).chapterNumber >= 4 ? "Apex Global Growth Capstone Simulation" : "Jenny's Artisan Java (CMS On-Page Repair)"}
                     playbookContent={currentTutorial.content}
                     isSplitView={false}
+                    onMasteryAchieved={async () => {
+                      try {
+                        await fetch('/api/tutorials/complete', {
+                          method: 'POST',
+                          body: JSON.stringify({ tutorialId: currentTutorial.id }),
+                          headers: { 'Content-Type': 'application/json' },
+                          credentials: 'include'
+                        });
+                        setProgress(prev => Array.from(new Set([...prev, currentTutorial.id])));
+                      } catch (err) {
+                        console.error('Failed to mark tutorial complete on mastery:', err);
+                      }
+                    }}
                   />
                 </div>
               )}
