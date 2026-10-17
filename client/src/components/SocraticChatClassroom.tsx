@@ -579,6 +579,7 @@ CRITICAL LIVE VOICE TEACHING GUIDELINES:
       await geminiLive.startSession({
         voiceName: geminiVoice,
         systemInstruction,
+        initialPrompt: `Hi ${instructor.name}! The live call just connected. Please greet me warmly in 1 or 2 spoken sentences, welcome me to our lesson on '${lessonTitle}', and ask what questions or thoughts I have to kick off!`,
         onAssistantTranscript: (text, isFinal) => {
           if (!text) return;
           setMessages(prev => {

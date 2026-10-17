@@ -3,6 +3,7 @@ import { useState, useRef, useCallback, useEffect } from "react";
 interface GeminiLiveOptions {
   voiceName?: string; // Aoede, Puck, Charon, Kore, Fenrir
   systemInstruction?: string;
+  initialPrompt?: string; // Kickoff spoken turn prompt
   onAssistantTranscript?: (text: string, isFinal: boolean) => void;
   onUserTranscript?: (text: string, isFinal: boolean) => void;
   onInterrupted?: () => void;
@@ -375,21 +376,19 @@ export function useGeminiLive() {
           if (!isSetupCompleteRef.current) return;
           if (ws.readyState !== WebSocket.OPEN) return;
           if (isMicMutedRef.current) return;
-          // Prevent laptop speaker acoustic feedback into mic while Sarah speaks
-          if (isAiSpeakingRef.current) return;
 
           // Downsample from hardware rate (e.g. 48kHz) down to 16kHz PCM16 for Gemini Live
           const pcm16Buffer = downsampleAndConvertToPCM16(float32Data, micAudioCtx.sampleRate);
           const base64Audio = arrayBufferToBase64(pcm16Buffer);
 
+          // Google Gemini Live BidiGenerateContentRealtimeInput:
+          // 'mediaChunks' is deprecated and ignored; official schema is realtimeInput.audio
           const audioPayload = {
             realtimeInput: {
-              mediaChunks: [
-                {
-                  mimeType: "audio/pcm;rate=16000",
-                  data: base64Audio
-                }
-              ]
+              audio: {
+                data: base64Audio,
+                mimeType: "audio/pcm;rate=16000"
+              }
             }
           };
 
@@ -514,6 +513,23 @@ export function useGeminiLive() {
             isSetupCompleteRef.current = true;
             setPipelineStage("live");
             setDiagnosticInfo(prev => ({ ...prev, setupAcknowledged: true }));
+
+            // If initial kickoff prompt is provided, start the instructor spoken introduction immediately
+            if (options.initialPrompt && ws.readyState === WebSocket.OPEN) {
+              const kickoffMsg = {
+                clientContent: {
+                  turns: [
+                    {
+                      role: "user",
+                      parts: [{ text: options.initialPrompt }]
+                    }
+                  ],
+                  turnComplete: true
+                }
+              };
+              ws.send(JSON.stringify(kickoffMsg));
+              console.log("[Gemini Live] Sent kickoff greeting prompt to instructor");
+            }
             return;
           }
 
