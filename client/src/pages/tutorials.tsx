@@ -752,29 +752,51 @@ export default function TutorialsPage() {
               )}
 
               {learningMode === 'conversational' && (
-                <div className="space-y-4">
-                  <SocraticChatClassroom
-                    lessonTitle={currentTutorial.title}
-                    lessonLevel={currentTutorial.level}
-                    chapterNumber={(currentTutorial as any).chapterNumber || 1}
-                    simulationLink={(currentTutorial as any).chapterNumber === 2 ? "/ad-simulation/1" : (currentTutorial as any).chapterNumber >= 4 ? "/capstone-simulation" : "/seo-simulation/1"}
-                    simulationName={(currentTutorial as any).chapterNumber === 2 ? "Dr. Miller Dental (Paid Search Auction)" : (currentTutorial as any).chapterNumber >= 4 ? "Apex Global Growth Capstone Simulation" : "Jenny's Artisan Java (CMS On-Page Repair)"}
-                    playbookContent={currentTutorial.content}
-                    isSplitView={false}
-                    onMasteryAchieved={async () => {
-                      try {
-                        await fetch('/api/tutorials/complete', {
-                          method: 'POST',
-                          body: JSON.stringify({ tutorialId: currentTutorial.id }),
-                          headers: { 'Content-Type': 'application/json' },
-                          credentials: 'include'
-                        });
-                        setProgress(prev => Array.from(new Set([...prev, currentTutorial.id])));
-                      } catch (err) {
-                        console.error('Failed to mark tutorial complete on mastery:', err);
-                      }
-                    }}
-                  />
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                  {/* Left Column: Interactive Socratic Chat Classroom */}
+                  <div className="lg:col-span-6 xl:col-span-5 space-y-4">
+                    <SocraticChatClassroom
+                      lessonTitle={currentTutorial.title}
+                      lessonLevel={currentTutorial.level}
+                      chapterNumber={(currentTutorial as any).chapterNumber || 1}
+                      simulationLink={(currentTutorial as any).chapterNumber === 2 ? "/ad-simulation/1" : (currentTutorial as any).chapterNumber >= 4 ? "/capstone-simulation" : "/seo-simulation/1"}
+                      simulationName={(currentTutorial as any).chapterNumber === 2 ? "Dr. Miller Dental (Paid Search Auction)" : (currentTutorial as any).chapterNumber >= 4 ? "Apex Global Growth Capstone Simulation" : "Jenny's Artisan Java (CMS On-Page Repair)"}
+                      playbookContent={currentTutorial.content}
+                      isSplitView={true}
+                      onMasteryAchieved={async () => {
+                        try {
+                          await fetch('/api/tutorials/complete', {
+                            method: 'POST',
+                            body: JSON.stringify({ tutorialId: currentTutorial.id }),
+                            headers: { 'Content-Type': 'application/json' },
+                            credentials: 'include'
+                          });
+                          setProgress(prev => Array.from(new Set([...prev, currentTutorial.id])));
+                        } catch (err) {
+                          console.error('Failed to mark tutorial complete on mastery:', err);
+                        }
+                      }}
+                    />
+                  </div>
+
+                  {/* Right Column: Study Guide & Reference Notes */}
+                  <div className="lg:col-span-6 xl:col-span-7 prose prose-invert max-w-none p-4 sm:p-6 rounded-xl bg-slate-950/60 border border-white/10 text-slate-200 shadow-xl max-h-[850px] overflow-y-auto">
+                    <div className="flex items-center justify-between mb-4 border-b border-white/10 pb-3 sticky top-0 bg-slate-950/95 backdrop-blur z-10 -mt-2 pt-2">
+                      <div className="flex items-center gap-2">
+                        <BookOpen className="h-4 w-4 text-primary" />
+                        <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Study Guide Reference Notes</span>
+                      </div>
+                      <Badge variant="outline" className="text-[10px] border-emerald-500/30 text-emerald-400 bg-emerald-500/10">
+                        Referenced by Instructor
+                      </Badge>
+                    </div>
+                    <TutorialContentRenderer 
+                      content={currentTutorial.content} 
+                      chapterNumber={(currentTutorial as any).chapterNumber}
+                      tutorialIndex={(currentTutorial as any).lessonNumber}
+                      hideAudioBar={true}
+                    />
+                  </div>
                 </div>
               )}
 
