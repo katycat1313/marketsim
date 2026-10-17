@@ -673,10 +673,7 @@ CRITICAL LIVE VOICE TEACHING GUIDELINES:
     }
   }, [lessonTitle, chapterNumber, track, isSplitView, playbookContent]);
 
-  // Auto-scroll to bottom of chat
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, isTyping]);
+  // Auto-scroll on every incoming message is disabled to prevent viewport jumping during live voice streaming
 
   // Handle Voice Input via Web Speech API / Deepgram
   const toggleVoiceInput = () => {
