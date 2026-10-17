@@ -756,6 +756,7 @@ export default function TutorialsPage() {
                   {/* Left Column: Interactive Socratic Chat Classroom */}
                   <div className="lg:col-span-6 xl:col-span-5 space-y-4">
                     <SocraticChatClassroom
+                      tutorialId={currentTutorial.id}
                       lessonTitle={currentTutorial.title}
                       lessonLevel={currentTutorial.level}
                       chapterNumber={(currentTutorial as any).chapterNumber || 1}

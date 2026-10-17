@@ -233,6 +233,7 @@ interface ChatMessage {
 }
 
 interface SocraticChatClassroomProps {
+  tutorialId?: number;
   lessonTitle: string;
   lessonLevel: string;
   chapterNumber: number;
@@ -446,6 +447,7 @@ When you're auditing a new client or business website for the first time, which 
 }
 
 export function SocraticChatClassroom({
+  tutorialId,
   lessonTitle,
   lessonLevel,
   chapterNumber = 1,
@@ -456,6 +458,14 @@ export function SocraticChatClassroom({
   onMasteryAchieved
 }: SocraticChatClassroomProps) {
   const { toast } = useToast();
+
+  // Deterministic storage key for persistent lesson memory
+  const storageKey = useMemo(() => {
+    const idKey = tutorialId ? `tut_${tutorialId}` : `ch_${chapterNumber}`;
+    const cleanTitle = lessonTitle.toLowerCase().replace(/[^a-z0-9]/g, "_").slice(0, 40);
+    return `krechet_socratic_memory_${idKey}_${cleanTitle}`;
+  }, [tutorialId, chapterNumber, lessonTitle]);
+
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
@@ -552,6 +562,8 @@ export function SocraticChatClassroom({
       });
 
       const pendingTargets = coreTargets.filter(t => !achievedTargetIds.includes(t.id));
+      const hasHistory = messages.length > 1;
+
       const systemInstruction = `You are ${instructor.name}, an encouraging, expert digital marketing instructor at Krechet Academy.
 Your teaching style: '${instructor.teachingStyle}'.
 The student is working through lesson '${lessonTitle}' (Chapter ${chapterNumber}).
@@ -567,7 +579,7 @@ ${studentWeaknesses.map(w => w.replace(/_/g, " ")).join(", ")}
 
 CURRICULUM COMPETENCY TARGETS TO ASSESS:
 ${coreTargets.map((t, idx) => `${idx + 1}. [${achievedTargetIds.includes(t.id) ? "COMPLETED" : "PENDING"}] ${t.label}: ${t.description}`).join("\n")}
-
+${hasHistory ? `\nPREVIOUS CONVERSATION CONTEXT SO FAR:\n${messages.slice(-6).map(m => `${m.sender === "instructor" ? instructor.name : "Student"}: ${m.text}`).join("\n")}\n` : ""}
 CRITICAL LIVE VOICE TEACHING GUIDELINES:
 1. Speak warmly, concisely, and naturally like an encouraging senior mentor on a real audio call. Keep every voice turn to 1-3 spoken sentences. Avoid monologues.
 2. Direct the student to look at specific sections, formulas, and warnings in their guide on the right side (e.g., 'Look at Section 2 on your right...', 'Notice the formula for CAC...').
@@ -576,10 +588,14 @@ CRITICAL LIVE VOICE TEACHING GUIDELINES:
 5. If the student answers a pending target well (${pendingTargets.map(t => t.label).join(", ")}), explicitly validate and praise their reasoning so they know they nailed that objective.
 6. If the student interrupts you or asks a question, immediately pivot and answer their question directly.`;
 
+      const initialPrompt = hasHistory
+        ? `Hi ${instructor.name}! I'm returning to our live session on '${lessonTitle}'. We've already completed ${achievedTargetIds.length} of ${coreTargets.length} milestones. Please welcome me back warmly in 1 or 2 concise spoken sentences and let's pick up where we left off!`
+        : `Hi ${instructor.name}! The live call just connected. Please greet me warmly in 1 or 2 spoken sentences, welcome me to our lesson on '${lessonTitle}', and ask what questions or thoughts I have to kick off!`;
+
       await geminiLive.startSession({
         voiceName: geminiVoice,
         systemInstruction,
-        initialPrompt: `Hi ${instructor.name}! The live call just connected. Please greet me warmly in 1 or 2 spoken sentences, welcome me to our lesson on '${lessonTitle}', and ask what questions or thoughts I have to kick off!`,
+        initialPrompt,
         onAssistantTranscript: (text, isFinal) => {
           if (!text) return;
           setMessages(prev => {
@@ -645,33 +661,69 @@ CRITICAL LIVE VOICE TEACHING GUIDELINES:
     }
   };
 
-  // Initial teacher kick-off message per chapter using the Tactical Playbook
+  // Load lesson memory so progress & conversation are preserved when navigating away and returning
   useEffect(() => {
-    setAchievedTargetIds([]);
-    setMasteryScore(0);
-    setIsUnlocked(false);
-
-    const initialBriefing = buildLessonBriefing({
-      lessonTitle,
-      chapterNumber,
-      playbookContent,
-      isSplitView,
-      instructor
-    });
-
-    const firstMessage: ChatMessage = {
-      id: "msg-1",
-      sender: "instructor",
-      text: initialBriefing,
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-    };
-
-    setMessages([firstMessage]);
-
-    if (isVoiceEnabled) {
-      instructorVoice.speak(initialBriefing);
+    let loadedFromStorage = false;
+    try {
+      const savedRaw = localStorage.getItem(storageKey);
+      if (savedRaw) {
+        const saved = JSON.parse(savedRaw);
+        if (saved && Array.isArray(saved.messages) && saved.messages.length > 0) {
+          setMessages(saved.messages);
+          setAchievedTargetIds(Array.isArray(saved.achievedTargetIds) ? saved.achievedTargetIds : []);
+          setMasteryScore(typeof saved.masteryScore === "number" ? saved.masteryScore : 0);
+          setIsUnlocked(Boolean(saved.isUnlocked));
+          loadedFromStorage = true;
+        }
+      }
+    } catch (err) {
+      console.warn("[Lesson Memory] Error loading persisted state:", err);
     }
-  }, [lessonTitle, chapterNumber, track, isSplitView, playbookContent]);
+
+    if (!loadedFromStorage) {
+      setAchievedTargetIds([]);
+      setMasteryScore(0);
+      setIsUnlocked(false);
+
+      const initialBriefing = buildLessonBriefing({
+        lessonTitle,
+        chapterNumber,
+        playbookContent,
+        isSplitView,
+        instructor
+      });
+
+      const firstMessage: ChatMessage = {
+        id: `msg-${Date.now()}`,
+        sender: "instructor",
+        text: initialBriefing,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+
+      setMessages([firstMessage]);
+
+      if (isVoiceEnabled) {
+        instructorVoice.speak(initialBriefing);
+      }
+    }
+  }, [storageKey, lessonTitle, chapterNumber, track, isSplitView, playbookContent]);
+
+  // Persist conversation and milestone progress whenever state updates
+  useEffect(() => {
+    if (messages.length === 0) return;
+    try {
+      const memoryPayload = {
+        messages,
+        achievedTargetIds,
+        masteryScore,
+        isUnlocked,
+        lastUpdated: new Date().toISOString()
+      };
+      localStorage.setItem(storageKey, JSON.stringify(memoryPayload));
+    } catch (err) {
+      console.warn("[Lesson Memory] Failed to save state to localStorage:", err);
+    }
+  }, [messages, achievedTargetIds, masteryScore, isUnlocked, storageKey]);
 
   // Auto-scroll on every incoming message is disabled to prevent viewport jumping during live voice streaming
 
@@ -869,6 +921,11 @@ Keep your response natural, conversational, and punchy (2-3 sentences max).`,
   };
 
   const handleResetClassroom = () => {
+    try {
+      localStorage.removeItem(storageKey);
+    } catch (e) {}
+
+    setAchievedTargetIds([]);
     setMasteryScore(0);
     setIsUnlocked(false);
 
@@ -894,8 +951,8 @@ Keep your response natural, conversational, and punchy (2-3 sentences max).`,
     }
 
     toast({
-      title: "Lesson Reset",
-      description: `${instructor.name} has restarted today's lesson.`
+      title: "Lesson Reset 🔄",
+      description: `${instructor.name} has restarted today's lesson. Practice history cleared.`
     });
   };
 
