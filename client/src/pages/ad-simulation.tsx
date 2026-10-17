@@ -35,6 +35,7 @@ import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
 import { getQueryFn, apiRequest, queryClient } from "@/lib/queryClient";
 import { AdPlatformSimulation } from "@shared/schema";
+import { EmergencyCrisisModal, CrisisOption } from "@/components/EmergencyCrisisModal";
 
 // Define an interface for the simulation data
 interface AdSimulation {
@@ -130,12 +131,47 @@ interface LinkedInAdForm {
   leadGenFields: string[];
 }
 
+const bossCrisisOptions: CrisisOption[] = [
+  {
+    text: "Option A: Immediately pause leaking broad-match keywords, deploy an emergency negative keyword shield (-free, -cheap, -diy, -jobs, -dentures), switch to Phrase & Exact match on high-intent terms like '[emergency dentist near me]', and draft a client credit memo for the wasted spend.",
+    isCorrect: true,
+    feedback: "✅ Outstanding tactical decision under executive pressure. Pausing broad match stops the bleed instantly. The negative keyword shield eliminates unqualified junk searches, and shifting to exact/phrase match guarantees Dr. Miller only pays for high-intent patients. Offering a credit memo preserves the $10,000 monthly retainer.",
+    spokenResolution: "Good. That's the decisive leadership I expect from my account managers. I'm telling Dr. Miller right now that we caught the leak, paused broad match, deployed negative shields, and credited the $380 spend. You just saved the retainer. Now get back in there and finish tightening those ad groups!"
+  },
+  {
+    text: "Option B: Tell Dr. Miller that Google Ads always wastes budget in the first 7 days during the algorithmic learning phase, and ask him to increase the daily budget so the AI can optimize.",
+    isCorrect: false,
+    feedback: "❌ Lethal mistake. In agency management, telling a furious client to spend MORE money after burning their budget on unqualified junk clicks will get your agency fired on the spot and sued for negligence."
+  },
+  {
+    text: "Option C: Blame Google's automated recommendations and tell Dr. Miller that paid search doesn't work for dental clinics in his market.",
+    isCorrect: false,
+    feedback: "❌ Never shift blame or claim a proven channel doesn't work. Dental paid search has some of the highest patient lifetime values in local marketing if configured with strict match types and location gating."
+  }
+];
+
 export default function AdSimulationPage() {
   const [matched, params] = useRoute<{ id?: string; simulationId?: string }>('/ad-simulation/:id');
   const simulationId = params?.id ? parseInt(params.id) : (params?.simulationId ? parseInt(params.simulationId) : null);
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const [isGeneratingNext, setIsGeneratingNext] = useState(false);
+
+  // Mid-Campaign Surprise Boss Crisis Call State
+  const [isCrisisOpen, setIsCrisisOpen] = useState(false);
+  const [hasTriggeredCrisis, setHasTriggeredCrisis] = useState(false);
+  const [crisisResolved, setCrisisResolved] = useState(false);
+
+  // Trigger surprise Boss crisis call after student explores the campaign (catches them off-guard!)
+  useEffect(() => {
+    if (!hasTriggeredCrisis && !crisisResolved) {
+      const timer = setTimeout(() => {
+        setIsCrisisOpen(true);
+        setHasTriggeredCrisis(true);
+      }, 15000); // 15 seconds into the simulation
+      return () => clearTimeout(timer);
+    }
+  }, [hasTriggeredCrisis, crisisResolved]);
 
   const handleLaunchRemediation = async (weaknessKey: string, difficulty: string = "Expert") => {
     setIsGeneratingNext(true);
@@ -2416,7 +2452,7 @@ export default function AdSimulationPage() {
       <div className="mb-6">
         <h1 className="text-3xl font-bold mb-2">{simulation?.title}</h1>
         <p className="text-gray-600 mb-4">{simulation?.scenarioDescription}</p>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 flex-wrap">
           <Badge variant="outline">{simulation?.industry} Industry</Badge>
           <Badge variant="outline" className={`capitalize ${
             simulation?.difficulty === "beginner" ? "bg-green-100 text-green-800" :
@@ -2426,6 +2462,23 @@ export default function AdSimulationPage() {
           }`}>
             {simulation?.difficulty} Level
           </Badge>
+
+          {crisisResolved ? (
+            <Badge className="bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border-emerald-500/40 text-xs flex items-center gap-1.5 py-1 px-2.5">
+              <CheckCircle className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
+              <span>Agency Retainer Saved (+15 Rep)</span>
+            </Badge>
+          ) : (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsCrisisOpen(true)}
+              className="h-7 px-3 text-xs text-amber-600 dark:text-amber-400 hover:text-amber-700 hover:bg-amber-50 dark:hover:bg-amber-500/10 border-amber-500/40 font-medium animate-pulse"
+              title="Incoming executive crisis call from Managing Director Atlas"
+            >
+              🚨 Incoming Boss Crisis Call
+            </Button>
+          )}
         </div>
       </div>
       
@@ -2488,6 +2541,30 @@ export default function AdSimulationPage() {
       ) : (
         renderSimulationResults()
       )}
+
+      {/* Mid-Campaign Surprise Boss Crisis Incoming Call Modal */}
+      <EmergencyCrisisModal
+        isOpen={isCrisisOpen}
+        onClose={() => setIsCrisisOpen(false)}
+        onResolved={() => {
+          setCrisisResolved(true);
+          toast({
+            title: "🎉 Retainer Saved!",
+            description: "Director Atlas confirmed Dr. Miller's retainer was saved. +15 Reputation Points added to your agency portfolio!",
+          });
+        }}
+        callerName="Director Marcus Atlas"
+        callerRole="Managing Director • Krechet Media Group"
+        callerAvatar="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400"
+        callerVoice="aura-orion-en"
+        clientName={simulation?.title || "Dr. Miller Dental Clinic"}
+        urgencyBadge="Executive Red Alert"
+        crisisAudioText="Stop what you're doing right now! Dr. Miller just called my direct cell screaming. We launched his search campaign three hours ago, and his entire $600 weekly budget has already burned $380 with zero appointments booked! His front desk is getting flooded with calls from people asking for free government dentures and DIY tooth extraction kits! Did someone leave broad match open with zero negative keywords? We are about to lose a ten-thousand dollar retainer in the next ten minutes. What is your immediate tactical action plan?"
+        situationReportTitle="Urgent Budget Bleed Report:"
+        tacticalQuestion="Your Strategic Executive Response (Client Retention):"
+        options={bossCrisisOptions}
+        resolutionSummary="🏆 Retainer Saved • +15 Agency Reputation Logged"
+      />
     </div>
   );
 }

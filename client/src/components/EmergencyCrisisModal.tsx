@@ -6,14 +6,47 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Phone, PhoneOff, AlertTriangle, ShieldCheck, Sparkles, Volume2, VolumeX, CheckCircle2, Clock } from "lucide-react";
 import { useDeepgramVoice } from "@/hooks/useDeepgramVoice";
 
-interface EmergencyCrisisModalProps {
+export interface CrisisOption {
+  text: string;
+  isCorrect: boolean;
+  feedback: string;
+  spokenResolution?: string;
+}
+
+const DEFAULT_CRISIS_OPTIONS: CrisisOption[] = [
+  {
+    text: "Option A: Tell Jenny to stand firm, refuse the $4 price, and demand customers pay the full $18.",
+    isCorrect: false,
+    feedback: "❌ Rookie mistake. Telling angry in-store customers to pay full price when your website made the error creates furious 1-star Yelp and Google Maps reviews that cost thousands to fix."
+  },
+  {
+    text: "Option B: Honor the $4 price for the 4 people currently at the counter as a one-time courtesy, offer a free sample, and fix the CMS price to $18 immediately.",
+    isCorrect: true,
+    feedback: "✅ Exactly right. In client management, honoring the promo for the 4 people currently in the store turns a PR disaster into word-of-mouth loyalty. The immediate CMS fix stops future loss.",
+    spokenResolution: "Brilliant call. Jenny just texted me—she honored the $4 for those four customers and offered a free pour-over. They were super understanding and even promised to leave a positive review! Great job staying calm under pressure."
+  },
+  {
+    text: "Option C: Tell the customers that the website developer made a stupid mistake and it's not Jenny's fault.",
+    isCorrect: false,
+    feedback: "❌ Never blame staff or interns to customers. It looks unprofessional and destroys customer trust in Jenny's brand."
+  }
+];
+
+export interface EmergencyCrisisModalProps {
   isOpen: boolean;
   onClose: () => void;
   onResolved: () => void;
   callerName?: string;
   callerRole?: string;
   callerAvatar?: string;
+  callerVoice?: string;
   clientName?: string;
+  urgencyBadge?: string;
+  crisisAudioText?: string;
+  situationReportTitle?: string;
+  tacticalQuestion?: string;
+  options?: CrisisOption[];
+  resolutionSummary?: string;
 }
 
 export function EmergencyCrisisModal({
@@ -23,7 +56,14 @@ export function EmergencyCrisisModal({
   callerName = "Sarah Jenkins",
   callerRole = "Lead Account Director",
   callerAvatar = "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400",
-  clientName = "Jenny's Artisan Java"
+  callerVoice = "aura-asteria-en",
+  clientName = "Jenny's Artisan Java",
+  urgencyBadge = "Client Emergency",
+  crisisAudioText = "Hey, stop what you're doing for a second. Jenny just called me in a total panic. Her barista has four customers arguing at the register right now because an old test promo on the site says whole bean bags are $4 instead of $18! We need to handle this immediately before she gets slammed with one-star reviews on Google Maps. What's the best damage-control response?",
+  situationReportTitle = "Immediate Situation Report:",
+  tacticalQuestion = "Your Strategic Decision (Damage Control):",
+  options = DEFAULT_CRISIS_OPTIONS,
+  resolutionSummary = "🏆 Crisis resolved • Portfolio score updated"
 }: EmergencyCrisisModalProps) {
   const [callState, setCallState] = useState<"ringing" | "connected" | "de-escalation" | "resolved">("ringing");
   const [callSeconds, setCallSeconds] = useState(0);
@@ -32,11 +72,8 @@ export function EmergencyCrisisModal({
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   const voice = useDeepgramVoice({
-    defaultVoice: "aura-asteria-en"
+    defaultVoice: callerVoice
   });
-
-  const crisisAudioText = 
-    "Hey, stop what you're doing for a second. Jenny just called me in a total panic. Her barista has four customers arguing at the register right now because an old test promo on the site says whole bean bags are $4 instead of $18! We need to handle this immediately before she gets slammed with one-star reviews on Google Maps. What's the best damage-control response?";
 
   // Play realistic telephone ring sound via Web Audio API
   const playPhoneRing = () => {
@@ -102,15 +139,17 @@ export function EmergencyCrisisModal({
 
   const handleSelectOption = (idx: number) => {
     setSelectedResponse(idx);
-    if (idx === 1) {
-      // Correct tactical answer
-      setFeedback("✅ Exactly right. In client management, honoring the promo for the 4 people currently in the store turns a PR disaster into word-of-mouth loyalty. The immediate CMS fix stops future loss.");
-      voice.speak("Brilliant call. Jenny just texted me—she honored the $4 for those four customers and offered a free pour-over. They were super understanding and even promised to leave a positive review! Great job staying calm under pressure.");
+    const chosen = options[idx];
+    if (!chosen) return;
+
+    if (chosen.isCorrect) {
+      setFeedback(chosen.feedback);
+      if (chosen.spokenResolution) {
+        voice.speak(chosen.spokenResolution);
+      }
       setCallState("resolved");
-    } else if (idx === 0) {
-      setFeedback("❌ Rookie mistake. Telling angry in-store customers to pay full price when your website made the error creates furious 1-star Yelp and Google Maps reviews that cost thousands to fix.");
     } else {
-      setFeedback("❌ Never blame staff or interns to customers. It looks unprofessional and destroys customer trust in Jenny's brand.");
+      setFeedback(chosen.feedback);
     }
   };
 
@@ -132,7 +171,7 @@ export function EmergencyCrisisModal({
               <div className="relative">
                 <Avatar className="h-12 w-12 border-2 border-red-500">
                   <AvatarImage src={callerAvatar} alt={callerName} />
-                  <AvatarFallback className="bg-red-500 text-white font-bold">SJ</AvatarFallback>
+                  <AvatarFallback className="bg-red-500 text-white font-bold">{callerName.split(' ').map(w => w[0]).join('')}</AvatarFallback>
                 </Avatar>
                 <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
@@ -141,8 +180,8 @@ export function EmergencyCrisisModal({
               </div>
               <div>
                 <div className="flex items-center gap-1.5">
-                  <Badge variant="destructive" className="text-[9px] uppercase px-1.5 py-0">
-                    Client Emergency
+                  <Badge variant="destructive" className="text-[9px] uppercase px-1.5 py-0 font-bold">
+                    {urgencyBadge}
                   </Badge>
                 </div>
                 <h4 className="text-sm font-bold mt-0.5">{callerName}</h4>
@@ -151,7 +190,7 @@ export function EmergencyCrisisModal({
             </div>
 
             <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-2 text-[11px] text-red-200">
-              🚨 Urgent call regarding <strong>{clientName}</strong> pricing dispute.
+              🚨 Urgent incoming call regarding <strong>{clientName}</strong>
             </div>
 
             <div className="flex items-center gap-2 pt-1">
@@ -235,25 +274,21 @@ export function EmergencyCrisisModal({
                 </h4>
 
                 <div className="space-y-2">
-                  {[
-                    "Option A: Tell Jenny to stand firm, refuse the $4 price, and demand customers pay the full $18.",
-                    "Option B: Honor the $4 price for the 4 people currently at the counter as a one-time courtesy, offer a free sample, and fix the CMS price to $18 immediately.",
-                    "Option C: Tell the customers that the website developer made a stupid mistake and it's not Jenny's fault."
-                  ].map((option, idx) => (
+                  {options.map((option, idx) => (
                     <button
                       key={idx}
                       onClick={() => handleSelectOption(idx)}
                       disabled={callState === "resolved"}
                       className={`w-full text-left p-3 rounded-lg border text-xs transition-all flex items-start gap-2.5 ${
                         selectedResponse === idx
-                          ? idx === 1
-                            ? "bg-emerald-950/40 border-emerald-500 text-emerald-200"
+                          ? option.isCorrect
+                            ? "bg-emerald-950/40 border-emerald-500 text-emerald-200 font-medium"
                             : "bg-red-950/40 border-red-500 text-red-200"
                           : "bg-card/60 border-border/70 hover:border-primary/50 text-foreground"
                       }`}
                     >
                       <span className="font-bold text-primary shrink-0">[{idx + 1}]</span>
-                      <span className="leading-relaxed">{option}</span>
+                      <span className="leading-relaxed">{option.text}</span>
                     </button>
                   ))}
                 </div>
@@ -262,7 +297,7 @@ export function EmergencyCrisisModal({
               {/* Feedback Alert */}
               {feedback && (
                 <div className={`p-3 rounded-lg text-xs leading-relaxed border ${
-                  selectedResponse === 1 
+                  selectedResponse !== null && options[selectedResponse]?.isCorrect
                     ? "bg-emerald-950/30 border-emerald-500/40 text-emerald-300"
                     : "bg-red-950/30 border-red-500/40 text-red-300"
                 }`}>
@@ -273,7 +308,7 @@ export function EmergencyCrisisModal({
 
             <DialogFooter className="border-t border-border/60 pt-3 flex items-center justify-between">
               <span className="text-[11px] text-muted-foreground">
-                {callState === "resolved" ? "🏆 Crisis resolved • Portfolio score updated" : "Select an option to advise your client"}
+                {callState === "resolved" ? resolutionSummary : "Select an option to advise your client"}
               </span>
 
               {callState === "resolved" ? (
