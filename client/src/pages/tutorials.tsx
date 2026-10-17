@@ -18,13 +18,15 @@ import {
   MessageSquare,
   Columns,
   Sparkles,
-  Headphones
+  Headphones,
+  Flame
 } from 'lucide-react';
 import ErrorBoundary from '../components/ErrorBoundary';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import TutorialContentRenderer from '../components/TutorialContentRenderer';
 import { MicroFeedback } from '@/components/ui/micro-feedback';
 import { SocraticChatClassroom } from '@/components/SocraticChatClassroom';
+import { CrisisDispatchHub } from '@/components/CrisisDispatchHub';
 
 // Tutorial interface
 interface Tutorial {
@@ -59,6 +61,7 @@ export default function TutorialsPage() {
   const [progress, setProgress] = useState<number[]>([]);
   const [currentTutorial, setCurrentTutorial] = useState<Tutorial | null>(null);
   const [learningMode, setLearningMode] = useState<'study_guide' | 'listen' | 'conversational'>('conversational');
+  const [isCrisisHubOpen, setIsCrisisHubOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -553,15 +556,24 @@ export default function TutorialsPage() {
             </p>
           </div>
           
-          <div className="flex flex-col items-end">
-            <div className="flex items-center space-x-2 mb-2">
+          <div className="flex flex-col items-end gap-2">
+            <Button
+              onClick={() => setIsCrisisHubOpen(true)}
+              className="bg-gradient-to-r from-red-600 to-amber-600 hover:from-red-500 hover:to-amber-500 text-white font-extrabold text-xs h-8 px-3 rounded-xl shadow-lg border border-red-500/40 flex items-center gap-1.5 animate-pulse"
+              title="Open the Agency Crisis Dispatch Room (3 Fire Drills Per Week)"
+            >
+              <Flame className="h-3.5 w-3.5 text-amber-200" />
+              <span>🚨 Crisis Dispatch Room (3/Wk)</span>
+            </Button>
+
+            <div className="flex items-center space-x-2">
               <span className="text-sm font-medium">Your Progress:</span>
               <span className="text-[#ffd700] font-semibold">{getOverallProgress()}%</span>
             </div>
             <div className="w-48">
               <Progress value={getOverallProgress()} className="h-2" />
             </div>
-            <p className="text-xs text-muted-foreground mt-1">
+            <p className="text-xs text-muted-foreground mt-0.5">
               {progress.length}/{tutorials.length} tutorials completed
             </p>
           </div>
@@ -619,7 +631,15 @@ export default function TutorialsPage() {
                   </h2>
                 </div>
 
-                <div className="flex items-center gap-2 self-stretch sm:self-start md:self-auto justify-end">
+                <div className="flex items-center gap-2 self-stretch sm:self-start md:self-auto justify-end flex-wrap">
+                  <Button
+                    onClick={() => setIsCrisisHubOpen(true)}
+                    className="bg-red-600/90 hover:bg-red-500 text-white font-bold text-xs h-8 px-2.5 rounded-lg border border-red-500/40 flex items-center gap-1.5"
+                    title="Open Agency Crisis Dispatch Room"
+                  >
+                    <Flame className="h-3 w-3 text-amber-300 animate-pulse" />
+                    <span>🚨 Weekly Crisis Calls (3/Wk)</span>
+                  </Button>
                   <Button 
                     variant="outline" 
                     size="sm"
@@ -1014,6 +1034,13 @@ export default function TutorialsPage() {
             </div>
           )}
         </ErrorBoundary>
+
+        {/* Agency Weekly Crisis Dispatch Hub */}
+        <CrisisDispatchHub
+          isOpen={isCrisisHubOpen}
+          onClose={() => setIsCrisisHubOpen(false)}
+          defaultWeek={currentTutorial ? Math.min(4, Math.max(1, Math.ceil(extractChapterNumber(currentTutorial) / 2))) : 1}
+        />
       </div>
     </div>
   );

@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Phone, PhoneOff, AlertTriangle, ShieldCheck, Sparkles, Volume2, VolumeX, CheckCircle2, Clock } from "lucide-react";
 import { useDeepgramVoice } from "@/hooks/useDeepgramVoice";
+import { CrisisScenario } from "@/lib/crisisScenarios";
 
 export interface CrisisOption {
   text: string;
@@ -36,6 +37,7 @@ export interface EmergencyCrisisModalProps {
   isOpen: boolean;
   onClose: () => void;
   onResolved: () => void;
+  scenario?: CrisisScenario;
   callerName?: string;
   callerRole?: string;
   callerAvatar?: string;
@@ -53,26 +55,49 @@ export function EmergencyCrisisModal({
   isOpen,
   onClose,
   onResolved,
-  callerName = "Sarah Jenkins",
-  callerRole = "Lead Account Director",
-  callerAvatar = "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400",
-  callerVoice = "aura-asteria-en",
-  clientName = "Jenny's Artisan Java",
-  urgencyBadge = "Client Emergency",
-  crisisAudioText = "Hey, stop what you're doing for a second. Jenny just called me in a total panic. Her barista has four customers arguing at the register right now because an old test promo on the site says whole bean bags are $4 instead of $18! We need to handle this immediately before she gets slammed with one-star reviews on Google Maps. What's the best damage-control response?",
-  situationReportTitle = "Immediate Situation Report:",
-  tacticalQuestion = "Your Strategic Decision (Damage Control):",
-  options = DEFAULT_CRISIS_OPTIONS,
-  resolutionSummary = "🏆 Crisis resolved • Portfolio score updated"
+  scenario,
+  callerName: propCallerName,
+  callerRole: propCallerRole,
+  callerAvatar: propCallerAvatar,
+  callerVoice: propCallerVoice,
+  clientName: propClientName,
+  urgencyBadge: propUrgencyBadge,
+  crisisAudioText: propCrisisAudioText,
+  situationReportTitle: propSituationReportTitle,
+  tacticalQuestion: propTacticalQuestion,
+  options: propOptions,
+  resolutionSummary: propResolutionSummary,
 }: EmergencyCrisisModalProps) {
+  const callerName = scenario?.callerName || propCallerName || "Sarah Jenkins";
+  const callerRole = scenario?.callerRole || propCallerRole || "Lead Account Director";
+  const callerAvatar = scenario?.callerAvatar || propCallerAvatar || "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400";
+  const callerVoice = scenario?.callerVoice || propCallerVoice || "aura-asteria-en";
+  const clientName = scenario?.clientName || propClientName || "Jenny's Artisan Java";
+  const urgencyBadge = scenario?.urgencyBadge || propUrgencyBadge || "Client Emergency";
+  const crisisAudioText = scenario?.crisisAudioText || propCrisisAudioText || "Hey, stop what you're doing for a second. Jenny just called me in a total panic. Her barista has four customers arguing at the register right now because an old test promo on the site says whole bean bags are $4 instead of $18! We need to handle this immediately before she gets slammed with one-star reviews on Google Maps. What's the best damage-control response?";
+  const situationReportTitle = scenario?.situationReportTitle || propSituationReportTitle || "Immediate Situation Report:";
+  const tacticalQuestion = scenario?.tacticalQuestion || propTacticalQuestion || "Your Strategic Decision (Damage Control):";
+  const options = scenario?.options || propOptions || DEFAULT_CRISIS_OPTIONS;
+  const resolutionSummary = scenario?.resolutionSummary || propResolutionSummary || "🏆 Crisis resolved • Portfolio score updated";
+
   const [callState, setCallState] = useState<"ringing" | "connected" | "de-escalation" | "resolved">("ringing");
   const [callSeconds, setCallSeconds] = useState(0);
   const [selectedResponse, setSelectedResponse] = useState<number | null>(null);
   const [feedback, setFeedback] = useState<string | null>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Reset state whenever modal is opened or scenario changes
+  useEffect(() => {
+    if (isOpen) {
+      setCallState("ringing");
+      setCallSeconds(0);
+      setSelectedResponse(null);
+      setFeedback(null);
+    }
+  }, [isOpen, scenario?.id]);
+
   const voice = useDeepgramVoice({
-    defaultVoice: callerVoice
+    defaultVoice: callerVoice as any
   });
 
   // Play realistic telephone ring sound via Web Audio API
@@ -129,7 +154,7 @@ export function EmergencyCrisisModal({
 
   const handleAnswerCall = () => {
     setCallState("connected");
-    voice.speak(crisisAudioText);
+    voice.speak(crisisAudioText, callerVoice);
   };
 
   const handleRejectCall = () => {
@@ -145,7 +170,7 @@ export function EmergencyCrisisModal({
     if (chosen.isCorrect) {
       setFeedback(chosen.feedback);
       if (chosen.spokenResolution) {
-        voice.speak(chosen.spokenResolution);
+        voice.speak(chosen.spokenResolution, callerVoice);
       }
       setCallState("resolved");
     } else {
