@@ -45,7 +45,7 @@ export interface LessonTarget {
 /**
  * Returns the exact 3-5 core competency targets for the current lesson
  */
-export function getLessonCoreTargets(chapterNumber: number, title: string, playbookContent?: string): LessonTarget[] {
+function getLessonCoreTargets(chapterNumber: number, title: string, playbookContent?: string): LessonTarget[] {
   const t = title.toLowerCase();
 
   // Lesson 1: Fundamentals & Funnel Economics
@@ -194,7 +194,7 @@ export function getLessonCoreTargets(chapterNumber: number, title: string, playb
 /**
  * Checks if student has demonstrated a specific pending competency target
  */
-export function evaluateTargetDemonstration(
+function evaluateTargetDemonstration(
   userText: string,
   replyText: string,
   pendingTargets: LessonTarget[]
