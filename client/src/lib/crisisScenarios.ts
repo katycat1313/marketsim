@@ -6,6 +6,7 @@ export interface CrisisScenario {
   weekTitle: string;
   title: string;
   category: "operational" | "executive" | "pr_legal" | "technical";
+  interactiveType?: "multiple_choice" | "campaign_audit" | "persona_strategy";
   callerName: string;
   callerRole: string;
   callerAvatar: string;
@@ -18,6 +19,7 @@ export interface CrisisScenario {
   options: CrisisOption[];
   resolutionSummary: string;
   rewardRep: number;
+  hint?: string;
 }
 
 export const CRISIS_SCENARIOS: CrisisScenario[] = [
@@ -466,6 +468,48 @@ export const CRISIS_SCENARIOS: CrisisScenario[] = [
       }
     ],
     resolutionSummary: "🏆 Retainer Renewed • +20% Budget Expansion Won (+25 Rep)",
+    rewardRep: 25
+  },
+  {
+    id: "w3-c4-boss-audit-interactive",
+    weekNumber: 3,
+    weekTitle: "Week 3: CRO, Landing Pages & A/B Testing",
+    title: "Director Atlas: Campaign Efficiency Diagnostic (Hands-On)",
+    category: "technical",
+    interactiveType: "campaign_audit",
+    callerName: "Director Marcus Atlas",
+    callerRole: "Managing Director • Krechet Media Group",
+    callerAvatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400",
+    callerVoice: "aura-orion-en",
+    clientName: "Apex Dental Clinic",
+    urgencyBadge: "Boss Diagnostic Challenge",
+    crisisAudioText: "I'm looking at our dental account right now and our blended cost-per-acquisition just spiked to ninety-five dollars! That is unacceptable. I am not going to spoon-feed you the answer—pull up the device telemetry and search query reports. Figure out where the budget leak is, drop bids on the bleeding segments, deploy negative shields, and submit your corrective changes back to my terminal right now!",
+    situationReportTitle: "Diagnostic Telemetry Briefing:",
+    tacticalQuestion: "Execute Corrective Campaign Adjustments:",
+    hint: "Examine the device breakdown: Desktop CPA is $15, while Mobile CPA is $410 with 320 clicks eating $410. Reduce Mobile bids by at least 50%, switch off Broad match, and add negative shields (-free, -diy, -jobs).",
+    options: [],
+    resolutionSummary: "🏆 Campaign Leak Plugged • Blended CPA Reduced to $18 (+25 Rep)",
+    rewardRep: 25
+  },
+  {
+    id: "w4-c4-client-persona-interactive",
+    weekNumber: 4,
+    weekTitle: "Week 4: Speed-to-Lead Automation & Enterprise Growth",
+    title: "Client Pitch: Executive Persona on a $400 Budget (Hands-On)",
+    category: "operational",
+    interactiveType: "persona_strategy",
+    callerName: "Dr. Evelyn Reed",
+    callerRole: "Founder & Clinical Director",
+    callerAvatar: "https://images.unsplash.com/photo-1594824813511-66d7fe9e0c52?auto=format&fit=crop&q=80&w=400",
+    callerVoice: "aura-asteria-en",
+    clientName: "BioVanguard Executive Wellness",
+    urgencyBadge: "Client Strategy Request",
+    crisisAudioText: "Hey! We want to expand our practice to target high-net-worth corporate executives and partners for executive wellness memberships. But here's the catch—our testing budget is locked at only four hundred dollars a week. If we spread this thin budget across random channels, we'll get zero clients. I need you to build a tight persona hook, select the exact channels where executives actually convert, and allocate our four hundred dollars with zero waste. What's your strategic brief?",
+    situationReportTitle: "Client Expansion Brief:",
+    tacticalQuestion: "Design Persona Angle & Strategic Channel Budget Split:",
+    hint: "High-earning executives have high intent during pain points and live on B2B platforms. Put 70% of the $400 into High-Intent Search ($250+) and 25-30% into LinkedIn ($100+). Do NOT spend on consumer video like TikTok with a thin $400 budget!",
+    options: [],
+    resolutionSummary: "🏆 Strategy Approved • Executive Retainer Expanded (+25 Rep)",
     rewardRep: 25
   }
 ];

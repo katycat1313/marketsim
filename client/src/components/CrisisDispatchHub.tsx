@@ -114,6 +114,11 @@ export function CrisisDispatchHub({ isOpen, onClose, defaultWeek = 1 }: CrisisDi
                             <div className="min-w-0">
                               <div className="flex items-center gap-2 flex-wrap">
                                 <span className="font-bold text-xs text-foreground truncate">{cr.title}</span>
+                                {cr.interactiveType && (
+                                  <Badge className="bg-primary/20 text-primary border-primary/40 text-[10px] py-0 px-1.5 font-bold">
+                                    🛠️ Hands-On Action
+                                  </Badge>
+                                )}
                                 <Badge
                                   variant="outline"
                                   className={`text-[10px] py-0 px-1.5 ${
