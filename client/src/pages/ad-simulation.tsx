@@ -2751,7 +2751,7 @@ export default function AdSimulationPage() {
               <div className="flex items-center justify-between flex-wrap gap-2">
                 <div className="flex items-center gap-2">
                   <Brain className="h-5 w-5 text-amber-400" />
-                  <CardTitle className="text-lg text-foreground">MarketSim AI Coach Debrief</CardTitle>
+                  <CardTitle className="text-lg text-foreground">Krechet AI Coach Debrief</CardTitle>
                   <Badge variant="outline" className="bg-amber-500/15 text-amber-400 border-amber-500/40 text-xs">
                     Telemetric Analysis
                   </Badge>

@@ -538,7 +538,7 @@ function Router() {
               <Logo className="scale-90" />
             </div>
             <div className="text-xs text-muted-foreground">
-              © 2026 MarketSim AI Academy. All rights reserved.
+              © 2026 Krechet AI Marketing Academy. All rights reserved.
             </div>
             <div className="text-[11px] text-muted-foreground/80 mt-1">
               The Interactive Campaign Simulator for Digital Marketers & Small Businesses
@@ -572,7 +572,7 @@ function App() {
         <button
           className="fixed bottom-6 right-6 h-13 w-13 p-3.5 rounded-full shadow-2xl bg-primary text-primary-foreground z-50 flex items-center justify-center hover:bg-primary/90 transition-all duration-300 transform hover:scale-105 border-2 border-primary-foreground/20 group cursor-pointer"
           onClick={toggleAIAssistant}
-          aria-label="Toggle MarketSim AI Coach"
+          aria-label="Toggle Krechet AI Coach"
         >
           {isAIAssistantExpanded ? (
             <X className="h-6 w-6" />

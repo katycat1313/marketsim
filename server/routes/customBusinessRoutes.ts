@@ -143,7 +143,7 @@ export const registerCustomBusinessRoutes = (app: Express) => {
           const response = await fetch(url, {
             signal: controller.signal,
             headers: {
-              "User-Agent": "MarketSim-Educational-Auditor/1.0 (+https://marketsim.ai/educational-bot)"
+              "User-Agent": "KrechetAcademy-Educational-Auditor/1.0 (+https://krechet.academy/educational-bot)"
             }
           });
           clearTimeout(timeout);

@@ -1,10 +1,10 @@
 export const content = `# Lesson 4: Putting AI to the Test: Simulation Challenge & Real-World Success
 
-Now it's time to put your new skills to the test! Here's a simulation challenge you can complete within the MarketSim environment:
+Now it's time to put your new skills to the test! Here's a simulation challenge you can complete within the Krechet Academy environment:
 
 ### Challenge Scenario:
-1. Choose a blog post or landing page from the MarketSim SEO Lab.
-2. Use the MarketSim AI Copilot to analyze search intent, extract primary/secondary keywords, and generate title tags and meta descriptions.
+1. Choose a blog post or landing page from the Krechet Academy SEO Lab.
+2. Use the Krechet AI Copilot to analyze search intent, extract primary/secondary keywords, and generate title tags and meta descriptions.
 3. Optimize headings (H1, H2) and weave target keywords organically into body content.
 4. Run the SEO Simulation score check and observe changes in keyword density, readability index, and simulated organic rank.
 

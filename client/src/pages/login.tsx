@@ -85,7 +85,7 @@ export default function LoginPage() {
       
       <Card className="w-full max-w-md shadow-lg border-primary/20">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">Sign in to MarketSim</CardTitle>
+          <CardTitle className="text-2xl font-bold text-center">Sign in to Krechet Academy</CardTitle>
           <CardDescription className="text-center">
             Sign in to start your interactive marketing simulations
           </CardDescription>

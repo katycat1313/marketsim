@@ -76,7 +76,7 @@ export default function SubscriptionPage() {
         
         <div className="mt-12 text-center text-sm text-muted-foreground">
           <p>All plans include a 14-day money-back guarantee. No contracts or hidden fees.</p>
-          <p className="mt-2">Questions about our plans? <a href="mailto:support@marketsim.ai?subject=MarketSim%20Plan%20Inquiry" className="text-primary underline hover:text-primary/80">Contact our team</a></p>
+          <p className="mt-2">Questions about our plans? <a href="mailto:support@krechet.academy?subject=Krechet%20Academy%20Plan%20Inquiry" className="text-primary underline hover:text-primary/80">Contact our team</a></p>
         </div>
       </div>
     </div>

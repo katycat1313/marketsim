@@ -73,18 +73,18 @@ export default function AIAssistant({
   
   const getWelcomeMessage = (context: AIAssistantProps["initialContext"]) => {
     if (!context) {
-      return "Hello! I'm your MarketSim AI Coach. I continuously analyze your simulation runs to detect strategy gaps and craft personalized challenges. Ask me 'What are my weak areas?' to see your diagnostic breakdown!";
+      return "Hello! I'm your Krechet AI Coach. I continuously analyze your simulation runs to detect strategy gaps and craft personalized challenges. Ask me 'What are my weak areas?' to see your diagnostic breakdown!";
     }
     
     switch(context.type) {
       case "tutorial":
-        return "Hello! I'm your MarketSim AI Coach. I can see you're working through a tutorial. How can I help you master these concepts?";
+        return "Hello! I'm your Krechet AI Coach. I can see you're working through a tutorial. How can I help you master these concepts?";
       case "simulation":
-        return "Hello! I'm your MarketSim AI Coach. I'm actively monitoring your campaign metrics (Quality Score, CPA, Match Types). Ask me for tactical guidance or weakness analysis!";
+        return "Hello! I'm your Krechet AI Coach. I'm actively monitoring your campaign metrics (Quality Score, CPA, Match Types). Ask me for tactical guidance or weakness analysis!";
       case "campaign":
-        return "Hello! I'm your MarketSim AI Coach. I see you're configuring a campaign. Would you like help optimizing your match types, negative keywords, or budget?";
+        return "Hello! I'm your Krechet AI Coach. I see you're configuring a campaign. Would you like help optimizing your match types, negative keywords, or budget?";
       default:
-        return "Hello! I'm your MarketSim AI Coach. I continuously analyze your simulation runs to detect strategy gaps and craft personalized challenges. Ask me 'What are my weak areas?' to see your diagnostic breakdown!";
+        return "Hello! I'm your Krechet AI Coach. I continuously analyze your simulation runs to detect strategy gaps and craft personalized challenges. Ask me 'What are my weak areas?' to see your diagnostic breakdown!";
     }
   };
 
@@ -263,7 +263,7 @@ Negative keywords prevent your ads from showing on unqualified search queries:
 3. **CBO (Advantage Campaign Budget)**: Let Meta allocate budget to winning ad creatives dynamically.`;
     }
 
-    return `### 🚀 MarketSim AI Strategy Coach
+    return `### 🚀 Krechet AI Strategy Coach
 
 Great question! In digital marketing, success depends on aligning:
 1. **Search Intent**: Targeting high-intent commercial keywords rather than broad informational terms.
@@ -285,11 +285,11 @@ Ask me for specific recommendations on **Quality Score**, **Negative Keywords**,
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">
               <Avatar className="h-8 w-8 border border-primary/40">
-                <AvatarFallback className="bg-primary/20 text-primary text-xs font-bold">MS</AvatarFallback>
+                <AvatarFallback className="bg-primary/20 text-primary text-xs font-bold">KA</AvatarFallback>
               </Avatar>
               <div>
                 <CardTitle className="text-sm font-semibold text-foreground flex items-center gap-1.5">
-                  MarketSim AI Coach
+                  Krechet AI Coach
                   <Badge variant="outline" className="text-[10px] h-4 bg-emerald-500/10 text-emerald-400 border-emerald-500/30 font-medium">
                     Online
                   </Badge>
@@ -370,7 +370,7 @@ Ask me for specific recommendations on **Quality Score**, **Negative Keywords**,
                     {message.role === "assistant" && message.id !== "welcome" && (
                       <div className="flex items-center gap-1.5 mb-1.5 text-xs text-primary font-medium">
                         <Sparkles className="h-3 w-3" />
-                        <span>MarketSim AI Coach</span>
+                        <span>Krechet AI Coach</span>
                       </div>
                     )}
                     

@@ -54,7 +54,7 @@ export default function AdSimulationsPage() {
   const [genWeakness, setGenWeakness] = useState("negativeKeywordDefense");
   const [genIndustry, setGenIndustry] = useState("B2B Cybersecurity SaaS");
 
-  // MarketSim Pre-Simulation AI Socratic Micro-Lesson Modal State
+  // Krechet Pre-Simulation AI Socratic Micro-Lesson Modal State
   const [selectedSimForLesson, setSelectedSimForLesson] = useState<any>(null);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [isAnswerSubmitted, setIsAnswerSubmitted] = useState(false);
@@ -708,7 +708,7 @@ export default function AdSimulationsPage() {
         </TabsContent>
       </Tabs>
 
-      {/* MarketSim Pre-Simulation AI Micro-Lesson Modal */}
+      {/* Krechet Pre-Simulation AI Micro-Lesson Modal */}
       {selectedSimForLesson && (() => {
         const lesson = getMicroLesson(selectedSimForLesson);
         if (!lesson) return null;
@@ -720,7 +720,7 @@ export default function AdSimulationsPage() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 text-primary font-bold text-lg">
                     <GraduationCap className="h-6 w-6 text-primary" />
-                    <span>MarketSim AI Pre-Simulation Briefing</span>
+                    <span>Krechet AI Pre-Simulation Briefing</span>
                   </div>
                   <Badge variant="outline" className="border-primary/40 text-primary">
                     {lesson.duration}

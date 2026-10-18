@@ -88,7 +88,7 @@ export default function SignupPage() {
       
       toast({
         title: "Account created successfully",
-        description: "Welcome to MarketSim! You can now log in.",
+        description: "Welcome to Krechet Academy! You can now log in.",
       });
       
       // Navigate to login after signup
@@ -113,7 +113,7 @@ export default function SignupPage() {
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center">Create an account</CardTitle>
           <CardDescription className="text-center">
-            Join MarketSim to start your marketing skill development journey
+            Join Krechet Academy to start your marketing skill development journey
           </CardDescription>
         </CardHeader>
         

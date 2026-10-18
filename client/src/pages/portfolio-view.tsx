@@ -63,7 +63,7 @@ export default function PortfolioViewPage() {
 
   const handleExportText = (cs: PortfolioCaseStudy) => {
     const text = `
-MARKETSIM VERIFIED AGENCY CASE STUDY
+KRECHET ACADEMY VERIFIED CASE STUDY
 =======================================
 Client: ${cs.clientName} (${cs.industry})
 Project: ${cs.title}
@@ -132,7 +132,7 @@ VERIFIED PERFORMANCE METRICS:
             </Badge>
           </div>
           <p className="text-muted-foreground text-sm max-w-2xl">
-            Real campaign challenges you have diagnosed, optimized, and solved on MarketSim. Export these case studies directly for job applications, resumes, and client pitch decks.
+            Real campaign challenges you have diagnosed, optimized, and solved on Krechet Academy. Export these case studies directly for job applications, resumes, and client pitch decks.
           </p>
         </div>
         <div className="flex gap-2">

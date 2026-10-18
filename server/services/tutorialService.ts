@@ -287,7 +287,7 @@ Every high-converting marketing prompt must include these 4 pillars:
         description: "Run the 4-part prompt framework in free Gemini or ChatGPT",
         type: "practical",
         requirements: ["Apply role, context, constraints, and target action"],
-        verificationCriteria: ["Generate 5 ad headlines under 30 characters", "Verify in MarketSim ad simulator"]
+        verificationCriteria: ["Generate 5 ad headlines under 30 characters", "Verify in Krechet ad simulator"]
       }]
     });
     

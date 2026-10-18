@@ -383,7 +383,7 @@ const FindConnections = ({ userId }: { userId: number }) => {
           <UserPlus className="h-12 w-12 mx-auto text-muted-foreground mb-3" />
           <h3 className="text-xl mb-2">Find Marketing Professionals</h3>
           <p className="text-muted-foreground mb-4 max-w-md mx-auto">
-            Search for other MarketSim users to connect, collaborate, and share insights.
+            Search for other Krechet Academy peers to connect, collaborate, and share insights.
           </p>
         </div>
       )}

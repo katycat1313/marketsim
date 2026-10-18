@@ -974,7 +974,7 @@ Here are tactical suggestions for your current simulation:
 - **ROAS (Return on Ad Spend)** = \`Total Revenue / Total Ad Spend\`. Aim for >3.0x to 4.0x for sustainable scaling.`;
     }
 
-    return `### 🚀 MarketSim Strategy Advisor
+    return `### 🚀 Krechet Academy Strategy Advisor
 
 Great question! In digital marketing at the **${userLevel}** tier, success depends on tight alignment across:
 
