@@ -26,48 +26,58 @@ interface SubscriptionPlan {
   priceId: string;
   features: string[];
   tier: SubscriptionTier;
+  mode?: 'payment' | 'subscription';
+  badge?: string;
 }
 
 const SUBSCRIPTION_PLANS: SubscriptionPlan[] = [
   {
     id: 'free',
-    name: 'Free',
-    description: 'Basic access to marketing simulations',
-    price: '$0/month',
-    priceId: 'price_free', // This would be your actual Stripe price ID
+    name: 'Free Audit Preview',
+    description: 'Explore simulated ad accounts and baseline marketing concepts',
+    price: '$0',
+    priceId: 'price_free',
+    mode: 'payment',
     features: [
-      'Access to basic tutorials',
-      'Limited simulations',
-      'Community support'
+      'Chapter 1 & 2 Socratic AI Lessons',
+      'Read-only Google & Meta Ad account inspection',
+      'Community discussion hub access'
     ],
     tier: 'free'
   },
   {
-    id: 'premium',
-    name: 'Premium',
-    description: 'Enhanced features for marketing professionals',
-    price: '$19.99/month',
-    priceId: 'price_premium', // This would be your actual Stripe price ID
+    id: 'course1',
+    name: 'Course 1: Foundation Agency Simulator',
+    description: 'Complete hands-on simulation training with verified case study export',
+    price: '$59 one-time',
+    priceId: 'course1',
+    mode: 'payment',
+    badge: 'Most Popular',
     features: [
-      'All Free features',
-      'Advanced simulations',
-      'Personalized AI feedback',
-      'Priority support'
+      'All 10 Socratic AI Strategy Chapters',
+      'Living Weekly Campaign Sandbox (Google & Meta Ads)',
+      'The Boss Crisis Call (Director Atlas Drills)',
+      'The Client Persona & Budget Allocation Challenge',
+      'Adaptive Weakness Detection & Remediation Engine',
+      'Verified Agency Work Portfolio & Case Study Export'
     ],
     tier: 'premium'
   },
   {
-    id: 'enterprise',
-    name: 'Enterprise',
-    description: 'Full access for marketing teams and agencies',
-    price: '$49.99/month',
-    priceId: 'price_enterprise', // This would be your actual Stripe price ID
+    id: 'course2',
+    name: 'Course 2: Creative AI Suite',
+    description: 'Advanced track for Small Business Owners & Agency Teams',
+    price: '$199/month',
+    priceId: 'course2',
+    mode: 'subscription',
+    badge: 'Agency Pro',
     features: [
-      'All Premium features',
-      'Team collaboration',
-      'Advanced analytics',
-      'Custom simulations',
-      'Dedicated account manager'
+      'Everything in Course 1 Foundation',
+      'Generative AI Image & Video Ad Creation Engine',
+      'Canva Workflow & Creative Asset Automation',
+      'Ethical AI Governance & Ad Policy Compliance',
+      'Small Business Growth Track & Agency Multi-Seat Hub',
+      '3 Weekly Mid-Week Crisis Client Curveballs'
     ],
     tier: 'enterprise'
   }
@@ -114,38 +124,35 @@ export default function SubscriptionManager({ userId, userEmail }: SubscriptionM
 
   // Create checkout session mutation
   const checkoutMutation = useMutation({
-    mutationFn: async (priceId: string) => {
-      // Create customer if one doesn't exist
+    mutationFn: async ({ priceId, mode }: { priceId: string; mode?: 'payment' | 'subscription' }) => {
       let stripeCustomerId = customerId;
-      if (!stripeCustomerId) {
-        const customer = await createCustomer(userEmail);
-        stripeCustomerId = customer.id;
-        setCustomerId(stripeCustomerId);
+      try {
+        if (!stripeCustomerId) {
+          const customer = await createCustomer(userEmail);
+          stripeCustomerId = customer.id;
+          setCustomerId(stripeCustomerId);
+        }
+      } catch (e) {
+        console.warn('Customer lookup fallback to email');
       }
 
-      // Create checkout session - ensure stripeCustomerId is never null
-      if (!stripeCustomerId) {
-        throw new Error('Failed to create customer');
-      }
-      
-      // Type guard to ensure stripeCustomerId is definitely string
-      const customerId: string = stripeCustomerId;
-      
       return createCheckoutSession(
-        customerId,
+        stripeCustomerId || '',
         priceId,
         `${window.location.origin}/subscription/success`,
-        `${window.location.origin}/subscription/cancel`
+        `${window.location.origin}/subscription/cancel`,
+        { mode, customerEmail: userEmail }
       );
     },
     onSuccess: (data) => {
-      // Redirect to checkout
-      window.location.href = data.url;
+      if (data?.url) {
+        window.location.href = data.url;
+      }
     },
-    onError: (error) => {
+    onError: (error: any) => {
       toast({
-        title: 'Error',
-        description: 'Failed to create checkout session',
+        title: 'Checkout Error',
+        description: error?.message || 'Failed to create checkout session',
         variant: 'destructive',
       });
     },
@@ -178,12 +185,12 @@ export default function SubscriptionManager({ userId, userEmail }: SubscriptionM
     if (plan.tier === 'free') {
       toast({
         title: 'Free Plan',
-        description: 'You are now on the free plan',
+        description: 'You are now exploring on the free preview tier',
       });
       return;
     }
 
-    checkoutMutation.mutate(plan.priceId);
+    checkoutMutation.mutate({ priceId: plan.priceId, mode: plan.mode });
   };
 
   // Handle subscription cancellation
@@ -200,19 +207,24 @@ export default function SubscriptionManager({ userId, userEmail }: SubscriptionM
   return (
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
       {SUBSCRIPTION_PLANS.map((plan) => (
-        <Card key={plan.id} className={`flex flex-col ${plan.tier === currentTier ? 'border-primary' : ''}`}>
+        <Card key={plan.id} className={`flex flex-col relative ${plan.badge ? 'border-primary/60 shadow-md' : ''} ${plan.tier === currentTier ? 'ring-2 ring-primary' : ''}`}>
+          {plan.badge && (
+            <div className="absolute -top-3 right-4 bg-primary text-primary-foreground text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow">
+              {plan.badge}
+            </div>
+          )}
           <CardHeader>
             <CardTitle>{plan.name}</CardTitle>
             <CardDescription>{plan.description}</CardDescription>
           </CardHeader>
           <CardContent className="flex-grow">
-            <div className="text-2xl font-bold mb-4">{plan.price}</div>
+            <div className="text-2xl font-bold mb-4 text-foreground">{plan.price}</div>
             <Separator className="my-2" />
             <ul className="space-y-2 my-4">
               {plan.features.map((feature, i) => (
-                <li key={i} className="flex items-start">
-                  <span className="text-primary mr-2">✓</span>
-                  {feature}
+                <li key={i} className="flex items-start text-sm">
+                  <span className="text-primary font-bold mr-2">✓</span>
+                  <span>{feature}</span>
                 </li>
               ))}
             </ul>
@@ -222,11 +234,15 @@ export default function SubscriptionManager({ userId, userEmail }: SubscriptionM
               variant={plan.tier === currentTier ? "outline" : "default"}
               className="w-full"
               onClick={() => handleSubscribe(plan)}
-              disabled={plan.tier === currentTier && currentTier !== 'free'}
+              disabled={checkoutMutation.isPending || (plan.tier === currentTier && currentTier !== 'free')}
             >
-              {plan.tier === currentTier
-                ? 'Current Plan'
-                : `Upgrade to ${plan.name}`}
+              {checkoutMutation.isPending 
+                ? 'Connecting to Checkout...'
+                : plan.tier === currentTier
+                  ? 'Current Plan'
+                  : plan.mode === 'payment'
+                    ? `Enroll in ${plan.name} ($59)`
+                    : `Subscribe to ${plan.name} ($199/mo)`}
             </Button>
             
             {plan.tier === currentTier && currentTier !== 'free' && (

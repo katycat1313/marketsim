@@ -7,7 +7,7 @@ let stripePromise: ReturnType<typeof loadStripe> | null = null;
 
 export const getStripe = () => {
   if (!stripePromise) {
-    const key = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
+    const key = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || (import.meta.env as any).STRIPE_ANON_API_KEY || (import.meta.env as any).VITE_STRIPE_ANON_API_KEY;
     if (!key) {
       console.error('Stripe publishable key is missing');
       return null;
@@ -32,9 +32,17 @@ export const createCheckoutSession = async (
   customerId: string,
   priceId: string,
   successUrl: string,
-  cancelUrl: string
+  cancelUrl: string,
+  options?: { mode?: 'payment' | 'subscription'; customerEmail?: string }
 ) => {
-  const res = await apiRequest('POST', '/api/stripe/checkout', { customerId, priceId, successUrl, cancelUrl });
+  const res = await apiRequest('POST', '/api/stripe/checkout', { 
+    customerId, 
+    customerEmail: options?.customerEmail, 
+    priceId, 
+    successUrl, 
+    cancelUrl,
+    mode: options?.mode,
+  });
   return res.json();
 };
 

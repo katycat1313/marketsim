@@ -29,38 +29,30 @@ export default function SubscriptionPage() {
     <div className="container mx-auto py-12 px-4">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-12">
-          <h1 className="text-3xl font-bold tracking-tight mb-2">Subscription Plans</h1>
+          <h1 className="text-3xl font-bold tracking-tight mb-2">Enrollment & Training Plans</h1>
           <p className="text-xl text-muted-foreground">
-            Choose the right plan to enhance your marketing skills
+            Master real-world digital marketing with AI simulation campaigns, crisis drills, and verified portfolio credentials
           </p>
         </div>
         
-        <div className="mb-8 bg-muted p-6 rounded-lg">
-          <h2 className="text-lg font-medium mb-2">Plan Benefits</h2>
-          <ul className="grid gap-2 md:grid-cols-2">
+        <div className="mb-8 bg-muted/50 border border-border/80 p-6 rounded-lg">
+          <h2 className="text-lg font-bold mb-3 text-foreground">Why Krechet Academy Works</h2>
+          <ul className="grid gap-3 md:grid-cols-2 text-sm text-muted-foreground">
             <li className="flex items-start">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-primary mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-              <span>Access to AI-powered marketing simulations</span>
+              <span className="text-primary font-bold mr-2">✓</span>
+              <span><strong>Living Campaign Simulations</strong>: Manage realistic Google and Meta ad accounts without risking real client capital.</span>
             </li>
             <li className="flex items-start">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-primary mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-              <span>Detailed performance analytics and feedback</span>
+              <span className="text-primary font-bold mr-2">✓</span>
+              <span><strong>Mid-Week Boss & Client Crisis Calls</strong>: Handle surprise curveballs, broad-match leakage, and sudden persona expansions.</span>
             </li>
             <li className="flex items-start">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-primary mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-              <span>Connect with marketing professionals</span>
+              <span className="text-primary font-bold mr-2">✓</span>
+              <span><strong>Adaptive Weakness Engine</strong>: Telemetry detects where you bleed spend and injects targeted drills to build mastery.</span>
             </li>
             <li className="flex items-start">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-primary mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-              <span>Learn from comprehensive marketing tutorials</span>
+              <span className="text-primary font-bold mr-2">✓</span>
+              <span><strong>Verified Proof-of-Work Portfolio</strong>: Export audited campaign case studies with real CTR and ROAS lift to prove your skills.</span>
             </li>
           </ul>
         </div>

@@ -18,10 +18,12 @@ const createSubscriptionSchema = z.object({
 
 // Schema for checkout session
 const createCheckoutSessionSchema = z.object({
-  customerId: z.string(),
+  customerId: z.string().optional(),
+  customerEmail: z.string().email().optional(),
   priceId: z.string(),
   successUrl: z.string().url(),
   cancelUrl: z.string().url(),
+  mode: z.enum(['payment', 'subscription']).optional(),
 });
 
 /**
@@ -57,8 +59,8 @@ router.post('/subscriptions', async (req, res) => {
  */
 router.post('/checkout', async (req, res) => {
   try {
-    const { customerId, priceId, successUrl, cancelUrl } = createCheckoutSessionSchema.parse(req.body);
-    const session = await stripeService.createCheckoutSession(customerId, priceId, successUrl, cancelUrl);
+    const { customerId, customerEmail, priceId, successUrl, cancelUrl, mode } = createCheckoutSessionSchema.parse(req.body);
+    const session = await stripeService.createCheckoutSession(customerId || '', priceId, successUrl, cancelUrl, { mode, customerEmail });
     res.json(session);
   } catch (error: any) {
     console.error('Error in create checkout session route:', error);
