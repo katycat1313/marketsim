@@ -19,6 +19,7 @@ import {
   AlertCircle, 
   Info, 
   ArrowRight, 
+  ArrowLeft,
   Plus, 
   Trash2,
   Sparkles,
@@ -36,7 +37,10 @@ import {
   GraduationCap,
   ChevronDown,
   ChevronUp,
-  ExternalLink
+  ExternalLink,
+  HelpCircle,
+  Eye,
+  Lightbulb
 } from "lucide-react";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Progress } from "@/components/ui/progress";
@@ -45,6 +49,14 @@ import { getQueryFn, apiRequest, queryClient } from "@/lib/queryClient";
 import { AdPlatformSimulation } from "@shared/schema";
 import { EmergencyCrisisModal, CrisisOption } from "@/components/EmergencyCrisisModal";
 import { FlightInstructorCopilot } from "@/components/FlightInstructorCopilot";
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogDescription, 
+  DialogFooter, 
+  DialogHeader, 
+  DialogTitle 
+} from "@/components/ui/dialog";
 
 // Define an interface for the simulation data
 interface AdSimulation {
@@ -166,6 +178,111 @@ export default function AdSimulationPage() {
   const [isGeneratingNext, setIsGeneratingNext] = useState(false);
   const [isTeacherCopilotOpen, setIsTeacherCopilotOpen] = useState(false);
   const [showLessonGuide, setShowLessonGuide] = useState(false);
+  const [isOnboardingModalOpen, setIsOnboardingModalOpen] = useState(false);
+
+  const handleLoadStarterDraft = () => {
+    const isApparel = simulation?.industry?.toLowerCase().includes("cloth") || 
+                      simulation?.title?.toLowerCase().includes("cloth") || 
+                      simulation?.businessType?.toLowerCase().includes("cloth") ||
+                      (simulation?.objectives || []).some((o: string) => o.toLowerCase().includes("clothing"));
+    
+    const isDental = simulation?.industry?.toLowerCase().includes("dental") || 
+                     simulation?.title?.toLowerCase().includes("dental");
+
+    if (isApparel) {
+      setGoogleForm({
+        campaignName: "EcoThreads - Search - High Intent Apparel",
+        campaignObjective: "sales",
+        adGroups: [{
+          name: "Organic Cotton Hoodies",
+          keywords: [
+            { text: "organic cotton hoodie", matchType: "phrase" },
+            { text: "buy eco friendly clothing", matchType: "phrase" },
+            { text: "sustainable streetwear brand", matchType: "exact" },
+            { text: "organic casual wear online", matchType: "phrase" }
+          ],
+          negativeKeywords: ["-free", "-cheap", "-diy", "-jobs", "-wholesale", "-fabric scrap"]
+        }],
+        adCreatives: [{
+          headline1: "Organic Cotton Hoodies",
+          headline2: "100% Sustainable & Soft",
+          headline3: "Shop 20% Off First Order",
+          description1: "Ethically crafted organic streetwear hoodies & tees. Fair-trade verified.",
+          description2: "Ultra-soft premium cotton built to last. Free shipping on orders over $50.",
+          finalUrl: "https://ecothreads.example.com/hoodies"
+        }],
+        locations: ["United States", "Canada"],
+        devices: ["mobile", "desktop"],
+        bidStrategy: "maximize_conversions",
+        dailyBudget: 50,
+        adExtensions: [
+          { type: "sitelink", content: "Shop New Arrivals | Men's & Women's Sustainable Styles" },
+          { type: "callout", content: "Free Carbon-Neutral Shipping | 30-Day Returns" }
+        ]
+      });
+    } else if (isDental) {
+      setGoogleForm({
+        campaignName: "Dr. Miller - Search - Emergency & Cosmetic Dental",
+        campaignObjective: "leads",
+        adGroups: [{
+          name: "Emergency Dental Care",
+          keywords: [
+            { text: "emergency dentist near me", matchType: "exact" },
+            { text: "same day tooth repair", matchType: "phrase" },
+            { text: "urgent dental clinic open now", matchType: "phrase" }
+          ],
+          negativeKeywords: ["-free", "-cheap", "-medicaid", "-diy", "-dental assistant jobs"]
+        }],
+        adCreatives: [{
+          headline1: "Emergency Dentist Near You",
+          headline2: "Same-Day Relief & Care",
+          headline3: "Book Online in 60 Seconds",
+          description1: "Severe tooth pain? Walk-ins and same-day emergency appointments available today.",
+          description2: "Top-rated compassionate dental care. Transparent pricing with zero surprise bills.",
+          finalUrl: "https://drmillerdental.example.com/emergency"
+        }],
+        locations: ["United States"],
+        devices: ["mobile", "desktop"],
+        bidStrategy: "target_cpa",
+        dailyBudget: 50,
+        adExtensions: [
+          { type: "callout", content: "Same-Day Emergency Care | 5-Star Rated" }
+        ]
+      });
+    } else {
+      setGoogleForm({
+        campaignName: `${simulation?.title || "Growth"} - High Intent Search`,
+        campaignObjective: "sales",
+        adGroups: [{
+          name: "Core High-Intent Search",
+          keywords: [
+            { text: "buy premium organic apparel", matchType: "phrase" },
+            { text: "best sustainable clothing brand", matchType: "exact" },
+            { text: "eco friendly hoodies online", matchType: "phrase" }
+          ],
+          negativeKeywords: ["-free", "-cheap", "-diy", "-jobs", "-used", "-craigslist"]
+        }],
+        adCreatives: [{
+          headline1: "Premium Organic Clothing",
+          headline2: "Crafted for Everyday Wear",
+          headline3: "Shop New Arrivals Online",
+          description1: "Discover ethically made organic apparel designed for comfort and modern style.",
+          description2: "Certified organic materials with carbon-neutral shipping on all orders.",
+          finalUrl: "https://example.com/store"
+        }],
+        locations: ["United States", "Canada"],
+        devices: ["mobile", "desktop"],
+        bidStrategy: "maximize_conversions",
+        dailyBudget: 50,
+        adExtensions: []
+      });
+    }
+
+    toast({
+      title: "✨ Benchmark Campaign Template Loaded!",
+      description: "We've populated recommended best-practice settings so you can inspect, customize, and learn!",
+    });
+  };
 
   // Mid-Campaign Surprise Boss Crisis Call State
   const [isCrisisOpen, setIsCrisisOpen] = useState(false);
@@ -591,27 +708,64 @@ export default function AdSimulationPage() {
   const renderGoogleAdsForm = () => (
     <>
       <Tabs value={activeSetupTab} onValueChange={setActiveSetupTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="campaign">Campaign</TabsTrigger>
-          <TabsTrigger value="adgroups">Ad Groups</TabsTrigger>
-          <TabsTrigger value="ads">Ads</TabsTrigger>
-          <TabsTrigger value="settings">Settings</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 h-auto p-1.5 gap-1.5 bg-muted/60 rounded-xl mb-4">
+          <TabsTrigger value="campaign" className="py-2.5 flex flex-col items-center sm:items-start text-xs data-[state=active]:bg-card data-[state=active]:shadow-sm">
+            <span className="font-bold flex items-center gap-1.5">
+              <span className="h-4 w-4 rounded-full bg-primary/20 text-primary text-[10px] flex items-center justify-center font-mono">1</span>
+              <span>Campaign Setup</span>
+            </span>
+            <span className="text-[10px] text-muted-foreground hidden sm:inline">Goal & Geo Locations</span>
+          </TabsTrigger>
+          
+          <TabsTrigger value="adgroups" className="py-2.5 flex flex-col items-center sm:items-start text-xs data-[state=active]:bg-card data-[state=active]:shadow-sm">
+            <span className="font-bold flex items-center gap-1.5">
+              <span className="h-4 w-4 rounded-full bg-primary/20 text-primary text-[10px] flex items-center justify-center font-mono">2</span>
+              <span>Ad Groups & Keywords</span>
+            </span>
+            <span className="text-[10px] text-muted-foreground hidden sm:inline">Match Types & Negatives</span>
+          </TabsTrigger>
+          
+          <TabsTrigger value="ads" className="py-2.5 flex flex-col items-center sm:items-start text-xs data-[state=active]:bg-card data-[state=active]:shadow-sm">
+            <span className="font-bold flex items-center gap-1.5">
+              <span className="h-4 w-4 rounded-full bg-primary/20 text-primary text-[10px] flex items-center justify-center font-mono">3</span>
+              <span>Ad Creatives</span>
+            </span>
+            <span className="text-[10px] text-muted-foreground hidden sm:inline">Headlines (&le;30 chars)</span>
+          </TabsTrigger>
+          
+          <TabsTrigger value="settings" className="py-2.5 flex flex-col items-center sm:items-start text-xs data-[state=active]:bg-card data-[state=active]:shadow-sm">
+            <span className="font-bold flex items-center gap-1.5">
+              <span className="h-4 w-4 rounded-full bg-primary/20 text-primary text-[10px] flex items-center justify-center font-mono">4</span>
+              <span>Budget & Bidding</span>
+            </span>
+            <span className="text-[10px] text-muted-foreground hidden sm:inline">Daily Spend & Strategy</span>
+          </TabsTrigger>
         </TabsList>
         
         <TabsContent value="campaign" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Campaign Setup</CardTitle>
-              <CardDescription>Configure the basic campaign settings</CardDescription>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-base font-bold">Step 1: Campaign Foundation & Objective</CardTitle>
+                  <CardDescription className="text-xs">Define your high-level goal and where your ads will run</CardDescription>
+                </div>
+                <Badge variant="outline" className="text-[10px]">
+                  Step 1 of 4
+                </Badge>
+              </div>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="google-campaignName">Campaign Name</Label>
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="google-campaignName">Campaign Name</Label>
+                  <span className="text-[11px] text-muted-foreground font-mono">Format: [Client] - [Type] - [Intent]</span>
+                </div>
                 <Input 
                   id="google-campaignName" 
                   value={googleForm.campaignName} 
                   onChange={(e) => setGoogleForm(prev => ({...prev, campaignName: e.target.value}))}
-                  placeholder="Enter a name for your campaign"
+                  placeholder="e.g. EcoThreads - Search - High Intent Apparel"
                 />
               </div>
               
@@ -625,17 +779,30 @@ export default function AdSimulationPage() {
                     <SelectValue placeholder="Select an objective" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="sales">Sales</SelectItem>
-                    <SelectItem value="leads">Lead Generation</SelectItem>
-                    <SelectItem value="website_traffic">Website Traffic</SelectItem>
-                    <SelectItem value="brand_awareness">Brand Awareness</SelectItem>
-                    <SelectItem value="app_promotion">App Promotion</SelectItem>
+                    <SelectItem value="sales">🛍️ Sales (Direct Purchases & Online Orders)</SelectItem>
+                    <SelectItem value="leads">📋 Lead Generation (Phone Calls & Consultation Forms)</SelectItem>
+                    <SelectItem value="website_traffic">🌐 Website Traffic (Clicks to Homepage/Blog)</SelectItem>
+                    <SelectItem value="brand_awareness">📢 Brand Awareness (Reach & Impressions)</SelectItem>
                   </SelectContent>
                 </Select>
+
+                {/* Objective Pro-Tip Callout */}
+                <div className="p-3 rounded-xl bg-blue-500/10 border border-blue-500/20 text-xs text-muted-foreground mt-2">
+                  <span className="font-semibold text-foreground flex items-center gap-1.5 mb-1 text-blue-300">
+                    <Lightbulb className="h-3.5 w-3.5" />
+                    <span>Why Objective Choice Matters:</span>
+                  </span>
+                  {simulation?.objectives?.some((o: string) => o.toLowerCase().includes("clothing") || o.toLowerCase().includes("sales")) ? (
+                    <span>The client wants to <strong>generate clothing sales</strong>. Selecting <strong>Sales</strong> tells Google's Smart Bidding AI to prioritize searchers who have a history of completing online checkouts, rather than casual window-shoppers.</span>
+                  ) : (
+                    <span>Select <strong>Sales</strong> for physical/digital products, or <strong>Lead Generation</strong> for service businesses and clinics that book appointments.</span>
+                  )}
+                </div>
               </div>
               
               <div className="space-y-2">
-                <Label>Locations</Label>
+                <Label>Target Locations</Label>
+                <p className="text-[11px] text-muted-foreground">Select the countries where your client can ship or service customers.</p>
                 <div className="flex flex-wrap gap-2">
                   {simulation?.targetAudience?.locations?.map((location: string, index: number) => (
                     <Badge key={index} variant="outline" className="py-1">
@@ -664,7 +831,8 @@ export default function AdSimulationPage() {
               </div>
               
               <div className="space-y-2">
-                <Label>Devices</Label>
+                <Label>Target Devices</Label>
+                <p className="text-[11px] text-muted-foreground">E-commerce clothing shoppers browse heavily on mobile and desktop.</p>
                 <div className="flex flex-wrap gap-4">
                   {["mobile", "desktop", "tablet"].map((device, index) => (
                     <div key={index} className="flex items-center space-x-2">
@@ -690,17 +858,67 @@ export default function AdSimulationPage() {
                   ))}
                 </div>
               </div>
+
+              <div className="flex justify-end pt-3 border-t border-border/50">
+                <Button
+                  type="button"
+                  onClick={() => setActiveSetupTab("adgroups")}
+                  className="text-xs h-9 flex items-center gap-1.5 bg-primary hover:bg-primary/90"
+                >
+                  <span>Continue to Step 2: Ad Groups & Keywords</span>
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
         
         <TabsContent value="adgroups" className="space-y-4">
+          {/* Step 2 Educational Banner: Match Types & Shields */}
+          <div className="p-4 rounded-xl bg-gradient-to-r from-amber-500/10 via-card to-background border border-amber-500/30 space-y-3">
+            <div className="flex items-center justify-between flex-wrap gap-2">
+              <div className="flex items-center gap-2 text-sm font-bold text-foreground">
+                <Lightbulb className="h-4 w-4 text-amber-400" />
+                <span>Step 2 Agency Guide: Keyword Match Types & Negative Shields</span>
+              </div>
+              <Badge variant="outline" className="text-[10px] bg-background">
+                Step 2 of 4
+              </Badge>
+            </div>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Paid Search campaigns succeed or fail based on <strong>Match Type selectivity</strong>. Broad match without negative keywords invites casual searchers looking for free items or job postings, rapidly draining client retainers.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1 text-xs">
+              <div className="p-2.5 rounded-lg bg-card/80 border border-border/60">
+                <div className="font-semibold text-emerald-400 flex items-center justify-between mb-1">
+                  <span>[Exact Match]</span>
+                  <Badge variant="secondary" className="text-[9px] h-4 px-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Highest Intent</Badge>
+                </div>
+                <p className="text-[11px] text-muted-foreground">Only triggers when searchers enter the exact query. Highest conversion rate and lowest wasted spend.</p>
+              </div>
+              <div className="p-2.5 rounded-lg bg-card/80 border border-border/60">
+                <div className="font-semibold text-blue-400 flex items-center justify-between mb-1">
+                  <span>"Phrase Match"</span>
+                  <Badge variant="secondary" className="text-[9px] h-4 px-1 bg-blue-500/10 text-blue-400 border border-blue-500/20">Recommended</Badge>
+                </div>
+                <p className="text-[11px] text-muted-foreground">Triggers when the search includes your phrase meaning in order. Great balance of reach and relevance.</p>
+              </div>
+              <div className="p-2.5 rounded-lg bg-card/80 border border-border/60">
+                <div className="font-semibold text-amber-400 flex items-center justify-between mb-1">
+                  <span>Broad Match</span>
+                  <Badge variant="secondary" className="text-[9px] h-4 px-1 bg-amber-500/10 text-amber-400 border border-amber-500/20">High Risk</Badge>
+                </div>
+                <p className="text-[11px] text-muted-foreground">Matches loose synonyms & related topics. High chance of accidental clicks unless guarded by negative keywords.</p>
+              </div>
+            </div>
+          </div>
+
           {googleForm.adGroups.map((adGroup, groupIndex) => (
             <Card key={groupIndex}>
               <CardHeader className="flex flex-row items-center justify-between">
                 <div>
-                  <CardTitle>Ad Group {groupIndex + 1}</CardTitle>
-                  <CardDescription>Configure keywords and targeting</CardDescription>
+                  <CardTitle className="text-base font-bold">Ad Group {groupIndex + 1}: {adGroup.name || "Untitled"}</CardTitle>
+                  <CardDescription className="text-xs">Configure tightly themed keywords and budget protection</CardDescription>
                 </div>
                 {googleForm.adGroups.length > 1 && (
                   <Button 
@@ -719,7 +937,7 @@ export default function AdSimulationPage() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor={`adgroup-name-${groupIndex}`}>Ad Group Name</Label>
+                  <Label htmlFor={`adgroup-name-${groupIndex}`}>Ad Group Theme Name</Label>
                   <Input 
                     id={`adgroup-name-${groupIndex}`} 
                     value={adGroup.name} 
@@ -728,12 +946,16 @@ export default function AdSimulationPage() {
                       newAdGroups[groupIndex].name = e.target.value;
                       setGoogleForm(prev => ({...prev, adGroups: newAdGroups}));
                     }}
-                    placeholder="Enter a name for this ad group"
+                    placeholder="e.g. Organic Cotton Hoodies (Keep single-theme)"
                   />
+                  <p className="text-[11px] text-muted-foreground">Pro-tip: Group similar products together so your ad copy directly mirrors what the searcher typed.</p>
                 </div>
                 
                 <div className="space-y-2">
-                  <Label>Keywords</Label>
+                  <div className="flex items-center justify-between">
+                    <Label>Target Keywords & Match Types</Label>
+                    <span className="text-[11px] text-muted-foreground font-mono">Use Phrase or Exact for higher ROAS</span>
+                  </div>
                   {adGroup.keywords.map((keyword, keywordIndex) => (
                     <div key={keywordIndex} className="flex gap-2 mb-2">
                       <Input 
@@ -743,8 +965,8 @@ export default function AdSimulationPage() {
                           newAdGroups[groupIndex].keywords[keywordIndex].text = e.target.value;
                           setGoogleForm(prev => ({...prev, adGroups: newAdGroups}));
                         }}
-                        placeholder="Enter a keyword"
-                        className="flex-grow"
+                        placeholder="e.g. organic cotton hoodie"
+                        className="flex-grow font-mono text-xs"
                       />
                       <Select 
                         value={keyword.matchType} 
@@ -754,13 +976,13 @@ export default function AdSimulationPage() {
                           setGoogleForm(prev => ({...prev, adGroups: newAdGroups}));
                         }}
                       >
-                        <SelectTrigger className="w-[180px]">
+                        <SelectTrigger className="w-[180px] text-xs">
                           <SelectValue placeholder="Match Type" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="broad">Broad</SelectItem>
-                          <SelectItem value="phrase">Phrase</SelectItem>
-                          <SelectItem value="exact">Exact</SelectItem>
+                          <SelectItem value="phrase">"Phrase Match"</SelectItem>
+                          <SelectItem value="exact">[Exact Match]</SelectItem>
+                          <SelectItem value="broad">Broad Match</SelectItem>
                         </SelectContent>
                       </Select>
                       {adGroup.keywords.length > 1 && (
@@ -783,16 +1005,58 @@ export default function AdSimulationPage() {
                     size="sm"
                     onClick={() => {
                       const newAdGroups = [...googleForm.adGroups];
-                      newAdGroups[groupIndex].keywords.push({ text: "", matchType: "broad" });
+                      newAdGroups[groupIndex].keywords.push({ text: "", matchType: "phrase" });
                       setGoogleForm(prev => ({...prev, adGroups: newAdGroups}));
                     }}
+                    className="text-xs"
                   >
-                    <Plus className="h-4 w-4 mr-2" /> Add Keyword
+                    <Plus className="h-3.5 w-3.5 mr-1.5" /> Add Keyword
                   </Button>
                 </div>
                 
-                <div className="space-y-2">
-                  <Label>Negative Keywords</Label>
+                <div className="space-y-2 pt-2 border-t border-border/50">
+                  <div className="flex items-center justify-between flex-wrap gap-2">
+                    <div>
+                      <Label className="flex items-center gap-1.5">
+                        <ShieldAlert className="h-3.5 w-3.5 text-red-400" />
+                        <span>Negative Keywords (Budget Shield)</span>
+                      </Label>
+                      <p className="text-[11px] text-muted-foreground">Blocks unwanted searches (e.g. free downloads, DIY, employee job applicants) so you don't pay for empty clicks.</p>
+                    </div>
+
+                    <Button 
+                      type="button"
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => {
+                        const newAdGroups = [...googleForm.adGroups];
+                        const coreShields = ["-free", "-cheap", "-diy", "-jobs", "-used", "-wholesale", "-craigslist"];
+                        const existing = new Set(newAdGroups[groupIndex].negativeKeywords.map(k => k.toLowerCase().trim()));
+                        const toAdd = coreShields.filter(s => !existing.has(s.toLowerCase()));
+                        if (toAdd.length > 0) {
+                          newAdGroups[groupIndex].negativeKeywords = [
+                            ...newAdGroups[groupIndex].negativeKeywords.filter(k => k.trim() !== ""), 
+                            ...toAdd
+                          ];
+                          setGoogleForm(prev => ({...prev, adGroups: newAdGroups}));
+                          toast({
+                            title: "🛡️ Negative Shield Activated",
+                            description: `Added ${toAdd.length} negative keywords to protect against budget bleed.`,
+                          });
+                        } else {
+                          toast({
+                            title: "Shield Already In Place",
+                            description: "All core negative keywords are already active in this ad group.",
+                          });
+                        }
+                      }}
+                      className="h-7 text-xs border-amber-500/40 text-amber-500 dark:text-amber-400 hover:bg-amber-500/10 flex items-center gap-1.5"
+                    >
+                      <ShieldCheck className="h-3.5 w-3.5" />
+                      <span>🛡️ Quick Shield: Add Core Bleed Blockers</span>
+                    </Button>
+                  </div>
+
                   {adGroup.negativeKeywords.map((keyword, keywordIndex) => (
                     <div key={keywordIndex} className="flex gap-2 mb-2">
                       <Input 
@@ -802,8 +1066,8 @@ export default function AdSimulationPage() {
                           newAdGroups[groupIndex].negativeKeywords[keywordIndex] = e.target.value;
                           setGoogleForm(prev => ({...prev, adGroups: newAdGroups}));
                         }}
-                        placeholder="Enter a negative keyword"
-                        className="flex-grow"
+                        placeholder="e.g. -free, -cheap, -diy, -jobs"
+                        className="flex-grow font-mono text-xs text-red-400"
                       />
                       {adGroup.negativeKeywords.length > 0 && (
                         <Button 
@@ -828,40 +1092,106 @@ export default function AdSimulationPage() {
                       newAdGroups[groupIndex].negativeKeywords.push("");
                       setGoogleForm(prev => ({...prev, adGroups: newAdGroups}));
                     }}
+                    className="text-xs"
                   >
-                    <Plus className="h-4 w-4 mr-2" /> Add Negative Keyword
+                    <Plus className="h-3.5 w-3.5 mr-1.5" /> Add Negative Keyword
                   </Button>
                 </div>
               </CardContent>
             </Card>
           ))}
-          <Button
-            variant="outline"
-            onClick={() => {
-              setGoogleForm(prev => ({
-                ...prev,
-                adGroups: [
-                  ...prev.adGroups,
-                  {
-                    name: `Ad Group ${prev.adGroups.length + 1}`,
-                    keywords: [{ text: "", matchType: "broad" }],
-                    negativeKeywords: []
-                  }
-                ]
-              }));
-            }}
-          >
-            <Plus className="h-4 w-4 mr-2" /> Add Ad Group
-          </Button>
+
+          <div className="flex items-center justify-between pt-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                setGoogleForm(prev => ({
+                  ...prev,
+                  adGroups: [
+                    ...prev.adGroups,
+                    {
+                      name: `Ad Group ${prev.adGroups.length + 1}`,
+                      keywords: [{ text: "", matchType: "phrase" }],
+                      negativeKeywords: ["-free", "-cheap", "-diy", "-jobs"]
+                    }
+                  ]
+                }));
+              }}
+              className="text-xs"
+            >
+              <Plus className="h-3.5 w-3.5 mr-1.5" /> Add Another Ad Group
+            </Button>
+          </div>
+
+          {/* Navigation Controls */}
+          <div className="flex items-center justify-between pt-4 border-t border-border/50">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setActiveSetupTab("campaign")}
+              className="text-xs h-9 flex items-center gap-1.5"
+            >
+              <ArrowLeft className="h-3.5 w-3.5" />
+              <span>Back to Step 1: Campaign Foundation</span>
+            </Button>
+            <Button
+              type="button"
+              onClick={() => setActiveSetupTab("ads")}
+              className="text-xs h-9 flex items-center gap-1.5 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
+            >
+              <span>Continue to Step 3: Ad Creatives</span>
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Button>
+          </div>
         </TabsContent>
         
         <TabsContent value="ads" className="space-y-4">
+          {/* Step 3 Educational Banner: 3-Headline Formula */}
+          <div className="p-4 rounded-xl bg-gradient-to-r from-blue-500/10 via-card to-background border border-blue-500/30 space-y-3">
+            <div className="flex items-center justify-between flex-wrap gap-2">
+              <div className="flex items-center gap-2 text-sm font-bold text-foreground">
+                <Lightbulb className="h-4 w-4 text-blue-400" />
+                <span>Step 3 Agency Guide: The 3-Headline Responsive Ad Formula</span>
+              </div>
+              <Badge variant="outline" className="text-[10px] bg-background">
+                Step 3 of 4
+              </Badge>
+            </div>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Google displays up to 3 headlines separated by pipes (|) and 2 descriptions. High-performing agency ads follow this proven 3-part psychological formula:
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1 text-xs">
+              <div className="p-2.5 rounded-lg bg-card/80 border border-border/60">
+                <div className="font-semibold text-foreground flex items-center gap-1.5 mb-1">
+                  <span className="text-primary font-bold">1.</span>
+                  <span>Product / Core Query</span>
+                </div>
+                <p className="text-[11px] text-muted-foreground">Matches exactly what the user searched (e.g. <em>"Organic Cotton Hoodies"</em>). Confirms they're in the right place.</p>
+              </div>
+              <div className="p-2.5 rounded-lg bg-card/80 border border-border/60">
+                <div className="font-semibold text-foreground flex items-center gap-1.5 mb-1">
+                  <span className="text-primary font-bold">2.</span>
+                  <span>Value Prop / Benefit</span>
+                </div>
+                <p className="text-[11px] text-muted-foreground">Answers "Why buy from you?" (e.g. <em>"100% Sustainable & Soft"</em> or <em>"Same-Day Emergency Care"</em>).</p>
+              </div>
+              <div className="p-2.5 rounded-lg bg-card/80 border border-border/60">
+                <div className="font-semibold text-foreground flex items-center gap-1.5 mb-1">
+                  <span className="text-primary font-bold">3.</span>
+                  <span>Urgent Call to Action</span>
+                </div>
+                <p className="text-[11px] text-muted-foreground">Tells them the next action and sweetens the offer (e.g. <em>"Shop 20% Off First Order"</em>).</p>
+              </div>
+            </div>
+          </div>
+
           {googleForm.adCreatives.map((ad, adIndex) => (
             <Card key={adIndex}>
               <CardHeader className="flex flex-row items-center justify-between">
                 <div>
-                  <CardTitle>Ad {adIndex + 1}</CardTitle>
-                  <CardDescription>Create your responsive search ad</CardDescription>
+                  <CardTitle className="text-base font-bold">Ad Creative {adIndex + 1}</CardTitle>
+                  <CardDescription className="text-xs">Create responsive search ad copy that converts searchers into customers</CardDescription>
                 </div>
                 {googleForm.adCreatives.length > 1 && (
                   <Button 
@@ -879,88 +1209,119 @@ export default function AdSimulationPage() {
                 )}
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor={`headline1-${adIndex}`}>Headline 1 (max 30 characters)</Label>
-                  <Input 
-                    id={`headline1-${adIndex}`} 
-                    value={ad.headline1} 
-                    onChange={(e) => {
-                      const newAds = [...googleForm.adCreatives];
-                      newAds[adIndex].headline1 = e.target.value.slice(0, 30);
-                      setGoogleForm(prev => ({...prev, adCreatives: newAds}));
-                    }}
-                    placeholder="Main headline"
-                    maxLength={30}
-                  />
-                  <div className="text-xs text-gray-500 text-right">{ad.headline1.length}/30</div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor={`headline1-${adIndex}`} className="text-xs">Headline 1 (Product/Query)</Label>
+                      <span className={`text-[10px] font-mono ${ad.headline1.length > 30 ? "text-destructive font-bold" : ad.headline1.length > 0 ? "text-emerald-400" : "text-muted-foreground"}`}>
+                        {ad.headline1.length}/30
+                      </span>
+                    </div>
+                    <Input 
+                      id={`headline1-${adIndex}`} 
+                      value={ad.headline1} 
+                      onChange={(e) => {
+                        const newAds = [...googleForm.adCreatives];
+                        newAds[adIndex].headline1 = e.target.value.slice(0, 30);
+                        setGoogleForm(prev => ({...prev, adCreatives: newAds}));
+                      }}
+                      placeholder="e.g. Organic Cotton Hoodies"
+                      maxLength={30}
+                      className="text-xs"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor={`headline2-${adIndex}`} className="text-xs">Headline 2 (Benefit)</Label>
+                      <span className={`text-[10px] font-mono ${ad.headline2.length > 30 ? "text-destructive font-bold" : ad.headline2.length > 0 ? "text-emerald-400" : "text-muted-foreground"}`}>
+                        {ad.headline2.length}/30
+                      </span>
+                    </div>
+                    <Input 
+                      id={`headline2-${adIndex}`} 
+                      value={ad.headline2} 
+                      onChange={(e) => {
+                        const newAds = [...googleForm.adCreatives];
+                        newAds[adIndex].headline2 = e.target.value.slice(0, 30);
+                        setGoogleForm(prev => ({...prev, adCreatives: newAds}));
+                      }}
+                      placeholder="e.g. 100% Sustainable & Soft"
+                      maxLength={30}
+                      className="text-xs"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor={`headline3-${adIndex}`} className="text-xs">Headline 3 (Call-to-Action)</Label>
+                      <span className={`text-[10px] font-mono ${ad.headline3.length > 30 ? "text-destructive font-bold" : ad.headline3.length > 0 ? "text-emerald-400" : "text-muted-foreground"}`}>
+                        {ad.headline3.length}/30
+                      </span>
+                    </div>
+                    <Input 
+                      id={`headline3-${adIndex}`} 
+                      value={ad.headline3} 
+                      onChange={(e) => {
+                        const newAds = [...googleForm.adCreatives];
+                        newAds[adIndex].headline3 = e.target.value.slice(0, 30);
+                        setGoogleForm(prev => ({...prev, adCreatives: newAds}));
+                      }}
+                      placeholder="e.g. Shop 20% Off First Order"
+                      maxLength={30}
+                      className="text-xs"
+                    />
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor={`description1-${adIndex}`} className="text-xs">Description 1 (Primary Offer)</Label>
+                      <span className={`text-[10px] font-mono ${ad.description1.length > 90 ? "text-destructive font-bold" : ad.description1.length > 0 ? "text-emerald-400" : "text-muted-foreground"}`}>
+                        {ad.description1.length}/90
+                      </span>
+                    </div>
+                    <Textarea 
+                      id={`description1-${adIndex}`} 
+                      value={ad.description1} 
+                      onChange={(e) => {
+                        const newAds = [...googleForm.adCreatives];
+                        newAds[adIndex].description1 = e.target.value.slice(0, 90);
+                        setGoogleForm(prev => ({...prev, adCreatives: newAds}));
+                      }}
+                      placeholder="e.g. Ethically crafted organic streetwear hoodies & tees. Fair-trade verified."
+                      maxLength={90}
+                      rows={2}
+                      className="text-xs"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor={`description2-${adIndex}`} className="text-xs">Description 2 (Proof & CTA)</Label>
+                      <span className={`text-[10px] font-mono ${ad.description2.length > 90 ? "text-destructive font-bold" : ad.description2.length > 0 ? "text-emerald-400" : "text-muted-foreground"}`}>
+                        {ad.description2.length}/90
+                      </span>
+                    </div>
+                    <Textarea 
+                      id={`description2-${adIndex}`} 
+                      value={ad.description2} 
+                      onChange={(e) => {
+                        const newAds = [...googleForm.adCreatives];
+                        newAds[adIndex].description2 = e.target.value.slice(0, 90);
+                        setGoogleForm(prev => ({...prev, adCreatives: newAds}));
+                      }}
+                      placeholder="e.g. Ultra-soft premium cotton built to last. Free shipping on orders over $50."
+                      maxLength={90}
+                      rows={2}
+                      className="text-xs"
+                    />
+                  </div>
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor={`headline2-${adIndex}`}>Headline 2 (max 30 characters)</Label>
-                  <Input 
-                    id={`headline2-${adIndex}`} 
-                    value={ad.headline2} 
-                    onChange={(e) => {
-                      const newAds = [...googleForm.adCreatives];
-                      newAds[adIndex].headline2 = e.target.value.slice(0, 30);
-                      setGoogleForm(prev => ({...prev, adCreatives: newAds}));
-                    }}
-                    placeholder="Additional headline"
-                    maxLength={30}
-                  />
-                  <div className="text-xs text-gray-500 text-right">{ad.headline2.length}/30</div>
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor={`headline3-${adIndex}`}>Headline 3 (max 30 characters)</Label>
-                  <Input 
-                    id={`headline3-${adIndex}`} 
-                    value={ad.headline3} 
-                    onChange={(e) => {
-                      const newAds = [...googleForm.adCreatives];
-                      newAds[adIndex].headline3 = e.target.value.slice(0, 30);
-                      setGoogleForm(prev => ({...prev, adCreatives: newAds}));
-                    }}
-                    placeholder="Additional headline"
-                    maxLength={30}
-                  />
-                  <div className="text-xs text-gray-500 text-right">{ad.headline3.length}/30</div>
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor={`description1-${adIndex}`}>Description 1 (max 90 characters)</Label>
-                  <Textarea 
-                    id={`description1-${adIndex}`} 
-                    value={ad.description1} 
-                    onChange={(e) => {
-                      const newAds = [...googleForm.adCreatives];
-                      newAds[adIndex].description1 = e.target.value.slice(0, 90);
-                      setGoogleForm(prev => ({...prev, adCreatives: newAds}));
-                    }}
-                    placeholder="Main description"
-                    maxLength={90}
-                  />
-                  <div className="text-xs text-gray-500 text-right">{ad.description1.length}/90</div>
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor={`description2-${adIndex}`}>Description 2 (max 90 characters)</Label>
-                  <Textarea 
-                    id={`description2-${adIndex}`} 
-                    value={ad.description2} 
-                    onChange={(e) => {
-                      const newAds = [...googleForm.adCreatives];
-                      newAds[adIndex].description2 = e.target.value.slice(0, 90);
-                      setGoogleForm(prev => ({...prev, adCreatives: newAds}));
-                    }}
-                    placeholder="Additional description"
-                    maxLength={90}
-                  />
-                  <div className="text-xs text-gray-500 text-right">{ad.description2.length}/90</div>
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor={`finalUrl-${adIndex}`}>Final URL</Label>
+                  <Label htmlFor={`finalUrl-${adIndex}`} className="text-xs">Landing Page Final URL</Label>
                   <Input 
                     id={`finalUrl-${adIndex}`} 
                     value={ad.finalUrl} 
@@ -969,78 +1330,174 @@ export default function AdSimulationPage() {
                       newAds[adIndex].finalUrl = e.target.value;
                       setGoogleForm(prev => ({...prev, adCreatives: newAds}));
                     }}
-                    placeholder="https://www.example.com"
+                    placeholder="https://clientbrand.example.com/collection"
+                    className="text-xs font-mono"
                   />
+                  <p className="text-[11px] text-muted-foreground">Must direct searchers to the specific relevant product category, NOT an empty homepage.</p>
                 </div>
                 
-                <div className="mt-6 border rounded-lg p-4 bg-gray-50">
-                  <h4 className="font-medium mb-2">Ad Preview</h4>
-                  <div className="space-y-1">
-                    <div className="text-blue-600 font-medium">
-                      {ad.headline1 || "Main Headline"} | {ad.headline2 || "Second Headline"} | {ad.headline3 || "Third Headline"}
+                {/* Authentic Google SERP Live Ad Preview */}
+                <div className="mt-6 border border-border/80 rounded-xl p-4 bg-muted/20 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                      <Eye className="h-3.5 w-3.5 text-primary" />
+                      <span>Live Google SERP Search Ad Preview</span>
+                    </h4>
+                    <Badge variant="outline" className="text-[10px] bg-background">
+                      Desktop & Mobile Google Result
+                    </Badge>
+                  </div>
+
+                  <div className="bg-card p-4 rounded-xl border border-border/80 shadow-sm space-y-1.5 max-w-2xl">
+                    <div className="flex items-center gap-2">
+                      <div className="h-6 w-6 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary text-[10px] font-bold">
+                        Ad
+                      </div>
+                      <div className="text-xs leading-none">
+                        <div className="flex items-center gap-1 font-semibold text-foreground text-[11px]">
+                          <span>{simulation?.title?.split(" ")[0] || "ClientBrand"}</span>
+                          <span className="text-muted-foreground">•</span>
+                          <span className="font-bold text-foreground text-[10px]">Sponsored</span>
+                        </div>
+                        <div className="text-[11px] text-muted-foreground truncate max-w-md mt-0.5">
+                          {ad.finalUrl || "https://www.example.com/shop"}
+                        </div>
+                      </div>
                     </div>
-                    <div className="text-green-700 text-sm">
-                      {ad.finalUrl ? ad.finalUrl.replace(/^https?:\/\//, "") : "www.example.com"}
+
+                    <div className="text-base text-blue-600 dark:text-blue-400 font-medium hover:underline cursor-pointer leading-snug">
+                      {[ad.headline1 || "Headline 1", ad.headline2 || "Headline 2", ad.headline3 || "Headline 3"].filter(Boolean).join(" | ")}
                     </div>
-                    <div className="text-gray-700 text-sm">
-                      {ad.description1 || "Main description goes here to explain more about your product or service."} {ad.description2 || "Additional information for your customers."}
+
+                    <div className="text-xs text-muted-foreground leading-relaxed">
+                      {ad.description1 || "Main description goes here explaining key benefits."} {ad.description2 || "Secondary description with reassurance and clear call to action."}
                     </div>
+
+                    {googleForm.adExtensions.length > 0 && (
+                      <div className="pt-2 flex flex-wrap gap-2 border-t border-border/40 mt-2">
+                        {googleForm.adExtensions.map((ext, extIdx) => (
+                          <span key={extIdx} className="text-xs text-blue-600 dark:text-blue-400 hover:underline cursor-pointer bg-primary/5 px-2 py-0.5 rounded border border-primary/10">
+                            {ext.content || `${ext.type} link`}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
               </CardContent>
             </Card>
           ))}
-          <Button
-            variant="outline"
-            onClick={() => {
-              setGoogleForm(prev => ({
-                ...prev,
-                adCreatives: [
-                  ...prev.adCreatives,
-                  {
-                    headline1: "",
-                    headline2: "",
-                    headline3: "",
-                    description1: "",
-                    description2: "",
-                    finalUrl: ""
-                  }
-                ]
-              }));
-            }}
-          >
-            <Plus className="h-4 w-4 mr-2" /> Add Ad Creative
-          </Button>
+
+          <div className="flex items-center justify-between pt-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                setGoogleForm(prev => ({
+                  ...prev,
+                  adCreatives: [
+                    ...prev.adCreatives,
+                    {
+                      headline1: "",
+                      headline2: "",
+                      headline3: "",
+                      description1: "",
+                      description2: "",
+                      finalUrl: ""
+                    }
+                  ]
+                }));
+              }}
+              className="text-xs"
+            >
+              <Plus className="h-3.5 w-3.5 mr-1.5" /> Add Another Ad Variation
+            </Button>
+          </div>
+
+          {/* Navigation Controls */}
+          <div className="flex items-center justify-between pt-4 border-t border-border/50">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setActiveSetupTab("adgroups")}
+              className="text-xs h-9 flex items-center gap-1.5"
+            >
+              <ArrowLeft className="h-3.5 w-3.5" />
+              <span>Back to Step 2: Ad Groups & Keywords</span>
+            </Button>
+            <Button
+              type="button"
+              onClick={() => setActiveSetupTab("settings")}
+              className="text-xs h-9 flex items-center gap-1.5 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
+            >
+              <span>Continue to Step 4: Budget & Bidding</span>
+              <ArrowRight className="h-3.5 w-3.5" />
+            </Button>
+          </div>
         </TabsContent>
         
         <TabsContent value="settings" className="space-y-4">
+          {/* Step 4 Educational Banner: Budget & Bidding */}
+          <div className="p-4 rounded-xl bg-gradient-to-r from-emerald-500/10 via-card to-background border border-emerald-500/30 space-y-3">
+            <div className="flex items-center justify-between flex-wrap gap-2">
+              <div className="flex items-center gap-2 text-sm font-bold text-foreground">
+                <Lightbulb className="h-4 w-4 text-emerald-400" />
+                <span>Step 4 Agency Guide: Smart Bidding Strategy & Budget Control</span>
+              </div>
+              <Badge variant="outline" className="text-[10px] bg-background">
+                Step 4 of 4
+              </Badge>
+            </div>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Smart Bidding uses Google's auction machine learning to optimize bids in real time based on user intent signals. Choosing the right bid strategy ensures you don't overpay for traffic.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1 text-xs">
+              <div className="p-2.5 rounded-lg bg-card/80 border border-border/60">
+                <div className="font-semibold text-emerald-400 mb-1">Maximize Conversions</div>
+                <p className="text-[11px] text-muted-foreground">Recommended for most e-commerce and retail stores. Google bids aggressively on searchers most likely to buy.</p>
+              </div>
+              <div className="p-2.5 rounded-lg bg-card/80 border border-border/60">
+                <div className="font-semibold text-blue-400 mb-1">Target CPA (Cost Per Acquisition)</div>
+                <p className="text-[11px] text-muted-foreground">Best for service clinics and lead gen where you have a strict maximum dollar amount you can pay per lead.</p>
+              </div>
+              <div className="p-2.5 rounded-lg bg-card/80 border border-border/60">
+                <div className="font-semibold text-amber-400 mb-1">Manual CPC</div>
+                <p className="text-[11px] text-muted-foreground">Full manual control over exact keyword bids. Gives safety for tiny budgets but requires frequent adjustments.</p>
+              </div>
+            </div>
+          </div>
+
           <Card>
             <CardHeader>
-              <CardTitle>Campaign Settings</CardTitle>
-              <CardDescription>Set your bidding and budget</CardDescription>
+              <CardTitle className="text-base font-bold">Step 4: Campaign Settings & Bidding</CardTitle>
+              <CardDescription className="text-xs">Set your bidding algorithm, daily spending caps, and SERP ad extensions</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="bidStrategy">Bid Strategy</Label>
+                <Label htmlFor="bidStrategy">Smart Bidding Strategy</Label>
                 <Select 
                   value={googleForm.bidStrategy} 
                   onValueChange={(value) => setGoogleForm(prev => ({...prev, bidStrategy: value}))}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="text-xs">
                     <SelectValue placeholder="Select a bid strategy" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="manual_cpc">Manual CPC</SelectItem>
-                    <SelectItem value="maximize_clicks">Maximize Clicks</SelectItem>
-                    <SelectItem value="target_cpa">Target CPA</SelectItem>
-                    <SelectItem value="maximize_conversions">Maximize Conversions</SelectItem>
-                    <SelectItem value="target_roas">Target ROAS</SelectItem>
+                    <SelectItem value="maximize_conversions">🎯 Maximize Conversions (Recommended for Sales)</SelectItem>
+                    <SelectItem value="target_cpa">💼 Target CPA (Fixed Cost Per Acquisition)</SelectItem>
+                    <SelectItem value="maximize_clicks">📈 Maximize Clicks (Traffic Volume Focus)</SelectItem>
+                    <SelectItem value="target_roas">📊 Target ROAS (Revenue Multiple Focus)</SelectItem>
+                    <SelectItem value="manual_cpc">🛠️ Manual CPC (Individual Keyword Bids)</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               
-              <div className="space-y-2">
-                <Label htmlFor="dailyBudget">Daily Budget (USD)</Label>
+              <div className="space-y-2 pt-2 border-t border-border/50">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="dailyBudget">Daily Budget Cap (USD)</Label>
+                  <span className="text-xs font-bold text-primary font-mono">${googleForm.dailyBudget} / day</span>
+                </div>
+                <p className="text-[11px] text-muted-foreground">Recommended: $50/day. Provides sufficient auction data for statistical significance without risking large budget bleed.</p>
                 <div className="flex items-center gap-4">
                   <Slider 
                     value={[googleForm.dailyBudget]} 
@@ -1054,28 +1511,34 @@ export default function AdSimulationPage() {
                     type="number" 
                     value={googleForm.dailyBudget} 
                     onChange={(e) => setGoogleForm(prev => ({...prev, dailyBudget: parseInt(e.target.value) || 0}))}
-                    className="w-20"
+                    className="w-24 text-xs font-mono"
                   />
                 </div>
               </div>
               
-              <div className="space-y-2">
-                <Label>Ad Extensions</Label>
-                <Button 
-                  variant="outline" 
-                  size="sm"
-                  onClick={() => {
-                    setGoogleForm(prev => ({
-                      ...prev,
-                      adExtensions: [
-                        ...prev.adExtensions,
-                        { type: "sitelink", content: "" }
-                      ]
-                    }));
-                  }}
-                >
-                  <Plus className="h-4 w-4 mr-2" /> Add Extension
-                </Button>
+              <div className="space-y-2 pt-2 border-t border-border/50">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Label>Ad Extensions (SERP Enhancements)</Label>
+                    <p className="text-[11px] text-muted-foreground">Extensions make your ad up to 30% larger on Google results, boosting Click-Through Rate (CTR) by 10–15%.</p>
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => {
+                      setGoogleForm(prev => ({
+                        ...prev,
+                        adExtensions: [
+                          ...prev.adExtensions,
+                          { type: "sitelink", content: "" }
+                        ]
+                      }));
+                    }}
+                    className="text-xs"
+                  >
+                    <Plus className="h-3.5 w-3.5 mr-1.5" /> Add Extension
+                  </Button>
+                </div>
                 
                 {googleForm.adExtensions.map((extension, extensionIndex) => (
                   <div key={extensionIndex} className="flex gap-2 mt-2">
@@ -1087,14 +1550,14 @@ export default function AdSimulationPage() {
                         setGoogleForm(prev => ({...prev, adExtensions: newExtensions}));
                       }}
                     >
-                      <SelectTrigger className="w-[180px]">
+                      <SelectTrigger className="w-[180px] text-xs">
                         <SelectValue placeholder="Extension Type" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="sitelink">Sitelink</SelectItem>
                         <SelectItem value="callout">Callout</SelectItem>
                         <SelectItem value="structured_snippet">Structured Snippet</SelectItem>
-                        <SelectItem value="call">Call</SelectItem>
+                        <SelectItem value="call">Call Button</SelectItem>
                       </SelectContent>
                     </Select>
                     <Input 
@@ -1104,8 +1567,8 @@ export default function AdSimulationPage() {
                         newExtensions[extensionIndex].content = e.target.value;
                         setGoogleForm(prev => ({...prev, adExtensions: newExtensions}));
                       }}
-                      placeholder="Extension content"
-                      className="flex-grow"
+                      placeholder="e.g. Free Carbon-Neutral Shipping | 30-Day Returns"
+                      className="flex-grow text-xs"
                     />
                     <Button 
                       variant="ghost" 
@@ -1121,6 +1584,38 @@ export default function AdSimulationPage() {
                     </Button>
                   </div>
                 ))}
+              </div>
+
+              {/* Navigation Controls */}
+              <div className="flex items-center justify-between pt-4 border-t border-border/50">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setActiveSetupTab("ads")}
+                  className="text-xs h-9 flex items-center gap-1.5"
+                >
+                  <ArrowLeft className="h-3.5 w-3.5" />
+                  <span>Back to Step 3: Ad Creatives</span>
+                </Button>
+                <div className="flex items-center gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setIsTeacherCopilotOpen(true)}
+                    className="border-amber-500/40 text-amber-500 dark:text-amber-400 hover:bg-amber-500/10 text-xs h-9 flex items-center gap-1.5"
+                  >
+                    <GraduationCap className="h-3.5 w-3.5" />
+                    <span>Ask Teacher to Audit Setup</span>
+                  </Button>
+                  <Button
+                    type="button"
+                    onClick={handleSubmit}
+                    disabled={submitMutation.isPending}
+                    className="text-xs h-9 flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold shadow-md"
+                  >
+                    <span>{submitMutation.isPending ? "Simulating Auction..." : "🚀 Launch & Grade Campaign"}</span>
+                  </Button>
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -2501,40 +2996,159 @@ export default function AdSimulationPage() {
     );
   }
 
-  // Project objectives reference card component
+  // Redesigned Agency Client Brief & Mission Guide
   const ProjectObjectivesCard = () => {
     if (!simulation) return null;
+
+    const isApparel = simulation?.industry?.toLowerCase().includes("cloth") || 
+                      simulation?.title?.toLowerCase().includes("cloth") || 
+                      simulation?.businessType?.toLowerCase().includes("cloth") ||
+                      (simulation?.objectives || []).some((o: string) => o.toLowerCase().includes("clothing"));
+    
+    const clientName = simulation.title.includes("Google Ads") ? (isApparel ? "EcoThreads Apparel" : "Apex Client") : simulation.title;
     
     return (
-      <Card className="mb-4">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-lg">Project Goals & Objectives</CardTitle>
-          <CardDescription>Reference these goals while creating your campaign</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-2 pt-0">
-          <div className="text-sm">
-            <p className="font-medium text-foreground">Objectives:</p>
-            <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
-              {(Array.isArray(simulation?.objectives) ? simulation.objectives : [simulation?.objectives || "Optimize campaign ROAS and reduce CPA"]).map((obj: string, index: number) => (
-                <li key={index}>{obj}</li>
-              ))}
-            </ul>
+      <Card className="mb-6 border-2 border-primary/20 bg-gradient-to-br from-card via-card/95 to-primary/5 shadow-xl overflow-hidden rounded-2xl">
+        <CardHeader className="bg-muted/30 pb-3 border-b border-border/60">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div>
+              <div className="flex items-center gap-2 flex-wrap">
+                <Badge className="bg-primary/20 text-primary border-primary/30 text-[10px] font-bold uppercase tracking-wider">
+                  🏢 Agency Client Dossier
+                </Badge>
+                <Badge variant="outline" className="text-[10px] text-muted-foreground">
+                  {simulation.industry} • {simulation.businessType || "E-Commerce Direct-to-Consumer"}
+                </Badge>
+              </div>
+              <CardTitle className="text-xl font-black text-foreground mt-1.5 flex items-center gap-2">
+                <span>{clientName}</span>
+                <span className="text-xs font-normal text-muted-foreground">• Account Onboarding</span>
+              </CardTitle>
+            </div>
+
+            <div className="flex items-center gap-2 flex-wrap">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setIsOnboardingModalOpen(true)}
+                className="text-xs h-8 border-primary/40 text-primary hover:bg-primary/10 flex items-center gap-1.5 font-medium shadow-sm"
+              >
+                <HelpCircle className="h-3.5 w-3.5 text-primary" />
+                <span>👋 60-Sec Student Guide</span>
+              </Button>
+              <Button
+                variant="default"
+                size="sm"
+                onClick={handleLoadStarterDraft}
+                className="text-xs h-8 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-medium flex items-center gap-1.5 shadow-sm"
+                title="Populate an exemplary agency campaign setup to learn from"
+              >
+                <Sparkles className="h-3.5 w-3.5 text-purple-200" />
+                <span>✨ Load Starter Benchmark Draft</span>
+              </Button>
+            </div>
           </div>
-          <div className="text-sm">
-            <p className="font-medium text-foreground">Success Criteria:</p>
-            <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
-              {simulation?.successCriteria && Array.isArray(simulation.successCriteria) ? 
-                simulation.successCriteria.map((criteria: any, index: number) => (
-                  <li key={index}>
-                    {typeof criteria === 'object' && criteria.metric ? 
-                      `${criteria.metric}: ${criteria.comparison === "greater" ? ">" : criteria.comparison === "less" ? "<" : "="} ${criteria.target}` : 
-                      String(criteria)
-                    }
-                  </li>
-                )) : 
-                <li>Please refer to the project objectives above</li>
-              }
-            </ul>
+        </CardHeader>
+
+        <CardContent className="p-4 sm:p-5 space-y-4">
+          {/* Situation & Your Agency Role */}
+          <div className="p-3.5 rounded-xl bg-primary/5 border border-primary/20 text-xs text-muted-foreground leading-relaxed">
+            <strong className="text-foreground flex items-center gap-1.5 mb-1 text-xs">
+              <Target className="h-3.5 w-3.5 text-primary" />
+              <span>Your Role & Client Mission:</span>
+            </strong>
+            You are the <strong>Agency Media Buyer</strong> managing this account. {simulation.scenarioDescription || "The client has hired our agency to launch their search advertising campaign. Your goal is to capture high-intent buyers searching on Google without burning client budget on accidental or irrelevant clicks."}
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Left: Client Objectives & Success Criteria */}
+            <div className="space-y-3 bg-background/60 p-3.5 rounded-xl border border-border/80">
+              <div>
+                <h4 className="text-xs font-bold text-foreground uppercase tracking-wider flex items-center gap-1.5">
+                  <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
+                  <span>Client's Target Objectives</span>
+                </h4>
+                <ul className="mt-2 space-y-1.5 text-xs text-muted-foreground">
+                  {(Array.isArray(simulation?.objectives) ? simulation.objectives : [simulation?.objectives || "Maximize return on ad spend"]).map((obj: string, index: number) => (
+                    <li key={index} className="flex items-start gap-2">
+                      <span className="text-primary font-bold">•</span>
+                      <span className="text-foreground/90 font-medium">{obj}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="pt-2 border-t border-border/50">
+                <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+                  Success Criteria (Grading Benchmarks):
+                </span>
+                <ul className="mt-1 space-y-1 text-[11px] text-muted-foreground">
+                  {simulation?.successCriteria && Array.isArray(simulation.successCriteria) ? 
+                    simulation.successCriteria.map((criteria: any, index: number) => (
+                      <li key={index} className="flex items-center gap-1.5 font-mono text-emerald-400/90">
+                        <span>✓</span>
+                        <span>
+                          {typeof criteria === 'object' && criteria.metric ? 
+                            `${criteria.metric}: ${criteria.comparison === "greater" ? ">" : criteria.comparison === "less" ? "<" : "="} ${criteria.target}` : 
+                            String(criteria)
+                          }
+                        </span>
+                      </li>
+                    )) : 
+                    <li>Achieve Quality Score &ge; 7/10 and positive ROAS</li>
+                  }
+                </ul>
+              </div>
+            </div>
+
+            {/* Right: The 4-Step Student Action Gameplan */}
+            <div className="bg-background/60 p-3.5 rounded-xl border border-border/80 space-y-2.5">
+              <h4 className="text-xs font-bold text-foreground uppercase tracking-wider flex items-center gap-1.5">
+                <Zap className="h-3.5 w-3.5 text-amber-400" />
+                <span>Your 4-Step Action Gameplan</span>
+              </h4>
+              <div className="space-y-2 text-xs">
+                <div className="p-2 rounded-lg bg-card/80 border border-border/50 flex items-start gap-2">
+                  <Badge variant="outline" className="h-5 px-1.5 text-[10px] shrink-0 font-bold bg-primary/10 text-primary">1</Badge>
+                  <div>
+                    <span className="font-semibold text-foreground">Campaign Setup:</span>
+                    <p className="text-[11px] text-muted-foreground">
+                      {isApparel ? "Choose 'Sales' as the objective (since the client sells clothing products, not phone leads)." : "Choose an objective that matches the client's goal (Sales for e-commerce, Leads for service clinics)."}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="p-2 rounded-lg bg-card/80 border border-border/50 flex items-start gap-2">
+                  <Badge variant="outline" className="h-5 px-1.5 text-[10px] shrink-0 font-bold bg-primary/10 text-primary">2</Badge>
+                  <div>
+                    <span className="font-semibold text-foreground">Ad Groups & Keywords:</span>
+                    <p className="text-[11px] text-muted-foreground">
+                      Target searchers with <strong>Phrase Match</strong> (<code className="text-amber-300">"keyword"</code>) and deploy <strong>Negative Shields</strong> (<code className="text-red-400">-free, -cheap</code>) to stop budget bleed.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="p-2 rounded-lg bg-card/80 border border-border/50 flex items-start gap-2">
+                  <Badge variant="outline" className="h-5 px-1.5 text-[10px] shrink-0 font-bold bg-primary/10 text-primary">3</Badge>
+                  <div>
+                    <span className="font-semibold text-foreground">Ad Creatives:</span>
+                    <p className="text-[11px] text-muted-foreground">
+                      Write 3 headlines (Product &bull; Benefit &bull; CTA). Google strictly enforces a <strong>30-character limit</strong> per headline!
+                    </p>
+                  </div>
+                </div>
+
+                <div className="p-2 rounded-lg bg-card/80 border border-border/50 flex items-start gap-2">
+                  <Badge variant="outline" className="h-5 px-1.5 text-[10px] shrink-0 font-bold bg-primary/10 text-primary">4</Badge>
+                  <div>
+                    <span className="font-semibold text-foreground">Settings & Bidding:</span>
+                    <p className="text-[11px] text-muted-foreground">
+                      Set a daily budget ($50/day recommended) and select <strong>Maximize Conversions</strong> or <strong>Manual CPC</strong>.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -3223,6 +3837,126 @@ export default function AdSimulationPage() {
         ]}
         resolutionSummary="🏆 Extra Persona Task Unlocked • Ready to Build"
       />
+
+      {/* 60-Second Student Onboarding Walkthrough Dialog */}
+      <Dialog open={isOnboardingModalOpen} onOpenChange={setIsOnboardingModalOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <div className="flex items-center gap-2 mb-1">
+              <Badge className="bg-primary/20 text-primary border-primary/30 text-xs">
+                👋 New Student Quickstart
+              </Badge>
+              <Badge variant="outline" className="text-xs">
+                60-Second Overview
+              </Badge>
+            </div>
+            <DialogTitle className="text-xl font-bold text-foreground">
+              How to Ace This Ad Campaign Simulation
+            </DialogTitle>
+            <DialogDescription className="text-xs text-muted-foreground">
+              Everything you need to know about your role, what to build across the 4 tabs, and how to get graded.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-2 text-xs">
+            {/* Mission & Role */}
+            <div className="p-3.5 rounded-xl bg-primary/10 border border-primary/20 space-y-1.5">
+              <h4 className="font-bold text-foreground text-sm flex items-center gap-2">
+                <Target className="h-4 w-4 text-primary" />
+                <span>Your Role: Agency Media Buyer</span>
+              </h4>
+              <p className="text-muted-foreground leading-relaxed">
+                You are managing paid search advertising for <strong>{simulation?.title || "your client"}</strong>. The client hired your agency to acquire high-value customers. Your goal is to maximize Return on Ad Spend (ROAS) and Quality Score while preventing budget bleed.
+              </p>
+            </div>
+
+            {/* The 4 Configuration Steps */}
+            <div className="space-y-2">
+              <h4 className="font-bold text-foreground uppercase tracking-wider text-[11px] flex items-center gap-1.5">
+                <Zap className="h-3.5 w-3.5 text-amber-400" />
+                <span>The 4-Step Campaign Gameplan</span>
+              </h4>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <div className="p-2.5 rounded-lg bg-card/80 border border-border/60 space-y-1">
+                  <div className="flex items-center gap-1.5 font-bold text-foreground">
+                    <span className="w-4 h-4 rounded-full bg-primary/20 text-primary text-[10px] flex items-center justify-center font-mono">1</span>
+                    <span>Campaign Setup</span>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground">
+                    Select your Campaign Objective. For physical/online stores selling apparel, select <strong>Sales</strong> (not Leads) to train Google AI on checkout transactions.
+                  </p>
+                </div>
+
+                <div className="p-2.5 rounded-lg bg-card/80 border border-border/60 space-y-1">
+                  <div className="flex items-center gap-1.5 font-bold text-foreground">
+                    <span className="w-4 h-4 rounded-full bg-primary/20 text-primary text-[10px] flex items-center justify-center font-mono">2</span>
+                    <span>Ad Groups & Keywords</span>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground">
+                    Keep each ad group single-themed. Use <strong>Phrase Match</strong> (<code className="text-blue-400">"keyword"</code>) and click the <strong>Quick Shield</strong> button to block non-buyer terms (<code className="text-red-400">-free, -cheap</code>).
+                  </p>
+                </div>
+
+                <div className="p-2.5 rounded-lg bg-card/80 border border-border/60 space-y-1">
+                  <div className="flex items-center gap-1.5 font-bold text-foreground">
+                    <span className="w-4 h-4 rounded-full bg-primary/20 text-primary text-[10px] flex items-center justify-center font-mono">3</span>
+                    <span>Ad Creatives</span>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground">
+                    Write 3 headlines (Product • Benefit • Call-to-Action). Keep each headline under Google's strict <strong>30-character limit</strong>. Watch your live SERP preview update!
+                  </p>
+                </div>
+
+                <div className="p-2.5 rounded-lg bg-card/80 border border-border/60 space-y-1">
+                  <div className="flex items-center gap-1.5 font-bold text-foreground">
+                    <span className="w-4 h-4 rounded-full bg-primary/20 text-primary text-[10px] flex items-center justify-center font-mono">4</span>
+                    <span>Budget & Bidding</span>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground">
+                    Set a test budget ($50/day recommended) and select <strong>Maximize Conversions</strong>. Add Sitelink extensions to boost ad real estate and click-through rate.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Pacing Reassurance */}
+            <div className="p-3 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-start gap-2.5">
+              <Coffee className="h-4 w-4 text-blue-400 shrink-0 mt-0.5" />
+              <div className="space-y-0.5">
+                <span className="font-semibold text-foreground text-xs">Work at Your Own Pace Throughout the Week</span>
+                <p className="text-[11px] text-muted-foreground leading-relaxed">
+                  Real media buyers tweak campaigns continuously. You do not have to finish everything right now. Your work is <strong>automatically auto-saved</strong> to your browser. You can take a break or jump into Chapter 2 & Chapter 4 tutorial lessons anytime.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <DialogFooter className="flex flex-col sm:flex-row items-center justify-between gap-2 pt-2 border-t border-border/50">
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsOnboardingModalOpen(false)}
+              className="text-xs text-muted-foreground hover:text-foreground w-full sm:w-auto"
+            >
+              I'll Build From Scratch
+            </Button>
+            <Button
+              type="button"
+              size="sm"
+              onClick={() => {
+                handleLoadStarterDraft();
+                setIsOnboardingModalOpen(false);
+              }}
+              className="text-xs bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold flex items-center gap-1.5 shadow-md w-full sm:w-auto"
+            >
+              <Sparkles className="h-3.5 w-3.5" />
+              <span>Load Starter Benchmark Draft & Guide Me</span>
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Floating Ask Growth Director Mentor Side Drawer */}
       <FlightInstructorCopilot 
