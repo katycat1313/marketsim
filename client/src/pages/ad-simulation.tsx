@@ -31,7 +31,12 @@ import {
   Target,
   Coffee,
   RotateCcw,
-  CheckCircle2
+  CheckCircle2,
+  BookOpen,
+  GraduationCap,
+  ChevronDown,
+  ChevronUp,
+  ExternalLink
 } from "lucide-react";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Progress } from "@/components/ui/progress";
@@ -39,6 +44,7 @@ import { useToast } from "@/hooks/use-toast";
 import { getQueryFn, apiRequest, queryClient } from "@/lib/queryClient";
 import { AdPlatformSimulation } from "@shared/schema";
 import { EmergencyCrisisModal, CrisisOption } from "@/components/EmergencyCrisisModal";
+import { FlightInstructorCopilot } from "@/components/FlightInstructorCopilot";
 
 // Define an interface for the simulation data
 interface AdSimulation {
@@ -157,8 +163,9 @@ export default function AdSimulationPage() {
   const [matched, params] = useRoute<{ id?: string; simulationId?: string }>('/ad-simulation/:id');
   const simulationId = params?.id ? parseInt(params.id) : (params?.simulationId ? parseInt(params.simulationId) : null);
   const [, setLocation] = useLocation();
-  const { toast } = useToast();
   const [isGeneratingNext, setIsGeneratingNext] = useState(false);
+  const [isTeacherCopilotOpen, setIsTeacherCopilotOpen] = useState(false);
+  const [showLessonGuide, setShowLessonGuide] = useState(false);
 
   // Mid-Campaign Surprise Boss Crisis Call State
   const [isCrisisOpen, setIsCrisisOpen] = useState(false);
@@ -2592,6 +2599,17 @@ export default function AdSimulationPage() {
           <Button
             variant="outline"
             size="sm"
+            onClick={() => setIsTeacherCopilotOpen(true)}
+            className="h-7 px-3 text-xs text-amber-600 dark:text-amber-400 hover:text-amber-700 hover:bg-amber-50 dark:hover:bg-amber-500/10 border-amber-500/40 font-medium flex items-center gap-1.5"
+            title="Ask AI Growth Director to guide or review your ad campaign"
+          >
+            <GraduationCap className="h-3.5 w-3.5 text-amber-500" />
+            <span>🎓 Ask Teacher</span>
+          </Button>
+
+          <Button
+            variant="outline"
+            size="sm"
             onClick={() => {
               toast({
                 title: "💾 Campaign Draft Safely Preserved",
@@ -2659,6 +2677,134 @@ export default function AdSimulationPage() {
             <span>Take a Break • Return to Lessons</span>
           </Button>
         </div>
+      </div>
+
+      {/* Related Curriculum Lessons & Teacher Kick-Off Strip */}
+      <div className="mb-6 rounded-2xl bg-gradient-to-r from-card via-card/95 to-primary/5 border border-border shadow-md overflow-hidden">
+        <div className="p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-border/60 bg-muted/20">
+          <div className="flex items-start gap-3">
+            <div className="p-2 bg-primary/10 rounded-xl text-primary border border-primary/20 shrink-0 mt-0.5">
+              <BookOpen className="h-5 w-5" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-xs font-bold uppercase tracking-wider text-primary">Curriculum Connection</span>
+                <Badge variant="outline" className="text-[10px] bg-background">
+                  Chapter 2 & Chapter 4 Companion Lab
+                </Badge>
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">
+                You are not expected to know all ad settings from memory! This sandbox applies the exact concepts taught in your tutorials. Review a lesson below or ask your AI Teacher to get you started.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 shrink-0 w-full md:w-auto justify-end flex-wrap">
+            <Button
+              variant="default"
+              size="sm"
+              onClick={() => setIsTeacherCopilotOpen(true)}
+              className="bg-amber-600 hover:bg-amber-500 text-white text-xs h-8 flex items-center gap-1.5 shadow-sm"
+            >
+              <GraduationCap className="h-4 w-4" />
+              <span>Teacher Kick-Off & Review</span>
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowLessonGuide(!showLessonGuide)}
+              className="text-xs h-8 flex items-center gap-1.5"
+            >
+              <span>{showLessonGuide ? "Hide Companion Lessons" : "📚 View Related Lessons (3)"}</span>
+              {showLessonGuide ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
+            </Button>
+          </div>
+        </div>
+
+        {showLessonGuide && (
+          <div className="p-4 grid grid-cols-1 md:grid-cols-3 gap-3 bg-card/50 text-xs">
+            {/* Lesson 3 Card */}
+            <div className="p-3.5 rounded-xl border border-border/80 bg-background/80 hover:border-primary/50 transition-all flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between gap-2 mb-1.5">
+                  <Badge className="bg-blue-500/10 text-blue-400 border-blue-500/20 text-[10px]">
+                    Chapter 2 • Lesson 1
+                  </Badge>
+                  <span className="text-[10px] text-muted-foreground">30 min</span>
+                </div>
+                <h4 className="font-semibold text-foreground text-xs leading-snug">
+                  Google Ads Campaign Structure & Account Hierarchy
+                </h4>
+                <p className="text-[11px] text-muted-foreground mt-1.5 leading-relaxed">
+                  Learn the 3-tier hierarchy (Campaign &rarr; Ad Groups &rarr; RSAs) and how the Quality Score formula lowers your actual CPC.
+                </p>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setLocation('/tutorials?tutorialId=3')}
+                className="mt-3 w-full text-[11px] h-7 text-primary hover:text-primary flex items-center justify-center gap-1 border-primary/30"
+              >
+                <span>Study Lesson 3</span>
+                <ExternalLink className="h-3 w-3" />
+              </Button>
+            </div>
+
+            {/* Lesson 4 Card */}
+            <div className="p-3.5 rounded-xl border border-border/80 bg-background/80 hover:border-primary/50 transition-all flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between gap-2 mb-1.5">
+                  <Badge className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 text-[10px]">
+                    Chapter 2 • Lesson 2
+                  </Badge>
+                  <span className="text-[10px] text-muted-foreground">45 min</span>
+                </div>
+                <h4 className="font-semibold text-foreground text-xs leading-snug">
+                  Keyword Match Types & Negative Keyword Shields
+                </h4>
+                <p className="text-[11px] text-muted-foreground mt-1.5 leading-relaxed">
+                  Understand Broad vs. Phrase vs. Exact match and how to deploy negative keyword lists (-free, -cheap) to stop budget bleed.
+                </p>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setLocation('/tutorials?tutorialId=4')}
+                className="mt-3 w-full text-[11px] h-7 text-emerald-400 hover:text-emerald-300 flex items-center justify-center gap-1 border-emerald-500/30"
+              >
+                <span>Study Lesson 4</span>
+                <ExternalLink className="h-3 w-3" />
+              </Button>
+            </div>
+
+            {/* Lesson 6 Card */}
+            <div className="p-3.5 rounded-xl border border-border/80 bg-background/80 hover:border-primary/50 transition-all flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between gap-2 mb-1.5">
+                  <Badge className="bg-purple-500/10 text-purple-400 border-purple-500/20 text-[10px]">
+                    Chapter 4 • Lesson 1
+                  </Badge>
+                  <span className="text-[10px] text-muted-foreground">40 min</span>
+                </div>
+                <h4 className="font-semibold text-foreground text-xs leading-snug">
+                  Ethical AI Prompting & The Persona Hook Matrix
+                </h4>
+                <p className="text-[11px] text-muted-foreground mt-1.5 leading-relaxed">
+                  Formulate 5 psychological ad angles (Pain Point, Myth-Busting, Urgency) and enforce strict 30-character headline limits.
+                </p>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setLocation('/tutorials?tutorialId=6')}
+                className="mt-3 w-full text-[11px] h-7 text-purple-400 hover:text-purple-300 flex items-center justify-center gap-1 border-purple-500/30"
+              >
+                <span>Study Lesson 6</span>
+                <ExternalLink className="h-3 w-3" />
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
       
       {activeStep !== "setup" && (
@@ -2987,13 +3133,23 @@ export default function AdSimulationPage() {
             </Card>
           )}
           
-          <div className="mt-6 flex justify-end">
+          <div className="mt-6 flex items-center justify-between gap-3 flex-wrap">
+            <Button
+              variant="outline"
+              type="button"
+              onClick={() => setIsTeacherCopilotOpen(true)}
+              className="border-amber-500/40 text-amber-500 dark:text-amber-400 hover:bg-amber-500/10 text-xs h-10 flex items-center gap-2"
+            >
+              <GraduationCap className="h-4 w-4" />
+              <span>🎓 Teacher: Review My Setup Before Launch</span>
+            </Button>
+
             <Button 
               onClick={handleSubmit} 
               disabled={submitMutation.isPending}
-              className="min-w-[150px]"
+              className="min-w-[170px] bg-emerald-600 hover:bg-emerald-500 text-white font-bold h-10 shadow-lg"
             >
-              {submitMutation.isPending ? "Submitting..." : "Launch Campaign"}
+              {submitMutation.isPending ? "Running Auction Simulation..." : "🚀 Launch & Grade Campaign"}
             </Button>
           </div>
         </>
@@ -3066,6 +3222,23 @@ export default function AdSimulationPage() {
           }
         ]}
         resolutionSummary="🏆 Extra Persona Task Unlocked • Ready to Build"
+      />
+
+      {/* Floating Ask Growth Director Mentor Side Drawer */}
+      <FlightInstructorCopilot 
+        track="ads"
+        pageTitle={`${simulation?.title || "Paid Search Campaign"} (${simulation?.platform || "Google Ads"})`}
+        isOpenExternal={isTeacherCopilotOpen}
+        onOpenChange={setIsTeacherCopilotOpen}
+        currentDraft={{
+          platform: simulation?.platform || activePlatformTab,
+          googleForm,
+          metaForm,
+          linkedinForm,
+          extraPersonaData,
+          hasUnlockedPersonaTask,
+          isPersonaTaskCompleted
+        }}
       />
     </div>
   );

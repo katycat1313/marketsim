@@ -37,6 +37,8 @@ interface FlightInstructorCopilotProps {
   track?: "seo" | "ads" | "general";
   pageTitle?: string;
   sectionContext?: string;
+  isOpenExternal?: boolean;
+  onOpenChange?: (open: boolean) => void;
   currentDraft?: {
     title?: string;
     metaDescription?: string;
@@ -53,10 +55,17 @@ export function FlightInstructorCopilot({
   track = "general",
   pageTitle = "Simulation Workbench",
   sectionContext,
+  isOpenExternal,
+  onOpenChange,
   currentDraft
 }: FlightInstructorCopilotProps) {
   const { toast } = useToast();
-  const [isOpen, setIsOpen] = useState(false);
+  const [internalIsOpen, setInternalIsOpen] = useState(false);
+  const isOpen = isOpenExternal !== undefined ? isOpenExternal : internalIsOpen;
+  const setIsOpen = (open: boolean) => {
+    setInternalIsOpen(open);
+    if (onOpenChange) onOpenChange(open);
+  };
   const [isExpanded, setIsExpanded] = useState(false);
   const [messages, setMessages] = useState<CopilotMessage[]>([]);
   const [inputValue, setInputValue] = useState("");
@@ -81,7 +90,9 @@ export function FlightInstructorCopilot({
 
       let intro = `Growth Director ${instructor.name} here. I'm reviewing your live campaign work on ${pageTitle}${biz}.`;
 
-      if (instructor.teachingStyle === "drill_sergeant") {
+      if (track === "ads") {
+        intro += " Welcome to the Ad Campaign Lab! You don't have to finish this in one sitting. To get started: 1) Verify your daily budget, 2) Set up your first Ad Group with phrase or exact match keywords, and 3) Add negative keyword shields so you don't bleed client budget. Ask me anything or click one of the quick audit chips below!";
+      } else if (instructor.teachingStyle === "drill_sergeant") {
         intro += " Don't expect me to write your copy for you. If a tag is weak or leaking intent, I will call it out. What section are we fixing first?";
       } else if (instructor.teachingStyle === "witty") {
         intro += " Remember: Google has the attention span of a goldfish. Keep it punchy! What do you want me to look over?";
@@ -197,10 +208,15 @@ Conversation History:
 ${updated.map(m => `${m.sender.toUpperCase()}: ${m.text}`).join("\n")}
 
 STRICT PEDAGOGICAL POLICY:
-1. NEVER write the finished copy or give the exact answer away. You are a mentor, not a copy-paste generator.
-2. If they ask "is my title good?", inspect the draft title and give an honest, Socratic critique (e.g. character count, search intent, lack of CTA or modifiers).
-3. Keep responses punchy and actionable (2-3 sentences max).
-4. Match your selected persona ('${instructor.teachingStyle}'):
+1. Praise first: Highlight at least one thing the student did RIGHT (e.g., solid keyword match, realistic budget, clean headline, or negative shield).
+2. Constructive diagnostic: Point out 1–2 specific areas they may want to CHANGE or watch out for (e.g., broad match bleed, missing negative keywords, headlines over 30 chars, low click-through intent).
+3. Connect to Course Curriculum: If relevant, mention the related lesson:
+   - Chapter 2, Lesson 1: Google Ads Hierarchy & Quality Score
+   - Chapter 2, Lesson 2: Keyword Match Types & Negative Keyword Shields
+   - Chapter 4, Lesson 1: Ethical AI Prompting & The Persona Hook Matrix
+4. NEVER write the finished copy or give the exact answer away. You are a mentor, not a copy-paste generator.
+5. Keep responses punchy and actionable (2-4 sentences max).
+6. Match your selected persona ('${instructor.teachingStyle}'):
    - drill_sergeant: Tough love, calls out weak points directly, pushes for excellence.
    - supportive: Warm, patient, breaks down fear with gentle analogies.
    - executive: C-Suite focus, reminds them of customer acquisition economics.
@@ -244,7 +260,13 @@ STRICT PEDAGOGICAL POLICY:
     }
   };
 
-  const quickPrompts = [
+  const quickPrompts = track === "ads" ? [
+    { label: "🚀 How do I get started?", query: "Can you give me a clear, step-by-step gameplan on how to get started on this ad campaign?" },
+    { label: "🔍 Audit My Keywords & Match Types", query: "Please inspect my current keywords and match types. Am I using broad match dangerously, or are my phrase/exact matches tight?" },
+    { label: "🛡️ Check Negative Keyword Shields", query: "Can you critique my negative keywords list? Am I properly shielding against non-buying clicks (e.g., -free, -diy, -jobs)?" },
+    { label: "✍️ Critique Headlines & Copy Relevance", query: "Check my ad headlines and descriptions. Are they under character limits (30 chars) and closely tied to search intent?" },
+    { label: "💰 Review Budget & Bidding", query: "Review my daily budget and bidding strategy. Is it realistic for this client's goals?" }
+  ] : [
     { label: "🔍 Audit My Title Tag", query: "Can you critique my current Page Title Tag based on length and search intent?" },
     { label: "⚠️ Why is a Badge Amber?", query: "Why am I seeing 'Needs Adjustment' on my current draft? What search principle is missing?" },
     { label: "🎯 Check Search Intent", query: "Does my headline match commercial search intent or is it too generic?" }

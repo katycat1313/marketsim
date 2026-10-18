@@ -110,6 +110,21 @@ export default function TutorialsPage() {
         });
         
         setTutorials(sortedTutorials);
+        
+        // Auto-select tutorial if specified in URL query params (?tutorialId=X or ?id=X)
+        try {
+          const urlParams = new URLSearchParams(window.location.search);
+          const targetId = urlParams.get('tutorialId') || urlParams.get('id');
+          if (targetId) {
+            const match = sortedTutorials.find(t => t.id === parseInt(targetId));
+            if (match) {
+              setCurrentTutorial(match);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+          }
+        } catch (e) {
+          console.warn("Could not parse tutorialId param", e);
+        }
       } else {
         console.error('API response is not an array:', data);
         throw new Error('Tutorials API did not return an array');
