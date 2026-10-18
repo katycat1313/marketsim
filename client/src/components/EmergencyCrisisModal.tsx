@@ -401,6 +401,8 @@ export interface EmergencyCrisisModalProps {
   isOpen: boolean;
   onClose: () => void;
   onResolved: () => void;
+  onAcceptExtraTask?: () => void;
+  acceptExtraTaskLabel?: string;
   scenario?: CrisisScenario;
   callerName?: string;
   callerRole?: string;
@@ -419,6 +421,8 @@ export function EmergencyCrisisModal({
   isOpen,
   onClose,
   onResolved,
+  onAcceptExtraTask,
+  acceptExtraTaskLabel,
   scenario,
   callerName: propCallerName,
   callerRole: propCallerRole,
@@ -715,33 +719,50 @@ export function EmergencyCrisisModal({
               )}
             </div>
 
-            <DialogFooter className="border-t border-border/60 pt-3 flex items-center justify-between">
+            <DialogFooter className="border-t border-border/60 pt-3 flex items-center justify-between gap-2 flex-wrap">
               <span className="text-[11px] text-muted-foreground">
                 {callState === "resolved" ? resolutionSummary : scenario?.interactiveType ? "Apply the corrective adjustments above" : "Select an option to advise your client"}
               </span>
 
-              {callState === "resolved" ? (
-                <Button 
-                  onClick={() => {
-                    voice.stop();
-                    onResolved();
-                    onClose();
-                  }}
-                  className="bg-emerald-600 hover:bg-emerald-500 text-white text-xs flex items-center gap-1.5"
-                >
-                  <CheckCircle2 className="h-4 w-4" />
-                  <span>Resume Campaign Workbench</span>
-                </Button>
-              ) : (
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={handleRejectCall}
-                  className="text-xs text-muted-foreground"
-                >
-                  Hang Up Call
-                </Button>
-              )}
+              <div className="flex items-center gap-2">
+                {onAcceptExtraTask && (
+                  <Button 
+                    onClick={() => {
+                      voice.stop();
+                      onAcceptExtraTask();
+                      onResolved();
+                      onClose();
+                    }}
+                    className="bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold flex items-center gap-1.5 shadow-md animate-pulse"
+                  >
+                    <Sparkles className="h-3.5 w-3.5" />
+                    <span>{acceptExtraTaskLabel || "Accept Extra Task & Build Campaign"}</span>
+                  </Button>
+                )}
+
+                {callState === "resolved" ? (
+                  <Button 
+                    onClick={() => {
+                      voice.stop();
+                      onResolved();
+                      onClose();
+                    }}
+                    className="bg-emerald-600 hover:bg-emerald-500 text-white text-xs flex items-center gap-1.5"
+                  >
+                    <CheckCircle2 className="h-4 w-4" />
+                    <span>Resume Campaign Workbench</span>
+                  </Button>
+                ) : (
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={handleRejectCall}
+                    className="text-xs text-muted-foreground"
+                  >
+                    Hang Up Call
+                  </Button>
+                )}
+              </div>
             </DialogFooter>
           </DialogContent>
         </Dialog>

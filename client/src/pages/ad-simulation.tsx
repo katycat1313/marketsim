@@ -173,6 +173,31 @@ export default function AdSimulationPage() {
     }
   }, [hasTriggeredCrisis, crisisResolved]);
 
+  // Extra Client Persona & Channel Campaign Task State
+  const [isClientPersonaCallOpen, setIsClientPersonaCallOpen] = useState(false);
+  const [hasUnlockedPersonaTask, setHasUnlockedPersonaTask] = useState(false);
+  const [isPersonaTaskCompleted, setIsPersonaTaskCompleted] = useState(false);
+
+  const [extraPersonaData, setExtraPersonaData] = useState({
+    personaName: "Corporate C-Suite Executive & Managing Partner",
+    painPoint: "Severe emergency dental issue during workday; requires immediate same-day private suite with zero waiting room.",
+    hookAngle: "Executive Priority Dental Care: Same-Day Private Suite Appointments with Zero Waiting Room.",
+    targetChannel: "google_ads",
+    dailyBudget: 25,
+    headline1: "Executive Emergency Dentist",
+    headline2: "Same-Day Private Suite Care",
+    description: "Discrete, zero-wait emergency dental care for corporate executives. Book your private suite appointment online.",
+    keywords: [
+      { text: "executive emergency dentist", matchType: "exact" },
+      { text: "same day private dentist", matchType: "phrase" },
+      { text: "concierge dental clinic near me", matchType: "phrase" }
+    ],
+    newKwText: "",
+    newKwMatch: "phrase",
+    negativeKeywords: ["-free", "-cheap", "-medicaid", "-diy", "-jobs"],
+    newNegText: ""
+  });
+
   const handleLaunchRemediation = async (weaknessKey: string, difficulty: string = "Expert") => {
     setIsGeneratingNext(true);
     try {
@@ -213,8 +238,13 @@ export default function AdSimulationPage() {
         platform: simulation?.platform || "Google Ads Search",
         difficulty: simulation?.difficulty || "Advanced",
         challengeSummary: simulation?.scenarioDescription || "Optimizing paid advertising to reduce CPA and scale revenue.",
-        strategySummary: `Executed keyword match type gating, deployed negative keyword filters, and improved headline relevance.`,
-        keyTactics: (simulationResults.feedback || []).slice(0, 3),
+        strategySummary: isPersonaTaskCompleted
+          ? `Executed keyword match type gating, deployed negative keyword filters, and engineered dedicated C-Suite Executive Persona expansion campaign (+25 Rep).`
+          : `Executed keyword match type gating, deployed negative keyword filters, and improved headline relevance.`,
+        keyTactics: [
+          ...(isPersonaTaskCompleted ? [`Architected dedicated Executive Persona campaign with high-intent exact match keywords & negative shields.`] : []),
+          ...(simulationResults.feedback || []).slice(0, 2)
+        ],
         metrics: {
           qualityScore: simulationResults.metrics?.qualityScore || 8,
           roas: simulationResults.metrics?.roas || 3.8,
@@ -223,7 +253,7 @@ export default function AdSimulationPage() {
           conversions: simulationResults.metrics?.conversions || 18,
           spend: simulationResults.metrics?.cost || 500
         },
-        score: simulationResults.score || 85,
+        score: Math.min(100, (simulationResults.score || 85) + (isPersonaTaskCompleted ? 15 : 0)),
       };
 
       await apiRequest("POST", "/api/user/portfolio", payload);
@@ -2479,6 +2509,28 @@ export default function AdSimulationPage() {
               🚨 Incoming Boss Crisis Call
             </Button>
           )}
+
+          {isPersonaTaskCompleted ? (
+            <Badge className="bg-purple-500/20 text-purple-700 dark:text-purple-300 border-purple-500/40 text-xs flex items-center gap-1.5 py-1 px-2.5">
+              <CheckCircle className="h-3.5 w-3.5 text-purple-600 dark:text-purple-400" />
+              <span>Executive Persona Campaign Live (+25 Rep)</span>
+            </Badge>
+          ) : hasUnlockedPersonaTask ? (
+            <Badge className="bg-purple-500/10 text-purple-400 border-purple-500/40 text-xs flex items-center gap-1.5 py-1 px-2.5 animate-pulse">
+              <Sparkles className="h-3.5 w-3.5 text-purple-400" />
+              <span>🎯 Extra Task: Executive Persona Active</span>
+            </Badge>
+          ) : (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsClientPersonaCallOpen(true)}
+              className="h-7 px-3 text-xs text-purple-600 dark:text-purple-400 hover:text-purple-700 hover:bg-purple-50 dark:hover:bg-purple-500/10 border-purple-500/40 font-medium"
+              title="Client calling with new persona and campaign request"
+            >
+              📞 Client Call: New Persona Request
+            </Button>
+          )}
         </div>
       </div>
       
@@ -2527,6 +2579,286 @@ export default function AdSimulationPage() {
         <>
           <ProjectObjectivesCard />
           {renderAdPlatformForm()}
+
+          {hasUnlockedPersonaTask && (
+            <Card className="mt-8 border-2 border-purple-500/50 bg-purple-950/10 shadow-xl overflow-hidden rounded-2xl">
+              <CardHeader className="bg-gradient-to-r from-purple-900/30 to-slate-900/40 border-b border-purple-500/20 p-5">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2.5">
+                    <div className="p-2 bg-purple-500/20 rounded-xl text-purple-300 border border-purple-500/30">
+                      <Target className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <CardTitle className="text-base font-bold text-foreground flex items-center gap-2">
+                        <span>🎯 Extra Client Task: Target New Executive Persona</span>
+                        {isPersonaTaskCompleted ? (
+                          <Badge className="bg-emerald-500/20 text-emerald-300 border-emerald-500/40 text-[10px]">
+                            ✓ Deployed (+25 Rep)
+                          </Badge>
+                        ) : (
+                          <Badge variant="outline" className="border-purple-500/40 text-purple-300 text-[10px]">
+                            In Progress
+                          </Badge>
+                        )}
+                      </CardTitle>
+                      <CardDescription className="text-xs text-muted-foreground mt-0.5">
+                        Client special request: Build dedicated persona messaging, channel selection, and keyword architecture.
+                      </CardDescription>
+                    </div>
+                  </div>
+                  <Badge className="bg-purple-600 text-white font-mono text-xs">
+                    +25 Bonus Rep
+                  </Badge>
+                </div>
+              </CardHeader>
+
+              <CardContent className="p-5 space-y-5 text-xs">
+                {/* Section 1: Persona Definition */}
+                <div className="space-y-3 p-4 rounded-xl bg-slate-900/60 border border-white/10">
+                  <div className="font-bold text-foreground flex items-center gap-2 text-xs">
+                    <span className="w-5 h-5 rounded-full bg-purple-500/20 text-purple-300 flex items-center justify-center text-[10px] font-bold">1</span>
+                    <span>Persona Blueprint & Hook</span>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div className="space-y-1">
+                      <Label className="text-[11px] text-muted-foreground">Target Demographic Name:</Label>
+                      <Input
+                        value={extraPersonaData.personaName}
+                        disabled={isPersonaTaskCompleted}
+                        onChange={(e) => setExtraPersonaData(prev => ({ ...prev, personaName: e.target.value }))}
+                        className="h-8 text-xs bg-slate-950 border-white/10"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-[11px] text-muted-foreground">Primary Pain Point:</Label>
+                      <Input
+                        value={extraPersonaData.painPoint}
+                        disabled={isPersonaTaskCompleted}
+                        onChange={(e) => setExtraPersonaData(prev => ({ ...prev, painPoint: e.target.value }))}
+                        className="h-8 text-xs bg-slate-950 border-white/10"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-1">
+                    <Label className="text-[11px] text-muted-foreground">Core Value Proposition / Hook Angle:</Label>
+                    <Input
+                      value={extraPersonaData.hookAngle}
+                      disabled={isPersonaTaskCompleted}
+                      onChange={(e) => setExtraPersonaData(prev => ({ ...prev, hookAngle: e.target.value }))}
+                      className="h-8 text-xs bg-slate-950 border-white/10"
+                    />
+                  </div>
+                </div>
+
+                {/* Section 2: Channel & Ad Creatives */}
+                <div className="space-y-3 p-4 rounded-xl bg-slate-900/60 border border-white/10">
+                  <div className="font-bold text-foreground flex items-center gap-2 text-xs">
+                    <span className="w-5 h-5 rounded-full bg-purple-500/20 text-purple-300 flex items-center justify-center text-[10px] font-bold">2</span>
+                    <span>Channel Selection & Ad Creative</span>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div className="space-y-1">
+                      <Label className="text-[11px] text-muted-foreground">Primary Channel for this Persona:</Label>
+                      <Select
+                        value={extraPersonaData.targetChannel}
+                        disabled={isPersonaTaskCompleted}
+                        onValueChange={(val) => setExtraPersonaData(prev => ({ ...prev, targetChannel: val }))}
+                      >
+                        <SelectTrigger className="h-8 text-xs bg-slate-950 border-white/10">
+                          <SelectValue placeholder="Select channel" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="google_ads">Google Search (High Intent - Recommended)</SelectItem>
+                          <SelectItem value="linkedin_ads">LinkedIn B2B Sponsored Content</SelectItem>
+                          <SelectItem value="meta_ads">Meta Retargeting (Website Visitors)</SelectItem>
+                          <SelectItem value="tiktok">TikTok Video (High Waste for C-Suite)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="space-y-1">
+                      <div className="flex justify-between items-center">
+                        <Label className="text-[11px] text-muted-foreground">Daily Budget Reallocation:</Label>
+                        <span className="font-mono text-purple-400 font-bold">${extraPersonaData.dailyBudget}/day</span>
+                      </div>
+                      <Slider
+                        value={[extraPersonaData.dailyBudget]}
+                        min={10}
+                        max={100}
+                        step={5}
+                        disabled={isPersonaTaskCompleted}
+                        onValueChange={(val) => setExtraPersonaData(prev => ({ ...prev, dailyBudget: val[0] }))}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div className="space-y-1">
+                      <Label className="text-[11px] text-muted-foreground">Headline 1:</Label>
+                      <Input
+                        value={extraPersonaData.headline1}
+                        disabled={isPersonaTaskCompleted}
+                        onChange={(e) => setExtraPersonaData(prev => ({ ...prev, headline1: e.target.value }))}
+                        className="h-8 text-xs bg-slate-950 border-white/10"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-[11px] text-muted-foreground">Headline 2:</Label>
+                      <Input
+                        value={extraPersonaData.headline2}
+                        disabled={isPersonaTaskCompleted}
+                        onChange={(e) => setExtraPersonaData(prev => ({ ...prev, headline2: e.target.value }))}
+                        className="h-8 text-xs bg-slate-950 border-white/10"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-1">
+                    <Label className="text-[11px] text-muted-foreground">Ad Description:</Label>
+                    <Textarea
+                      value={extraPersonaData.description}
+                      disabled={isPersonaTaskCompleted}
+                      onChange={(e) => setExtraPersonaData(prev => ({ ...prev, description: e.target.value }))}
+                      className="text-xs bg-slate-950 border-white/10 min-h-[50px]"
+                    />
+                  </div>
+                </div>
+
+                {/* Section 3: Targeted Keywords & Negative Keyword Shield */}
+                <div className="space-y-3 p-4 rounded-xl bg-slate-900/60 border border-white/10">
+                  <div className="font-bold text-foreground flex items-center gap-2 text-xs">
+                    <span className="w-5 h-5 rounded-full bg-purple-500/20 text-purple-300 flex items-center justify-center text-[10px] font-bold">3</span>
+                    <span>High-Intent Keywords & Negative Shield</span>
+                  </div>
+
+                  {/* Keywords list */}
+                  <div className="space-y-1.5">
+                    <Label className="text-[11px] text-muted-foreground">Persona Target Keywords ({extraPersonaData.keywords.length}):</Label>
+                    <div className="flex flex-wrap gap-1.5">
+                      {extraPersonaData.keywords.map((kw, i) => (
+                        <Badge key={i} variant="outline" className="text-xs py-1 px-2 border-purple-500/30 bg-purple-500/10 text-purple-200 flex items-center gap-1.5">
+                          <span>{kw.matchType === "exact" ? `[${kw.text}]` : `"${kw.text}"`}</span>
+                          {!isPersonaTaskCompleted && (
+                            <button
+                              type="button"
+                              onClick={() => setExtraPersonaData(prev => ({ ...prev, keywords: prev.keywords.filter((_, idx) => idx !== i) }))}
+                              className="text-muted-foreground hover:text-red-400"
+                            >
+                              ×
+                            </button>
+                          )}
+                        </Badge>
+                      ))}
+                    </div>
+
+                    {!isPersonaTaskCompleted && (
+                      <div className="flex items-center gap-2 mt-2">
+                        <Input
+                          placeholder="Add executive keyword..."
+                          value={extraPersonaData.newKwText}
+                          onChange={(e) => setExtraPersonaData(prev => ({ ...prev, newKwText: e.target.value }))}
+                          className="h-8 text-xs bg-slate-950 border-white/10 max-w-xs"
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" && extraPersonaData.newKwText.trim()) {
+                              e.preventDefault();
+                              setExtraPersonaData(prev => ({
+                                ...prev,
+                                keywords: [...prev.keywords, { text: prev.newKwText.trim(), matchType: prev.newKwMatch }],
+                                newKwText: ""
+                              }));
+                            }
+                          }}
+                        />
+                        <Select
+                          value={extraPersonaData.newKwMatch}
+                          onValueChange={(val) => setExtraPersonaData(prev => ({ ...prev, newKwMatch: val }))}
+                        >
+                          <SelectTrigger className="h-8 text-xs w-28 bg-slate-950 border-white/10">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="exact">Exact [ ]</SelectItem>
+                            <SelectItem value="phrase">Phrase " "</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <Button
+                          type="button"
+                          size="sm"
+                          onClick={() => {
+                            if (extraPersonaData.newKwText.trim()) {
+                              setExtraPersonaData(prev => ({
+                                ...prev,
+                                keywords: [...prev.keywords, { text: prev.newKwText.trim(), matchType: prev.newKwMatch }],
+                                newKwText: ""
+                              }));
+                            }
+                          }}
+                          className="h-8 px-2.5 text-xs bg-purple-600 hover:bg-purple-500 text-white"
+                        >
+                          + Add
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Negative Keywords */}
+                  <div className="space-y-1.5 pt-2 border-t border-white/10">
+                    <Label className="text-[11px] text-muted-foreground">Negative Keyword Shields ({extraPersonaData.negativeKeywords.length}):</Label>
+                    <div className="flex flex-wrap gap-1.5">
+                      {extraPersonaData.negativeKeywords.map((neg, i) => (
+                        <Badge key={i} variant="outline" className="text-xs py-0.5 px-2 border-red-500/30 bg-red-500/10 text-red-300">
+                          {neg}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Submit Action */}
+                <div className="flex justify-end pt-2">
+                  {isPersonaTaskCompleted ? (
+                    <div className="flex items-center gap-2 text-emerald-400 font-bold text-xs bg-emerald-950/30 border border-emerald-500/40 p-2.5 rounded-xl">
+                      <CheckCircle className="h-4 w-4" />
+                      <span>Executive Persona Campaign Live! +25 Rep Points Added to Final Evaluation</span>
+                    </div>
+                  ) : (
+                    <Button
+                      onClick={() => {
+                        if (extraPersonaData.targetChannel === "tiktok") {
+                          toast({
+                            title: "Channel Risk Detected",
+                            description: "TikTok burns thin budgets on non-executives. Switch to Google Search or LinkedIn!",
+                            variant: "destructive"
+                          });
+                          return;
+                        }
+                        if (extraPersonaData.keywords.length < 2) {
+                          toast({
+                            title: "More Keywords Needed",
+                            description: "Please add at least 2 high-intent keywords for this persona.",
+                            variant: "destructive"
+                          });
+                          return;
+                        }
+                        setIsPersonaTaskCompleted(true);
+                        toast({
+                          title: "🎉 Extra Persona Task Deployed!",
+                          description: "Client approved the executive campaign! +25 Bonus Reputation Points awarded.",
+                        });
+                      }}
+                      className="bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs h-9 px-4 shadow-lg shadow-purple-900/30 flex items-center gap-2"
+                    >
+                      <Sparkles className="h-4 w-4" />
+                      <span>Deploy Extra Persona Campaign (+25 Rep)</span>
+                    </Button>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          )}
           
           <div className="mt-6 flex justify-end">
             <Button 
@@ -2564,6 +2896,49 @@ export default function AdSimulationPage() {
         tacticalQuestion="Your Strategic Executive Response (Client Retention):"
         options={bossCrisisOptions}
         resolutionSummary="🏆 Retainer Saved • +15 Agency Reputation Logged"
+      />
+
+      {/* Mid-Campaign Client Persona Request Incoming Call Modal */}
+      <EmergencyCrisisModal
+        isOpen={isClientPersonaCallOpen}
+        onClose={() => setIsClientPersonaCallOpen(false)}
+        onResolved={() => {
+          toast({
+            title: "Client Call Concluded",
+            description: "Extra Persona Campaign Task unlocked in your simulation workbench!",
+          });
+        }}
+        onAcceptExtraTask={() => {
+          setHasUnlockedPersonaTask(true);
+          toast({
+            title: "🎯 Extra Task Unlocked!",
+            description: "Scroll down to build the Executive Persona, Channel, and Keywords.",
+          });
+        }}
+        acceptExtraTaskLabel="Accept Extra Task & Build Campaign"
+        callerName="Dr. Evelyn Reed"
+        callerRole="Practice Partner & Client Lead"
+        callerAvatar="https://images.unsplash.com/photo-1594824813511-66d7fe9e0c52?auto=format&fit=crop&q=80&w=400"
+        callerVoice="aura-asteria-en"
+        clientName={simulation?.title || "Apex Dental Clinic"}
+        urgencyBadge="Client Growth Request"
+        crisisAudioText="Hey! Our board just met and wants us to target high-net-worth corporate executives and business partners for our private emergency suites. But our weekly budget is already thin! I need you to add an extra campaign task to this simulation: flesh out the executive persona, select the right channel that won't burn cash on scrollers, and build out high-intent keywords and negative shields. Can you take on this extra task?"
+        situationReportTitle="Client Persona Expansion Brief:"
+        tacticalQuestion="Client Request: Add Executive Persona Campaign Task:"
+        options={[
+          {
+            text: "Option A: Accept the challenge! Build a dedicated executive persona angle, allocate high-intent search & LinkedIn budget, and configure exact-match keywords with negative shields.",
+            isCorrect: true,
+            feedback: "✅ Outstanding initiative. Taking on client expansion requests with rigorous keyword gating and strict channel focus turns average account managers into indispensible agency growth partners.",
+            spokenResolution: "Fantastic! I knew I could count on you. I'm adding the Executive Persona Builder task right into your campaign workbench. Go build it out and let's capture those executive patients!"
+          },
+          {
+            text: "Option B: Tell the client that expanding into a new persona is impossible with a thin budget and refuse the request.",
+            isCorrect: false,
+            feedback: "❌ Missed opportunity. You can always pilot a new persona with strict exact-match keyword gating and small budget reallocation."
+          }
+        ]}
+        resolutionSummary="🏆 Extra Persona Task Unlocked • Ready to Build"
       />
     </div>
   );
