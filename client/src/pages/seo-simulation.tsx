@@ -40,7 +40,9 @@ import {
   Radio,
   Filter,
   Lightbulb,
-  CheckCircle2
+  CheckCircle2,
+  Coffee,
+  BookOpen
 } from 'lucide-react';
 import { 
   ResponsiveContainer, 
@@ -631,6 +633,21 @@ export default function SeoSimulationPage() {
           <div className="flex items-center gap-2 flex-wrap">
             <Button
               variant="outline"
+              onClick={() => {
+                toast({
+                  title: "💾 Progress Safely Preserved",
+                  description: "Your simulation progress is auto-saved in your browser. Jump back into lessons anytime!",
+                });
+                setLocation('/tutorials');
+              }}
+              className="border-blue-500/40 text-blue-400 hover:bg-blue-500/10 text-xs flex items-center gap-1.5"
+            >
+              <Coffee className="h-4 w-4" />
+              <span>Take a Break • Lessons</span>
+            </Button>
+
+            <Button
+              variant="outline"
               onClick={() => setIsBuilderOpen(true)}
               className="border-purple-500/40 text-purple-400 hover:bg-purple-500/10 text-xs flex items-center gap-1.5"
             >
@@ -670,6 +687,52 @@ export default function SeoSimulationPage() {
                 <span>Edit Website CMS</span>
               </Button>
             )}
+          </div>
+        </div>
+        
+        {/* Living Weekly Sandbox Pacing Reassurance Banner */}
+        <div className="p-4 rounded-2xl bg-gradient-to-r from-blue-950/40 via-indigo-950/30 to-purple-950/20 border border-blue-500/30 shadow-md flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div className="flex items-start gap-3">
+            <div className="p-2.5 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 shrink-0 mt-0.5">
+              <Coffee className="h-5 w-5" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2 flex-wrap">
+                <Badge className="bg-blue-500/20 text-blue-300 border-blue-500/30 font-semibold text-xs">
+                  🛠️ Living Client Sandbox (Open All Week)
+                </Badge>
+                {autoSavedTime ? (
+                  <span className="flex items-center gap-1 text-[11px] text-emerald-400 font-mono">
+                    <CheckCircle2 className="h-3.5 w-3.5 inline" /> Auto-saved at {autoSavedTime}
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-1 text-[11px] text-emerald-400/80 font-mono">
+                    <CheckCircle2 className="h-3.5 w-3.5 inline" /> Real-time auto-save active
+                  </span>
+                )}
+              </div>
+              <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed max-w-2xl">
+                <strong className="text-foreground">You are NOT meant to solve this in one sitting!</strong> In real marketing agencies, client accounts are worked on iteratively across the week. Spend 20–40 minutes fixing 1–2 items, run tests, and feel free to step away or jump back into your lessons. Everything you type is continuously preserved in your browser.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 shrink-0 w-full md:w-auto justify-end">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                toast({
+                  title: "💾 Draft Safely Saved",
+                  description: "Take a break! Your changes are stored in your browser and ready whenever you return.",
+                });
+                setLocation('/tutorials');
+              }}
+              className="border-blue-500/40 text-blue-300 hover:bg-blue-500/10 hover:text-white text-xs h-9 flex items-center gap-1.5 shadow-sm"
+            >
+              <Coffee className="h-4 w-4" />
+              <span>Take a Break • Return to Lessons</span>
+            </Button>
           </div>
         </div>
         

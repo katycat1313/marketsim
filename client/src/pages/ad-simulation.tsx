@@ -28,7 +28,10 @@ import {
   Zap,
   TrendingUp,
   RefreshCw,
-  Target
+  Target,
+  Coffee,
+  RotateCcw,
+  CheckCircle2
 } from "lucide-react";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Progress } from "@/components/ui/progress";
@@ -349,6 +352,60 @@ export default function AdSimulationPage() {
     leadGenEnabled: false,
     leadGenFields: []
   });
+
+  const [autoSavedTime, setAutoSavedTime] = useState<string | null>(null);
+
+  // Initialize draft from localStorage if available
+  useEffect(() => {
+    if (simulationId) {
+      try {
+        const savedDraft = localStorage.getItem(`krechet_ad_draft_${simulationId}`);
+        if (savedDraft) {
+          const parsed = JSON.parse(savedDraft);
+          if (parsed.googleForm) setGoogleForm(parsed.googleForm);
+          if (parsed.metaForm) setMetaForm(parsed.metaForm);
+          if (parsed.linkedinForm) setLinkedinForm(parsed.linkedinForm);
+          if (parsed.extraPersonaData) setExtraPersonaData(parsed.extraPersonaData);
+          if (parsed.hasUnlockedPersonaTask !== undefined) setHasUnlockedPersonaTask(parsed.hasUnlockedPersonaTask);
+          if (parsed.isPersonaTaskCompleted !== undefined) setIsPersonaTaskCompleted(parsed.isPersonaTaskCompleted);
+          if (parsed.crisisResolved !== undefined) setCrisisResolved(parsed.crisisResolved);
+          setAutoSavedTime(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+        }
+      } catch (e) {
+        console.warn("Could not load ad draft from localStorage", e);
+      }
+    }
+  }, [simulationId]);
+
+  // Auto-save whenever forms change
+  useEffect(() => {
+    if (simulationId) {
+      try {
+        const draft = {
+          googleForm,
+          metaForm,
+          linkedinForm,
+          extraPersonaData,
+          hasUnlockedPersonaTask,
+          isPersonaTaskCompleted,
+          crisisResolved,
+        };
+        localStorage.setItem(`krechet_ad_draft_${simulationId}`, JSON.stringify(draft));
+        setAutoSavedTime(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+      } catch (e) {
+        console.warn("Could not save ad draft to localStorage", e);
+      }
+    }
+  }, [simulationId, googleForm, metaForm, linkedinForm, extraPersonaData, hasUnlockedPersonaTask, isPersonaTaskCompleted, crisisResolved]);
+
+  const handleResetToBaseline = () => {
+    if (window.confirm("Are you sure you want to reset all campaign draft changes back to baseline?")) {
+      try {
+        localStorage.removeItem(`krechet_ad_draft_${simulationId}`);
+      } catch (e) {}
+      window.location.reload();
+    }
+  };
 
   // State for results after submitting
   const [simulationResults, setSimulationResults] = useState<any>(null);
@@ -2531,6 +2588,76 @@ export default function AdSimulationPage() {
               📞 Client Call: New Persona Request
             </Button>
           )}
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              toast({
+                title: "💾 Campaign Draft Safely Preserved",
+                description: "Your campaign changes are auto-saved. Jump back into lessons anytime and resume later!",
+              });
+              setLocation('/tutorials');
+            }}
+            className="h-7 px-3 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-500/10 border-blue-500/40 font-medium flex items-center gap-1.5"
+          >
+            <Coffee className="h-3.5 w-3.5" />
+            <span>Take a Break • Lessons</span>
+          </Button>
+        </div>
+      </div>
+      
+      {/* Living Weekly Sandbox Pacing Reassurance Banner */}
+      <div className="mb-6 p-4 rounded-2xl bg-gradient-to-r from-blue-950/40 via-indigo-950/30 to-purple-950/20 border border-blue-500/30 shadow-md flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div className="flex items-start gap-3">
+          <div className="p-2.5 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 shrink-0 mt-0.5">
+            <Coffee className="h-5 w-5" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2 flex-wrap">
+              <Badge className="bg-blue-500/20 text-blue-300 border-blue-500/30 font-semibold text-xs">
+                🛠️ Living Client Sandbox (Open All Week)
+              </Badge>
+              {autoSavedTime ? (
+                <span className="flex items-center gap-1 text-[11px] text-emerald-400 font-mono">
+                  <CheckCircle2 className="h-3.5 w-3.5 inline" /> Auto-saved at {autoSavedTime}
+                </span>
+              ) : (
+                <span className="flex items-center gap-1 text-[11px] text-emerald-400/80 font-mono">
+                  <CheckCircle2 className="h-3.5 w-3.5 inline" /> Real-time auto-save active
+                </span>
+              )}
+            </div>
+            <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed max-w-2xl">
+              <strong className="text-foreground">You are NOT meant to solve this in one sitting!</strong> Real marketing agency campaigns are built and fine-tuned across the entire week alongside your lessons. Spend 30–40 minutes on ad creatives or keywords, test your settings, and take a break or return to lessons whenever you want. Everything is safely auto-saved.
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 shrink-0 w-full md:w-auto justify-end">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={handleResetToBaseline}
+            className="text-[11px] h-8 text-muted-foreground hover:text-destructive"
+          >
+            <RotateCcw className="h-3 w-3 mr-1" /> Reset Draft
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              toast({
+                title: "💾 Campaign Draft Safely Preserved",
+                description: "Your campaign changes are saved in your browser. Feel free to rest or review tutorial concepts!",
+              });
+              setLocation('/tutorials');
+            }}
+            className="border-blue-500/40 text-blue-300 hover:bg-blue-500/10 hover:text-white text-xs h-8 flex items-center gap-1.5 shadow-sm"
+          >
+            <Coffee className="h-3.5 w-3.5" />
+            <span>Take a Break • Return to Lessons</span>
+          </Button>
         </div>
       </div>
       
