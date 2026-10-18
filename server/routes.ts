@@ -920,6 +920,19 @@ This module is part of the **Pro & Agency Track ($199/mo)**.
     }
   });
 
+  app.get("/api/user/seo-simulations/attempts", async (req, res) => {
+    try {
+      if (!req.user?.id) {
+        return res.json([]);
+      }
+      const attempts = await seoSimulationService.getAllUserAttempts(req.user.id);
+      res.json(attempts);
+    } catch (error) {
+      console.error("Error retrieving user SEO simulation attempts:", error);
+      res.json([]);
+    }
+  });
+
   app.get("/api/seo-simulations/:id/analytics", async (req, res) => {
     try {
       const simulationId = parseInt(req.params.id);

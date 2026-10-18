@@ -304,7 +304,51 @@ export default function AdSimulationsPage() {
   );
 
   return (
-    <div className="container mx-auto py-8 space-y-8">
+    <div className="container mx-auto py-8 space-y-6">
+      {/* 🧭 Master Career Pathway: Curriculum Road & Sequencing */}
+      <div className="p-5 rounded-2xl bg-gradient-to-r from-purple-950/40 via-card to-background border border-purple-500/30 shadow-lg space-y-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <Badge className="bg-purple-500/20 text-purple-300 border-purple-500/40 text-xs font-semibold py-0.5">
+              🧭 Agency Pathway • Track 2 of 3
+            </Badge>
+            <Badge variant="outline" className="text-xs">
+              Paid Search & Performance Acquisition
+            </Badge>
+          </div>
+          <Link href="/seo-simulations" className="text-xs text-primary hover:underline flex items-center gap-1">
+            <span>← Review Track 1: Organic SEO Studio</span>
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-2.5 text-xs">
+          <Link href="/seo-simulations">
+            <div className="p-2.5 rounded-lg bg-card/60 border border-border/60 hover:border-primary/50 transition-all cursor-pointer">
+              <span className="text-[10px] uppercase font-bold text-muted-foreground">Track 1 • Foundation</span>
+              <div className="font-bold text-foreground">🌱 Organic SEO Studio</div>
+              <p className="text-[11px] text-muted-foreground">Master search intent, title tags & schema without ad spend.</p>
+            </div>
+          </Link>
+
+          <div className="p-2.5 rounded-lg bg-primary/10 border-2 border-primary/50">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] uppercase font-bold text-primary">Track 2 • Active Track</span>
+              <Badge className="bg-primary text-primary-foreground text-[9px] h-3.5 px-1 font-bold">Active</Badge>
+            </div>
+            <div className="font-bold text-foreground">🚀 Paid Ad Simulations</div>
+            <p className="text-[11px] text-muted-foreground">Manage Google & Meta budgets, negative shields & bidding.</p>
+          </div>
+
+          <Link href="/capstone-simulation">
+            <div className="p-2.5 rounded-lg bg-card/60 border border-border/60 hover:border-amber-500/50 transition-all cursor-pointer">
+              <span className="text-[10px] uppercase font-bold text-amber-400">Track 3 • Mastery</span>
+              <div className="font-bold text-foreground">🏆 Full Agency Capstone</div>
+              <p className="text-[11px] text-muted-foreground">Cross-channel client retainer project for your portfolio.</p>
+            </div>
+          </Link>
+        </div>
+      </div>
+
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>

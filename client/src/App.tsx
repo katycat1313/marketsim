@@ -160,15 +160,30 @@ function SideNav({ onClose }: SideNavProps) {
 
             {/* Simulations Section */}
             <div className="space-y-2">
-              <div className="text-xs uppercase text-muted-foreground font-semibold tracking-wider pl-2">
-                AGENCY SIMULATIONS
+              <div className="text-xs uppercase text-muted-foreground font-semibold tracking-wider pl-2 flex items-center justify-between">
+                <span>AGENCY SIMULATIONS</span>
+                <span className="text-[10px] text-primary font-mono">1 ➔ 2 ➔ 3</span>
               </div>
               <div className="space-y-1 pl-2">
+                <Link href="/seo-simulations" onClick={handleLinkClick}>
+                  <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
+                    ${isActive('/seo-simulation') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
+                    <Search className="h-5 w-5 text-primary" />
+                    <div className="flex flex-col">
+                      <span className="font-medium text-xs">1. SEO & Website Studio</span>
+                      <span className="text-[10px] text-muted-foreground">Organic Intent & Meta</span>
+                    </div>
+                  </div>
+                </Link>
+
                 <Link href="/ad-simulations" onClick={handleLinkClick}>
                   <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
                     ${isActive('/ad-simulation') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
-                    <MousePointer className="h-5 w-5 text-primary" />
-                    <span>Ad Platform Sims</span>
+                    <MousePointer className="h-5 w-5 text-purple-400" />
+                    <div className="flex flex-col">
+                      <span className="font-medium text-xs">2. Paid Ad Platform Sims</span>
+                      <span className="text-[10px] text-muted-foreground">Google & Meta Bidding</span>
+                    </div>
                   </div>
                 </Link>
 
@@ -176,15 +191,10 @@ function SideNav({ onClose }: SideNavProps) {
                   <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
                     ${isActive('/capstone-simulation') ? 'bg-amber-500/15 text-amber-400 font-medium border border-amber-500/30' : 'text-amber-400/90 hover:bg-amber-500/10'}`}>
                     <Trophy className="h-5 w-5 text-amber-400" />
-                    <span>🏆 Agency Capstone</span>
-                  </div>
-                </Link>
-
-                <Link href="/seo-simulations" onClick={handleLinkClick}>
-                  <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
-                    ${isActive('/seo-simulation') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
-                    <Search className="h-5 w-5" />
-                    <span>SEO & SERP Sims</span>
+                    <div className="flex flex-col">
+                      <span className="font-medium text-xs">3. 🏆 Agency Capstone</span>
+                      <span className="text-[10px] text-amber-400/70">Full Client Retainer</span>
+                    </div>
                   </div>
                 </Link>
               </div>

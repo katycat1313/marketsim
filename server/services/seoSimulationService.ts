@@ -955,6 +955,22 @@ export class SeoSimulationService {
       return [];
     }
   }
+
+  // Get all attempts for a user across all SEO simulations
+  async getAllUserAttempts(userId: number): Promise<SeoSimulationAttempt[]> {
+    try {
+      const attempts = await db
+        .select()
+        .from(schema.seoSimulationAttempts)
+        .where(eq(schema.seoSimulationAttempts.userId, userId))
+        .orderBy(desc(schema.seoSimulationAttempts.createdAt));
+      
+      return attempts;
+    } catch (error) {
+      console.error('Error getting all user attempts:', error);
+      return [];
+    }
+  }
   
   // Evaluate a simulation attempt against the original
   async evaluateAttempt(simulation: SeoSimulation, attempt: InsertSeoSimulationAttempt): Promise<Partial<SeoSimulationAttempt>> {

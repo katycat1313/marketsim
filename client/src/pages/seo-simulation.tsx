@@ -176,11 +176,31 @@ export default function SeoSimulationPage() {
         method: 'POST',
         body: JSON.stringify({ modifiedContent })
       }),
-    onSuccess: () => {
+    onSuccess: (data: any) => {
       queryClient.invalidateQueries({ queryKey: ['/api/seo-simulations', simulationId, 'attempts'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/user/seo-simulations/attempts'] });
+      
+      const score = data?.score || 85;
+      if (simulationId && score >= 70) {
+        try {
+          const completedKey = "krechet_seo_completed_levels";
+          const saved = JSON.parse(localStorage.getItem(completedKey) || "{}");
+          saved[simulationId] = {
+            completedAt: new Date().toISOString(),
+            score: score,
+            title: simulation?.title || `Level ${simulationId}`
+          };
+          localStorage.setItem(completedKey, JSON.stringify(saved));
+        } catch (e) {
+          console.warn("Could not save completion to localStorage", e);
+        }
+      }
+
       toast({
-        title: "Submission successful!",
-        description: "Your SEO optimization has been evaluated.",
+        title: score >= 70 ? `🎉 Level ${simulationId} Passed! (${score}/100)` : "Evaluation Complete",
+        description: score >= 70 
+          ? `Outstanding work! You've unlocked Level ${(simulationId || 1) + 1} on your Agency Roadmap.`
+          : "Your SEO optimization has been evaluated. Review the recommendations to improve your score.",
       });
       setEditMode(false);
     },
