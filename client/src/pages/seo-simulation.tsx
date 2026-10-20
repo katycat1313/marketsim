@@ -181,6 +181,23 @@ export default function SeoSimulationPage() {
       queryClient.invalidateQueries({ queryKey: ['/api/user/seo-simulations/attempts'] });
       
       const score = data?.score || 85;
+
+      // Sync SEO optimizations directly into the connected client account engine
+      fetch('/api/client/sync-seo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          score,
+          pageContent: {
+            title: content?.title,
+            h1: content?.headings?.find((h: any) => h.tag === 'h1')?.content,
+            metaDescription: content?.metaDescription
+          }
+        })
+      }).then(() => {
+        queryClient.invalidateQueries({ queryKey: ['/api/client/current'] });
+      }).catch((err) => console.warn('Could not sync SEO to client engine', err));
+
       if (simulationId && score >= 70) {
         try {
           const completedKey = "krechet_seo_completed_levels";
@@ -199,7 +216,7 @@ export default function SeoSimulationPage() {
       toast({
         title: score >= 70 ? `🎉 Level ${simulationId} Passed! (${score}/100)` : "Evaluation Complete",
         description: score >= 70 
-          ? `Outstanding work! You've unlocked Level ${(simulationId || 1) + 1} on your Agency Roadmap.`
+          ? `Outstanding work! Landing Page Experience boosted for your client account, increasing ad Quality Score and reducing CPC.`
           : "Your SEO optimization has been evaluated. Review the recommendations to improve your score.",
       });
       setEditMode(false);

@@ -4,7 +4,7 @@ Now it's time to put your new skills to the test! Here's a simulation challenge 
 
 ### Challenge Scenario:
 1. Choose a blog post or landing page from the Krechet Academy SEO Lab.
-2. Use the Krechet AI Copilot to analyze search intent, extract primary/secondary keywords, and generate title tags and meta descriptions.
+2. Use the Krechet AI AI Strategist to analyze search intent, extract primary/secondary keywords, and generate title tags and meta descriptions.
 3. Optimize headings (H1, H2) and weave target keywords organically into body content.
 4. Run the SEO Simulation score check and observe changes in keyword density, readability index, and simulated organic rank.
 

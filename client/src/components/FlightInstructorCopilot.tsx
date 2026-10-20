@@ -26,14 +26,14 @@ import {
   RotateCcw
 } from "lucide-react";
 
-interface CopilotMessage {
+interface DirectorMessage {
   id: string;
   sender: "instructor" | "student";
   text: string;
   timestamp: string;
 }
 
-interface FlightInstructorCopilotProps {
+interface FlightInstructorDirectorProps {
   track?: "seo" | "ads" | "general";
   pageTitle?: string;
   sectionContext?: string;
@@ -51,14 +51,14 @@ interface FlightInstructorCopilotProps {
   };
 }
 
-export function FlightInstructorCopilot({
+export function FlightInstructorDirector({
   track = "general",
   pageTitle = "Simulation Workbench",
   sectionContext,
   isOpenExternal,
   onOpenChange,
   currentDraft
-}: FlightInstructorCopilotProps) {
+}: FlightInstructorDirectorProps) {
   const { toast } = useToast();
   const [internalIsOpen, setInternalIsOpen] = useState(false);
   const isOpen = isOpenExternal !== undefined ? isOpenExternal : internalIsOpen;
@@ -67,7 +67,7 @@ export function FlightInstructorCopilot({
     if (onOpenChange) onOpenChange(open);
   };
   const [isExpanded, setIsExpanded] = useState(false);
-  const [messages, setMessages] = useState<CopilotMessage[]>([]);
+  const [messages, setMessages] = useState<DirectorMessage[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [isVoiceActive, setIsVoiceActive] = useState(false);
@@ -104,7 +104,7 @@ export function FlightInstructorCopilot({
 
       setMessages([
         {
-          id: "copilot-intro",
+          id: "director-intro",
           sender: "instructor",
           text: intro,
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
@@ -173,7 +173,7 @@ export function FlightInstructorCopilot({
 
     if (!textToSend) setInputValue("");
 
-    const newStudentMsg: CopilotMessage = {
+    const newStudentMsg: DirectorMessage = {
       id: `msg-${Date.now()}`,
       sender: "student",
       text,
@@ -233,7 +233,7 @@ STRICT PEDAGOGICAL POLICY:
       const data = await res.json();
       const replyText = data.response || data.message || "Good observation. Let's make sure your headline directly answers the user's commercial search query.";
 
-      const instructorMsg: CopilotMessage = {
+      const instructorMsg: DirectorMessage = {
         id: `msg-resp-${Date.now()}`,
         sender: "instructor",
         text: replyText,
@@ -298,7 +298,7 @@ STRICT PEDAGOGICAL POLICY:
         </button>
       )}
 
-      {/* Slide-Out Growth Director Copilot Drawer */}
+      {/* Slide-Out Growth Director Director Drawer */}
       {isOpen && (
         <div 
           className={`fixed bottom-0 right-0 z-50 flex flex-col bg-background/95 backdrop-blur-xl border-l border-t md:border-t-0 border-border/80 shadow-2xl transition-all duration-300 ${
@@ -486,3 +486,5 @@ STRICT PEDAGOGICAL POLICY:
     </>
   );
 }
+
+export const FlightInstructorCopilot = FlightInstructorDirector;

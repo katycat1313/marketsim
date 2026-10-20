@@ -1,9 +1,11 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { Switch, Route, Link, useLocation } from "wouter";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/queryClient";
 import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider, useAuth } from "./context/AuthContext";
+import { ClientAgencyProvider } from "./context/ClientAgencyContext";
+import { AgencyClientHeader } from "./components/AgencyClientHeader";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/home";
 import PersonaBuilder from "@/pages/persona-builder";
@@ -156,6 +158,37 @@ function SideNav({ onClose }: SideNavProps) {
                 <span>Home</span>
               </div>
             </Link>
+          </div>
+
+          {/* Week 1 Beginner Core Curriculum */}
+          <div className="space-y-2">
+            <div className="text-xs uppercase text-amber-400 font-bold tracking-wider pl-2 flex items-center justify-between">
+              <span>WEEK 1 FOUNDATION</span>
+              <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 font-mono font-bold">ACTIVE</span>
+            </div>
+            <div className="space-y-1 pl-2">
+              <Link href="/tutorials" onClick={handleLinkClick}>
+                <div className={`flex items-center gap-3 p-2 rounded-md transition-colors border
+                  ${isActive('/tutorials') ? 'bg-amber-500/15 text-amber-300 border-amber-500/40 font-medium' : 'border-amber-500/20 bg-amber-500/5 text-amber-200/90 hover:bg-amber-500/10'}`}>
+                  <GraduationCap className="h-5 w-5 text-amber-400 shrink-0" />
+                  <div className="flex flex-col min-w-0">
+                    <span className="font-bold text-xs truncate">Week 1: Jenny's Artisan Java</span>
+                    <span className="text-[10px] text-amber-400/80">15 Lessons (Learn ➔ See ➔ Do)</span>
+                  </div>
+                </div>
+              </Link>
+
+              <Link href="/ab-test-workshop" onClick={handleLinkClick}>
+                <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
+                  ${isActive('/ab-test-workshop') ? 'bg-indigo-500/15 text-indigo-300 font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
+                  <Split className="h-5 w-5 text-indigo-400 shrink-0" />
+                  <div className="flex flex-col min-w-0">
+                    <span className="font-medium text-xs truncate">A/B Testing Lab</span>
+                    <span className="text-[10px] text-muted-foreground">Live Visual Split QA</span>
+                  </div>
+                </div>
+              </Link>
+            </div>
           </div>
 
             {/* Simulations Section */}
@@ -456,6 +489,9 @@ function Router() {
           </div>
         </div>
 
+        {/* Connected Agency Client Header */}
+        <AgencyClientHeader />
+
         {/* Content Area */}
         <main className="flex-1 p-4 md:p-6 overflow-auto">
           <Switch>
@@ -560,9 +596,10 @@ function App() {
   return (
     <AuthProvider>
       <QueryClientProvider client={queryClient}>
-        <Router />
-      
-        {/* AI Assistant */}
+        <ClientAgencyProvider>
+          <Router />
+        
+          {/* AI Assistant */}
         <AIAssistant 
           isExpanded={isAIAssistantExpanded} 
           onToggleExpand={toggleAIAssistant}
@@ -588,6 +625,7 @@ function App() {
         </button>
         
         <Toaster />
+        </ClientAgencyProvider>
       </QueryClientProvider>
     </AuthProvider>
   );

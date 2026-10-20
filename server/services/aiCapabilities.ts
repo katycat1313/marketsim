@@ -737,10 +737,10 @@ export class AICapabilities {
         }
       }
     } catch (apiErr) {
-      console.warn("AI API call error, falling back to dynamic marketing copilot engine:", apiErr);
+      console.warn("AI API call error, falling back to dynamic marketing intelligence engine:", apiErr);
     }
 
-    // Dynamic Intelligent Marketing Copilot Fallback
+    // Dynamic Intelligent Marketing Director Fallback
     return this.generateDynamicMarketingAssistantResponse(question, userContext);
   }
 
@@ -945,7 +945,7 @@ Negative keywords prevent your ads from triggering on irrelevant, wasteful searc
     }
 
     if (q.includes("hint") || q.includes("guide") || q.includes("help") || q.includes("audit")) {
-      return `### 💡 Marketing Copilot Guidance
+      return `### 💡 Marketing Director Guidance
 
 Here are tactical suggestions for your current simulation:
 

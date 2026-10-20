@@ -44,6 +44,7 @@ interface Tutorial {
   estimatedTime: number;
   skillsLearned: string[];
   hasSimulation?: boolean;
+  chapterNumber?: number;
 }
 
 // Chapter interface
@@ -173,6 +174,10 @@ export default function TutorialsPage() {
 
   // Helper function to extract a chapter number from a tutorial
   const extractChapterNumber = (tutorial: Tutorial): number => {
+    if (typeof tutorial.chapterNumber === 'number' && tutorial.chapterNumber > 0) {
+      return tutorial.chapterNumber;
+    }
+
     const titleLower = tutorial.title.toLowerCase();
     const contentLower = tutorial.content.toLowerCase();
     
@@ -241,8 +246,8 @@ export default function TutorialsPage() {
   };
 
   // Function to sort tutorials by chapter and subchapter
-  const sortTutorialsByChapter = (tutorials: Tutorial[]): Tutorial[] => {
-    return tutorials.sort((a, b) => {
+  const sortTutorialsByChapter = (tutorialList: Tutorial[]): Tutorial[] => {
+    return [...tutorialList].sort((a, b) => {
       // First sort by chapter number
       const aChapter = extractChapterNumber(a);
       const bChapter = extractChapterNumber(b);
@@ -251,14 +256,19 @@ export default function TutorialsPage() {
         return aChapter - bChapter;
       }
       
-      // If same chapter, try to extract subchapter numbers
+      // If same chapter, extract subchapter numbers from title first
       const aTitle = a.title.toLowerCase();
       const bTitle = b.title.toLowerCase();
       
-      const aMatch = aTitle.match(/chapter\s*\d+[\-\.](\d+)/i) || 
-                     a.content.toLowerCase().match(/chapter\s*\d+[\-\.](\d+)/i);
-      const bMatch = bTitle.match(/chapter\s*\d+[\-\.](\d+)/i) ||
-                     b.content.toLowerCase().match(/chapter\s*\d+[\-\.](\d+)/i);
+      const aTitleMatch = aTitle.match(/chapter\s*\d+[\-\.](\d+)/i);
+      const bTitleMatch = bTitle.match(/chapter\s*\d+[\-\.](\d+)/i);
+
+      if (aTitleMatch && bTitleMatch) {
+        return parseInt(aTitleMatch[1]) - parseInt(bTitleMatch[1]);
+      }
+      
+      const aMatch = aTitleMatch || a.content.toLowerCase().match(/chapter\s*\d+[\-\.](\d+)/i);
+      const bMatch = bTitleMatch || b.content.toLowerCase().match(/chapter\s*\d+[\-\.](\d+)/i);
       
       // If both have subchapter numbers, compare them
       if (aMatch && bMatch) {
@@ -284,48 +294,48 @@ export default function TutorialsPage() {
     const chapterStructure: Chapter[] = [
       {
         number: 1,
-        title: "Introduction to Digital Marketing",
-        description: "Basic concepts and fundamentals of digital marketing for beginners",
+        title: "Week 1: Marketing Fundamentals, Unit Economics & The High-Converting Offer",
+        description: "Unit economics, AOV/CAC modeling, client discovery with Jenny Miller, headline clarity, and live A/B testing on Jenny's Artisan Java.",
         image: "attached_assets/smallbusinessspelled.jpeg",
         icon: <BookOpen className="h-6 w-6 text-blue-500" />,
         tutorials: []
       },
       {
         number: 2,
-        title: "Google Ads Fundamentals",
-        description: "Core concepts of Google Ads platform and campaign types",
-        image: "attached_assets/ad-image.jpeg",
-        icon: <Megaphone className="h-6 w-6 text-red-500" />,
-        tutorials: []
-      },
-      {
-        number: 3,
-        title: "Advanced Google Ads",
-        description: "Advanced strategies and optimization techniques for Google Ads",
+        title: "Week 2: Organic Discovery, On-Page SEO & Local Business Presence",
+        description: "Search intent, long-tail keyword research, on-page meta tags (Title, H1, Meta Description), Google Business Profile, and ethical AI content creation.",
         image: "attached_assets/womanwork.jpeg",
         icon: <Globe className="h-6 w-6 text-green-500" />,
         tutorials: []
       },
       {
+        number: 3,
+        title: "Week 3: Paid Search Advertising (Google Search Ads 101)",
+        description: "The second-price ad auction, 3-tier account hierarchy, match types, the negative keyword budget shield, RSA copywriting, and Quality Score discounts.",
+        image: "attached_assets/ad-image.jpeg",
+        icon: <Megaphone className="h-6 w-6 text-red-500" />,
+        tutorials: []
+      },
+      {
         number: 4,
-        title: "Ethical AI Prompting & Co-Piloting",
-        description: "Prompt engineering, anti-hallucination guardrails, and free AI co-pilots (Gemini & ChatGPT)",
+        title: "Week 4: Paid Social & Creative Advertising (Meta / Instagram Ads 101)",
+        description: "Active search vs passive interruption, the 3-second hook, visual creative formats, Meta ad copywriting, audience targeting, and identifying ad fatigue.",
         image: "attached_assets/small business.jpeg",
         icon: <Sparkles className="h-6 w-6 text-purple-400" />,
         tutorials: []
       },
       {
         number: 5,
-        title: "Speed-to-Lead Automation (Make.com)",
-        description: "Automating 60-second lead responses with free Make.com 1-click blueprints",
+        title: "Week 5: Email Marketing, Customer Retention & Funnel Psychology",
+        description: "Owned media vs rented land, email list building, automated 3-part welcome sequences, abandoned cart recovery, copywriting, and CAN-SPAM compliance.",
         image: "attached_assets/group-thinking.jpeg",
         icon: <Cpu className="h-6 w-6 text-amber-400" />,
         tutorials: []
       },
       {
         number: 6,
-        title: "Verified Growth Audit & Capstone",
-        description: "Live client crisis simulation, end-to-end growth audit, and verified portfolio generation",
+        title: "Week 6: Analytics, Conversion Optimization, Agency Reporting & Capstone Certification",
+        description: "GA4 traffic attribution, UTM tracking, funnel bottleneck drop-off diagnostics, 1-page executive client reporting, and the Level 1 Boardroom Audit.",
         image: "attached_assets/wiered-headshot.jpeg",
         icon: <CheckCircle2 className="h-6 w-6 text-emerald-400" />,
         tutorials: []
@@ -562,9 +572,9 @@ export default function TutorialsPage() {
       <div className="flex flex-col space-y-6">
         <div className="flex flex-col md:flex-row md:justify-between md:items-center space-y-2 md:space-y-0">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight text-[#ffd700] flex items-center">
-              <span className="w-8 h-8 rounded-full bg-[#ffd700] text-black flex items-center justify-center mr-3 text-sm">DZ</span>
-              Marketing Academy
+            <h1 className="text-3xl font-bold tracking-tight text-foreground flex items-center">
+              <span className="w-8 h-8 rounded-xl bg-gradient-to-br from-primary to-amber-500 text-primary-foreground flex items-center justify-center mr-3 text-xs font-bold shadow-md shadow-primary/20">KA</span>
+              <span>Krechet Academy</span>
             </h1>
             <p className="text-muted-foreground mt-2">
               Follow our structured learning path from fundamentals to mastery
@@ -845,109 +855,189 @@ export default function TutorialsPage() {
                 />
               </div>
 
-              {/* Seamless Course Flow: Previous / Simulation / Next Navigation Strip */}
+              {/* Seamless Course Flow: Week Lesson Strip + Previous / Simulation / Next Navigation Strip */}
               {(() => {
-                const currentIndex = tutorials.findIndex(t => t.id === currentTutorial.id);
-                const prevTutorial = currentIndex > 0 ? tutorials[currentIndex - 1] : null;
-                const nextTutorial = currentIndex >= 0 && currentIndex < tutorials.length - 1 ? tutorials[currentIndex + 1] : null;
                 const currentChapterNum = (currentTutorial as any).chapterNumber || 1;
-                const chapterTutorials = tutorials.filter(t => ((t as any).chapterNumber || 1) === currentChapterNum);
+                // Strictly sort chapter tutorials by subchapter number (e.g. 1.1, 1.2, 1.3, 1.4, 1.5...)
+                const chapterTutorials = tutorials
+                  .filter(t => ((t as any).chapterNumber || 1) === currentChapterNum)
+                  .sort((a, b) => {
+                    const aTitleMatch = a.title.match(/chapter\s*\d+[\-\.](\d+)/i);
+                    const bTitleMatch = b.title.match(/chapter\s*\d+[\-\.](\d+)/i);
+                    if (aTitleMatch && bTitleMatch) {
+                      return parseInt(aTitleMatch[1]) - parseInt(bTitleMatch[1]);
+                    }
+                    return a.id - b.id;
+                  });
+
+                const currentChapterIndex = chapterTutorials.findIndex(t => t.id === currentTutorial.id);
+                const prevTutorial = currentChapterIndex > 0 ? chapterTutorials[currentChapterIndex - 1] : null;
+                const nextTutorial = currentChapterIndex >= 0 && currentChapterIndex < chapterTutorials.length - 1 ? chapterTutorials[currentChapterIndex + 1] : null;
                 const isLastLessonOfWeek = chapterTutorials.length > 0 && chapterTutorials[chapterTutorials.length - 1].id === currentTutorial.id;
                 const isWeekCompleted = chapterTutorials.length > 0 && chapterTutorials.every(t => progress.includes(t.id));
                 const weekSimLink = currentChapterNum === 2 ? "/ad-simulation/1" : currentChapterNum >= 4 ? "/capstone-simulation" : "/seo-simulation/1";
                 const weekSimName = currentChapterNum === 2 ? "Week 2: Dr. Miller Dental (Paid Search)" : currentChapterNum >= 4 ? "Week 6: Apex Global Growth Capstone" : "Week 1: Jenny's Artisan Java (CMS SEO)";
 
                 return (
-                  <div className="mt-10 p-5 rounded-2xl bg-card border border-border/80 shadow-xl flex flex-col md:flex-row items-center justify-between gap-4">
-                    {/* Previous Lesson Button */}
-                    <Button 
-                      variant="outline"
-                      disabled={!prevTutorial}
-                      onClick={() => {
-                        if (prevTutorial) {
-                          setCurrentTutorial(prevTutorial);
-                          window.scrollTo({ top: 0, behavior: 'smooth' });
-                        }
-                      }}
-                      className="w-full md:w-auto text-xs h-10 border-border hover:bg-secondary flex items-center gap-2"
-                    >
-                      <span>⬅️</span>
-                      <span className="truncate max-w-[160px]">
-                        {prevTutorial ? prevTutorial.title : "First Lesson"}
-                      </span>
-                    </Button>
+                  <div className="space-y-4 mt-8">
+                    {/* Week Lesson Navigator Track (Directly inspect all 15 lessons) */}
+                    {chapterTutorials.length > 1 && (
+                      <div className="p-3.5 sm:p-4 rounded-2xl bg-slate-950/70 border border-white/10 shadow-lg">
+                        <div className="flex items-center justify-between mb-2.5">
+                          <div className="flex items-center gap-2">
+                            <BookOpen className="h-3.5 w-3.5 text-primary" />
+                            <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                              Week {currentChapterNum} Syllabus • {chapterTutorials.length} Bite-Sized Lessons (Learn → See → Do)
+                            </span>
+                          </div>
+                          <Badge variant="outline" className="text-[10px] text-primary border-primary/30 bg-primary/10">
+                            Lesson {currentChapterIndex >= 0 ? currentChapterIndex + 1 : 1} of {chapterTutorials.length}
+                          </Badge>
+                        </div>
 
-                    {/* Week's Simulation Workbench (Available throughout the week) */}
-                    <Button
-                      asChild
-                      className="w-full md:w-auto bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs h-10 px-5 shadow-lg flex items-center gap-2"
-                      title="Practice client simulation workbench — available throughout the week"
-                    >
-                      <Link href={weekSimLink}>
-                        <span>🛠️</span>
-                        <span>{weekSimName} (Open All Week)</span>
-                      </Link>
-                    </Button>
+                        <div className="flex flex-wrap gap-1.5 sm:gap-2">
+                          {chapterTutorials.map((tut, idx) => {
+                            const isCurrent = tut.id === currentTutorial.id;
+                            const isDone = progress.includes(tut.id);
+                            const subMatch = tut.title.match(/chapter\s*(\d+[\-\.]\d+)/i);
+                            const label = subMatch ? subMatch[1] : `${currentChapterNum}.${idx + 1}`;
+                            const typeTag = tut.title.includes('(Learn)') ? 'Learn' : tut.title.includes('(See') ? 'See & AI' : tut.title.includes('(Do)') ? 'Do' : `L${idx+1}`;
 
-                    {/* Weekly Assessment Quiz Button - Only unlocked at end of week once week's lessons are completed */}
-                    {(isLastLessonOfWeek || isWeekCompleted) ? (
-                      <Button
-                        asChild
-                        className="w-full md:w-auto bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black font-extrabold text-xs h-10 px-4 shadow-md flex items-center gap-1.5 animate-pulse"
-                        title="End-of-Week Assessment Quiz"
-                      >
-                        <Link href="/seo-quiz">
-                          <span>📝</span>
-                          <span>Take Week {currentChapterNum} Assessment Quiz</span>
-                        </Link>
-                      </Button>
-                    ) : (
-                      <div className="hidden lg:flex items-center gap-1.5 text-[11px] text-muted-foreground/80 italic px-3 py-2 bg-secondary/30 rounded-lg border border-border/50">
-                        <span>🔒</span>
-                        <span>Weekly Assessment unlocks after Lesson {chapterTutorials.length}</span>
+                            return (
+                              <button
+                                key={tut.id}
+                                type="button"
+                                onClick={() => {
+                                  setCurrentTutorial(tut);
+                                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                                }}
+                                title={tut.title}
+                                className={`px-2 py-1.5 rounded-lg border text-center transition-all flex items-center gap-1.5 text-xs ${
+                                  isCurrent
+                                    ? 'bg-primary/25 border-primary text-primary-foreground font-extrabold shadow-md ring-1 ring-primary/60 scale-105'
+                                    : isDone
+                                    ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20'
+                                    : 'bg-card/40 border-border/60 text-muted-foreground hover:bg-card/80 hover:text-foreground'
+                                }`}
+                              >
+                                {isDone && <span className="text-[10px] text-emerald-400">✓</span>}
+                                <span className="font-semibold">{label}</span>
+                                <span className={`text-[10px] px-1 py-0.2 rounded ${
+                                  isCurrent ? 'bg-primary/40 text-white' : 'bg-secondary/60 text-muted-foreground'
+                                }`}>
+                                  {typeTag}
+                                </span>
+                              </button>
+                            );
+                          })}
+                        </div>
                       </div>
                     )}
 
-                    {/* Next Lesson / Complete Button */}
-                    {nextTutorial ? (
+                    {/* Navigation Buttons Strip */}
+                    <div className="p-4 sm:p-5 rounded-2xl bg-card border border-border/80 shadow-xl flex flex-col md:flex-row items-center justify-between gap-3 sm:gap-4">
+                      {/* Previous Lesson Button */}
                       <Button 
-                        onClick={async () => {
-                          try {
-                            await fetch('/api/tutorials/complete', {
-                              method: 'POST',
-                              body: JSON.stringify({ tutorialId: currentTutorial.id }),
-                              headers: { 'Content-Type': 'application/json' },
-                              credentials: 'include' 
-                            });
-                            await fetchProgress();
-                          } catch (e) {}
-                          setCurrentTutorial(nextTutorial);
-                          window.scrollTo({ top: 0, behavior: 'smooth' });
+                        variant="outline"
+                        disabled={!prevTutorial}
+                        onClick={() => {
+                          if (prevTutorial) {
+                            setCurrentTutorial(prevTutorial);
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                          }
                         }}
-                        className="w-full md:w-auto bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs h-10 flex items-center gap-2"
+                        className="w-full md:w-auto text-xs h-11 border-border hover:bg-secondary flex items-center gap-2 px-3 sm:px-4"
                       >
-                        <span className="truncate max-w-[160px]">Next: {nextTutorial.title}</span>
-                        <span>➡️</span>
+                        <span className="text-sm">⬅️</span>
+                        <div className="flex flex-col text-left">
+                          <span className="text-[10px] text-muted-foreground uppercase font-semibold">
+                            {prevTutorial ? (prevTutorial.title.match(/Chapter\s*(\d+[\-\.]\d+)/i) ? `Previous: ${prevTutorial.title.match(/Chapter\s*(\d+[\-\.]\d+)/i)![1]}` : 'Previous Lesson') : 'First Lesson'}
+                          </span>
+                          <span className="truncate max-w-[170px] font-bold text-xs text-foreground">
+                            {prevTutorial ? prevTutorial.title.replace(/^Chapter\s*\d+[\-\.]\d+:\s*/i, '') : 'Start of Week'}
+                          </span>
+                        </div>
                       </Button>
-                    ) : (
-                      <Button 
-                        onClick={async () => {
-                          try {
-                            await fetch('/api/tutorials/complete', {
-                              method: 'POST',
-                              body: JSON.stringify({ tutorialId: currentTutorial.id }),
-                              headers: { 'Content-Type': 'application/json' },
-                              credentials: 'include' 
-                            });
-                            await fetchProgress();
-                          } catch (e) {}
-                          setCurrentTutorial(null);
-                        }}
-                        className="w-full md:w-auto bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs h-10"
+
+                      {/* Week's Simulation Workbench (Available throughout the week) */}
+                      <Button
+                        asChild
+                        className="w-full md:w-auto bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs h-11 px-4 shadow-lg flex items-center gap-2"
+                        title="Practice client simulation workbench — available throughout the week"
                       >
-                        <span>🎉 Complete & Return to Syllabus</span>
+                        <Link href={weekSimLink}>
+                          <span>🛠️</span>
+                          <span>{weekSimName} (Open All Week)</span>
+                        </Link>
                       </Button>
-                    )}
+
+                      {/* Weekly Assessment Quiz Button - Only unlocked at end of week once week's lessons are completed */}
+                      {(isLastLessonOfWeek || isWeekCompleted) ? (
+                        <Button
+                          asChild
+                          className="w-full md:w-auto bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black font-extrabold text-xs h-11 px-4 shadow-md flex items-center gap-1.5 animate-pulse"
+                          title="End-of-Week Assessment Quiz"
+                        >
+                          <Link href="/seo-quiz">
+                            <span>📝</span>
+                            <span>Take Week {currentChapterNum} Assessment Quiz</span>
+                          </Link>
+                        </Button>
+                      ) : (
+                        <div className="hidden lg:flex items-center gap-1.5 text-[11px] text-muted-foreground/80 italic px-3 py-2 bg-secondary/30 rounded-lg border border-border/50">
+                          <span>🔒</span>
+                          <span>Assessment unlocks after Lesson {chapterTutorials.length}</span>
+                        </div>
+                      )}
+
+                      {/* Next Lesson / Complete Button */}
+                      {nextTutorial ? (
+                        <Button 
+                          onClick={async () => {
+                            try {
+                              await fetch('/api/tutorials/complete', {
+                                method: 'POST',
+                                body: JSON.stringify({ tutorialId: currentTutorial.id }),
+                                headers: { 'Content-Type': 'application/json' },
+                                credentials: 'include' 
+                              });
+                              await fetchProgress();
+                            } catch (e) {}
+                            setCurrentTutorial(nextTutorial);
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                          }}
+                          className="w-full md:w-auto bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-xs h-11 flex items-center gap-2 px-3 sm:px-4 shadow-lg"
+                        >
+                          <div className="flex flex-col text-left">
+                            <span className="text-[10px] text-primary-foreground/80 uppercase font-semibold">
+                              {nextTutorial.title.match(/Chapter\s*(\d+[\-\.]\d+)/i) ? `Next: ${nextTutorial.title.match(/Chapter\s*(\d+[\-\.]\d+)/i)![1]}` : 'Next Lesson'}
+                            </span>
+                            <span className="truncate max-w-[190px] font-extrabold text-xs">
+                              {nextTutorial.title.replace(/^Chapter\s*\d+[\-\.]\d+:\s*/i, '')}
+                            </span>
+                          </div>
+                          <span className="text-sm">➡️</span>
+                        </Button>
+                      ) : (
+                        <Button 
+                          onClick={async () => {
+                            try {
+                              await fetch('/api/tutorials/complete', {
+                                method: 'POST',
+                                body: JSON.stringify({ tutorialId: currentTutorial.id }),
+                                headers: { 'Content-Type': 'application/json' },
+                                credentials: 'include' 
+                              });
+                              await fetchProgress();
+                            } catch (e) {}
+                            setCurrentTutorial(null);
+                          }}
+                          className="w-full md:w-auto bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs h-11 px-4"
+                        >
+                          <span>🎉 Complete & Return to Syllabus</span>
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 );
               })()}

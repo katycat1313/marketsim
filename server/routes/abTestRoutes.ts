@@ -63,7 +63,14 @@ router.get('/:id/variants', async (req: Request, res: Response) => {
 router.get('/:id/results', async (req: Request, res: Response) => {
   try {
     const testId = Number(req.params.id);
-    const results = await storage.getSimulationResult(testId);
+    let results = await storage.getSimulationResult(testId);
+    
+    if (!results) {
+      const test = await storage.getABTest(testId);
+      if (test) {
+        results = await abTestSimulation.runSimulation(testId);
+      }
+    }
     
     if (!results) {
       return res.status(404).json({ error: 'Simulation results not found' });

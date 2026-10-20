@@ -123,6 +123,27 @@ export default function PersonaBuilderTemplate() {
   const getDefaultValues = (): PersonaFormValues => {
     if (selectedTemplate) {
       switch (selectedTemplate.id) {
+        case 'jennys-artisan-java':
+          return {
+            name: 'Pour-Over Marcus',
+            age: '28-42',
+            gender: 'Male / Working Professional',
+            occupation: 'Remote Software Engineer / Healthcare Specialist',
+            income: '$70,000 - $110,000',
+            location: 'Morgantown, WV & Regional Appalachia',
+            education: "Bachelor's / Master's degree",
+            familyStatus: 'Coupled / Working Professional',
+            goals: 'Drink cafe-quality pour-over and espresso at home every morning; buy directly from local craft roasters who source organic single-origin beans; verify roast freshness with visible roast date.',
+            challenges: 'Supermarket grocery coffee is 6 months old, stale, and bitter; local cafes are closed during early morning work sessions; hard to tell which online brands roast fresh vs sit in warehouse.',
+            values: 'Roast date transparency (within 48 hours), single-origin direct trade, ethical sourcing, supporting local Appalachian craft businesses.',
+            interests: 'Specialty coffee brewing (V60, Chemex, Aeropress), whole-bean grinders, outdoor trail running, local artisanal food, sustainable agriculture.',
+            brands: 'Fellow Products, Chemex, Onyx Coffee Lab, Patagonia, Aeropress',
+            mediaChannels: "Google Search ('fresh roasted coffee morgantown'), Instagram brew guides, Reddit r/Coffee, James Hoffmann YouTube, Local newsletter",
+            purchaseInfluencers: 'Guaranteed 48-hour roast date stamped on valve bag, tasting notes (chocolate, caramel, blackberry), 15% first-order discount code, authentic customer reviews.',
+            buyingProcess: "Searches Google for fresh coffee roaster -> lands on roastery homepage -> validates 48-hr roast date within 5 seconds -> selects 2-bag bundle for free shipping -> enters 15% discount -> signs up for monthly roast delivery.",
+            painPoints: 'Stale beans with no roast date; dark roasts that taste burnt or bitter; paying high shipping on single bags; brands with zero traceability on where beans are grown.',
+            objections: 'Paying $18.50/bag vs $9 grocery coffee (overcome by highlighting 48-hr roast guarantee, 62% contribution quality, and 15% first order coupon).',
+          };
         case 'e-commerce':
           return {
             name: 'Shopping Sarah',
@@ -240,6 +261,12 @@ export default function PersonaBuilderTemplate() {
 
   // Template options
   const templateOptions: TemplateOption[] = [
+    {
+      id: 'jennys-artisan-java',
+      name: "Jenny's Roastery: Specialty Pour-Over Enthusiast (Week 1 Client)",
+      industry: 'Specialty Coffee / Retail (Jenny Miller)',
+      description: "The target buyer for Jenny's Artisan Java: values 48-hr roast freshness over stale grocery beans.",
+    },
     {
       id: 'e-commerce',
       name: 'E-commerce Customer',
@@ -889,6 +916,49 @@ export default function PersonaBuilderTemplate() {
                       </div>
                     </CardContent>
                   </Card>
+
+                  {/* Campaign Simulation & A/B Test Launchers */}
+                  <div className="p-4 rounded-xl bg-slate-900 border border-[#ffd700]/40 flex flex-wrap items-center justify-between gap-3 shadow-lg mt-6">
+                    <div>
+                      <div className="font-bold text-sm text-[#ffd700] flex items-center gap-2">
+                        <span>🚀 Connected Campaign Simulations & Experiments</span>
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        Put Marcus's persona directly to work in live headline experiments and traffic auctions.
+                      </p>
+                    </div>
+
+                    <div className="flex flex-wrap items-center gap-2">
+                      <Button
+                        asChild
+                        size="sm"
+                        className="bg-amber-500 hover:bg-amber-400 text-black font-extrabold text-xs h-8 shadow"
+                      >
+                        <a href="/ab-test-workshop">
+                          <span>🧪 Test in A/B Headline Lab</span>
+                        </a>
+                      </Button>
+                      <Button
+                        asChild
+                        size="sm"
+                        className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs h-8 shadow"
+                      >
+                        <a href="/ad-simulation/1">
+                          <span>📈 Test in Google Ads Sim</span>
+                        </a>
+                      </Button>
+                      <Button
+                        asChild
+                        size="sm"
+                        variant="outline"
+                        className="border-[#ffd700]/40 text-[#ffd700] hover:bg-[#ffd700]/10 text-xs h-8"
+                      >
+                        <a href="/seo-simulation/1">
+                          <span>🌐 Test in CMS SEO Sim</span>
+                        </a>
+                      </Button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

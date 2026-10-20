@@ -29,8 +29,8 @@ import {
   User,
   Lightbulb,
   Building2,
-  PhoneCall,
-  PhoneOff,
+  Headphones,
+  Square,
   Target
 } from "lucide-react";
 import { getActiveInstructor } from "@/lib/instructorConfig";
@@ -47,57 +47,381 @@ export interface LessonTarget {
  */
 function getLessonCoreTargets(chapterNumber: number, title: string, playbookContent?: string): LessonTarget[] {
   const t = title.toLowerCase();
+  const subMatch = title.match(/Chapter\s*(\d+)[\-\.](\d+)/i);
+  const chapter = subMatch ? parseInt(subMatch[1]) : chapterNumber;
+  const lesson = subMatch ? parseInt(subMatch[2]) : 1;
 
-  // Lesson 1: Fundamentals & Funnel Economics
-  if (chapterNumber === 1 && (t.includes("fundamental") || t.includes("flywheel") || !t.includes("goal"))) {
-    return [
-      {
-        id: "target_1",
-        label: "Growth Funnel Stages",
-        description: "Differentiate TOFU awareness, MOFU consideration, and BOFU high-intent conversion.",
-        keywords: ["tofu", "mofu", "bofu", "funnel", "awareness", "consideration", "conversion", "intent"]
-      },
-      {
-        id: "target_2",
-        label: "CAC Calculation & Payback",
-        description: "Calculate Customer Acquisition Cost (CAC) by dividing total spend by acquired customers.",
-        keywords: ["cac", "spend", "cost", "customer", "divided", "acquisition", "50", "ratio"]
-      },
-      {
-        id: "target_3",
-        label: "LTV-to-CAC Viability Rule",
-        description: "Apply the Golden Rule: LTV must be >= 3x CAC to sustain profitability and overhead.",
-        keywords: ["ltv", "golden rule", "3x", "ratio", "margin", "profit", "repeat", "viability", "overhead"]
-      }
-    ];
+  if (chapter === 1) {
+    if (lesson === 1 || t.includes("customer journey")) {
+      return [
+        {
+          id: "target_1",
+          label: "3-Stage Funnel Anatomy",
+          description: "Differentiate TOFU awareness, MOFU consideration, and BOFU high-intent conversion.",
+          keywords: ["tofu", "mofu", "bofu", "funnel", "awareness", "consideration", "conversion", "intent"]
+        },
+        {
+          id: "target_2",
+          label: "The 97/3 Universal Rule",
+          description: "Explain why 97% of market traffic is not in 'Buy Now' mode and requires education and trust.",
+          keywords: ["97/3", "97", "3%", "buy now", "browsing", "problem", "trust", "nurture", "cold"]
+        },
+        {
+          id: "target_3",
+          label: "Clarity Over Cleverness",
+          description: "Identify why driving cold traffic to a bare checkout page produces 85%+ bounce rates.",
+          keywords: ["propose", "marry", "first date", "bounce", "amateur", "clarity", "trust", "shouting"]
+        }
+      ];
+    }
+
+    if (lesson === 2 || t.includes("teardown") || t.includes("ethical ai mapping")) {
+      return [
+        {
+          id: "target_1",
+          label: "Jenny's Funnel Failure",
+          description: "Diagnose why driving cold traffic directly to an unbranded product page caused an 84% bounce rate.",
+          keywords: ["jenny", "bounce", "cold", "skipped", "awareness", "consideration", "product page", "why"]
+        },
+        {
+          id: "target_2",
+          label: "Ethical AI Prompt Architecture",
+          description: "Apply the 3 pillars (Role, Context, Strict Constraints) to instruct AI without buzzwords.",
+          keywords: ["role", "context", "constraints", "prompt", "intern", "director", "buzzwords", "tactic"]
+        },
+        {
+          id: "target_3",
+          label: "Human-in-the-Loop Audit",
+          description: "Apply the human audit checklist (Fact-Check, Strip Clichés, Verify Reality) before publishing.",
+          keywords: ["audit", "fact-check", "clichés", "verify", "reality", "buzzwords", "elevate", "pivotal"]
+        }
+      ];
+    }
+
+    if (lesson === 3 || t.includes("interactive funnel") || t.includes("leak detection")) {
+      return [
+        {
+          id: "target_1",
+          label: "Funnel Diagnostic Signals",
+          description: "Inspect baseline sessions, bounce rate, duration, and conversion rate in Jenny's account.",
+          keywords: ["sessions", "bounce rate", "duration", "conversion", "cvr", "baseline", "diagnostics"]
+        },
+        {
+          id: "target_2",
+          label: "Primary Bottleneck Identification",
+          description: "Confirm that an 84% bounce rate is the primary revenue leak draining Jenny's ad budget.",
+          keywords: ["leak", "bottleneck", "84%", "drop-off", "primary", "drain", "disconnect"]
+        },
+        {
+          id: "target_3",
+          label: "Traffic vs Conversion Diagnosis",
+          description: "Verify traffic volume is sufficient while landing page conversion is the broken component.",
+          keywords: ["traffic", "volume", "sufficient", "landing page", "conversion", "offer", "broken"]
+        }
+      ];
+    }
+
+    if (lesson === 4 || t.includes("unit economics") || t.includes("math of profitability")) {
+      return [
+        {
+          id: "target_1",
+          label: "AOV & Gross Margin Math",
+          description: "Calculate Average Order Value ($42.50) and Gross Profit Margin (62%).",
+          keywords: ["aov", "average order", "gross margin", "margin", "cogs", "revenue", "62%"]
+        },
+        {
+          id: "target_2",
+          label: "CAC Calculation & Payback",
+          description: "Calculate Customer Acquisition Cost (CAC) by dividing total spend by acquired customers.",
+          keywords: ["cac", "acquisition cost", "spend", "cost", "customers", "divided", "ratio"]
+        },
+        {
+          id: "target_3",
+          label: "LTV / CAC > 3.0 Golden Ratio",
+          description: "Apply the viability rule: Customer Lifetime Value must be at least 3x acquisition cost.",
+          keywords: ["ltv", "golden ratio", "3x", "3.0", "viable", "profitability", "roas", "overhead"]
+        }
+      ];
+    }
+
+    if (lesson === 5 || t.includes("coffee unit economics") || t.includes("ai margin")) {
+      return [
+        {
+          id: "target_1",
+          label: "Jenny's Unit Margin Breakdown",
+          description: "Dissect Jenny's $18.50 price, $7.00 COGS, and $11.50 (62%) gross profit per bag.",
+          keywords: ["18.50", "7.00", "11.50", "cogs", "beans", "fuel", "valve", "gross profit"]
+        },
+        {
+          id: "target_2",
+          label: "Basket Contribution Profit",
+          description: "Calculate $42.50 basket AOV minus $8.35 shipping box overhead = $18.00 contribution margin.",
+          keywords: ["42.50", "8.35", "18.00", "contribution", "basket", "shipping", "break-even"]
+        },
+        {
+          id: "target_3",
+          label: "Auditing AI Financial Calculations",
+          description: "Manually verify AI-generated financial estimates against actual production and freight receipts.",
+          keywords: ["audit", "verify", "hallucination", "math", "calculator", "operational", "receipts"]
+        }
+      ];
+    }
+
+    if (lesson === 6 || t.includes("break-even cpa")) {
+      return [
+        {
+          id: "target_1",
+          label: "Break-Even CPA Ceiling",
+          description: "Calculate maximum allowable acquisition cost ($18.00) before losing money on an order.",
+          keywords: ["break-even", "cpa", "18", "ceiling", "maximum", "allowable", "zero profit"]
+        },
+        {
+          id: "target_2",
+          label: "Target CPA Setting",
+          description: "Establish a profitable target CPA ($12.00) leaving $6.00 net margin per customer basket.",
+          keywords: ["target", "12", "6.00", "profit", "margin", "sustainable", "buffer"]
+        },
+        {
+          id: "target_3",
+          label: "Cash Flow Bleed Prevention",
+          description: "Diagnose why bidding above break-even CPA causes immediate bankruptcy on direct retail.",
+          keywords: ["bleed", "loss", "bankruptcy", "cash flow", "bidding", "exceeds", "negative"]
+        }
+      ];
+    }
+
+    if (lesson === 7 || t.includes("client discovery") || t.includes("ideal customer")) {
+      return [
+        {
+          id: "target_1",
+          label: "ICP vs Vague Demographics",
+          description: "Differentiate specific psychographic triggers from broad age/location filters.",
+          keywords: ["icp", "ideal customer", "psychographics", "demographics", "vague", "triggers"]
+        },
+        {
+          id: "target_2",
+          label: "Customer Pain Point Discovery",
+          description: "Pinpoint Marcus's core frustration with 6-month-old stale grocery store coffee beans.",
+          keywords: ["marcus", "stale", "grocery", "roast date", "pain point", "freshness", "pour-over"]
+        },
+        {
+          id: "target_3",
+          label: "Value Alignment",
+          description: "Connect 48-hour roast date transparency with customer willingness to pay premium prices.",
+          keywords: ["roast date", "48-hour", "transparency", "premium", "willingness", "value"]
+        }
+      ];
+    }
+
+    if (lesson === 8 || t.includes("high-value") || t.includes("lazy questions")) {
+      return [
+        {
+          id: "target_1",
+          label: "Strategic Discovery Questions",
+          description: "Distinguish diagnostic business questions from lazy checklist questions.",
+          keywords: ["diagnostic", "lazy", "high-value", "checklist", "operational", "strategic", "inquiry"]
+        },
+        {
+          id: "target_2",
+          label: "Auditing AI Persona Output",
+          description: "Spot generic AI assumptions and ground personas in real customer feedback.",
+          keywords: ["audit", "assumptions", "hallucination", "real", "grounded", "feedback", "stereotypes"]
+        },
+        {
+          id: "target_3",
+          label: "Uncovering Buying Objections",
+          description: "Identify the primary barrier preventing the customer from completing checkout.",
+          keywords: ["objection", "barrier", "shipping", "price", "hesitation", "trust", "friction"]
+        }
+      ];
+    }
+
+    if (lesson === 9 || t.includes("client inquiry portal") || t.includes("message jenny")) {
+      return [
+        {
+          id: "target_1",
+          label: "Client Rapport Engagement",
+          description: "Initiate professional real-time dialogue with founder Jenny Miller in the portal.",
+          keywords: ["jenny", "rapport", "dialogue", "founder", "portal", "professional", "inquiry"]
+        },
+        {
+          id: "target_2",
+          label: "Operational Discovery",
+          description: "Inquire about roast batch sizes, bean sources, and fulfillment constraints.",
+          keywords: ["batch", "roast", "beans", "ethiopian", "guatemala", "fulfillment", "capacity"]
+        },
+        {
+          id: "target_3",
+          label: "Rapport Score Progression",
+          description: "Earn Client Rapport through thoughtful, high-value business questions.",
+          keywords: ["score", "rapport", "earned", "trust", "progression", "relationship"]
+        }
+      ];
+    }
+
+    if (lesson === 10 || t.includes("5-second test") || t.includes("clarity beats cleverness")) {
+      return [
+        {
+          id: "target_1",
+          label: "The 5-Second Test",
+          description: "Answer the 3 essential questions: What is this? Why should I care? What do I do next?",
+          keywords: ["5-second", "what is this", "why care", "what next", "instant", "clarity"]
+        },
+        {
+          id: "target_2",
+          label: "Clarity Over Cleverness",
+          description: "Explain why poetic puns and vague slogans confuse visitors and cause immediate bounces.",
+          keywords: ["clever", "clarity", "puns", "confuse", "bounce", "vague", "headline"]
+        },
+        {
+          id: "target_3",
+          label: "Hero Value Proposition",
+          description: "Draft a hero headline clearly communicating product, key benefit, and offer.",
+          keywords: ["value proposition", "hero", "benefit", "offer", "discount", "fresh", "roasted"]
+        }
+      ];
+    }
+
+    if (lesson === 11 || t.includes("teardown of 'coffee beans for sale'")) {
+      return [
+        {
+          id: "target_1",
+          label: "Hero Headline Teardown",
+          description: "Diagnose why Jenny's baseline headline ('Coffee Beans For Sale') failed to convert.",
+          keywords: ["coffee beans for sale", "baseline", "fail", "generic", "commodity", "zero hook"]
+        },
+        {
+          id: "target_2",
+          label: "Constrained AI Copywriting",
+          description: "Prompt AI with exact character counts, sensory hooks, and zero marketing buzzwords.",
+          keywords: ["constraints", "character count", "sensory", "buzzwords", "prompt", "junior copywriter"]
+        },
+        {
+          id: "target_3",
+          label: "Headline Differentiation",
+          description: "Integrate 48-hour roast freshness and 15% introductory discount into the challenger copy.",
+          keywords: ["challenger", "differentiation", "48-hour", "freshness", "15%", "discount", "hook"]
+        }
+      ];
+    }
+
+    if (lesson === 12 || t.includes("a/b test headline lab") || t.includes("visual qa")) {
+      return [
+        {
+          id: "target_1",
+          label: "A/B Test Configuration",
+          description: "Configure Version A (Control) vs Version B (Challenger) in the interactive lab.",
+          keywords: ["version a", "version b", "control", "challenger", "lab", "workshop", "variable"]
+        },
+        {
+          id: "target_2",
+          label: "Visual QA Inspection",
+          description: "Inspect desktop and mobile responsive layout previews to ensure copy does not clip.",
+          keywords: ["visual qa", "desktop", "mobile", "preview", "responsive", "clip", "render"]
+        },
+        {
+          id: "target_3",
+          label: "Split Traffic Deployment",
+          description: "Launch the 50/50 split routing to collect real user performance telemetry.",
+          keywords: ["split", "traffic", "50/50", "launch", "telemetry", "experiment"]
+        }
+      ];
+    }
+
+    if (lesson === 13 || t.includes("how a/b testing works") || t.includes("statistical significance")) {
+      return [
+        {
+          id: "target_1",
+          label: "Statistical Confidence (p < 0.05)",
+          description: "Understand that results have a < 5% probability of being caused by random chance.",
+          keywords: ["p < 0.05", "p-value", "statistical", "significance", "confidence", "noise", "random"]
+        },
+        {
+          id: "target_2",
+          label: "Sample Size Integrity",
+          description: "Explain why early peeking and stopping tests prematurely creates false positives.",
+          keywords: ["sample size", "peeking", "false positive", "premature", "patience", "volume"]
+        },
+        {
+          id: "target_3",
+          label: "Split Routing Architecture",
+          description: "Understand how cookie-based routing divides traffic evenly between variants.",
+          keywords: ["routing", "cookie", "traffic", "split", "fair", "control", "variant"]
+        }
+      ];
+    }
+
+    if (lesson === 14 || t.includes("sample size traps")) {
+      return [
+        {
+          id: "target_1",
+          label: "Sample Size Trap Detection",
+          description: "Recognize false certainty in low-sample conversion data.",
+          keywords: ["trap", "small sample", "certainty", "15 conversions", "noise", "variance"]
+        },
+        {
+          id: "target_2",
+          label: "Auditing AI Analytical Reports",
+          description: "Verify that AI-generated conversion summaries account for sample size and variance.",
+          keywords: ["audit", "analytical", "misinterpretation", "ai claim", "verify", "hallucination"]
+        },
+        {
+          id: "target_3",
+          label: "Data-Driven Decision Making",
+          description: "Require statistical significance before reallocating client budget or changing pages.",
+          keywords: ["data-driven", "reallocate", "budget", "decision", "discipline", "rigor"]
+        }
+      ];
+    }
+
+    if (lesson === 15 || t.includes("deploy the winning headline") || t.includes("certification audit")) {
+      return [
+        {
+          id: "target_1",
+          label: "Winning Variant Deployment",
+          description: "Promote Version B to 100% live traffic on Jenny's storefront.",
+          keywords: ["deploy", "winner", "promote", "100%", "active", "storefront", "account"]
+        },
+        {
+          id: "target_2",
+          label: "Downstream Auction Impact",
+          description: "Verify Quality Score jumps from 4/10 to 8/10 and CPC drops by 50%.",
+          keywords: ["quality score", "cpc", "discount", "auction", "adrank", "ripple", "4/10", "8/10"]
+        },
+        {
+          id: "target_3",
+          label: "Week 1 Certification Clearance",
+          description: "Complete the Level 1 AI Authenticity Audit with a passing score.",
+          keywords: ["certification", "audit", "level 1", "exam", "clearance", "authenticity"]
+        }
+      ];
+    }
   }
 
-  // Lesson 2: Marketing Goals & KPIs
-  if (chapterNumber === 1 || t.includes("goal") || t.includes("kpi")) {
-    return [
-      {
-        id: "target_1",
-        label: "Revenue KPIs vs Vanity Metrics",
-        description: "Differentiate vanity metrics (likes, views) from revenue-driving KPIs (CPL, ROAS, conversions).",
-        keywords: ["vanity", "kpi", "cpl", "roas", "revenue", "conversion", "sales", "lead", "like", "view"]
-      },
-      {
-        id: "target_2",
-        label: "SMART Marketing Framework",
-        description: "Construct a Specific, Measurable, Achievable, Relevant, and Time-bound business target.",
-        keywords: ["smart", "specific", "measurable", "achievable", "relevant", "time", "bound", "30 days", "target"]
-      },
-      {
-        id: "target_3",
-        label: "Acquisition Economics",
-        description: "Connect campaign budget pacing to target cost per customer acquisition.",
-        keywords: ["budget", "margin", "profit", "acquisition", "cost", "lifetime", "value", "ratio", "payback"]
-      }
-    ];
-  }
-
-  // Lesson 3: Google Ads Hierarchy & Quality Score
-  if (chapterNumber === 2 && (t.includes("structure") || t.includes("hierarchy") || t.includes("quality score"))) {
+  // Google Ads Hierarchy & Quality Score (Week 2/3)
+  if (chapter === 2 || chapter === 3) {
+    if (t.includes("match") || t.includes("negative")) {
+      return [
+        {
+          id: "target_1",
+          label: "Match Type Precision",
+          description: "Differentiate Broad Match, Phrase Match (\"quotes\"), and Exact Match ([brackets]).",
+          keywords: ["broad", "phrase", "exact", "match", "brackets", "quotes", "loose", "trigger"]
+        },
+        {
+          id: "target_2",
+          label: "Negative Keyword Budget Shield",
+          description: "Deploy negative keywords to prevent budget waste on free seekers, job seekers, and competitor mismatch.",
+          keywords: ["negative", "shield", "free", "jobs", "diy", "waste", "drain", "filter", "block"]
+        },
+        {
+          id: "target_3",
+          label: "Search Terms Auditing",
+          description: "Inspect actual search queries and add negative exact or phrase exclusions.",
+          keywords: ["search terms", "query", "audit", "exclude", "leakage", "intent"]
+        }
+      ];
+    }
     return [
       {
         id: "target_1",
@@ -120,135 +444,29 @@ function getLessonCoreTargets(chapterNumber: number, title: string, playbookCont
     ];
   }
 
-  // Lesson 4: Match Types & Negative Keyword Shields
-  if (chapterNumber === 2 || t.includes("match") || t.includes("negative")) {
-    return [
-      {
-        id: "target_1",
-        label: "Match Type Precision",
-        description: "Differentiate Broad Match, Phrase Match (\"quotes\"), and Exact Match ([brackets]).",
-        keywords: ["broad", "phrase", "exact", "match", "brackets", "quotes", "loose", "trigger"]
-      },
-      {
-        id: "target_2",
-        label: "Negative Keyword Budget Shield",
-        description: "Deploy negative keywords to prevent budget waste on free seekers, job seekers, and competitor mismatch.",
-        keywords: ["negative", "shield", "free", "jobs", "diy", "waste", "drain", "filter", "block"]
-      },
-      {
-        id: "target_3",
-        label: "Search Terms Auditing",
-        description: "Inspect actual search queries and add negative exact or phrase exclusions.",
-        keywords: ["search terms", "query", "audit", "exclude", "leakage", "intent"]
-      }
-    ];
-  }
-
-  // SEO / On-Page Architecture
-  if (chapterNumber === 1 || t.includes("seo") || t.includes("on-page") || t.includes("newspaper")) {
-    return [
-      {
-        id: "target_1",
-        label: "The Newspaper Rule Hierarchy",
-        description: "Enforce exactly one primary H1 header above the fold, followed by structured H2/H3 subsections.",
-        keywords: ["newspaper", "h1", "single", "h2", "h3", "hierarchy", "heading", "above the fold"]
-      },
-      {
-        id: "target_2",
-        label: "Title Tag & Meta CTR Optimization",
-        description: "Write compelling title tags under 60 characters with high-intent primary keywords and branding.",
-        keywords: ["title tag", "meta", "ctr", "60 characters", "click-through", "intent"]
-      },
-      {
-        id: "target_3",
-        label: "Search Intent Alignment",
-        description: "Match page content directly to commercial and transactional search intent rather than informational fluff.",
-        keywords: ["intent", "transactional", "commercial", "buyer", "service", "conversion"]
-      }
-    ];
-  }
-
-  // Dynamic Fallback: 3 core targets for any other lesson
+  // Fallback targets
   return [
     {
       id: "target_1",
-      label: "Core Principles & Framework",
-      description: `Demonstrate understanding of the key concepts in ${title}.`,
-      keywords: ["concept", "principle", "understand", "core", "foundation", "framework"]
+      label: "Core Architecture",
+      description: "Explain the central mental model and principles outlined in the study guide.",
+      keywords: ["architecture", "funnel", "concept", "strategy", "foundation"]
     },
     {
       id: "target_2",
-      label: "Tactical Application",
-      description: `Apply the strategic playbook tactics for ${title}.`,
-      keywords: ["strategy", "apply", "tactic", "execution", "section", "guide"]
+      label: "Practical Implementation",
+      description: "Demonstrate practical application to real business and client scenarios.",
+      keywords: ["practical", "business", "application", "client", "execution"]
     },
     {
       id: "target_3",
-      label: "Optimization & Quality Control",
-      description: "Diagnose pitfalls, protect budget, and ensure high-conversion execution.",
-      keywords: ["mistake", "avoid", "protect", "optimize", "quality", "result"]
+      label: "Verification & Error Prevention",
+      description: "Identify common amateur mistakes and verify ethical execution.",
+      keywords: ["mistake", "error", "verify", "audit", "prevention"]
     }
   ];
 }
 
-/**
- * Checks if student has demonstrated a specific pending competency target
- */
-function evaluateTargetDemonstration(
-  userText: string,
-  replyText: string,
-  pendingTargets: LessonTarget[]
-): LessonTarget | null {
-  const userLower = userText.toLowerCase();
-  const replyLower = replyText.toLowerCase();
-
-  // If instructor explicitly declares mastery of the lesson
-  if (/mastered today's lesson|good luck|simulation clearance|clear understanding/i.test(replyLower)) {
-    return pendingTargets[0] || null;
-  }
-
-  for (const target of pendingTargets) {
-    // Check keyword hits in user's response
-    const userKeywordHits = target.keywords.filter(kw => userLower.includes(kw.toLowerCase()));
-    
-    // Check if instructor explicitly praises this topic
-    const targetLabelWords = target.label.toLowerCase().split(/\s+/).filter(w => w.length > 3);
-    const instructorMentionsTarget = targetLabelWords.some(w => replyLower.includes(w));
-    const isAffirmative = /great|exactly|spot on|correct|sharp|good analysis|well said|nice job|right on|good reasoning/i.test(replyLower);
-    
-    if ((userKeywordHits.length >= 2 && userText.length >= 20) || (userKeywordHits.length >= 1 && isAffirmative && instructorMentionsTarget)) {
-      return target;
-    }
-  }
-
-  return null;
-}
-
-interface ChatMessage {
-  id: string;
-  sender: "instructor" | "student";
-  text: string;
-  timestamp: string;
-  scoreDelta?: number;
-}
-
-interface SocraticChatClassroomProps {
-  tutorialId?: number;
-  lessonTitle: string;
-  lessonLevel: string;
-  chapterNumber: number;
-  simulationLink?: string;
-  simulationName?: string;
-  playbookContent?: string;
-  isSplitView?: boolean;
-  onMasteryAchieved?: () => void;
-}
-
-/**
- * Builds an in-depth lesson briefing from the Tactical Playbook,
- * actively teaching the student and pointing out sections, formulas, and warnings
- * before posing the Socratic challenge.
- */
 function buildLessonBriefing({
   lessonTitle,
   chapterNumber,
@@ -267,183 +485,275 @@ function buildLessonBriefing({
     : "Take a look at the lesson guide below:";
 
   const titleLower = lessonTitle.toLowerCase();
+  const subMatch = lessonTitle.match(/Chapter\s*(\d+)[\-\.](\d+)/i);
+  const chapter = subMatch ? parseInt(subMatch[1]) : chapterNumber;
+  const lesson = subMatch ? parseInt(subMatch[2]) : 1;
+
   const hasBiz = instructor.config.hasCustomBusiness && instructor.config.businessName;
   const bizName = instructor.config.businessName;
   const bizIndustry = instructor.config.industry || "local business";
   const bizOffer = instructor.config.primaryOffer || "core services";
 
-  // Lesson 1: Fundamentals & Funnel
-  if (chapterNumber === 1 && (titleLower.includes("fundamental") || titleLower.includes("flywheel") || !titleLower.includes("goal"))) {
-    return `Welcome future marketers! Today we will be doing a deep dive into understanding marketing fundamentals. I'm your instructor ${instructor.name}, and I am so glad you're here today. Let's get started.
+  if (chapter === 1) {
+    if (lesson === 1 || titleLower.includes("customer journey")) {
+      return `Welcome future marketers! I'm your instructor ${instructor.name}, and I'm excited to guide you through your first foundational module at Krechet Academy.
 
-${lookDirective} Think of the marketing funnel like building a relationship: you don't ask someone to marry you on the first date, and you don't ask someone who just discovered your brand to buy your most expensive offer immediately. You build trust step by step:
+${lookDirective} Before spending a single dollar on marketing or tweaking a website, you must understand how digital traffic actually turns into paying customers.
 
 Section 1: The Growth Funnel — Notice the 3 stages:
-• TOFU (Top of Funnel - Awareness): Introducing your brand to people who don't know you yet through organic search, short videos, or helpful articles.
-• MOFU (Middle of Funnel - Consideration): Building trust with reviews, case studies, and email guides.
-• BOFU (Bottom of Funnel - Conversion): High-intent searches where people are ready to buy today.
+• TOFU (Top of Funnel - Awareness): Cold audiences who don't know your business exists yet.
+• MOFU (Middle of Funnel - Consideration): Problem-aware prospects researching options, reading reviews, and checking ingredients or pricing.
+• BOFU (Bottom of Funnel - Conversion): High-intent prospects ready to purchase right now.
 
-Section 2: Key Financial Metrics & The Golden Rule —
-• CAC (Customer Acquisition Cost): Total marketing spend ÷ new customers acquired.
-• LTV (Lifetime Value): What a customer spends with you over their entire relationship.
-• The Golden Rule: Your customer lifetime value must be at least 3x your acquisition cost ($LTV / CAC > 3.0$) so your business has healthy profit after overhead and payroll.
-
-Common Mistake to Avoid:
-Spending $1,000 on ads that point to a slow, confusing homepage with no clear phone number or call-to-action. Always make sure your landing page works before you spend money on traffic!
-
-${hasBiz ? `For your business, **${bizName}** (${bizIndustry}), this means knowing what a new customer for ${bizOffer} is worth before spending ad dollars.\n\n` : ""}Now, looking at the guide on your right:
-Imagine an agency spends $1,000 on ads and gets 20 new customers. But each customer only spends $35 one time and never comes back. What is their CAC, what is their LTV-to-CAC ratio, and what mistake did they make?`;
-  }
-
-  // Lesson 2: Marketing Goals & KPIs
-  if (chapterNumber === 1 || titleLower.includes("goal") || titleLower.includes("kpi")) {
-    return `Welcome future marketers! Today we're doing a deep dive into setting marketing goals and measurable KPIs. I'm your instructor ${instructor.name}, and I'm really glad you're here today. Let's get started.
-
-${lookDirective} In marketing, hope is not a strategy. We never invest time or money without clear, measurable targets:
-
-Section 1: The SMART Goal Framework —
-Notice how every solid goal is Specific, Measurable, Achievable, Relevant, and Time-Bound. For example: "Generate 25 qualified consultations in the next 30 days" instead of just "I want more sales."
-
-Section 2: Channel-Specific KPIs —
-• SEO: Organic search clicks and qualified website inquiries.
-• Google Search Ads: Cost Per Click (CPC), Quality Score, and conversion rate.
-• Paid Social: Hook rate, Cost Per Lead (CPL), and Return on Ad Spend (ROAS).
+Section 2: The 97/3 Universal Rule —
+At any given moment in any market:
+• Only 3% of people are actively in "Buy Now" mode.
+• The other 97% are problem-aware, browsing, or not ready yet.
 
 Common Mistake to Avoid:
-Getting distracted by vanity metrics like Instagram likes or views. Likes don't pay business rent or team salaries—revenue and qualified leads do!
+Driving cold traffic directly to a bare checkout page with a generic "Buy Now" button. Shouting "Buy Now" at someone who just discovered you is like proposing marriage on the first date—it produces an 85%+ bounce rate and burns your budget!
 
-${hasBiz ? `For **${bizName}**, our primary focus is generating real paying customers for ${bizOffer}.\n\n` : ""}Looking at the SMART framework and KPI guide on your right:
-If a business owner tells you, "My marketing goal this month is just to get 10,000 followers and go viral," how would you guide them toward a real SMART goal and a revenue-tied KPI instead?`;
-  }
+${hasBiz ? `For **${bizName}** (${bizIndustry}), this means nurturing local prospects before pushing for ${bizOffer}.\n\n` : ""}Now, looking at Section 2 on your right:
+Why is driving cold traffic directly to a "Buy Now" checkout page like proposing on the first date, and what should a smart marketer do instead?`;
+    }
 
-  // Lesson 3: Google Ads Hierarchy & Quality Score
-  if (chapterNumber === 2 && (titleLower.includes("structure") || titleLower.includes("hierarchy") || !titleLower.includes("match"))) {
-    return `Welcome future marketers! Today we're diving into Google Search Ads and how the auction actually works. I'm your instructor ${instructor.name}, and I'm excited to walk you through this. Let's get started.
+    if (lesson === 2 || titleLower.includes("teardown") || titleLower.includes("ethical ai mapping")) {
+      return `Welcome back! Today we're doing our Day 1 teardown of Jenny's Artisan Java & Roastery in Morgantown, WV. I'm your instructor ${instructor.name}. Let's get to work.
 
-${lookDirective} Google Ads isn't a lottery or a guessing game—it's a mathematical auction where relevance wins discounts:
+${lookDirective} In this module, we dissect why Jenny's first marketing campaign lost money, and how to use AI as your research intern without letting it write robotic nonsense:
 
-Section 1: The 3-Tier Hierarchy —
-• Campaign Level: Sets your daily budget, location targeting, and bidding strategy.
-• Ad Group Level: Groups keywords into one tight theme (for example, "Emergency Plumber" separate from "Bathroom Remodeling").
-• Ad & Asset Level: Headlines and descriptions that directly match what the searcher typed.
+Section 1: Real-World Teardown (Jenny's Artisan Java) —
+Jenny ran $500 of Facebook ads driving cold traffic to a raw product page titled "Coffee Beans For Sale — $18.50". 3,400 visitors arrived, but 2,860 bounced within 4 seconds! She got only 12 sales. Why? Because she completely skipped the Awareness (TOFU) and Consideration (MOFU) stages. Cold visitors had no idea why her small-batch coffee was worth $18.50 when grocery store coffee is $8.99.
 
-Section 2: The Quality Score Formula —
-Take a look at the auction formula in Section 2:
-$$CPC = \\frac{AdRank_{competitor}}{Your\\,Quality\\,Score} + \\$0.01$$
-Because Quality Score is in the denominator, having a high score (8 to 10 out of 10) gives you up to a 50% discount on every single click! Google grades your score on click-through rate, ad relevance, and landing page experience.
+Section 2: The Golden Prompt Framework (AI is the Intern, You are the Director) —
+Raw AI copy is stuffed with clichés like "In today's fast-paced digital landscape, coffee plays a pivotal role...". To get world-class work from AI, you must provide 3 pillars:
+1. Role: Who the AI acts as.
+2. Context: Jenny's small-batch roastery in Morgantown, WV.
+3. Strict Constraints: Explicitly forbid generic buzzwords ('game-changer', 'elevate', 'unleash', 'pivotal').
+
+Section 3: The Human Audit Checklist —
+Always Fact-Check, Strip Clichés, and Verify Reality before publishing anything.
+
+Now, looking at Sections 1 and 2 on your right:
+What was the primary flaw in Jenny's funnel that caused 84% of her visitors to bounce, and how do strict negative constraints prevent AI from generating fluffy marketing clichés?`;
+    }
+
+    if (lesson === 3 || titleLower.includes("interactive funnel") || titleLower.includes("leak detection")) {
+      return `Welcome to Day 1's hands-on simulation! I'm ${instructor.name}. Today you are inspecting Jenny's live account inside our simulator.
+
+${lookDirective} Open Jenny's client dashboard from her header above. Look at her live attribution signals:
+• Total Sessions: ~3,400 visits.
+• Bounce Rate: 84% (Warning: over 70% indicates a severe disconnect between ad promise and page reality).
+• Average Session Duration: under 12 seconds.
+• Conversion Rate: 2.1%.
+
+Your mission today is to locate the exact drop-off point where her revenue is leaking.
+
+Looking at Jenny's live numbers:
+Is Jenny's primary growth bottleneck a lack of traffic volume, or is her landing page failing to convert the traffic she already has?`;
+    }
+
+    if (lesson === 4 || titleLower.includes("unit economics") || titleLower.includes("math of profitability")) {
+      return `Welcome to Day 2! Today we tackle unit economics. I'm ${instructor.name}. Marketing without math is just guessing with somebody else's money.
+
+${lookDirective} Before spending a single dollar on ads, you must master the 4 essential financial numbers:
+
+Section 1: The 4 Essential Numbers —
+1. Average Order Value (AOV): Total Revenue ÷ Total Orders (Jenny's basket: $42.50).
+2. Gross Profit Margin (%): (Revenue - Cost of Goods Sold) ÷ Revenue (Jenny's margin: 62%).
+3. Customer Acquisition Cost (CAC): Total Ad Spend ÷ Total New Customers Acquired.
+4. Customer Lifetime Value (LTV): AOV × Repeat Frequency × Lifespan.
+
+Section 2: The Golden Ratio ($LTV / CAC > 3.0$) —
+• Under 1.0: You lose money on every order.
+• 1.0 - 2.0: High risk, barely covering operational overhead.
+• 3.0 or higher: The gold standard of profitable, sustainable growth.
+
+Section 3: Why ROAS Can Be Deceptive —
+A "3.0 ROAS" sounds great, but if your product has a 20% margin, you lose $40 on every $100 spent! Never optimize for revenue alone; optimize for contribution profit.
+
+Now, looking at Section 1 and 2 on your right:
+If an agency spends $1,000 on ads and acquires 20 new customers, what is their CAC, and why is a 3.0 ROAS dangerous if a business only has a 20% gross margin?`;
+    }
+
+    if (lesson === 5 || titleLower.includes("coffee unit economics") || titleLower.includes("ai margin")) {
+      return `Welcome to Day 2's teardown! I'm ${instructor.name}. Let's dissect Jenny's exact bag economics and learn how to use AI as a financial calculator without falling for AI calculation errors.
+
+${lookDirective} Look at Section 1 on your right:
+• Single Bag Retail Price: $18.50.
+• Cost of Goods Sold (COGS): Green beans ($3.80) + Roasting fuel ($0.90) + Valve foil bag ($2.30) = $7.00 total COGS.
+• Gross Profit per Bag: $18.50 - $7.00 = $11.50 (62% gross margin).
+• Typical Customer Basket: 2.3 bags = $42.50 AOV.
+• Fulfillment & Shipping Overhead: $8.35 per box.
+• Net Contribution Margin: $42.50 × 62% ($26.35) - $8.35 = $18.00 contribution profit!
+
+This $18.00 is Jenny's break-even acquisition ceiling. If she spends $18.01 on ads to get an order, she loses money.
+
+Looking at Jenny's basket math on your right:
+After subtracting COGS and shipping box overhead, what is Jenny's net contribution profit per basket, and why does this number represent her absolute break-even ceiling for ad spend?`;
+    }
+
+    if (lesson === 6 || titleLower.includes("break-even cpa")) {
+      return `Welcome to Day 2's practical lab! I'm ${instructor.name}. Today you are calculating Jenny's maximum allowable ad spend.
+
+${lookDirective} Open the Break-Even CPA Calculator on your right. Enter Jenny's basket AOV ($42.50), her 62% gross margin, and her $8.35 fulfillment cost.
+
+Notice how her Maximum Break-Even CPA comes out to exactly $18.00. To run a healthy agency campaign, we set her Target CPA at $12.00, preserving $6.00 of net cash profit on every order.
+
+Looking at the calculator:
+What is Jenny's maximum break-even CPA, and what happens to her cash flow if an agency bids a $22.00 CPA?`;
+    }
+
+    if (lesson === 7 || titleLower.includes("client discovery") || titleLower.includes("ideal customer")) {
+      return `Welcome to Day 3! Today we master Client Discovery and Ideal Customer Profiles (ICP). I'm ${instructor.name}.
+
+${lookDirective} In marketing, speaking to "everyone" means speaking to no one. You must define an exact ICP:
+
+Section 1: Demographics vs Psychographics —
+Demographics tell you who they are (Age: 28-42, Morgantown WV). Psychographics tell you *why they buy* (Tired of bitter, stale 6-month-old grocery store beans; demands 48-hour roast date transparency).
+
+Meet Marcus: A remote software engineer in Morgantown who brews pour-over coffee every morning using a Chemex. He gladly pays $18.50 for fresh beans stamped with a roast date.
+
+Looking at Marcus's profile on your right:
+Why is targeting "anyone who drinks coffee" a recipe for high ad costs, and what is Marcus's primary emotional frustration with supermarket coffee?`;
+    }
+
+    if (lesson === 8 || titleLower.includes("high-value") || titleLower.includes("lazy questions")) {
+      return `Welcome to Day 3's teardown! I'm ${instructor.name}. Today we examine the difference between lazy agency questions and high-value strategic discovery.
+
+${lookDirective} Look at Section 1 on your right:
+• Lazy Agency Question: "What are your marketing goals?" (Produces generic answers like 'more sales').
+• High-Value Strategic Question: "What is your current roasting capacity, how many repeat bags does an average customer buy in 6 months, and what is your return on ad spend break-even?"
+
+When prompting AI to brainstorm customer objections, always verify the output against real customer support emails.
+
+Looking at the comparison in Section 1:
+Why does asking diagnostic operational questions build instant client trust, while generic checklist questions make you look like an inexperienced rookie?`;
+    }
+
+    if (lesson === 9 || titleLower.includes("client inquiry portal") || titleLower.includes("message jenny")) {
+      return `Welcome to Day 3's live simulation! Founder Jenny Miller is at her roastery in Morgantown, and you now have direct access to her via the Client Inquiry Portal in her header above.
+
+${lookDirective} Your mission is to interview Jenny, ask high-value discovery questions regarding her roasting capacity, bean sources, and fulfillment constraints, and earn +5 Client Rapport.
+
+Open the Client Inquiry Portal:
+What specific operational question did you ask Jenny, and what did she tell you about her weekly roast schedule?`;
+    }
+
+    if (lesson === 10 || titleLower.includes("5-second test") || titleLower.includes("clarity beats cleverness")) {
+      return `Welcome to Day 4! Today we tackle Hero Headline Psychology and the 5-Second Test. I'm ${instructor.name}.
+
+${lookDirective} When a visitor lands on a webpage, you have 5 seconds before they hit the back button. Your hero section must answer 3 questions instantly:
+1. What is this?
+2. Why should I care?
+3. What do I do next?
 
 Common Mistake to Avoid:
-Dumping 50 unrelated keywords into a single ad group. When someone searches for "coffee subscription" and your ad headline says "espresso machine repair," they bounce, your Quality Score drops, and Google charges you double for every click.
+Writing clever, poetic slogans like "Wake Up and Smell the Magic." A poetic slogan forces visitors to think. Clarity always beats cleverness!
 
-${hasBiz ? `For **${bizName}**, keeping your ad groups tightly focused on ${bizOffer} ensures you get the lowest possible cost per click.\n\n` : ""}Looking at Sections 1 and 2 on your right:
-If a local business puts three completely different services into one single ad group, what happens to their Ad Relevance and Quality Score, and how does that affect their Cost Per Click?`;
+Looking at the 5-Second Rule on your right:
+Why does a clever pun confuse cold visitors and cause immediate bounces, while a clear headline wins conversions?`;
+    }
+
+    if (lesson === 11 || titleLower.includes("teardown of 'coffee beans for sale'")) {
+      return `Welcome to Day 4's teardown! I'm ${instructor.name}. Let's examine Jenny's baseline headline vs our high-converting challenger copy.
+
+${lookDirective} Look at Section 1 on your right:
+• Control Headline: "Coffee Beans For Sale — Buy Now" (Zero hook, zero differentiation, sounds like a commodity).
+• Challenger Headline: "Small-Batch Artisan Coffee Roasted Fresh & Shipped to Your Door — 15% Off Your First Batch".
+
+Notice how the challenger highlights freshness (roasted fresh), delivery convenience (shipped to your door), and a clear incentive (15% off).
+
+Looking at the comparison on your right:
+What specific value triggers in the challenger headline solve Marcus's fear of stale beans and motivate him to click?`;
+    }
+
+    if (lesson === 12 || titleLower.includes("a/b test headline lab") || titleLower.includes("visual qa")) {
+      return `Welcome to Day 4's interactive lab! Open the A/B Test Headline Workshop.
+
+${lookDirective} You will configure Version A (Control) against your new challenger Version B. Use the Live Visual QA preview to verify that your headline and 15% discount CTA render cleanly on both desktop and mobile screens before launching traffic.
+
+Looking at your preview in the workshop:
+What headline and CTA did you enter for Version B, and how does your visual preview render across desktop and mobile devices?`;
+    }
+
+    if (lesson === 13 || titleLower.includes("how a/b testing works") || titleLower.includes("statistical significance")) {
+      return `Welcome to Day 5! Today we explore conversion rate optimization and statistical confidence. I'm ${instructor.name}.
+
+${lookDirective} Never declare an A/B test winner after 10 clicks. That's gambling, not science:
+
+Section 1: Statistical Confidence ($p < 0.05$) —
+A test is only valid when there is less than a 5% probability that the result occurred due to random chance.
+
+Section 2: The Sample Size Trap —
+Stopping a test after 2 days because one headline had 3 sales and the other had 1 is a classic amateur trap called a false positive. You need statistical volume before reallocating client budget.
+
+Looking at Section 1 on your right:
+Why is stopping an A/B test after only 50 visits dangerous, and what does p < 0.05 actually mean for business decision-making?`;
+    }
+
+    if (lesson === 14 || titleLower.includes("sample size traps")) {
+      return `Welcome to Day 5's analytical teardown! I'm ${instructor.name}. Today we audit AI-generated conversion summaries.
+
+${lookDirective} Look at Section 1 on your right:
+Often, generative AI will examine a small dataset with 12 conversions and confidently declare: "Version B is 99% likely to win!" This is a mathematical hallucination caused by ignoring sample size variance. As Growth Director, you must enforce statistical confidence before changing live pages.
+
+Looking at the teardown on your right:
+When an AI tool claims a winner based on a tiny sample size, what mathematical questions must you ask before accepting the recommendation?`;
+    }
+
+    if (lesson === 15 || titleLower.includes("deploy the winning headline") || titleLower.includes("certification audit")) {
+      return `Congratulations on reaching Friday! I'm ${instructor.name}. Today you complete your Week 1 Level 1 Capstone.
+
+${lookDirective} Open the A/B Test Workshop. Review your 50/50 split results showing the +28.6% conversion rate lift. Click "Deploy Winner to Client Account" to promote Version B to 100% live traffic!
+
+Notice how deploying this high-converting headline triggers an immediate ripple effect:
+• Google Ads Quality Score jumps from 4/10 to 8/10.
+• Cost Per Click drops from $2.85 to $1.42 (a 50% discount!).
+• Jenny's annual projected net profit increases by +$12,450.
+
+Looking at your deployed results:
+What happened to Jenny's projected Quality Score and CPC when you deployed the winning headline, and are you ready to take your Week 1 Level 1 Certification Audit?`;
+    }
   }
 
-  // Lesson 4: Match Types & Negative Keyword Shields
-  if (chapterNumber === 2 || titleLower.includes("match") || titleLower.includes("negative")) {
-    return `Welcome future marketers! Today we're diving into Google Ads keyword match types and budget protection. I'm your instructor ${instructor.name}, and I'm glad you're here. Let's get started.
+  // Google Ads Account Hierarchy (Week 2/3)
+  if (chapter === 2 || chapter === 3) {
+    if (titleLower.includes("match") || titleLower.includes("negative")) {
+      return `Welcome! Today we're diving into keyword match types and negative keyword budget protection. I'm ${instructor.name}.
 
-${lookDirective} The number one reason small businesses lose money on Google Ads is using the wrong keyword match types:
-
-Section 1: The 3 Match Types —
-• Broad Match (e.g., coffee beans): Shows your ad on anything Google thinks is related—including free images, job openings, or YouTube tutorials. High risk of wasted spend!
-• Phrase Match (e.g., "organic coffee beans"): Shows your ad when the search contains your core phrase in that order.
-• Exact Match (e.g., [morgantown coffee roaster]): Shows your ad ONLY when the search matches your exact intent.
+${lookDirective} The #1 reason small businesses lose money on Google Ads is improper match type selection:
+• Broad Match (coffee beans): Matches anything Google deems related—including free images or repair tutorials.
+• Phrase Match ("organic coffee beans"): Matches searches containing the core phrase in order.
+• Exact Match ([morgantown coffee roaster]): Matches ONLY high-intent buying searches.
 
 Section 2: Negative Keyword Shields —
-Notice the negative keyword list: words like -free, -cheap, -jobs, -salary, -diy, -youtube. Adding these prevents you from paying for clicks from people who are just looking for free advice or a job instead of hiring you.
+Adding negatives like -free, -cheap, -jobs, -salary prevents budget bleed on non-buying clicks.
 
-Common Mistake to Avoid:
-Letting ads run for weeks without checking the Search Terms report. You should review what people actually typed at least once a week to add new negative keywords.
+Looking at the guide on your right:
+If a local business runs all their keywords on Broad Match, why does that waste their budget so quickly, and what negative keywords should they add immediately?`;
+    }
 
-${hasBiz ? `For **${bizName}**, negative keywords make sure you never pay for people looking for free DIY tutorials.\n\n` : ""}Looking at the guide on your right:
-If a local business with a $1,500 monthly budget runs all their keywords on Broad Match, why does that waste their budget so quickly, and what match types and negative keywords would you recommend they use instead?`;
+    return `Welcome! Today we're diving into Google Search Ads and the Quality Score auction. I'm ${instructor.name}.
+
+${lookDirective} Google Ads is a mathematical auction where relevance earns discounts:
+• Campaign Level: Sets daily budget, location geo-targeting, and bidding strategy.
+• Ad Group Level: Groups keywords around a single theme.
+• Ad Level: Headlines and descriptions matching search queries.
+
+Section 2: The Quality Score Formula —
+$$CPC = \\frac{AdRank_{competitor}}{Your\\,Quality\\,Score} + \\$0.01$$
+A high Quality Score (8 to 10) discounts your Cost Per Click by up to 50%!
+
+Looking at Sections 1 and 2 on your right:
+If an advertiser puts 3 completely different services into one single ad group, what happens to their Ad Relevance and Quality Score, and how does that impact their Cost Per Click?`;
   }
 
-  // Lesson 5: SEO Newspaper Rule
-  if (chapterNumber === 3 || titleLower.includes("seo") || titleLower.includes("newspaper") || titleLower.includes("on-page")) {
-    return `Welcome future marketers! Today we're doing a deep dive into on-page SEO and how search engines read web pages. I'm your instructor ${instructor.name}, and I'm so glad you're here today. Let's get started.
+  return `Welcome to our interactive classroom! I'm ${instructor.name}, your instructor at Krechet Academy.
 
-${lookDirective} Search engine crawlers can't see colors or pretty layouts. They read your webpage structure just like a reader skims a printed newspaper:
+${lookDirective} Let's explore the core concepts outlined in today's guide. Review the sections, key frameworks, and common mistakes to avoid.
 
-Section 1: The Newspaper Rule for On-Page Tags —
-• Title Tag (The Newspaper Front Header): 50-60 characters. Must put your primary service and city right at the front (e.g., 'Organic Coffee Roaster Morgantown | Jenny\\'s Artisan Java').
-• H1 Headline (The Front-Page Banner): Exactly ONE per page. Clearly states what you do and where you do it.
-• H2 & H3 Subheadings (Section Topics): Organizes your page so crawlers and visitors can scan topics easily.
-• Meta Description (The Short Preview): 150-160 characters that acts like your search ad copy to convince people to click.
-
-Section 2: Image Alt Text —
-Helps search engines understand what is in your photos, while also helping visually impaired visitors using screen readers.
-
-Common Mistake to Avoid:
-Leaving your H1 headline as "Welcome to Our Website" or "Home". A search crawler has no idea what you sell or what city you're in, so your website stays invisible in search results!
-
-${hasBiz ? `For **${bizName}**, your Title Tag and H1 must clearly announce ${bizOffer} in ${instructor.config.location || 'your city'}.\n\n` : ""}Looking at the Newspaper Rule on your right:
-A local coffee roaster named Jenny has amazing organic coffee beans, but her website Title Tag says "Home - Welcome" and her H1 says "Welcome to Our Site". Why is Google ignoring her, and how would you rewrite her Title Tag and H1 right now?`;
-  }
-
-  // Lesson 6: Ethical AI Prompting
-  if (chapterNumber === 4 || titleLower.includes("prompt") || titleLower.includes("ai")) {
-    return `Welcome future marketers! Today we're diving into ethical AI prompt engineering for marketing. I'm your instructor ${instructor.name}, and I'm excited to show you this. Let's get started.
-
-${lookDirective} Think of AI like a fast, eager intern: if you give it vague instructions, it will give you generic fluff. But if you give it clear constraints, it can save you hours of work every week:
-
-Section 1: The 4-Part Prompt Formula (Works with Free ChatGPT or Gemini) —
-1. Role: Tell AI who it is ("Act as a direct-response copywriter for local businesses").
-2. Context: Provide specific business details, target audience, and your unique selling points.
-3. Strict Constraints: Set exact rules ("Write 5 Google Ads headlines under 30 characters each. Do not use exclamation marks").
-4. Desired Emotion & Goal: Focus on customer trust, convenience, or urgency.
-
-Section 2: Reusable Prompt Templates —
-Notice the prompt templates for generating negative keyword ideas and creating 30-second social video hooks.
-
-Common Mistake to Avoid:
-Publishing robotic, unedited AI text that sounds generic. Search engines reward genuine, helpful content, and customers can spot lazy AI writing instantly. Always review and edit AI output before using it!
-
-${hasBiz ? `For **${bizName}**, you can use this 4-part formula with free tools like Gemini to draft ad headlines for ${bizOffer}.\n\n` : ""}Looking at the 4-part formula on your right:
-Why do most marketers get boring, robotic answers from AI, and how would you structure a prompt using the 4 parts to get 5 punchy Google Ads headlines under 30 characters for a local business?`;
-  }
-
-  // Lesson 7: Speed-to-Lead Automation with Make.com
-  if (chapterNumber === 5 || titleLower.includes("make") || titleLower.includes("speed") || titleLower.includes("automation")) {
-    return `Welcome future marketers! Today we're exploring speed-to-lead automation using Make.com. I'm your instructor ${instructor.name}, and I'm really glad you're here. Let's get started.
-
-${lookDirective} Getting website leads is great, but letting them sit in an unread inbox for hours wastes your marketing budget:
-
-Section 1: The Power of Speed-to-Lead —
-Look at the research data in Section 1: contacting a new lead within 5 minutes makes you 21 times more likely to close them compared to waiting 30 minutes! When people submit a form, they are actively looking for help right now.
-
-Section 2: The 3-Step Automation Blueprint (Free on Make.com) —
-1. Webhook Module: Instantly catches new form submissions from your website.
-2. AI Intent Filter: Reads the inquiry to categorize what the customer needs.
-3. Instant Notification: Sends an immediate text alert to the business owner and an instant personalized email to the customer in under 60 seconds.
-
-Section 3: The Real-World Value —
-Business owners will happily pay $500 to $1,500 for someone to set this up because it stops lost leads and pays for itself with the very first saved customer.
-
-${hasBiz ? `For **${bizName}**, this automation guarantees that anyone inquiring about ${bizOffer} gets an instant, helpful response.\n\n` : ""}Looking at the guide on your right:
-Why does responding in under 60 seconds make marketing campaigns so much more profitable, and what are the 3 simple steps in our automation blueprint that handle this automatically?`;
-  }
-
-  // Lesson 8: Capstone & SLA
-  return `Welcome future marketers! Today is our comprehensive marketing audit capstone. I'm your instructor ${instructor.name}, and congratulations on making it this far. Let's get started.
-
-${lookDirective} This is where everything you've learned comes together into a professional marketing audit:
-
-Section 1: The 4-Pillar Audit Framework —
-1. On-Page SEO: Title tags, H1 structure, and the Newspaper Rule.
-2. Paid Search Defense: Single-theme ad groups, match types, and negative keywords.
-3. Lead Conversion & Speed: Sub-60 second response automations.
-4. Marketing Economics: CAC, LTV, and ensuring healthy profit margins.
-
-Section 2: Clear Client Agreements (SLA) —
-How to set realistic expectations with clients regarding response times, monthly reporting, and performance goals so everyone is aligned.
-
-Section 3: Your Practical Audit —
-Putting these steps into action to audit a real website and deliver clear, actionable recommendations.
-
-Looking at the 4 pillars on your right:
-When you're auditing a new client or business website for the first time, which pillar do you inspect first, and how do you explain the value of fixing it to the business owner?`;
+When you're ready, let me know what questions you have or how you would apply this framework to your marketing strategy!`;
 }
 
 export function SocraticChatClassroom({
@@ -463,7 +773,7 @@ export function SocraticChatClassroom({
   const storageKey = useMemo(() => {
     const idKey = tutorialId ? `tut_${tutorialId}` : `ch_${chapterNumber}`;
     const cleanTitle = lessonTitle.toLowerCase().replace(/[^a-z0-9]/g, "_").slice(0, 40);
-    return `krechet_socratic_memory_${idKey}_${cleanTitle}`;
+    return `krechet_socratic_memory_v4_${idKey}_${cleanTitle}`;
   }, [tutorialId, chapterNumber, lessonTitle]);
 
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -541,12 +851,12 @@ export function SocraticChatClassroom({
     }
   };
 
-  // Toggle Gemini Live bidirectional voice call
+  // Toggle Gemini Live bidirectional voice session
   const handleToggleGeminiLive = async () => {
     if (geminiLive.isConnected) {
       geminiLive.endSession();
       toast({
-        title: "Live Voice Call Ended 📞",
+        title: "Voice Discussion Ended",
         description: "Returned to standard chat mode."
       });
       return;
@@ -557,8 +867,8 @@ export function SocraticChatClassroom({
 
     try {
       toast({
-        title: "Connecting to Gemini Live... 🎙️",
-        description: `Starting real-time bidirectional call with ${instructor.name}.`
+        title: "Connecting to Voice Office Hours... 🎙️",
+        description: `Starting real-time bidirectional voice discussion with ${instructor.name}.`
       });
 
       const pendingTargets = coreTargets.filter(t => !achievedTargetIds.includes(t.id));
@@ -581,7 +891,7 @@ CURRICULUM COMPETENCY TARGETS TO ASSESS:
 ${coreTargets.map((t, idx) => `${idx + 1}. [${achievedTargetIds.includes(t.id) ? "COMPLETED" : "PENDING"}] ${t.label}: ${t.description}`).join("\n")}
 ${hasHistory ? `\nPREVIOUS CONVERSATION CONTEXT SO FAR:\n${messages.slice(-6).map(m => `${m.sender === "instructor" ? instructor.name : "Student"}: ${m.text}`).join("\n")}\n` : ""}
 CRITICAL LIVE VOICE TEACHING GUIDELINES:
-1. Speak warmly, concisely, and naturally like an encouraging senior mentor on a real audio call. Keep every voice turn to 1-3 spoken sentences. Avoid monologues.
+1. Speak warmly, concisely, and naturally like an encouraging senior mentor in live audio office hours. Keep every voice turn to 1-3 spoken sentences. Avoid monologues.
 2. Direct the student to look at specific sections, formulas, and warnings in their guide on the right side (e.g., 'Look at Section 2 on your right...', 'Notice the formula for CAC...').
 3. No aviation terminology (never say cockpit, copilot, runway, checkride, comms).
 4. Do not use the phrase "master class" or "master" as a level label.
@@ -590,7 +900,7 @@ CRITICAL LIVE VOICE TEACHING GUIDELINES:
 
       const initialPrompt = hasHistory
         ? `Hi ${instructor.name}! I'm returning to our live session on '${lessonTitle}'. We've already completed ${achievedTargetIds.length} of ${coreTargets.length} milestones. Please welcome me back warmly in 1 or 2 concise spoken sentences and let's pick up where we left off!`
-        : `Hi ${instructor.name}! The live call just connected. Please greet me warmly in 1 or 2 spoken sentences, welcome me to our lesson on '${lessonTitle}', and ask what questions or thoughts I have to kick off!`;
+        : `Hi ${instructor.name}! Our live voice discussion just connected. Please greet me warmly in 1 or 2 spoken sentences, welcome me to our lesson on '${lessonTitle}', and ask what questions or thoughts I have to kick off!`;
 
       await geminiLive.startSession({
         voiceName: geminiVoice,
@@ -641,16 +951,16 @@ CRITICAL LIVE VOICE TEACHING GUIDELINES:
         },
         onError: (err) => {
           toast({
-            title: "Live Call Error",
-            description: err.message || "Failed to maintain Gemini Live session.",
+            title: "Voice Discussion Error",
+            description: err.message || "Failed to maintain voice session.",
             variant: "destructive"
           });
         }
       });
 
       toast({
-        title: "Live Voice Call Connected! 🟢",
-        description: `You are now talking live with ${instructor.name}. Speak into your microphone anytime.`
+        title: "Voice Discussion Connected! 🟢",
+        description: `You are now in a live voice discussion with ${instructor.name}. Speak into your microphone anytime.`
       });
     } catch (err: any) {
       toast({
@@ -1013,24 +1323,24 @@ Keep your response natural, conversational, and punchy (2-3 sentences max).`,
                 ? "bg-rose-600 hover:bg-rose-500 text-white animate-pulse"
                 : "bg-emerald-600 hover:bg-emerald-500 text-white"
             }`}
-            title="Real-time zero-latency bidirectional voice call with instructor"
+            title="Real-time zero-latency bidirectional voice discussion with instructor"
           >
             {geminiLive.isConnecting ? (
               <>
                 <Radio className="h-3.5 w-3.5 shrink-0 animate-spin" />
                 <span className="hidden sm:inline">Connecting...</span>
-                <span className="sm:hidden">Calling</span>
+                <span className="sm:hidden">Connecting</span>
               </>
             ) : geminiLive.isConnected ? (
               <>
-                <PhoneOff className="h-3.5 w-3.5 shrink-0" />
-                <span className="hidden sm:inline">End Live Call</span>
-                <span className="sm:hidden">End</span>
+                <Square className="h-3.5 w-3.5 shrink-0 fill-current" />
+                <span className="hidden sm:inline">End Voice Session</span>
+                <span className="sm:hidden">End Voice</span>
               </>
             ) : (
               <>
-                <PhoneCall className="h-3.5 w-3.5 shrink-0" />
-                <span className="hidden sm:inline">Talk Live (Gemini Live)</span>
+                <Headphones className="h-3.5 w-3.5 shrink-0" />
+                <span className="hidden sm:inline">Voice Discussion</span>
                 <span className="sm:hidden">Talk Live</span>
               </>
             )}
@@ -1117,7 +1427,7 @@ Keep your response natural, conversational, and punchy (2-3 sentences max).`,
 
       {/* Interactive Chat Messages Thread */}
       <CardContent className="p-4 space-y-4">
-        {/* Active Gemini Live Bidirectional Call Status Banner */}
+        {/* Active Gemini Live Bidirectional Voice Status Banner */}
         {geminiLive.isConnected && (
           <div className="bg-gradient-to-r from-emerald-950/80 via-slate-900 to-emerald-950/80 border border-emerald-500/50 p-3 rounded-xl flex items-center justify-between gap-3 text-xs shadow-lg animate-in fade-in duration-200">
             <div className="flex items-center gap-2.5 min-w-0">
@@ -1127,10 +1437,10 @@ Keep your response natural, conversational, and punchy (2-3 sentences max).`,
               </span>
               <div className="min-w-0">
                 <div className="font-semibold text-emerald-400 text-xs flex items-center gap-1.5 flex-wrap">
-                  <span>● LIVE CALL ACTIVE — {instructor.name}</span>
+                  <span>● LIVE VOICE SESSION ACTIVE — {instructor.name}</span>
                   {geminiLive.isAiSpeaking && (
                     <Badge variant="outline" className="text-[9px] bg-purple-500/20 text-purple-300 border-purple-500/30 animate-pulse">
-                      Sarah Speaking...
+                      Instructor Speaking...
                     </Badge>
                   )}
                 </div>
@@ -1167,8 +1477,8 @@ Keep your response natural, conversational, and punchy (2-3 sentences max).`,
                 onClick={geminiLive.endSession}
                 className="h-8 px-2.5 text-[11px] bg-rose-600 hover:bg-rose-500 text-white font-medium shadow"
               >
-                <PhoneOff className="h-3 w-3 mr-1" />
-                <span>End Call</span>
+                <Square className="h-3 w-3 mr-1 fill-current" />
+                <span>End Voice Session</span>
               </Button>
             </div>
           </div>

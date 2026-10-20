@@ -33,6 +33,7 @@ import stripeRoutes from "./routes/stripeRoutes";
 import { registerAdSimulationRoutes } from "./routes/adSimulationRoutes";
 import { registerDataVisualizationRoutes } from "./routes/dataVisualizationRoutes";
 import abTestRoutes from "./routes/abTestRoutes";
+import clientAgencyRoutes from "./routes/clientAgencyRoutes";
 import { authService } from "./services/authService";
 import { registerAICapabilitiesRoutes } from "./services/aiCapabilities";
 import { registerMicroFeedbackRoutes } from "./routes/microFeedbackRoutes";
@@ -542,7 +543,7 @@ This module is part of the **Pro & Agency Track ($199/mo)**.
 ### What You Unlock in This Module:
 * Advanced multi-channel automation architectures.
 * Client-ready enterprise SOPs, contract templates, and pitch decks.
-* Direct checkride simulation with lead agency director evaluation.
+* Direct executive audit simulation with lead agency director evaluation.
 
 > [!TIP]
 > Are you testing the platform during our Early Beta? Use promo code **BETA7** at checkout to unlock full 7-day Pro access for free!`,
@@ -1199,6 +1200,10 @@ This module is part of the **Pro & Agency Track ($199/mo)**.
   // Register A/B Test routes
   app.use('/api/ab-tests', abTestRoutes);
   console.log('A/B Test routes registered');
+
+  // Register Connected Client Agency Retainer routes
+  app.use('/api/client', clientAgencyRoutes);
+  console.log('Client Agency Retainer routes registered');
 
   // Register AI Capabilities routes
   registerAICapabilitiesRoutes(app);

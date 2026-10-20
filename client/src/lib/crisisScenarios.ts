@@ -435,10 +435,10 @@ export const CRISIS_SCENARIOS: CrisisScenario[] = [
     rewardRep: 15
   },
   {
-    id: "w4-c3-enterprise-boardroom-checkride",
+    id: "w4-c3-enterprise-boardroom-defense",
     weekNumber: 4,
     weekTitle: "Week 4: Speed-to-Lead Automation & Enterprise Growth",
-    title: "The Hostile Boardroom Checkride",
+    title: "The Hostile Boardroom Executive Audit",
     category: "executive",
     callerName: "Director Marcus Atlas",
     callerRole: "Managing Director • Krechet Media Group",

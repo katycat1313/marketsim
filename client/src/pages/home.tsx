@@ -250,23 +250,34 @@ export default function Home() {
           </div>
 
           <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
+            <Link href="/tutorials">
+              <Button 
+                size="lg" 
+                className="w-full md:w-auto font-extrabold shadow-xl shadow-amber-500/25 bg-gradient-to-r from-amber-500 to-amber-600 text-black hover:from-amber-400 hover:to-amber-500 flex items-center gap-2 cursor-pointer border border-amber-400/40"
+              >
+                <GraduationCap className="h-5 w-5 fill-current" />
+                <span>Start Week 1: Jenny's Roastery (15 Lessons) ➔</span>
+              </Button>
+            </Link>
+
             <Button 
               size="lg" 
+              variant="outline"
               onClick={() => setIsTeacherModalOpen(true)}
-              className="w-full md:w-auto font-bold shadow-lg shadow-primary/25 bg-primary text-primary-foreground hover:bg-primary/90 flex items-center gap-2 cursor-pointer"
+              className="w-full md:w-auto font-bold border-primary/30 hover:bg-primary/10 flex items-center gap-2 cursor-pointer"
             >
               <Radio className="h-4 w-4 fill-current animate-pulse text-emerald-400" />
-              <span>Launch Mission 1 Briefing (90s)</span>
+              <span>Mission 1 Briefing (90s)</span>
             </Button>
 
             <Button 
-              size="lg"
-              variant="outline"
+              size="lg" 
+              variant="ghost"
               onClick={() => setIsEarlyBirdOpen(true)}
-              className="w-full md:w-auto font-bold border-amber-500/40 text-amber-400 hover:bg-amber-500/10 flex items-center gap-2 cursor-pointer shadow-md"
+              className="w-full md:w-auto font-medium text-amber-400 hover:bg-amber-500/10 flex items-center gap-2 cursor-pointer"
             >
               <Rocket className="h-4 w-4 text-amber-400" />
-              <span>🎟️ Reserve VIP Beta (50% Off)</span>
+              <span>🎟️ VIP Beta Pass</span>
             </Button>
           </div>
         </div>

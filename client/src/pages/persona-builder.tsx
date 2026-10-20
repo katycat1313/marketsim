@@ -62,9 +62,27 @@ export default function PersonaBuilder() {
         ...data,
         interests: selectedInterests,
       });
+
+      // Sync persona to live client engine
+      try {
+        await fetch("/api/client/sync-persona", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: data.name,
+            targetLocation: data.location,
+            interests: selectedInterests,
+            primaryNeed: data.description,
+            isSynthesized: true,
+          }),
+        });
+      } catch (err) {
+        console.warn("Could not sync persona to client engine", err);
+      }
+
       toast({
-        title: "Success",
-        description: "Persona created successfully",
+        title: "Persona Created & Synced",
+        description: "Persona calibrated to client account. Ad targeting & CTR bonus active!",
       });
       navigate("/campaign-creator");
     } catch (error) {

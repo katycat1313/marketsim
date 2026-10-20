@@ -429,7 +429,7 @@ export function AITeacherLessonPanel({
               </div>
             </div>
 
-            {/* Direct Sandbox Runway Banner */}
+            {/* Direct Sandbox Launch Banner */}
             <div className="p-3.5 rounded-xl bg-secondary/50 border border-border flex items-center justify-between gap-3">
               <div className="space-y-0.5">
                 <span className="font-bold text-xs text-foreground flex items-center gap-1.5">

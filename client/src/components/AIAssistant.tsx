@@ -143,7 +143,7 @@ export default function AIAssistant({
       
       setMessages(prevMessages => [...prevMessages, assistantMessage]);
     } catch (error) {
-      console.warn("AI Assistant live request failed, using intelligent copilot engine:", error);
+      console.warn("AI Assistant live request failed, using intelligent director engine:", error);
       const fallbackContent = getSimulatedResponse(textToSend, activeMode);
       setMessages(prevMessages => [
         ...prevMessages,

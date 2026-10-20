@@ -2,7 +2,7 @@ export const content = `# Lesson 2: AI-Powered SEO Solutions & Modern Toolsets
 
 To excel in AI-powered SEO content optimization, leverage specialized tools across every phase of content creation:
 
-### 1. Krechet AI Copilot
+### 1. Krechet AI AI Strategist
 - Real-time keyword density and search intent analysis.
 - Live headline, title tag, and meta description scoring.
 - Contextual recommendations for semantic entities and internal linking.

@@ -28,6 +28,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs";
+import { LiveClientAttributionDashboard } from "@/components/LiveClientAttributionDashboard";
 import {
   Select,
   SelectContent,
@@ -584,69 +585,90 @@ export default function DataVisualizationPage() {
   // Render challenge selection
   if (!activeChallenge) {
     return (
-      <div className="container mx-auto p-6 max-w-7xl">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-[#ffd700] mb-2">Data Visualization Lab</h1>
-          <p className="text-[#f5f5f5] mb-4">Build charts and graphs to analyze marketing data and make data-driven decisions</p>
-          <Separator className="my-4 bg-[#ffd700]/20" />
+      <div className="container mx-auto p-4 md:p-6 max-w-7xl">
+        <div className="mb-6">
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground">
+            Performance Reporting & Attribution
+          </h1>
+          <p className="text-muted-foreground text-sm mt-1">
+            Track multi-channel client performance, blended unit economics, and data visualization challenges
+          </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          {challenges.map((challenge) => (
-            <Card 
-              key={challenge.id} 
-              className="bg-[#111]/60 border border-[#ffd700]/20 hover:border-[#ffd700]/50 transition-all cursor-pointer"
-              onClick={() => handleSelectChallenge(challenge.id)}
-            >
-              <CardHeader>
-                <div className="flex items-center gap-2 mb-2">
-                  <Badge variant="outline" className="bg-[#ffd700]/10 text-[#ffd700] border-[#ffd700]/30">
-                    {challenge.dataset === 'ecommerce' ? 'E-Commerce' : 
-                     challenge.dataset === 'adPerformance' ? 'Advertising' :
-                     challenge.dataset === 'customerSegments' ? 'Customer Data' : 'Marketing'}
-                  </Badge>
-                  <Badge variant="outline" className="bg-[#222] text-[#f5f5f5] border-[#444]">
-                    Level {challenge.id}
-                  </Badge>
-                </div>
-                <CardTitle className="text-[#ffd700]">{challenge.title}</CardTitle>
-                <CardDescription className="text-[#f5f5f5]/80">{challenge.description}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="text-sm text-[#f5f5f5]/70 mb-3">Objectives:</div>
-                <ul className="space-y-2 text-sm text-[#f5f5f5]">
-                  {challenge.objectives.slice(0, 2).map((objective, i) => (
-                    <li key={i} className="flex items-start">
-                      <span className="text-[#ffd700] mr-2">•</span>
-                      <span>{objective}</span>
-                    </li>
-                  ))}
-                  {challenge.objectives.length > 2 && (
-                    <li className="flex items-start text-[#f5f5f5]/50">
-                      <span className="text-[#ffd700]/50 mr-2">•</span>
-                      <span>+{challenge.objectives.length - 2} more objectives</span>
-                    </li>
-                  )}
-                </ul>
-              </CardContent>
-              <CardFooter className="flex justify-between items-center pt-2 border-t border-[#ffd700]/10">
-                <div className="text-sm text-[#f5f5f5]/60">
-                  {userAttempts?.some(a => a.scenarioId === challenge.id) ? (
-                    <span className="flex items-center">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                      Attempted
-                    </span>
-                  ) : "Not attempted"}
-                </div>
-                <Button size="sm" variant="default" className="bg-[#ffd700] text-black hover:bg-[#e6c200]">
-                  Select Challenge
-                </Button>
-              </CardFooter>
-            </Card>
-          ))}
-        </div>
+        <Tabs defaultValue="liveClient" className="w-full">
+          <TabsList className="grid w-full max-w-md grid-cols-2 mb-6">
+            <TabsTrigger value="liveClient" className="gap-2 text-xs sm:text-sm font-medium">
+              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span>Live Client Performance</span>
+            </TabsTrigger>
+            <TabsTrigger value="challenges" className="text-xs sm:text-sm font-medium">
+              <span>Skills Challenges (4)</span>
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="liveClient" className="space-y-6 pt-2">
+            <LiveClientAttributionDashboard />
+          </TabsContent>
+
+          <TabsContent value="challenges" className="space-y-6 pt-2">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+              {challenges.map((challenge) => (
+                <Card 
+                  key={challenge.id} 
+                  className="bg-card/90 border border-border/70 hover:border-primary/50 transition-all cursor-pointer shadow-sm"
+                  onClick={() => handleSelectChallenge(challenge.id)}
+                >
+                  <CardHeader>
+                    <div className="flex items-center gap-2 mb-2">
+                      <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30">
+                        {challenge.dataset === 'ecommerce' ? 'E-Commerce' : 
+                         challenge.dataset === 'adPerformance' ? 'Advertising' :
+                         challenge.dataset === 'customerSegments' ? 'Customer Data' : 'Marketing'}
+                      </Badge>
+                      <Badge variant="outline" className="bg-secondary text-foreground border-border">
+                        Level {challenge.id}
+                      </Badge>
+                    </div>
+                    <CardTitle className="text-foreground text-lg">{challenge.title}</CardTitle>
+                    <CardDescription className="text-muted-foreground text-xs">{challenge.description}</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-xs text-muted-foreground mb-2">Objectives:</div>
+                    <ul className="space-y-1.5 text-xs text-foreground">
+                      {challenge.objectives.slice(0, 2).map((objective, i) => (
+                        <li key={i} className="flex items-start">
+                          <span className="text-primary mr-2">•</span>
+                          <span>{objective}</span>
+                        </li>
+                      ))}
+                      {challenge.objectives.length > 2 && (
+                        <li className="flex items-start text-muted-foreground">
+                          <span className="text-primary/50 mr-2">•</span>
+                          <span>+{challenge.objectives.length - 2} more objectives</span>
+                        </li>
+                      )}
+                    </ul>
+                  </CardContent>
+                  <CardFooter className="flex justify-between items-center pt-2 border-t border-border/40">
+                    <div className="text-xs text-muted-foreground">
+                      {userAttempts?.some(a => a.scenarioId === challenge.id) ? (
+                        <span className="flex items-center text-emerald-500 font-medium">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
+                          Attempted
+                        </span>
+                      ) : "Not attempted"}
+                    </div>
+                    <Button size="sm" variant="default" className="text-xs">
+                      Select Challenge
+                    </Button>
+                  </CardFooter>
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
+        </Tabs>
       </div>
     );
   }

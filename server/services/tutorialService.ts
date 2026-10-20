@@ -4,6 +4,7 @@ import { fileURLToPath } from 'url';
 import { db, pool } from '../db';
 import { sql } from 'drizzle-orm';
 import { userProfiles } from '@shared/schema';
+import { week1Lessons } from '../data/tutorial/week1-lessons';
 
 export interface Tutorial {
   id: number;
@@ -70,73 +71,8 @@ export class TutorialService {
       const lesson5Content = await this.loadTutorialContent('chapter10-5-UnlockingThePowerOfAIMarketing.ts');
       const lesson6Content = await this.loadTutorialContent('chapter10-6-AIIntoAction.ts');
       const lesson7Content = await this.loadTutorialContent('chapter10-7-FutureOfAIMarketing.ts');
-    // Chapter 1: Digital Marketing Fundamentals
-    this.tutorials.push({
-      id: 1,
-      chapterNumber: 1,
-      title: "Understanding Digital Marketing Fundamentals",
-      level: "Beginner",
-      content: `# Digital Marketing Fundamentals & The Growth Flywheel
-
-Welcome to Krechet Academy. Before touching ad budgets or client campaigns, you must understand how modern digital ecosystems generate revenue.
-
-## 1. The Core Mental Model: The Growth Funnel
-Every profitable marketing system operates across 3 distinct stages:
-* **Top of Funnel (TOFU) - Awareness**: Introducing the brand to cold audiences via Organic Search (SEO), Social Ads, or Video Reels.
-* **Middle of Funnel (MOFU) - Consideration**: Educating prospects, building trust, collecting email/SMS leads, and showcasing social proof.
-* **Bottom of Funnel (BOFU) - Conversion**: High-intent search queries ('buy organic beans online', 'emergency dental clinic near me') that turn prospects into paying customers.
-
-## 2. Key Metrics You Must Master
-1. **CAC (Customer Acquisition Cost)**: Total Sales & Marketing Spend ÷ Total New Customers Acquired.
-2. **LTV (Customer Lifetime Value)**: Average Order Value × Purchase Frequency × Customer Lifespan.
-3. **The Golden Rule**: Your LTV must be at least **3x your CAC** ($LTV / CAC > 3.0$) for a business to scale profitably.
-
-## 3. The Wasted Budget Trap ⚠️
-Rookie marketers spend $1,000 on broad social ads driving traffic to a broken homepage with no clear Call-to-Action. Always build the landing page offer FIRST before buying traffic!`,
-      estimatedTime: 30,
-      skillsLearned: ["Digital Marketing Basics", "Funnel Architecture", "CAC & LTV Modeling"],
-      tasks: [{
-        id: 1,
-        description: "Complete the digital marketing concepts quiz",
-        type: "quiz",
-        requirements: ["Review all content"],
-        verificationCriteria: ["Score at least 7/10 on the quiz"]
-      }]
-    });
-    
-    this.tutorials.push({
-      id: 2,
-      chapterNumber: 1,
-      title: "Setting Marketing Goals and KPIs",
-      level: "Beginner",
-      content: `# Setting Strategic Marketing Goals & North Star KPIs
-
-In professional agency marketing, you never run campaigns without clearly defined, mathematically sound Key Performance Indicators (KPIs).
-
-## 1. The SMART Goal Framework for Marketers
-* **Specific**: 'Increase organic search traffic to the Morgantown roastery product page by 35%.'
-* **Measurable**: Tracked via GA4 Organic Sessions and Google Search Console Impressions.
-* **Achievable**: Based on competitor keyword gap analysis and 15 optimized on-page tags.
-* **Relevant**: Drives high-margin coffee bag sales to local consumers.
-* **Time-Bound**: Completed within 60 days of CMS tag restructuring.
-
-## 2. Channel-Specific KPIs
-* **SEO**: Organic Clicks, Keyword SERP Rankings, CTR, Bounce Rate.
-* **Google Paid Search**: Impression Share, Cost Per Click (CPC), Quality Score, Conversion Rate (CVR).
-* **Meta/Paid Social**: Hook Rate (3s Video Views ÷ Impressions), Cost Per Acquisition (CPA), Return on Ad Spend (ROAS).
-
-## 3. The Rookie Trap ⚠️
-Setting vanity goals like 'get 10,000 Instagram likes'. Likes do not pay rent—focus on qualified leads, cost-per-acquisition, and bottom-line revenue!`,
-      estimatedTime: 45,
-      skillsLearned: ["SMART Goal Setting", "KPI Matrix", "Marketing Measurement"],
-      tasks: [{
-        id: 1,
-        description: "Create your first marketing goals document",
-        type: "practical",
-        requirements: ["Apply SMART framework to your goals"],
-        verificationCriteria: ["Document contains at least 3 SMART goals", "Each goal has associated KPIs"]
-      }]
-    });
+    // Chapter 1: Week 1 - Marketing Fundamentals, Unit Economics & The High-Converting Offer (15 Lessons: Learn -> See -> Do)
+    this.tutorials.push(...week1Lessons);
     
     // Chapter 2: Google Ads Fundamentals
     this.tutorials.push({
@@ -380,7 +316,7 @@ In this final evaluation, you will audit an entire business ecosystem:
 ---
 
 ## 2. Your Verified Proof-of-Work Portfolio
-Upon completing the Capstone Simulation and the Friday Checkride Quiz, our engine automatically publishes your **Verified Agency Case Study** at \`/portfolio\`.
+Upon completing the Capstone Simulation and the Friday Assessment Exam, our engine automatically publishes your **Verified Agency Case Study** at \`/portfolio\`.
 
 You can share this verified URL directly with:
 * Prospective freelance clients on Upwork or email.
