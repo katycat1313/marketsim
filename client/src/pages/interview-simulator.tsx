@@ -383,12 +383,24 @@ export default function InterviewSimulatorPage() {
         });
       };
 
+      // Preserve any text existing before mic was clicked
+      const initialText = userAnswer ? userAnswer.trim() + " " : "";
+
       recognition.onresult = (event: any) => {
-        let transcript = "";
-        for (let i = event.resultIndex; i < event.results.length; i++) {
-          transcript += event.results[i][0].transcript;
+        let finalTranscript = "";
+        let interimTranscript = "";
+
+        for (let i = 0; i < event.results.length; i++) {
+          const item = event.results[i];
+          if (item.isFinal) {
+            finalTranscript += item[0].transcript + " ";
+          } else {
+            interimTranscript += item[0].transcript;
+          }
         }
-        setUserAnswer(prev => prev ? `${prev} ${transcript}` : transcript);
+
+        const fullText = (initialText + finalTranscript + interimTranscript).trim();
+        setUserAnswer(fullText);
       };
 
       recognition.onerror = () => {
