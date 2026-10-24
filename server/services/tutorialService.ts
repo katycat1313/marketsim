@@ -5,6 +5,7 @@ import { db, pool } from '../db';
 import { sql } from 'drizzle-orm';
 import { userProfiles } from '@shared/schema';
 import { week1Lessons } from '../data/tutorial/week1-lessons';
+import { week2Lessons } from '../data/tutorial/week2-lessons';
 
 export interface Tutorial {
   id: number;
@@ -74,10 +75,13 @@ export class TutorialService {
     // Chapter 1: Week 1 - Marketing Fundamentals, Unit Economics & The High-Converting Offer (15 Lessons: Learn -> See -> Do)
     this.tutorials.push(...week1Lessons);
     
-    // Chapter 2: Google Ads Fundamentals
+    // Chapter 2: Week 2 - Organic Discovery, On-Page SEO & Local Business Presence (15 Lessons: Learn -> See -> Do)
+    this.tutorials.push(...week2Lessons);
+    
+    // Chapter 3: Week 3 - Paid Search Advertising (Google Ads 101)
     this.tutorials.push({
       id: 3,
-      chapterNumber: 2,
+      chapterNumber: 3,
       title: "Google Ads Campaign Structure & Account Hierarchy",
       level: "Beginner",
       content: `# Google Ads Architecture: The 3-Tier Account Hierarchy

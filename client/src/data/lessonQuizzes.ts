@@ -140,6 +140,330 @@ export const LESSON_QUIZ_DATABASE: Record<number, LessonQuestion[]> = {
       reflectionPrompt: "How do negative constraints ('Do NOT use buzzwords') dramatically improve AI output quality?"
     }
   ]
+,
+
+  // ==========================================
+  // WEEK 2 QUIZZES
+  // ==========================================
+  // Lesson 201: Search Engine Mechanics & The 4 Search Intents
+  201: [
+    {
+      id: 1,
+      question: "Which of the following describes the correct chronological lifecycle of how Google processes a new web page?",
+      options: [
+        { id: "a", text: "Ranking -> Indexing -> Crawling", isCorrect: false },
+        { id: "b", text: "Crawling -> Indexing -> Ranking", isCorrect: true },
+        { id: "c", text: "Indexing -> Crawling -> Ranking", isCorrect: false },
+        { id: "d", text: "Crawling -> Ranking -> Indexing", isCorrect: false }
+      ],
+      explanation: "Googlebot first crawls (discovers) links across the web, then indexes (parses and stores) the document, and finally ranks it in search results based on relevance and quality.",
+      reflectionPrompt: "Why can't Google rank a page that hasn't successfully passed through the indexing stage?"
+    },
+    {
+      id: 2,
+      question: "If a user searches 'how to brew pour over coffee at home', what type of search intent does this represent?",
+      options: [
+        { id: "a", text: "Transactional Intent", isCorrect: false },
+        { id: "b", text: "Commercial Investigation Intent", isCorrect: false },
+        { id: "c", text: "Informational Intent", isCorrect: true },
+        { id: "d", text: "Navigational Intent", isCorrect: false }
+      ],
+      explanation: "Queries starting with 'how to' or seeking educational answers represent Informational (TOFU) intent. The searcher wants to learn, not buy immediately.",
+      reflectionPrompt: "What happens to your bounce rate if you send an informational searcher directly to a product checkout page?"
+    },
+    {
+      id: 3,
+      question: "What is 'pogo-sticking' in Google search, and how does it affect rankings?",
+      options: [
+        { id: "a", text: "Users jumping rapidly between different websites, which Google rewards as high engagement", isCorrect: false },
+        { id: "b", text: "Users clicking a result, immediately hitting the Back button due to poor content, and clicking another result—causing Google to drop your ranking", isCorrect: true },
+        { id: "c", text: "A technical SEO script that speeds up mobile page rendering", isCorrect: false },
+        { id: "d", text: "A tool used to automate keyword bidding in Google Ads", isCorrect: false }
+      ],
+      explanation: "Pogo-sticking signals to Google that your page failed to satisfy the searcher's intent. When Google sees high pogo-sticking, it demotes your organic ranking.",
+      reflectionPrompt: "Why does satisfying search intent on the page prevent pogo-sticking back to Google?"
+    },
+    {
+      id: 4,
+      question: "Which query below represents high-intent Transactional (BOFU) search behavior?",
+      options: [
+        { id: "a", text: "'history of coffee roasting'", isCorrect: false },
+        { id: "b", text: "'best single origin coffee beans reviews'", isCorrect: false },
+        { id: "c", text: "'emergency dentist open saturday morgantown wv'", isCorrect: true },
+        { id: "d", text: "'what is a dental crown made of'", isCorrect: false }
+      ],
+      explanation: "Specific local queries with urgency ('emergency', 'open saturday', 'morgantown wv') represent users with high purchase/booking intent ready to take action immediately.",
+      reflectionPrompt: "What modifiers in a search query signal immediate readiness to purchase rather than casual research?"
+    },
+    {
+      id: 5,
+      question: "What is the primary danger of driving informational traffic to a bare product checkout page?",
+      options: [
+        { id: "a", text: "It causes near-immediate bounces (85%+) because the visitor hasn't established trust or understanding yet", isCorrect: true },
+        { id: "b", text: "Google will permanently ban your domain within 24 hours", isCorrect: false },
+        { id: "c", text: "It increases your merchant processing fees", isCorrect: false },
+        { id: "d", text: "There is no danger; traffic is traffic", isCorrect: false }
+      ],
+      explanation: "Informational searchers are looking for answers. Shouting 'Buy Now' at them creates friction and distrust, causing instant bounces.",
+      reflectionPrompt: "How can you nurture an informational searcher without scaring them away with an immediate hard sell?"
+    }
+  ],
+
+  // Lesson 204: The Long-Tail Strategy & Keyword Difficulty
+  204: [
+    {
+      id: 1,
+      question: "According to organic search data, approximately what percentage of all Google search queries are 3+ words (long-tail)?",
+      options: [
+        { id: "a", text: "Under 15%", isCorrect: false },
+        { id: "b", text: "Over 70%", isCorrect: true },
+        { id: "c", text: "Exactly 25%", isCorrect: false },
+        { id: "d", text: "Around 40%", isCorrect: false }
+      ],
+      explanation: "Over 70% of all searches are long-tail queries. While individual head terms have high search volume, the long-tail represents the vast majority of web traffic and purchase intent.",
+      reflectionPrompt: "Why do beginner marketers mistakenly focus all their effort on the 30% head terms instead of the 70% long-tail?"
+    },
+    {
+      id: 2,
+      question: "Why is a 250-volume keyword like 'buy ethiopian yirgacheffe beans online' often more valuable than a 15,000-volume keyword like 'coffee facts'?",
+      options: [
+        { id: "a", text: "Because it costs more to host on your web server", isCorrect: false },
+        { id: "b", text: "Because it has commercial transaction intent, meaning a high percentage of searchers actually buy products", isCorrect: true },
+        { id: "c", text: "Because Google gives bonus ranking points to Ethiopian words", isCorrect: false },
+        { id: "d", text: "It isn't; 15,000 volume is always better", isCorrect: false }
+      ],
+      explanation: "Search Value = Volume x Intent CVR x AOV. High-intent traffic converts at 8–12%, generating real revenue, while broad informational terms convert at near 0%.",
+      reflectionPrompt: "Why is commercial conversion rate more important to agency clients than raw impression counts?"
+    },
+    {
+      id: 3,
+      question: "What Keyword Difficulty (KD) range should new client websites (DA < 25) prioritize for fast organic wins?",
+      options: [
+        { id: "a", text: "KD 75 - 100", isCorrect: false },
+        { id: "b", text: "KD 50 - 75", isCorrect: false },
+        { id: "c", text: "KD 0 - 25 (Low Competition)", isCorrect: true },
+        { id: "d", text: "Keyword Difficulty doesn't matter for rankings", isCorrect: false }
+      ],
+      explanation: "Keywords with KD under 25 have low domain competition, allowing newer websites to rank on Page 1 within 30 to 60 days with clean on-page optimization.",
+      reflectionPrompt: "What happens when a new brand with zero backlinks tries to compete for KD 85+ keywords?"
+    },
+    {
+      id: 4,
+      question: "Which of the following is a negative intent modifier that signals non-buying traffic?",
+      options: [
+        { id: "a", text: "'buy'", isCorrect: false },
+        { id: "b", text: "'free', 'jobs', or 'salary'", isCorrect: true },
+        { id: "c", text: "'near me'", isCorrect: false },
+        { id: "d", text: "'shipping'", isCorrect: false }
+      ],
+      explanation: "Modifiers like 'free', 'jobs', 'salary', 'wikipedia', and 'diy' signal that searchers are looking for free resources or employment, not hiring or buying.",
+      reflectionPrompt: "Why must you filter out keywords with modifiers like 'free' or 'jobs' when building client targeting plans?"
+    },
+    {
+      id: 5,
+      question: "In the Agency Opportunity Formula, why is Keyword Difficulty in the denominator?",
+      options: [
+        { id: "a", text: "Because higher difficulty reduces the likelihood of ranking quickly, lowering the net opportunity value", isCorrect: true },
+        { id: "b", text: "Because Google multiplies ad spend by KD", isCorrect: false },
+        { id: "c", text: "Because difficulty increases server bandwidth costs", isCorrect: false },
+        { id: "d", text: "It is an arbitrary mathematical rule", isCorrect: false }
+      ],
+      explanation: "Opportunity Score = (Volume x Intent) / (KD + 1). Higher competition reduces ROI by increasing time and backlink acquisition costs.",
+      reflectionPrompt: "How does high keyword competition increase the cost and delay of client SEO results?"
+    }
+  ],
+
+  // Lesson 207: SERP Snippet & On-Page Tag Architecture
+  207: [
+    {
+      id: 1,
+      question: "What is the recommended maximum character limit for an SEO Title Tag before Google truncates it in desktop results?",
+      options: [
+        { id: "a", text: "120 characters", isCorrect: false },
+        { id: "b", text: "55 to 60 characters (approx. 580 pixels)", isCorrect: true },
+        { id: "c", text: "25 characters", isCorrect: false },
+        { id: "d", text: "There is no limit", isCorrect: false }
+      ],
+      explanation: "Title tags longer than 60 characters are truncated with an ellipsis (...), which cuts off value propositions and hurts Click-Through Rate.",
+      reflectionPrompt: "Why is front-loading your primary keyword in the first 35 characters essential if truncation occurs?"
+    },
+    {
+      id: 2,
+      question: "How many H1 heading tags should you have on a single web page according to semantic HTML and SEO best practices?",
+      options: [
+        { id: "a", text: "As many as you want; Google ignores headers", isCorrect: false },
+        { id: "b", text: "Exactly ONE H1 tag representing the primary page topic", isCorrect: true },
+        { id: "c", text: "At least 5 to cover all keywords", isCorrect: false },
+        { id: "d", text: "Only one per paragraph", isCorrect: false }
+      ],
+      explanation: "A page should have exactly one H1 headline declaring the core topic. Multiple H1 tags dilute topical clarity for search engine crawlers.",
+      reflectionPrompt: "Why does having multiple competing H1 tags confuse search engine crawlers about the primary topic?"
+    },
+    {
+      id: 3,
+      question: "Does the Meta Description directly influence Google's organic ranking algorithm score?",
+      options: [
+        { id: "a", text: "Yes, it is the #1 ranking factor", isCorrect: false },
+        { id: "b", text: "No, but it heavily impacts Click-Through Rate (CTR), which indirectly influences rankings", isCorrect: true },
+        { id: "c", text: "Only if it contains 5 or more exclamation marks", isCorrect: false },
+        { id: "d", text: "Only on mobile devices", isCorrect: false }
+      ],
+      explanation: "Meta descriptions don't directly boost ranking position, but a compelling description increases CTR. Higher CTR signals user satisfaction, lifting organic rankings.",
+      reflectionPrompt: "Why should you treat your meta description like persuasive advertising copy rather than just a keyword dump?"
+    },
+    {
+      id: 4,
+      question: "What is the recommended length range for a high-converting Meta Description?",
+      options: [
+        { id: "a", text: "50 to 75 characters", isCorrect: false },
+        { id: "b", text: "145 to 155 characters", isCorrect: true },
+        { id: "c", text: "300 to 400 characters", isCorrect: false },
+        { id: "d", text: "Under 20 characters", isCorrect: false }
+      ],
+      explanation: "145 to 155 characters ensures your entire message and call to action are visible across both mobile and desktop SERPs without truncation.",
+      reflectionPrompt: "What essential elements must fit inside a 150-character meta description to drive a click?"
+    },
+    {
+      id: 5,
+      question: "What is the primary function of Image Alt Text in modern on-page SEO?",
+      options: [
+        { id: "a", text: "To hide 20 competitor keywords in the HTML code", isCorrect: false },
+        { id: "b", text: "To provide an accurate, accessible description of the image for screen readers and search crawlers", isCorrect: true },
+        { id: "c", text: "To reduce image file size on mobile phones", isCorrect: false },
+        { id: "d", text: "To trigger popups when a user hovers over the photo", isCorrect: false }
+      ],
+      explanation: "Alt text describes image content for visually impaired users and helps Google understand image relevance. Keyword stuffing alt text violates Google guidelines.",
+      reflectionPrompt: "How does natural, descriptive alt text improve both accessibility and image search rankings?"
+    }
+  ],
+
+  // Lesson 210: Local SEO & Google Business Profile
+  210: [
+    {
+      id: 1,
+      question: "Approximately what percentage of local mobile search clicks go directly to the Google Maps Local 3-Pack?",
+      options: [
+        { id: "a", text: "Over 68%", isCorrect: true },
+        { id: "b", text: "Under 10%", isCorrect: false },
+        { id: "c", text: "Exactly 25%", isCorrect: false },
+        { id: "d", text: "Zero; people only click traditional blue links", isCorrect: false }
+      ],
+      explanation: "For local services, over 68% of searchers click directly inside the Google Maps 3-Pack before ever scrolling down to standard organic links.",
+      reflectionPrompt: "Why is ranking in the Local 3-Pack far more critical for local service clients than national organic rankings?"
+    },
+    {
+      id: 2,
+      question: "What does 'NAP Consistency' stand for in local SEO?",
+      options: [
+        { id: "a", text: "Network Access Protocol", isCorrect: false },
+        { id: "b", text: "Name, Address, and Phone Number", isCorrect: true },
+        { id: "c", text: "New Audience Positioning", isCorrect: false },
+        { id: "d", text: "Negative Ad Placement", isCorrect: false }
+      ],
+      explanation: "NAP stands for Name, Address, and Phone Number. Strict consistency across directories like Google, Yelp, and Apple Maps is a primary local ranking factor.",
+      reflectionPrompt: "Why does having conflicting phone numbers or misspelled suite addresses across directories hurt local rankings?"
+    },
+    {
+      id: 3,
+      question: "What is the single most heavily weighted ranking factor on a Google Business Profile (GBP)?",
+      options: [
+        { id: "a", text: "The Primary Business Category", isCorrect: true },
+        { id: "b", text: "The number of emojis in your business description", isCorrect: false },
+        { id: "c", text: "Having a website built in WordPress", isCorrect: false },
+        { id: "d", text: "Posting 10 updates every hour", isCorrect: false }
+      ],
+      explanation: "The Primary Category directly dictates which search queries your listing is eligible to rank for. Choosing the wrong category causes massive visibility loss.",
+      reflectionPrompt: "Why is selecting a specific high-intent primary category (like 'Emergency Dental Service') better than a generic category?"
+    },
+    {
+      id: 4,
+      question: "In local review management, what does 'Review Velocity' refer to?",
+      options: [
+        { id: "a", text: "How fast a customer types their review", isCorrect: false },
+        { id: "b", text: "The consistency and frequency with which your business receives fresh reviews over time", isCorrect: true },
+        { id: "c", text: "Deleting negative reviews within 60 seconds", isCorrect: false },
+        { id: "d", text: "Paying influencers for 5-star ratings", isCorrect: false }
+      ],
+      explanation: "Google rewards businesses that receive steady, recent reviews. 3–4 new reviews every week signals an active, reputable business far better than 100 stale reviews from 4 years ago.",
+      reflectionPrompt: "Why does Google's algorithm favor steady, recent reviews over an older business with stale reviews?"
+    },
+    {
+      id: 5,
+      question: "When responding to a negative patient review for Dr. Miller Dental, what legal/ethical standard must be strictly observed?",
+      options: [
+        { id: "a", text: "HIPAA Patient Privacy: Never confirm or discuss medical treatments publicly", isCorrect: true },
+        { id: "b", text: "Post the patient's full dental records to prove the clinic was right", isCorrect: false },
+        { id: "c", text: "Threaten to sue the patient for defamation in the public comments", isCorrect: false },
+        { id: "d", text: "Ignore the review completely", isCorrect: false }
+      ],
+      explanation: "Healthcare responses must be HIPAA-compliant. Never confirm patient identity or medical details. Validate empathy and offer a private offline phone number to resolve issues.",
+      reflectionPrompt: "How can you de-escalate a negative review professionally while fully respecting patient confidentiality?"
+    }
+  ],
+
+  // Lesson 213: Helpful Content (E-E-A-T) & AI Guidelines
+  213: [
+    {
+      id: 1,
+      question: "What does the acronym E-E-A-T stand for in Google's Search Quality Evaluator Guidelines?",
+      options: [
+        { id: "a", text: "Engagement, Execution, Advertising, Technology", isCorrect: false },
+        { id: "b", text: "Experience, Expertise, Authoritativeness, and Trustworthiness", isCorrect: true },
+        { id: "c", text: "Efficiency, Economics, Automation, Tracking", isCorrect: false },
+        { id: "d", text: "Enterprise, Ecommerce, Analytics, Testing", isCorrect: false }
+      ],
+      explanation: "E-E-A-T stands for Experience (first-hand proof), Expertise, Authoritativeness, and Trustworthiness. Trust is the central pillar holding them all together.",
+      reflectionPrompt: "Why did Google add 'Experience' to E-A-T to combat unverified, generic AI content?"
+    },
+    {
+      id: 2,
+      question: "What is Google's 'Scaled Content Abuse' policy designed to penalize?",
+      options: [
+        { id: "a", text: "Mass-producing hundreds of unedited, low-value AI articles designed solely to manipulate search rankings without original insight", isCorrect: true },
+        { id: "b", text: "Using spell check software on blog posts", isCorrect: false },
+        { id: "c", text: "Writing articles longer than 2,000 words", isCorrect: false },
+        { id: "d", text: "Adding author bios to landing pages", isCorrect: false }
+      ],
+      explanation: "Google penalizes domains that mass-publish generic AI content without original testing, proprietary data, or human oversight.",
+      reflectionPrompt: "What makes mass-produced generic AI content a massive liability for a client's domain authority?"
+    },
+    {
+      id: 3,
+      question: "Which of the following is the best way to prove 'Experience' on Jenny's Artisan Java coffee website?",
+      options: [
+        { id: "a", text: "Generating 20 AI articles about coffee history", isCorrect: false },
+        { id: "b", text: "Publishing original photographs of roast batches, Q-grader cupping scorecards, and first-hand flavor tasting notes", isCorrect: true },
+        { id: "c", text: "Copying bean descriptions from green coffee importers", isCorrect: false },
+        { id: "d", text: "Putting a stock photo of a coffee cup on the homepage", isCorrect: false }
+      ],
+      explanation: "Original photography, proprietary test data, and authentic roast logs provide undeniable proof of first-hand experience that AI scrapers cannot duplicate.",
+      reflectionPrompt: "Why do original photographs and proprietary tasting notes build more buyer trust than generic stock images?"
+    },
+    {
+      id: 4,
+      question: "What is the recommended best practice for descriptive internal link anchor text?",
+      options: [
+        { id: "a", text: "Always use 'click here' or 'learn more'", isCorrect: false },
+        { id: "b", text: "Use natural, descriptive phrases that explain the destination page (e.g., 'explore our single-origin Ethiopian coffee beans')", isCorrect: true },
+        { id: "c", text: "Paste raw URLs directly into the paragraph copy", isCorrect: false },
+        { id: "d", text: "Make every single word in an article a clickable link", isCorrect: false }
+      ],
+      explanation: "Descriptive anchor text tells Google's crawler and human readers exactly what the linked page is about, transferring topical authority effectively.",
+      reflectionPrompt: "Why does descriptive anchor text pass more SEO context than vague phrases like 'read more'?"
+    },
+    {
+      id: 5,
+      question: "What is the Krechet Academy 'Human-in-the-Loop' rule for AI content generation?",
+      options: [
+        { id: "a", text: "AI is the intern that helps draft and brainstorm, but a human director must fact-check, verify brand voice, and edit before publishing", isCorrect: true },
+        { id: "b", text: "Humans should never touch AI tools", isCorrect: false },
+        { id: "c", text: "AI should be trusted 100% on medical, legal, and financial facts", isCorrect: false },
+        { id: "d", text: "Publish immediately and only edit if a customer complains", isCorrect: false }
+      ],
+      explanation: "AI generates raw text based on statistics; it does not verify truth. Human directors ensure factual accuracy, compliance, and genuine brand resonance.",
+      reflectionPrompt: "What danger does an agency risk if it publishes unverified AI copy without human fact-checking?"
+    }
+  ]
 };
 
 // Fallback generator for lessons that don't have dedicated static items yet
