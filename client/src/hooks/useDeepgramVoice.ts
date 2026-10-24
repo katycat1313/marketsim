@@ -3,6 +3,7 @@ import { cleanTextForSpeech } from '@/lib/utils';
 
 interface UseDeepgramVoiceOptions {
   defaultVoice?: 'aura-orion-en' | 'aura-asteria-en' | 'aura-arcas-en' | 'aura-luna-en';
+  defaultPlaybackRate?: number;
   onStart?: () => void;
   onEnd?: () => void;
   onError?: (err: any) => void;
@@ -11,6 +12,7 @@ interface UseDeepgramVoiceOptions {
 export function useDeepgramVoice(options: UseDeepgramVoiceOptions = {}) {
   const {
     defaultVoice = 'aura-orion-en',
+    defaultPlaybackRate = 0.88,
     onStart,
     onEnd,
     onError
@@ -19,6 +21,7 @@ export function useDeepgramVoice(options: UseDeepgramVoiceOptions = {}) {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isDeepgramEnabled, setIsDeepgramEnabled] = useState<boolean | null>(null);
+  const [playbackRate, setPlaybackRate] = useState<number>(defaultPlaybackRate);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   // Check if Deepgram is configured on the backend
@@ -31,6 +34,13 @@ export function useDeepgramVoice(options: UseDeepgramVoiceOptions = {}) {
       .catch(() => {
         setIsDeepgramEnabled(false);
       });
+  }, []);
+
+  const updatePlaybackRate = useCallback((rate: number) => {
+    setPlaybackRate(rate);
+    if (audioRef.current) {
+      audioRef.current.playbackRate = rate;
+    }
   }, []);
 
   /**
@@ -65,6 +75,7 @@ export function useDeepgramVoice(options: UseDeepgramVoiceOptions = {}) {
         const audioBlob = await response.blob();
         const audioUrl = URL.createObjectURL(audioBlob);
         const audio = new Audio(audioUrl);
+        audio.playbackRate = playbackRate;
         audioRef.current = audio;
 
         audio.onplay = () => {
@@ -94,7 +105,7 @@ export function useDeepgramVoice(options: UseDeepgramVoiceOptions = {}) {
 
     // 2. Fallback to browser Web Speech API
     fallbackWebSpeech(spokenText);
-  }, [defaultVoice, onStart, onEnd, onError]);
+  }, [defaultVoice, playbackRate, onStart, onEnd, onError]);
 
   const fallbackWebSpeech = useCallback((text: string) => {
     setIsLoading(false);
@@ -102,7 +113,7 @@ export function useDeepgramVoice(options: UseDeepgramVoiceOptions = {}) {
 
     const clean = cleanTextForSpeech(text);
     const utterance = new SpeechSynthesisUtterance(clean);
-    utterance.rate = 0.95;
+    utterance.rate = playbackRate;
     utterance.pitch = 1.0;
 
     utterance.onstart = () => {
@@ -121,7 +132,7 @@ export function useDeepgramVoice(options: UseDeepgramVoiceOptions = {}) {
     };
 
     window.speechSynthesis.speak(utterance);
-  }, [onStart, onEnd, onError]);
+  }, [playbackRate, onStart, onEnd, onError]);
 
   /**
    * Stop any current speech playback
@@ -140,11 +151,13 @@ export function useDeepgramVoice(options: UseDeepgramVoiceOptions = {}) {
   }, [onEnd]);
 
   return {
-    speak,
-    stop,
     isSpeaking,
     isLoading,
-    isDeepgramEnabled
+    isDeepgramEnabled,
+    playbackRate,
+    setPlaybackRate: updatePlaybackRate,
+    speak,
+    stop
   };
 }
 

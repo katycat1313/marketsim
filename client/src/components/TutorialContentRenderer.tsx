@@ -703,7 +703,29 @@ const TutorialContentRenderer: React.FC<TutorialContentRendererProps> = ({
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
+            {/* Speed selection pills */}
+            <div className="flex items-center gap-1 bg-secondary/50 rounded-lg p-0.5 border border-border/40 text-[10px] font-bold mr-1">
+              {[
+                { label: '0.80x', rate: 0.80 },
+                { label: '0.88x (Calm)', rate: 0.88 },
+                { label: '1.0x', rate: 1.0 }
+              ].map(item => (
+                <button
+                  key={item.rate}
+                  type="button"
+                  onClick={() => deepgramVoice.setPlaybackRate(item.rate)}
+                  className={`px-1.5 py-0.5 rounded transition-all ${
+                    deepgramVoice.playbackRate === item.rate
+                      ? 'bg-amber-400 text-slate-950 font-black shadow-sm'
+                      : 'text-muted-foreground hover:text-foreground'
+                  }`}
+                  title={`Play at ${item.label} speed`}
+                >
+                  {item.label}
+                </button>
+              ))}
+            </div>
             {deepgramVoice.isSpeaking ? (
               <Button
                 size="sm"
