@@ -304,7 +304,10 @@ export function AcademyOrientationTour({
               <div className="flex justify-center -my-1 text-amber-400 font-bold text-xs">⬇️</div>
 
               {/* Step 2 */}
-              <div className="p-2.5 rounded-xl bg-card border border-border/80 flex items-center justify-between gap-3">
+              <div 
+                onClick={() => { onClose(); setLocation('/ad-simulations'); }}
+                className="p-2.5 rounded-xl bg-card border border-border/80 hover:border-amber-500/40 hover:bg-secondary/40 transition-all flex items-center justify-between gap-3 cursor-pointer group shadow-sm"
+              >
                 <div className="flex items-center gap-2.5 text-xs">
                   <span className="h-6 w-6 rounded-full bg-secondary text-foreground font-black flex items-center justify-center text-xs shrink-0">2</span>
                   <div>
@@ -320,7 +323,10 @@ export function AcademyOrientationTour({
               <div className="flex justify-center -my-1 text-muted-foreground font-bold text-xs">⬇️</div>
 
               {/* Step 3 */}
-              <div className="p-2.5 rounded-xl bg-card border border-border/80 flex items-center justify-between gap-3">
+              <div 
+                onClick={() => { onClose(); setLocation('/ad-simulations'); }}
+                className="p-2.5 rounded-xl bg-card border border-border/80 hover:border-amber-500/40 hover:bg-secondary/40 transition-all flex items-center justify-between gap-3 cursor-pointer group shadow-sm"
+              >
                 <div className="flex items-center gap-2.5 text-xs">
                   <span className="h-6 w-6 rounded-full bg-secondary text-foreground font-black flex items-center justify-center text-xs shrink-0">3</span>
                   <div>
@@ -336,7 +342,10 @@ export function AcademyOrientationTour({
               <div className="flex justify-center -my-1 text-muted-foreground font-bold text-xs">⬇️</div>
 
               {/* Step 4 */}
-              <div className="p-2.5 rounded-xl bg-card border border-border/80 flex items-center justify-between gap-3">
+              <div 
+                onClick={handleLaunchLesson1}
+                className="p-2.5 rounded-xl bg-card border border-border/80 hover:border-red-500/40 hover:bg-red-500/5 transition-all flex items-center justify-between gap-3 cursor-pointer group shadow-sm"
+              >
                 <div className="flex items-center gap-2.5 text-xs">
                   <span className="h-6 w-6 rounded-full bg-secondary text-foreground font-black flex items-center justify-center text-xs shrink-0">4</span>
                   <div>
@@ -352,7 +361,10 @@ export function AcademyOrientationTour({
               <div className="flex justify-center -my-1 text-muted-foreground font-bold text-xs">⬇️</div>
 
               {/* Step 5 */}
-              <div className="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-between gap-3">
+              <div 
+                onClick={() => { onClose(); setLocation('/portfolio'); }}
+                className="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 hover:bg-emerald-500/20 hover:border-emerald-500/50 transition-all flex items-center justify-between gap-3 cursor-pointer group shadow-sm"
+              >
                 <div className="flex items-center gap-2.5 text-xs">
                   <span className="h-6 w-6 rounded-full bg-emerald-500 text-slate-950 font-black flex items-center justify-center text-xs shrink-0">5</span>
                   <div>
