@@ -50,8 +50,8 @@ export default function LoginPage() {
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: "katycat1313@gmail.com",
-      password: "Big$$grl86",
+      email: "Katycat13",
+      password: "Big$$grl1986",
       rememberMe: true,
     },
   });
@@ -87,16 +87,16 @@ export default function LoginPage() {
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center">Sign in to Krechet Academy</CardTitle>
           <CardDescription className="text-center">
-            Sign in to start your interactive marketing simulations
+            Sign in as Founder/Developer or student
           </CardDescription>
         </CardHeader>
         
         <CardContent className="space-y-4">
           <div className="bg-primary/10 border border-primary/20 rounded-lg p-3 text-xs text-muted-foreground flex items-center justify-between">
             <div className="space-y-0.5">
-              <p className="font-semibold text-foreground">Demo Credentials Pre-filled:</p>
-              <p>Email / User: <span className="font-mono text-primary font-medium">katycat1313@gmail.com</span></p>
-              <p>Password: <span className="font-mono text-primary font-medium">Big$$grl86</span></p>
+              <p className="font-semibold text-foreground">👑 Founder Developer Pass:</p>
+              <p>Username / Email: <span className="font-mono text-primary font-medium">Katycat13</span></p>
+              <p>Password: <span className="font-mono text-primary font-medium">Big$$grl1986</span></p>
             </div>
             <Button 
               type="button" 
@@ -104,8 +104,8 @@ export default function LoginPage() {
               size="sm" 
               className="text-xs h-7"
               onClick={() => {
-                form.setValue("email", "katycat1313@gmail.com");
-                form.setValue("password", "Big$$grl86");
+                form.setValue("email", "Katycat13");
+                form.setValue("password", "Big$$grl1986");
               }}
             >
               Auto-Fill

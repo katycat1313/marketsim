@@ -7,6 +7,9 @@ interface User {
   firstName: string;
   lastName: string;
   level: string;
+  role?: string;
+  isDeveloper?: boolean;
+  isFounder?: boolean;
   tier?: string;
   trialStartDate?: string;
   xp?: number;
@@ -18,6 +21,7 @@ interface User {
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
+  isDeveloper: boolean;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
   signup: (userData: SignupData) => Promise<void>;
@@ -128,9 +132,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     localStorage.removeItem('user');
   };
 
+  const isDeveloper = Boolean(
+    user && (
+      (user as any).isDeveloper ||
+      (user as any).role === 'developer' ||
+      user.username?.toLowerCase() === 'katycat13' ||
+      user.username?.toLowerCase() === 'katycat' ||
+      user.email?.toLowerCase().includes('katycat')
+    )
+  );
+
   const value = {
     user,
     isAuthenticated: !!user,
+    isDeveloper,
     isLoading,
     login,
     signup,
