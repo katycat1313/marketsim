@@ -26,6 +26,7 @@ import SubscriptionPage from "@/pages/subscription";
 import SubscriptionSuccessPage from "@/pages/subscription/success";
 import SubscriptionCancelPage from "@/pages/subscription/cancel";
 import LoginPage from "@/pages/login";
+import VipAccessPage from "@/pages/vip-access";
 import SignupPage from "@/pages/signup";
 import PortfolioViewPage from "@/pages/portfolio-view";
 import InterviewSimulatorPage from "@/pages/interview-simulator";
@@ -581,6 +582,8 @@ function Router({ onOpenCoach, onOpenTour }: { onOpenCoach?: () => void; onOpenT
         <main className="flex-1 p-4 md:p-6 overflow-auto">
           <Switch>
             <Route path="/" component={Home} />
+            <Route path="/vip" component={VipAccessPage} />
+            <Route path="/vip-access" component={VipAccessPage} />
             <Route path="/login" component={LoginPage} />
             <Route path="/signup" component={SignupPage} />
             <Route path="/persona-builder">

@@ -42,6 +42,7 @@ import { registerCustomBusinessRoutes } from "./routes/customBusinessRoutes";
 import { registerWaitlistRoutes } from "./routes/waitlistRoutes";
 import { registerDeepgramRoutes } from "./routes/deepgramRoutes";
 import { registerGeminiLiveRoutes } from "./routes/geminiLiveRoutes";
+import { VIP_CREATORS, getVipCreatorByToken } from "./services/vipCreators";
 
 export async function registerRoutes(app: Express) {
   const httpServer = createServer(app);
@@ -98,6 +99,71 @@ export async function registerRoutes(app: Express) {
     }
   });
   
+  
+  // One-Click VIP Pass Login for Creators & Reviewers
+  app.get("/api/auth/vip/:token", async (req: Request, res: Response) => {
+    try {
+      const { token } = req.params;
+      const creator = getVipCreatorByToken(token);
+      
+      if (!creator) {
+        return res.status(404).json({ message: "VIP Pass not found or expired." });
+      }
+
+      const vipUser = {
+        id: 1000 + VIP_CREATORS.indexOf(creator),
+        username: `${creator.token}_vip`,
+        email: creator.email,
+        firstName: creator.firstName,
+        lastName: creator.lastName,
+        level: "VIP Reviewer",
+        role: "vip_reviewer",
+        tier: "premium",
+        isVip: true,
+        isDeveloper: false,
+        xp: 5000,
+        specializations: [creator.specialty, "Agency Casework", "Interview Strategy"],
+        achievements: ["VIP Reviewer", "Verified Industry Mentor"],
+        createdAt: new Date(),
+      };
+
+      res.json({
+        user: vipUser,
+        targetLanding: creator.targetLanding,
+        name: creator.name,
+        organization: creator.organization
+      });
+    } catch (error) {
+      console.error("VIP token error:", error);
+      res.status(500).json({ message: "Failed to authenticate VIP Pass" });
+    }
+  });
+
+  // VIP Password Set (allows creator to set custom password after 1-click entry)
+  app.post("/api/auth/vip-password", async (req: Request, res: Response) => {
+    try {
+      const { email, newPassword } = req.body;
+      if (!email || !newPassword || newPassword.length < 6) {
+        return res.status(400).json({ message: "Valid email and new password (min 6 chars) required" });
+      }
+      
+      const creator = VIP_CREATORS.find(c => c.email.toLowerCase() === email.toLowerCase());
+      const firstName = creator ? creator.firstName : "VIP";
+      const lastName = creator ? creator.lastName : "Member";
+      
+      const updatedUser = await authService.registerUser(email, newPassword, firstName, lastName, "expert");
+      res.json({ message: "Password updated successfully", user: updatedUser });
+    } catch (error) {
+      console.error("VIP password update error:", error);
+      res.status(500).json({ message: "Failed to set password" });
+    }
+  });
+
+  // List all VIP Creators (for developer and admin reference)
+  app.get("/api/auth/vip-creators-list", (req: Request, res: Response) => {
+    res.json(VIP_CREATORS);
+  });
+
   app.get("/api/auth/user", async (req: Request, res: Response) => {
     try {
       // In a real app with proper session management, you'd get the user ID from req.user
