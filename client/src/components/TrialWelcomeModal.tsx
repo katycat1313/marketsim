@@ -42,12 +42,14 @@ export function TrialWelcomeModal({
       localStorage.setItem("krechet_trial_welcome_seen", "true");
     } catch (e) {}
     onClose();
-    setLocation("/tutorials");
+    window.dispatchEvent(new CustomEvent("start-chapter-briefing"));
+    sessionStorage.setItem("krechet_auto_start_briefing", "true");
+    setLocation("/tutorials?start=1");
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-lg bg-card/95 backdrop-blur-2xl border-emerald-500/40 shadow-2xl p-6 sm:p-7">
+      <DialogContent className="sm:max-w-lg w-[94vw] max-h-[88vh] overflow-y-auto bg-card/95 backdrop-blur-2xl border-emerald-500/40 shadow-2xl p-5 sm:p-6 space-y-2.5">
         <DialogHeader className="space-y-3 text-center items-center">
           <div className="flex justify-center mb-1">
             <Logo className="scale-90" />
@@ -122,7 +124,7 @@ export function TrialWelcomeModal({
           </div>
         </div>
 
-        <DialogFooter className="flex flex-col gap-2 pt-1">
+        <DialogFooter className="flex flex-col sm:flex-col sm:space-x-0 gap-2 pt-1 w-full">
           <Button 
             onClick={handleStartMission}
             size="lg"

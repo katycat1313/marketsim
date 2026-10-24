@@ -42,7 +42,9 @@ export function WelcomeOnboardingModal({
       localStorage.setItem("krechet_welcome_modal_dismissed", "true");
     } catch (e) {}
     onClose();
-    setLocation("/tutorials");
+    window.dispatchEvent(new CustomEvent("start-chapter-briefing"));
+    sessionStorage.setItem("krechet_auto_start_briefing", "true");
+    setLocation("/tutorials?start=1");
   };
 
   const handleSignUp = () => {
