@@ -467,6 +467,47 @@ function getLessonCoreTargets(chapterNumber: number, title: string, playbookCont
   ];
 }
 
+/**
+ * Evaluates whether the student actually demonstrated understanding
+ * rather than just repeating words from the guide.
+ */
+function evaluateTargetDemonstration(
+  userText: string,
+  instructorReply: string,
+  pendingTargets: LessonTarget[]
+): LessonTarget | null {
+  const userLower = userText.toLowerCase().trim();
+  const replyLower = instructorReply.toLowerCase();
+
+  // If student input is too short or passive, it is NOT demonstration
+  if (userLower.length < 20) return null;
+
+  // Must not be a clarification or calling out parroting
+  if (replyLower.includes('you quoted') || replyLower.includes('you read') || replyLower.includes('parroting')) {
+    return null;
+  }
+
+  // Check if instructor affirmed real understanding in their response
+  const isAffirmed = replyLower.includes('mastered') ||
+    replyLower.includes('spot on') ||
+    replyLower.includes('exactly right') ||
+    replyLower.includes('great reasoning') ||
+    replyLower.includes('excellent analysis') ||
+    replyLower.includes('well, i think you have mastered');
+
+  if (!isAffirmed) return null;
+
+  // Find target whose keywords were substantively used
+  for (const target of pendingTargets) {
+    const hits = target.keywords.filter(kw => userLower.includes(kw.toLowerCase()));
+    if (hits.length >= 2) {
+      return target;
+    }
+  }
+
+  return pendingTargets[0] || null;
+}
+
 function buildLessonBriefing({
   lessonTitle,
   chapterNumber,
@@ -496,25 +537,11 @@ function buildLessonBriefing({
 
   if (chapter === 1) {
     if (lesson === 1 || titleLower.includes("customer journey")) {
-      return `Welcome future marketers! I'm your instructor ${instructor.name}, and I'm excited to guide you through your first foundational module at Krechet Academy.
+      return `Welcome! I'm ${instructor.name}, your instructor here at Krechet Academy. Let's get right into it!
 
-${lookDirective} Before spending a single dollar on marketing or tweaking a website, you must understand how digital traffic actually turns into paying customers.
+${lookDirective} Start by taking a look at **Section 1: The Growth Funnel**. Give it a quick read to see how the 3 stages (TOFU, MOFU, and BOFU) work.
 
-Section 1: The Growth Funnel — Notice the 3 stages:
-• TOFU (Top of Funnel - Awareness): Cold audiences who don't know your business exists yet.
-• MOFU (Middle of Funnel - Consideration): Problem-aware prospects researching options, reading reviews, and checking ingredients or pricing.
-• BOFU (Bottom of Funnel - Conversion): High-intent prospects ready to purchase right now.
-
-Section 2: The 97/3 Universal Rule —
-At any given moment in any market:
-• Only 3% of people are actively in "Buy Now" mode.
-• The other 97% are problem-aware, browsing, or not ready yet.
-
-Common Mistake to Avoid:
-Driving cold traffic directly to a bare checkout page with a generic "Buy Now" button. Shouting "Buy Now" at someone who just discovered you is like proposing marriage on the first date—it produces an 85%+ bounce rate and burns your budget!
-
-${hasBiz ? `For **${bizName}** (${bizIndustry}), this means nurturing local prospects before pushing for ${bizOffer}.\n\n` : ""}Now, looking at Section 2 on your right:
-Why is driving cold traffic directly to a "Buy Now" checkout page like proposing on the first date, and what should a smart marketer do instead?`;
+Whenever you're ready, read it to me or tell me what stands out, and we'll break down what it actually means for Jenny's coffee shop!`;
     }
 
     if (lesson === 2 || titleLower.includes("teardown") || titleLower.includes("ethical ai mapping")) {
@@ -1160,19 +1187,20 @@ ${studentWeaknesses.map(w => w.replace(/_/g, " ")).join(", ")}
 CURRICULUM COMPETENCY TARGETS TO ASSESS:
 ${coreTargets.map((t, idx) => `${idx + 1}. [${achievedTargetIds.includes(t.id) ? "ACHIEVED" : "PENDING"}] ${t.label}: ${t.description}`).join("\n")}
 
-Respond to the student naturally and respectfully:
-1. Speak directly and warmly like a real mentor teaching an ambitious adult student. No corporate roleplay, no military jargon, and no condescension.
-2. Actively reference the guide on their right side (e.g., 'As shown in Section 2 on your right...', 'Notice the formula in Section 2...', 'Remember the common mistake in Section 3...').
-3. IF the student demonstrates clear understanding or good reasoning on a pending target:
-   - Validate and praise that specific milestone!
-4. IF all core targets are mastered, conclude warmly:
-   - "Well, I think you have mastered today's lesson! Go apply what you learned today to the weekly simulation. Good luck, and if you have any questions along the way, just ask!"
-5. IF the student is on the right track but missed a detail:
-   - Point them specifically to the exact section in the guide on their right, provide a clear, supportive 1-2 sentence coaching tip, and ask 1 quick follow-up question.
-6. IF the student is confused or asks a question:
-   - Answer their question directly with a simple real-world analogy, point them to the relevant section on the right, and check in with them.
+CRITICAL TEACHING FLOW (STEP-BY-STEP DIALOGUE):
+1. IF THE STUDENT READS SECTION 1 (OR SAYS THEY FINISHED READING):
+   - Acknowledge their reading warmly, and ask:
+     "Nice reading! Now in your own words, what did we actually learn from that? Do you understand what it is saying, or how a cold visitor at the top (TOFU) is different from someone ready to buy at the bottom (BOFU)?"
+2. IF THE STUDENT EXPLAINS OR ASKS A QUESTION:
+   - Teach them directly! Use a simple real-world analogy (e.g., a customer browsing coffees in a supermarket aisle vs someone walking up to the cash register).
+   - Then guide them to Section 2: "Now take a quick look at Section 2 on your right: The 97/3 Rule. What does that tell us about driving cold traffic straight to a 'Buy Now' page?"
+3. NEVER ACCEPT MERE PARROTING AS FULL MASTERY:
+   - If they just read the text, do NOT say "You mastered the whole lesson!" Say: "You got the words down, but how would that help Jenny sell more coffee?"
+4. ONLY CONCLUDE WHEN READY:
+   - When the student demonstrates real understanding, conclude warmly:
+     "Well, I think you have mastered today's lesson! Go apply what you learned today to the weekly simulation. Good luck, and if you have any questions along the way, just ask!"
 
-Keep your response natural, conversational, and punchy (2-3 sentences max).`,
+Keep your response friendly, natural, and conversational (2-3 sentences max).`,
           userContext: {
             instructor: instructor.name,
             style: instructor.teachingStyle,
