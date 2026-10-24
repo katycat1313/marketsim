@@ -279,17 +279,26 @@ export function AcademyOrientationTour({
               </h4>
 
               {/* Step 1 */}
-              <div className="p-2.5 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-between gap-3">
+              {/* Step 1 */}
+              <div 
+                onClick={handleLaunchLesson1}
+                className="p-2.5 rounded-xl bg-amber-500/15 border border-amber-500/40 hover:bg-amber-500/25 transition-all flex items-center justify-between gap-3 cursor-pointer group shadow-sm hover:shadow-amber-500/20"
+              >
                 <div className="flex items-center gap-2.5 text-xs">
-                  <span className="h-6 w-6 rounded-full bg-amber-500 text-slate-950 font-black flex items-center justify-center text-xs shrink-0">1</span>
+                  <span className="h-6 w-6 rounded-full bg-amber-500 text-slate-950 font-black flex items-center justify-center text-xs shrink-0 group-hover:scale-110 transition-transform">1</span>
                   <div>
-                    <span className="font-bold text-foreground">Day 1: Learn Core Concept in Lesson 1.1</span>
+                    <span className="font-bold text-foreground group-hover:text-amber-300 transition-colors">Day 1: Learn Core Concept in Lesson 1.1</span>
                     <p className="text-[11px] text-muted-foreground">Study Customer Journey, AOV & Search Intent (Course Material)</p>
                   </div>
                 </div>
-                <Badge className="bg-amber-500/20 text-amber-300 border-amber-500/30 text-[10px] font-mono shrink-0">
-                  START HERE
-                </Badge>
+                <Button
+                  size="sm"
+                  onClick={(e) => { e.stopPropagation(); handleLaunchLesson1(); }}
+                  className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs h-7 px-3 shadow-md shrink-0 flex items-center gap-1 cursor-pointer animate-pulse"
+                >
+                  <span>START HERE</span>
+                  <ArrowRight className="h-3 w-3" />
+                </Button>
               </div>
 
               <div className="flex justify-center -my-1 text-amber-400 font-bold text-xs">⬇️</div>

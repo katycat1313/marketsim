@@ -103,19 +103,32 @@ export function WelcomeOnboardingModal({
           </h4>
 
           {/* Step 1: Free Week 1 */}
-          <div className="p-2.5 sm:p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/25 flex items-start gap-2.5 sm:gap-3">
-            <div className="h-7 w-7 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 mt-0.5">
-              <Coffee className="h-3.5 w-3.5" />
-            </div>
-            <div className="space-y-0.5 text-xs">
-              <div className="flex items-center gap-1.5 font-bold text-foreground">
-                <span>1. Start Week 1 Free (Jenny's Artisan Java)</span>
-                <span className="px-1.5 py-0.2 bg-emerald-500/20 text-emerald-400 text-[10px] rounded font-mono font-bold">100% FREE</span>
+          <div 
+            onClick={handleStartWeek1}
+            className="p-2.5 sm:p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/35 hover:bg-emerald-500/20 transition-all flex items-center justify-between gap-2.5 sm:gap-3 cursor-pointer group shadow-sm hover:shadow-emerald-500/20"
+          >
+            <div className="flex items-start gap-2.5 sm:gap-3">
+              <div className="h-7 w-7 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-110 transition-transform">
+                <Coffee className="h-3.5 w-3.5" />
               </div>
-              <p className="text-muted-foreground leading-relaxed text-[11px] sm:text-xs">
-                Meet your first client, Jenny Miller. Audit her coffee roastery's website, fix search intent, run A/B copy tests, and learn the 15 Socratic foundation lessons.
-              </p>
+              <div className="space-y-0.5 text-xs">
+                <div className="flex items-center gap-1.5 font-bold text-foreground group-hover:text-emerald-300 transition-colors">
+                  <span>1. Start Week 1 Free (Jenny's Artisan Java)</span>
+                  <span className="px-1.5 py-0.2 bg-emerald-500/20 text-emerald-400 text-[10px] rounded font-mono font-bold">100% FREE</span>
+                </div>
+                <p className="text-muted-foreground leading-relaxed text-[11px] sm:text-xs">
+                  Meet your first client, Jenny Miller. Audit her coffee roastery's website, fix search intent, and launch your first lesson.
+                </p>
+              </div>
             </div>
+            <Button
+              size="sm"
+              onClick={(e) => { e.stopPropagation(); handleStartWeek1(); }}
+              className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs h-7 px-2.5 shadow-md shrink-0 flex items-center gap-1 cursor-pointer"
+            >
+              <span>START HERE</span>
+              <ArrowRight className="h-3 w-3" />
+            </Button>
           </div>
 
           {/* Step 2: Account & AI Voice */}
