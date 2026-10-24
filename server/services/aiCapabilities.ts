@@ -1433,8 +1433,15 @@ export const registerAICapabilitiesRoutes = (app: any) => {
   });
 
   app.post('/api/ai/interview-evaluate', async (req: any, res: any) => {
+    const startTime = Date.now();
     try {
-      const { question, userAnswer, targetRole = 'Junior PPC Specialist' } = req.body;
+      const { 
+        question, 
+        userAnswer, 
+        targetRole = 'Junior PPC Specialist',
+        clientTrack = 'general',
+        questionId = '' 
+      } = req.body;
 
       if (!userAnswer || !question) {
         return res.status(400).json({ error: 'Question and answer are required' });
@@ -1442,40 +1449,133 @@ export const registerAICapabilitiesRoutes = (app: any) => {
 
       const answerLower = userAnswer.toLowerCase();
       
-      // Agency vocabulary dictionaries
-      const searchTerms = ['quality score', 'negative keyword', 'phrase match', 'exact match', 'headline', 'expected ctr', 'sitelink', 'cpc', 'cpa', 'ad group', 'search query report'];
-      const socialTerms = ['lookalike', 'pixel', 'custom audience', 'frequency', 'cpm', 'ctr', 'reels', 'creative fatigue', 'roas', 'attribution', 'hook'];
-      const seoTerms = ['title tag', 'meta description', 'h1', 'search intent', 'backlinks', 'keyword density', 'crawlability', 'internal linking', 'serp'];
+      // Comprehensive Agency Vocabulary Dictionaries
+      const searchTerms = [
+        'quality score', 'negative keyword', 'phrase match', 'exact match', 'broad match', 
+        'headline', 'expected ctr', 'sitelink', 'cpc', 'cpa', 'ad group', 'stag', 
+        'search query report', 'second-price', 'ad rank', 'target cpa', 'target roas', 'rsa'
+      ];
+      const socialTerms = [
+        'lookalike', 'pixel', 'custom audience', 'frequency', 'cpm', 'ctr', 'reels', 
+        'creative fatigue', 'roas', 'attribution', 'hook rate', 'ugc', 'capi', 'mer', 'thumbstop'
+      ];
+      const seoTerms = [
+        'title tag', 'meta description', 'h1', 'search intent', 'backlinks', 'keyword density', 
+        'crawlability', 'internal linking', 'serp', 'google business profile', 'gbp', 'schema', 
+        'localbusiness', 'nap', 'local pack', 'map pack', 'citation'
+      ];
+      const croTerms = [
+        'lift model', 'value proposition', 'friction', 'anxiety', 'distraction', 'urgency', 
+        'relevance', 'a/b test', 'statistical significance', 'p-value', 'hypothesis', 
+        'above the fold', 'thumb zone', 'core web vitals', 'lcp', 'trust stack'
+      ];
+      const analyticsTerms = [
+        'ga4', 'gtm', 'datalayer', 'speed-to-lead', 'webhook', 'attribution window', 
+        'event-driven', 'custom event', 'drop-off', 'funnel leak', 'make.com', 'zapier'
+      ];
       
-      const allTerms = [...searchTerms, ...socialTerms, ...seoTerms];
+      const allTerms = [...searchTerms, ...socialTerms, ...seoTerms, ...croTerms, ...analyticsTerms];
       const usedTerms = allTerms.filter(t => answerLower.includes(t));
-      const vocabularyScore = Math.min(100, Math.max(30, usedTerms.length * 20));
+      const vocabularyScore = Math.min(100, Math.max(35, usedTerms.length * 18));
 
-      let strategicScore = 60;
-      if (answerLower.includes('diagnos') || answerLower.includes('check') || answerLower.includes('first') || answerLower.includes('audit')) {
-        strategicScore += 15;
-      }
-      if (answerLower.includes('test') || answerLower.includes('measure') || answerLower.includes('kpi') || answerLower.includes('cpa') || answerLower.includes('roas')) {
-        strategicScore += 15;
-      }
-      if (userAnswer.length > 120) strategicScore += 10;
-      strategicScore = Math.min(100, strategicScore);
+      // STAR Framework Analysis
+      const situationTokens = ['baseline', 'inherited', 'suffering', 'initial', 'problem', 'challenge', 'drop', 'churn', 'crisis', 'spending', 'burning', 'bleeding', 'jenny', 'dr. miller', 'miller', 'apex'];
+      const taskTokens = ['objective', 'goal', 'target', 'ceiling', 'kpi', 'aim', 'benchmark', 'cpa of', 'roas of', 'quality score of', 'recover', 'turn around'];
+      const actionTokens = ['deployed', 'implemented', 'engineered', 'structured', 'restructured', 'audited', 'isolated', 'pinned', 'optimized', 'tested', 'built', 'created', 'configured', 'injected', 'negative', 'stag', 'schema', 'lift', 'rsa'];
+      const resultTokens = ['lift', 'lifted', 'cut', 'slashed', 'reduced', 'dropped', 'achieved', 'drove', 'increased', 'improved', 'saved', '%', 'x roas', 'roas', 'cpc discount', 'quality score to', 'outperformed'];
 
-      const overallScore = Math.round((vocabularyScore * 0.45) + (strategicScore * 0.55));
-      const isReady = overallScore >= 75;
+      const hasSituation = situationTokens.some(t => answerLower.includes(t));
+      const hasTask = taskTokens.some(t => answerLower.includes(t));
+      const hasAction = actionTokens.some(t => answerLower.includes(t));
+      const hasResult = resultTokens.some(t => answerLower.includes(t));
+
+      let starScore = 40;
+      if (hasSituation) starScore += 15;
+      if (hasTask) starScore += 15;
+      if (hasAction) starScore += 15;
+      if (hasResult) starScore += 15;
+      starScore = Math.min(100, starScore);
+
+      // Quantified Metrics Analysis
+      const numbersFound = userAnswer.match(/\d+(\.\d+)?%?|\$\d+(\.\d+)?|\d+x/g) || [];
+      const metricScore = Math.min(100, Math.max(30, numbersFound.length * 25));
+
+      // Overall Score (Weighted: 35% STAR, 35% Vocabulary, 30% Quantified Metrics)
+      const overallScore = Math.round((starScore * 0.35) + (vocabularyScore * 0.35) + (metricScore * 0.30));
+
+      // Tailored Executive Translations & Insights based on Client Casework
+      let executiveTranslation = "";
+      let directorImpression = "";
+      let curveballFollowUp = "";
+      let recommendedTerms: string[] = [];
+
+      if (clientTrack === 'miller' || answerLower.includes('miller') || answerLower.includes('dental') || questionId === 'q-miller') {
+        executiveTranslation = "\"For Dr. Miller Dental, I audited a campaign burning ad spend on low-intent search terms with a 4/10 Quality Score. My target was an emergency dental CPA under $25. I deployed a 35-term negative keyword shield, isolated emergency intent into STAG ad groups, and pinned high-intent tokens across a 15-headline RSA matrix. This lifted Expected CTR, elevated Quality Score from 4 to 9/10, reduced actual CPC by 38% via second-price auction mechanics, and drove a 4.2x ROAS.\"";
+        directorImpression = overallScore >= 80 
+          ? "Solid executive command. You clearly connected second-price auction mechanics to Quality Score and protected spend with negative keywords." 
+          : "Understood the basic PPC concept, but failed to highlight the negative keyword shield and exact auction discount that saved the client money.";
+        curveballFollowUp = "If a competitor starts aggressively outbidding Dr. Miller on 'emergency dentist near me' with a $35 bid, do you increase bid caps, or how do you use Quality Score and ad extensions to outrank them without burning margin?";
+        recommendedTerms = ['Quality Score 9/10', 'STAG Architecture', '35-Keyword Negative Shield', 'Second-Price Auction Discount', 'Expected CTR'];
+      } else if (clientTrack === 'jenny' || answerLower.includes('jenny') || answerLower.includes('coffee') || questionId === 'q-jenny') {
+        executiveTranslation = "\"When auditing Jenny's Artisan Java, I diagnosed that inconsistent NAP citations and missing structured data were suppressing their Google Map Pack ranking. I engineered a JSON-LD LocalBusiness schema payload, aligned their primary category to Coffee Roasters, and optimized Title and Meta descriptions within strict pixel constraints. This resolved crawl bottlenecks, captured 3 top-3 local pack rankings, and produced a 44% lift in organic phone calls and driving directions.\"";
+        directorImpression = overallScore >= 80
+          ? "Excellent grasp of technical Local SEO. You highlighted Google Business Profile consistency, schema markup, and measurable foot-traffic conversion."
+          : "Too vague on the technical execution. Hiring managers want to hear about JSON-LD schema, title character limits, and NAP consistency.";
+        curveballFollowUp = "A local competitor opens across the street and starts buying Google Ads on Jenny's branded keyword 'Jenny's Artisan Java'. What is your tactical response to protect brand traffic?";
+        recommendedTerms = ['JSON-LD LocalBusiness Schema', 'NAP Consistency', 'Map Pack 3-Pack', 'Strict 60-Char Title Constraints', 'Google Business Profile'];
+      } else if (clientTrack === 'apex' || clientTrack === 'cro' || answerLower.includes('lift') || answerLower.includes('a/b') || questionId === 'q-apex') {
+        executiveTranslation = "\"I applied the 6-factor LIFT Model to Apex Athletics' landing page, hypothesizing that low above-the-fold relevance and missing trust signals were leaking checkout intent. I engineered a challenger variant with a single prominent value prop, an above-the-fold 3-layer trust stack, and a mobile thumb-zone checkout CTA. Running a two-week A/B test with 4,200 unique visitors, the challenger delivered a +24.6% conversion lift verified at 97% statistical significance (p < 0.05).\"";
+        directorImpression = overallScore >= 80
+          ? "High-level CRO acumen. You cited hypothesis framing, the LIFT model, and proved statistical validity at p < 0.05."
+          : "Good awareness of testing, but you must cite your hypothesis framework (LIFT model) and prove statistical confidence (p < 0.05) to sound credible.";
+        curveballFollowUp = "If an A/B test variant shows a +15% conversion lift on Day 3 but has only recorded 45 total conversions, do you ship it immediately or keep running it, and why?";
+        recommendedTerms = ['LIFT Model', 'Statistical Significance (p < 0.05)', '3-Layer Trust Stack', 'Mobile Thumb Zone', 'Sample Size Validation'];
+      } else if (clientTrack === 'social' || answerLower.includes('meta') || answerLower.includes('tiktok') || answerLower.includes('mer') || questionId === 'q-social') {
+        executiveTranslation = "\"When our Meta ad frequency crossed 3.8 and CPA climbed by 45%, I diagnosed severe creative fatigue rather than audience saturation. I deployed a rapid-testing creative sprint with three 4-part UGC video variations featuring distinct 3-second visual hooks. Simultaneously, I verified our Meta Conversions API (CAPI) deduplication to ensure data resilience against iOS privacy loss, recovering a blended MER of 3.8x at scale.\"";
+        directorImpression = overallScore >= 80
+          ? "Modern paid social specialist. You understand creative fatigue as the primary variable, CAPI server-side resilience, and blended MER attribution."
+          : "Don't just talk about changing audiences. In modern paid social, creative is the targeting. Talk about hook rates, 4-part UGC structures, and CAPI.";
+        curveballFollowUp = "If Meta Ads Manager reports a 4.2x ROAS, but your client's Shopify bank receipts show blended MER is only 1.8x, where is the discrepancy coming from and how do you audit attribution windows?";
+        recommendedTerms = ['3-Second Hook Rate', 'Creative Fatigue (Freq > 3.5)', '4-Part UGC Structure', 'Meta CAPI (Conversions API)', 'Blended MER'];
+      } else if (clientTrack === 'analytics' || answerLower.includes('ga4') || answerLower.includes('webhook') || questionId === 'q-analytics') {
+        executiveTranslation = "\"I architected an event-driven measurement framework in GA4 utilizing GTM DataLayers to track discrete micro-conversions. To solve lead drop-off, I engineered an automated webhook pipeline via Make.com that routed inbound demo requests into CRM routing in under 60 seconds. This dropped lead response latency by 92% and lifted demo completion rates by 34%.\"";
+        directorImpression = overallScore >= 80
+          ? "Exceptional technical marketing operations. Connecting GA4 custom events to speed-to-lead automation demonstrates real agency systems thinking."
+          : "Make sure you connect measurement to revenue. Tracking events in GA4 is step one; automating the speed-to-lead pipeline is what wins the client.";
+        curveballFollowUp = "How do you handle cross-domain tracking in GA4 when a user moves from an informational blog to a checkout subdomain hosted on a third-party platform?";
+        recommendedTerms = ['GA4 Event-Driven Schema', 'GTM DataLayer', 'Speed-to-Lead Webhook (<60s)', 'Micro-Conversion Funnels', 'Attribution Modeling'];
+      } else {
+        executiveTranslation = "\"In managing agency client campaigns, I follow a disciplined 4-step framework: 1) Audit the baseline data to pinpoint root-cause leakage, 2) Formulate a metric-backed hypothesis with clear target CPA ceilings, 3) Deploy targeted technical interventions like negative keyword shields and conversion-rate optimization, and 4) Verify ROI impact with statistically significant reporting and blended ROAS analysis.\"";
+        directorImpression = overallScore >= 75
+          ? "Strong, structured strategic answer. Demonstrates systematic agency methodology."
+          : "Structure your response using the STAR method: Situation, Task, Action, and Quantified Result.";
+        curveballFollowUp = "Walk me through how you communicate a campaign failure to an angry client and the exact steps you take to recover their trust within 48 hours.";
+        recommendedTerms = ['Root Cause Diagnosis', 'Target CPA Ceilings', 'Blended ROAS', 'STAR Framework', 'Quantified Business Outcome'];
+      }
 
       const responsePayload = {
         score: overallScore,
         vocabularyScore,
-        strategicScore,
+        starScore,
+        metricScore,
+        starBreakdown: {
+          situation: hasSituation,
+          task: hasTask,
+          action: hasAction,
+          result: hasResult,
+        },
         rating: overallScore >= 85 ? '🌟 Top Tier Agency Candidate' : overallScore >= 70 ? '✅ Interview Ready' : '⚠️ Needs Practice',
         usedTerminology: usedTerms,
-        recommendedTerminology: ['Negative Keyword Lists', 'Expected CTR', 'Target CPA Ceilings', 'Quality Score Optimization', 'Search Query Report'].filter(t => !usedTerms.includes(t.toLowerCase())),
+        recommendedTerminology: recommendedTerms.filter(t => !usedTerms.includes(t.toLowerCase())),
+        directorImpression,
+        executiveTranslation,
+        curveballFollowUp,
+        speedMs: Date.now() - startTime,
         feedback: [
-          usedTerms.length > 0 ? `Great use of professional agency terminology: "${usedTerms.slice(0, 3).join('", "')}".` : 'Try incorporating more industry terminology like Quality Score, Negative Keywords, and Target CPA.',
-          strategicScore >= 75 ? 'Strong structured reasoning: diagnosing root cause before taking action is exactly what hiring directors look for.' : 'Structure your answer in a clear 3-step sequence: 1) Audit data, 2) Apply fix, 3) Measure CPA/ROAS impact.',
-        ],
-        sampleModelAnswer: `In an agency setting, I start by reviewing the Search Query Report to identify budget bleed from unqualified clicks and immediately deploy negative keywords. Next, I optimize the RSA Headlines to mirror high-intent keyword themes and raise Expected CTR to achieve a 8+ Quality Score. Finally, I adjust target CPA bid caps to prevent overpaying in peak auction hours.`
+          hasSituation ? '✅ Good contextual framing: established client challenge early.' : '⚠️ Missing Situation: Start by stating the client crisis or baseline inefficiency.',
+          hasAction ? '✅ Strong tactical action: named specific agency tools and adjustments.' : '⚠️ Missing Action: Name the exact methods deployed (e.g. STAG groups, negative keywords, schema).',
+          hasResult ? '✅ Great result accountability: cited quantifiable performance metrics.' : '⚠️ Missing Result: Always conclude with a measurable outcome (e.g. Quality Score 9/10, 38% CPC reduction).'
+        ]
       };
 
       res.json(responsePayload);
@@ -1484,6 +1584,6 @@ export const registerAICapabilitiesRoutes = (app: any) => {
       res.status(500).json({ error: 'Failed to evaluate interview answer' });
     }
   });
-  
-  console.log('AI Capabilities routes registered');
+
+    console.log('AI Capabilities routes registered');
 };

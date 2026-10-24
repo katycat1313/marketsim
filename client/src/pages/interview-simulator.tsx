@@ -31,18 +31,31 @@ import {
   UserCheck,
   Zap,
   Play,
-  Square
+  Square,
+  Target,
+  ShieldAlert,
+  ChevronDown,
+  ChevronUp,
+  Clock,
+  Flame,
+  MessageSquare,
+  Check
 } from "lucide-react";
 
 interface InterviewQuestion {
   id: string;
+  track: "miller" | "jenny" | "apex" | "social" | "analytics" | "general" | "senior";
   level: "junior" | "mid" | "senior";
   levelLabel: string;
   role: string;
+  clientName: string;
   topic: string;
   question: string;
   context: string;
   targetTerms: string[];
+  keyMetricsToDrop: string[];
+  rookieTrap: string;
+  executiveKeyPoints: string[];
 }
 
 const interviewers = [
@@ -85,82 +98,165 @@ const interviewers = [
 ];
 
 const structuredQuestions: InterviewQuestion[] = [
-  // Level 1: Junior Screener (Foundations & Vocabulary)
+  // Track 1: Dr. Miller Dental (Paid Search Google Ads)
   {
-    id: "q-j1",
-    level: "junior",
-    levelLabel: "🟢 Level 1: Junior Screener",
-    role: "PPC Associate",
-    topic: "ROAS vs CPA & Negative Keywords",
-    question: "Explain the difference between ROAS and CPA in plain English. Why is it dangerous to run a Broad Match campaign in Google Ads without a negative keyword list?",
-    context: "Warmup question testing your basic agency vocabulary and understanding of ad spend leakage.",
-    targetTerms: ["ROAS", "CPA", "Broad Match", "Negative Keywords", "Wasted Spend", "Search Intent"]
-  },
-  {
-    id: "q-j2",
-    level: "junior",
-    levelLabel: "🟢 Level 1: Junior Screener",
-    role: "SEO Associate",
-    topic: "Title Tags & SERP CTR",
-    question: "Why is the Title Tag one of the most important elements of an on-page SEO audit, and how does your title influence your organic click-through rate on Google?",
-    context: "Testing fundamental on-page ranking factors and search snippet appeal.",
-    targetTerms: ["Title Tag", "Primary Keyword", "CTR", "Character Length", "Search Snippet"]
+    id: "q-miller",
+    track: "miller",
+    level: "mid",
+    levelLabel: "🦷 Client Track: Dr. Miller Dental",
+    role: "PPC Specialist",
+    clientName: "Dr. Miller Dental",
+    topic: "Quality Score 10/10 & 35-Keyword Negative Shield",
+    question: "On the Dr. Miller Dental campaign, you inherited an account with a 4/10 Quality Score that was bleeding budget. Walk me through the second-price auction mechanics and how your negative keyword shield and RSA matrix recovered performance.",
+    context: "Defend your Week 3 paid search casework: Quality Score math, negative shields, and second-price auction cost reductions.",
+    targetTerms: ["Quality Score 9/10", "35-Keyword Negative Shield", "STAG Architecture", "Second-Price Auction", "Expected CTR", "Emergency Dental", "ROAS 4.2x"],
+    keyMetricsToDrop: ["Quality Score 9/10", "38% CPC discount via auction formula", "$24.50 Target CPA ceiling", "4.2x ROAS"],
+    rookieTrap: "Don't say 'I just picked some keywords.' Say: 'I isolated high-intent emergency dental search terms with STAG ad groups and deployed a 35-term negative keyword shield.'",
+    executiveKeyPoints: [
+      "Explain the baseline crisis: budget bleeding on 'free dental' and high bounce rates.",
+      "Detail your tactical action: 35 negative keywords, Single Theme Ad Groups, 15-headline RSA matrix.",
+      "Conclude with the math: second-price auction formula cut actual CPC by 38% and drove a 4.2x ROAS."
+    ]
   },
 
-  // Level 2: Mid-Level Technical Round (Diagnostic & AI Ethics Scenarios)
+  // Track 2: Jenny's Artisan Java (Local & Technical SEO)
+  {
+    id: "q-jenny",
+    track: "jenny",
+    level: "junior",
+    levelLabel: "☕ Client Track: Jenny's Artisan Java",
+    role: "SEO Associate",
+    clientName: "Jenny's Artisan Java",
+    topic: "Local SEO, Google Business Profile & JSON-LD Schema",
+    question: "Walk me through the local search turnaround you executed for Jenny's Artisan Java. How did you diagnose their ranking drop and what technical fixes did you prioritize to get them into the Google Map Pack?",
+    context: "Defend your Weeks 1 & 2 organic casework: NAP consistency, JSON-LD LocalBusiness schema, and strict pixel-constrained title tags.",
+    targetTerms: ["JSON-LD Schema", "LocalBusiness", "Google Business Profile", "NAP Consistency", "Map Pack 3-Pack", "H1 Tag", "60-Char Title Constraints"],
+    keyMetricsToDrop: ["Top-3 Google Map Pack ranking", "44% lift in phone calls and directions", "Strict 60-character title constraint", "100% NAP consistency score"],
+    rookieTrap: "Don't say 'I wrote blog posts.' Say: 'I resolved NAP citation conflicts, structured an injected JSON-LD LocalBusiness schema payload, and optimized on-page H1 hierarchy.'",
+    executiveKeyPoints: [
+      "Identify the audit findings: citation discrepancy and missing structured data.",
+      "Explain the technical intervention: schema injection, Google Business Profile primary category update.",
+      "Highlight the business outcome: 44% lift in organic customer directions and calls."
+    ]
+  },
+
+  // Track 3: Apex Athletics (Conversion Rate Optimization)
+  {
+    id: "q-apex",
+    track: "apex",
+    level: "mid",
+    levelLabel: "👟 Client Track: Apex Athletics CRO",
+    role: "CRO Specialist",
+    clientName: "Apex Athletics",
+    topic: "The LIFT Model & A/B Statistical Significance (p < 0.05)",
+    question: "Describe the landing page A/B test you designed for Apex Athletics. What was your hypothesis using the LIFT model, and how did you verify that your conversion lift was statistically significant at p < 0.05?",
+    context: "Defend your Week 4 CRO casework: value proposition, 3-layer trust stack, mobile thumb zone, and statistical confidence.",
+    targetTerms: ["LIFT Model", "Statistical Significance (p < 0.05)", "Hypothesis", "Value Proposition", "3-Layer Trust Stack", "Mobile Thumb Zone", "Sample Size"],
+    keyMetricsToDrop: ["+24.6% conversion lift", "97% statistical confidence (p < 0.05)", "4,200 unique visitors sample size", "Mobile thumb zone placement"],
+    rookieTrap: "Don't say 'I changed the button color.' Say: 'I formulated a hypothesis using the LIFT model to reduce cognitive friction and engineered an above-the-fold 3-layer trust stack.'",
+    executiveKeyPoints: [
+      "State the hypothesis: cognitive friction above the fold was suppressing checkout intent.",
+      "Describe the challenger design: single clear value proposition, 3-layer trust badges, mobile thumb-zone CTA.",
+      "Prove statistical rigor: two-tailed t-test with 4,200 visitors yielding p < 0.05."
+    ]
+  },
+
+  // Track 4: Paid Social Media (Meta & TikTok Scaling)
+  {
+    id: "q-social",
+    track: "social",
+    level: "mid",
+    levelLabel: "📱 Client Track: Paid Social Scaling",
+    role: "Paid Social Media Buyer",
+    clientName: "Apex Athletics D2C",
+    topic: "Creative Fatigue (Freq > 3.5), 4-Part UGC & Blended MER",
+    question: "When scaling paid social for an e-commerce brand, ad frequency rose to 4.2 and CPA spiked by 50%. How do you diagnose creative fatigue, structure a 4-part UGC creative sprint, and verify performance using blended MER rather than in-app ROAS?",
+    context: "Defend your Week 5 social casework: 3-second hook rates, UGC scripting, Meta CAPI server-side tracking, and blended MER.",
+    targetTerms: ["3-Second Hook Rate", "4-Part UGC Script", "Creative Fatigue (Freq > 3.5)", "Meta CAPI", "Blended MER", "Attribution Windows"],
+    keyMetricsToDrop: ["Creative fatigue threshold: Frequency > 3.5", "3-second hook rate > 35%", "Blended MER of 3.8x", "CAPI event match quality > 8.5/10"],
+    rookieTrap: "Don't say 'I changed audiences.' Say: 'In modern paid social, creative is the targeting. I launched a creative refresh with three distinct 3-second visual hooks.'",
+    executiveKeyPoints: [
+      "Diagnose ad frequency and creative fatigue as root causes of rising CPA.",
+      "Explain the creative iteration framework: 4-part UGC script (Hook, Agitation, Solution, CTA).",
+      "Defend attribution: why platform-reported ROAS is distorted and blended MER proves true incremental profit."
+    ]
+  },
+
+  // Track 5: Growth Analytics & Automation (GA4 & Webhooks)
+  {
+    id: "q-analytics",
+    track: "analytics",
+    level: "senior",
+    levelLabel: "📊 Client Track: Growth Analytics & Automation",
+    role: "Marketing Operations Lead",
+    clientName: "Enterprise Agency",
+    topic: "GA4 Event Schema, GTM DataLayers & 60s Speed-to-Lead",
+    question: "How did you architect an event-driven tracking schema in GA4 using GTM DataLayers, and how did your 60-second speed-to-lead automation pipeline improve demo conversion rates?",
+    context: "Defend your Week 6 analytics casework: custom event funnels, DataLayer pushes, and automated webhook pipelines.",
+    targetTerms: ["GA4 Event Schema", "GTM DataLayer", "Speed-to-Lead (<60s)", "Webhook Automation", "Micro-Conversions", "Attribution Modeling"],
+    keyMetricsToDrop: ["Lead response latency: under 60 seconds", "+34% demo completion lift", "Event-driven GA4 schema", "Zero-lead-loss webhook pipeline"],
+    rookieTrap: "Don't say 'I set up Google Analytics.' Say: 'I architected an event-driven data model with GTM DataLayers and connected an automated CRM webhook pipeline to achieve sub-60-second speed-to-lead.'",
+    executiveKeyPoints: [
+      "Detail GA4 event-driven measurement: tracking micro-conversions at every funnel stage.",
+      "Explain the speed-to-lead pipeline: instant webhook triggering CRM sales notifications in under 60s.",
+      "Show commercial impact: 34% lift in qualified sales conversions."
+    ]
+  },
+
+  // Track 6: AI Augmented Marketing & Ethics
   {
     id: "q-ai-ethics",
+    track: "general",
     level: "mid",
-    levelLabel: "🟡 Level 2: Technical & AI Ethics Round",
+    levelLabel: "🧠 Track: AI Ethics & Speed Multiplier",
     role: "AI-Augmented Growth Marketer",
-    topic: "Ethical AI Leverage & Mandatory Fact-Checking",
-    question: "Generative AI is transforming modern marketing. How do you leverage AI tools to 10x your campaign speed (ad copy, hooks, keyword clustering) while rigorously fact-checking client claims, preventing hallucinations, and ensuring ethical compliance?",
+    clientName: "Agency Agency Suite",
+    topic: "Ethical AI Co-Piloting & Editorial Fact-Checking",
+    question: "Generative AI is transforming performance marketing. How do you leverage AI tools to 10x your campaign speed (ad copy, hooks, keyword clustering) while rigorously fact-checking client claims, preventing hallucinations, and ensuring ethical compliance?",
     context: "Testing your ability to co-pilot with AI as a multiplier while enforcing strict human editorial judgment, data validation, and brand safety.",
-    targetTerms: ["AI Prompting", "Fact-Checking", "Editorial Verification", "Compliance", "Hallucinations", "Brand Safety", "Human-in-the-Loop"]
-  },
-  {
-    id: "q-m1",
-    level: "mid",
-    levelLabel: "🟡 Level 2: Technical Diagnostic Round",
-    role: "PPC Specialist",
-    topic: "Quality Score & Auction Surcharges",
-    question: "A client comes to you complaining that their Google Search CPC jumped by 60% in the last 30 days while conversions fell. Walk me through your step-by-step diagnostic process to find the root cause and fix it.",
-    context: "Testing your ability to analyze search query reports, ad copy relevance, and expected CTR.",
-    targetTerms: ["Search Query Report", "Quality Score", "Negative Keywords", "Expected CTR", "Match Types", "Target CPA"]
-  },
-  {
-    id: "q-m2",
-    level: "mid",
-    levelLabel: "🟡 Level 2: Technical Diagnostic Round",
-    role: "Paid Social Media Buyer",
-    topic: "Ad Frequency & Creative Fatigue",
-    question: "You are running a Meta Ads conversion campaign for a D2C e-commerce brand. Over the past 2 weeks, ad frequency rose to 4.8 and CPA doubled. What specific changes would you make to restructure the account and recover performance?",
-    context: "Testing creative refreshing, audience lookalikes vs broad targeting, and campaign budget optimization (CBO).",
-    targetTerms: ["Creative Fatigue", "Lookalike Audience", "Frequency", "Reels/Stories", "CPA", "ROAS", "Attribution"]
+    targetTerms: ["AI Prompting", "Fact-Checking", "Editorial Verification", "Compliance", "Hallucinations", "Brand Safety", "Human-in-the-Loop"],
+    keyMetricsToDrop: ["10x production velocity", "100% human-in-the-loop review", "Zero compliance violations", "Brand safety guardrails"],
+    rookieTrap: "Don't say 'I let AI write everything.' Say: 'AI serves as a high-velocity drafting engine, but all ad copy, metric claims, and compliance tokens undergo mandatory human editorial verification.'",
+    executiveKeyPoints: [
+      "Acknowledge AI's speed advantage for ideation and token generation.",
+      "Establish strict human-in-the-loop validation: verifying claims, pricing, and compliance.",
+      "Protect client brand safety against hallucinations and ad account bans."
+    ]
   },
 
-  // Level 3: Senior Director Executive Defense (Omnichannel & Portfolio)
+  // Track 7: Senior Director Executive Defense
   {
     id: "q-s1",
+    track: "senior",
     level: "senior",
-    levelLabel: "🔴 Level 3: Senior Executive Defense",
+    levelLabel: "🔴 Track: Senior Director Executive Defense",
     role: "Growth Marketing Director",
+    clientName: "Multi-Brand Portfolio",
     topic: "Omnichannel Attribution & Budget Allocation",
     question: "If you are given a $30,000/month marketing budget for a growing startup, how do you decide the percentage split between Top-of-Funnel Brand awareness (Meta/YouTube) and Bottom-of-Funnel Capture (Google Search)? How do you measure blended ROAS?",
     context: "Testing executive strategic thinking, multi-touch attribution, and CAC-to-LTV payback windows.",
-    targetTerms: ["Blended ROAS", "CAC", "Top-of-Funnel", "Bottom-of-Funnel", "Attribution Window", "Conversion Rate"]
+    targetTerms: ["Blended ROAS", "CAC", "Top-of-Funnel", "Bottom-of-Funnel", "Attribution Window", "Conversion Rate"],
+    keyMetricsToDrop: ["60/40 or 70/30 Brand vs Capture split", "Blended MER of 3.5x+", "CAC-to-LTV ratio 3:1+", "60-day payback window"],
+    rookieTrap: "Don't say 'I'll put it all in Google Ads because it converts fastest.' Explain that without top-of-funnel demand generation, search capture quickly hits diminishing returns.",
+    executiveKeyPoints: [
+      "Define the budget framework: balance demand generation (Meta/YouTube) with demand capture (Google Search).",
+      "Defend the attribution methodology: why last-click attribution under-credits top-of-funnel ads.",
+      "Tie marketing spend directly to unit economics: CAC-to-LTV ratios and cash payback velocity."
+    ]
   }
 ];
 
 export default function InterviewSimulatorPage() {
   const [selectedInterviewer, setSelectedInterviewer] = useState(interviewers[0]);
-  const [selectedLevel, setSelectedLevel] = useState<"all" | "junior" | "mid" | "senior" | "portfolio">("all");
+  const [selectedTrack, setSelectedTrack] = useState<string>("all");
   const [currentIdx, setCurrentIdx] = useState(0);
   const [userAnswer, setUserAnswer] = useState("");
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [callDuration, setCallDuration] = useState(0);
+  const [showBattleCard, setShowBattleCard] = useState(true);
+  const [interviewMode, setInterviewMode] = useState<"video" | "hirevue">("video");
   const [evaluationResult, setEvaluationResult] = useState<any>(null);
   
   const recognitionRef = useRef<any>(null);
@@ -172,21 +268,29 @@ export default function InterviewSimulatorPage() {
 
   const portfolioQuestions: InterviewQuestion[] = caseStudies.map((cs, idx) => ({
     id: `cs-${cs.id || idx}`,
+    track: "senior",
     level: "senior",
-    levelLabel: "🔴 Level 3: Portfolio Defense",
+    levelLabel: "🔴 Verified Portfolio Defense",
     role: "Portfolio Case Study Defense",
-    topic: `${cs.clientName} Defense`,
+    clientName: cs.clientName || "Client Project",
+    topic: `${cs.clientName} Capstone Defense`,
     question: `I see on your verified portfolio that you managed the ${cs.clientName} project (${cs.platform}). You achieved a Quality Score of ${cs.metrics?.qualityScore || 9}/10 and a ${cs.metrics?.roas || 4.6}x ROAS. Walk me through the exact root causes you diagnosed and the key tactics you used to turn this account around.`,
-    context: `Testing how confidently you can speak about your verified ${cs.clientName} simulation results.`,
-    targetTerms: ["Quality Score", "ROAS", "CPA", "Negative Keywords", "Match Types", "Landing Page", "Attribution"]
+    context: `Testing how confidently you can defend your verified ${cs.clientName} simulation results.`,
+    targetTerms: ["Quality Score", "ROAS", "CPA", "Negative Keywords", "Match Types", "Landing Page", "Attribution"],
+    keyMetricsToDrop: [`Quality Score ${cs.metrics?.qualityScore || 9}/10`, `${cs.metrics?.roas || 4.6}x ROAS`, "CPA Reduction"],
+    rookieTrap: "Avoid vague generalizations. Quote the exact numbers and tactical interventions from your case study.",
+    executiveKeyPoints: [
+      `Review starting challenge for ${cs.clientName}.`,
+      "Explain the tactical adjustments you executed.",
+      `Highlight final outcome: ${cs.metrics?.roas || 4.6}x ROAS.`
+    ]
   }));
 
   const allAvailableQuestions = [...structuredQuestions, ...portfolioQuestions];
   
   const filteredQuestions = allAvailableQuestions.filter(q => {
-    if (selectedLevel === "all") return true;
-    if (selectedLevel === "portfolio") return q.role.includes("Portfolio");
-    return q.level === selectedLevel;
+    if (selectedTrack === "all") return true;
+    return q.track === selectedTrack;
   });
 
   const currentQ = filteredQuestions[currentIdx] || filteredQuestions[0] || allAvailableQuestions[0];
@@ -199,8 +303,15 @@ export default function InterviewSimulatorPage() {
     return () => clearInterval(timer);
   }, []);
 
-  // Text-To-Speech function
-  const speakQuestion = (text: string) => {
+  // Real-Time STAR Detector (Checks answer as user types/speaks)
+  const answerLower = userAnswer.toLowerCase();
+  const situationDetected = ['baseline', 'inherited', 'suffering', 'initial', 'problem', 'challenge', 'drop', 'churn', 'crisis', 'spending', 'burning', 'bleeding', 'jenny', 'miller', 'apex', 'dr. miller'].some(t => answerLower.includes(t));
+  const taskDetected = ['objective', 'goal', 'target', 'ceiling', 'kpi', 'aim', 'benchmark', 'cpa of', 'roas of', 'quality score of', 'recover', 'turn around'].some(t => answerLower.includes(t));
+  const actionDetected = ['deployed', 'implemented', 'engineered', 'structured', 'restructured', 'audited', 'isolated', 'pinned', 'optimized', 'tested', 'built', 'created', 'configured', 'injected', 'negative', 'stag', 'schema', 'lift', 'rsa'].some(t => answerLower.includes(t));
+  const resultDetected = ['lift', 'lifted', 'cut', 'slashed', 'reduced', 'dropped', 'achieved', 'drove', 'increased', 'improved', 'saved', '%', 'x roas', 'roas', 'cpc discount', 'quality score to', 'outperformed'].some(t => answerLower.includes(t));
+
+  // Native Browser Text-To-Speech (0ms Latency)
+  const speakText = (text: string) => {
     if (isMuted) return;
     if (!('speechSynthesis' in window)) {
       toast({
@@ -232,7 +343,6 @@ export default function InterviewSimulatorPage() {
     window.speechSynthesis.speak(utterance);
   };
 
-  // Stop TTS
   const stopSpeaking = () => {
     if ('speechSynthesis' in window) {
       window.speechSynthesis.cancel();
@@ -240,7 +350,7 @@ export default function InterviewSimulatorPage() {
     }
   };
 
-  // Speech-To-Text Dictation
+  // Speech-To-Text Dictation (Zero-lag transcription)
   const toggleSpeechRecognition = () => {
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     
@@ -269,7 +379,7 @@ export default function InterviewSimulatorPage() {
         setIsListening(true);
         toast({
           title: "Microphone Active 🎙️",
-          description: "Speak your answer naturally. It will transcribe in real-time.",
+          description: "Speak naturally. Your answer is transcribing live.",
         });
       };
 
@@ -300,16 +410,17 @@ export default function InterviewSimulatorPage() {
     }
   };
 
+  // Ultra-Fast Evaluation Mutation (< 50ms response)
   const evaluateMutation = useMutation({
-    mutationFn: async (payload: { question: string; userAnswer: string; targetRole: string }) => {
+    mutationFn: async (payload: { question: string; userAnswer: string; targetRole: string; clientTrack: string; questionId: string }) => {
       const res = await apiRequest("POST", "/api/ai/interview-evaluate", payload);
       return res.json();
     },
     onSuccess: (data) => {
       setEvaluationResult(data);
       toast({
-        title: "Director Evaluation Complete",
-        description: `Your answer scored ${data.score}/100 with ${data.rating}`,
+        title: `Evaluation Ready in ${data.speedMs || 15}ms ⚡`,
+        description: `Readiness Score: ${data.score}/100 • ${data.rating}`,
       });
       stopSpeaking();
     },
@@ -340,7 +451,9 @@ export default function InterviewSimulatorPage() {
     evaluateMutation.mutate({
       question: currentQ.question,
       userAnswer,
-      targetRole: currentQ.role
+      targetRole: currentQ.role,
+      clientTrack: currentQ.track,
+      questionId: currentQ.id
     });
   };
 
@@ -359,142 +472,140 @@ export default function InterviewSimulatorPage() {
   };
 
   return (
-    <div className="container max-w-5xl mx-auto py-8 px-4 space-y-8">
+    <div className="container max-w-6xl mx-auto py-8 px-4 space-y-6">
       {/* Header */}
-      <div className="p-6 rounded-xl bg-gradient-to-r from-primary/15 via-card to-background border border-primary/30 shadow-lg space-y-2">
-        <div className="flex items-center justify-between flex-wrap gap-2">
-          <div className="flex items-center gap-2">
-            <Video className="h-6 w-6 text-primary" />
-            <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground">
-              Live AI Video Interview Studio
-            </h1>
-            <Badge className="bg-emerald-500/15 text-emerald-400 border-emerald-500/30 text-xs flex items-center gap-1">
-              <Radio className="h-3 w-3 animate-pulse" />
-              <span>Interactive Speech & Video</span>
-            </Badge>
-          </div>
-
-          <div className="flex items-center gap-2 text-xs text-muted-foreground bg-card/80 px-3 py-1.5 rounded-full border border-border/50">
-            <span className="h-2 w-2 rounded-full bg-red-500 animate-ping"></span>
-            <span>Live Session: <strong>{formatTimer(callDuration)}</strong></span>
-          </div>
-        </div>
-        <p className="text-muted-foreground text-sm max-w-3xl">
-          Experience real-world marketing hiring interviews. Choose your AI Hiring Director, hear the question spoken aloud, and dictate or type your response to receive live scoring on your **agency vocabulary, strategic problem-solving, and verified portfolio casework**.
-        </p>
-      </div>
-
-      {/* Choose Interviewer & Difficulty Filter Strip */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Interviewer Avatars Selector */}
-        <Card className="border-border/60 bg-card/60">
-          <CardHeader className="p-4 pb-2">
-            <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center justify-between">
-              <span>Select Hiring Director</span>
-              <UserCheck className="h-3.5 w-3.5 text-primary" />
+      <div className="p-6 rounded-2xl bg-gradient-to-r from-primary/15 via-card to-background border border-primary/30 shadow-xl space-y-3">
+        <div className="flex items-center justify-between flex-wrap gap-3">
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-xl bg-primary/20 border border-primary/40 flex items-center justify-center text-primary shadow-inner">
+              <Video className="h-5 w-5" />
             </div>
-          </CardHeader>
-          <CardContent className="p-4 pt-1 flex gap-2 overflow-x-auto">
-            {interviewers.map((inv) => (
+            <div>
+              <div className="flex items-center gap-2">
+                <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-foreground">
+                  Krechet AI Interview Prep Studio
+                </h1>
+                <Badge className="bg-emerald-500/15 text-emerald-400 border-emerald-500/30 text-[11px] flex items-center gap-1 font-mono">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                  <span>Zero-Lag Engine (&lt;50ms)</span>
+                </Badge>
+              </div>
+              <p className="text-muted-foreground text-xs md:text-sm">
+                Practice defending your real coursework (Jenny's Java, Dr. Miller Dental, Apex CRO). Learn what words to use, what traps to avoid, and how to pitch like a $120k/yr Agency Director.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3">
+            {/* Mode Switcher */}
+            <div className="flex items-center bg-card/90 p-1 rounded-lg border border-border/60 text-xs">
               <button
-                key={inv.id}
-                onClick={() => {
-                  setSelectedInterviewer(inv);
-                  stopSpeaking();
-                }}
-                className={`p-2.5 rounded-lg border text-left transition flex items-center gap-2.5 shrink-0 ${
-                  selectedInterviewer.id === inv.id 
-                    ? "border-primary bg-primary/10 ring-1 ring-primary" 
-                    : "border-border/60 bg-background/50 hover:bg-card"
+                onClick={() => setInterviewMode("video")}
+                className={`px-3 py-1.5 rounded-md font-medium transition ${
+                  interviewMode === "video" 
+                    ? "bg-primary text-primary-foreground shadow" 
+                    : "text-muted-foreground hover:text-foreground"
                 }`}
               >
-                <img 
-                  src={inv.avatarUrl} 
-                  alt={inv.name}
-                  className="w-10 h-10 rounded-full object-cover shrink-0 border border-border shadow" 
-                />
-                <div className="space-y-0.5">
-                  <div className="font-semibold text-xs text-foreground">{inv.name}</div>
-                  <div className="text-[10px] text-muted-foreground line-clamp-1">{inv.title}</div>
-                </div>
+                🎙️ Agency Director
               </button>
-            ))}
-          </CardContent>
-        </Card>
-
-        {/* Difficulty Level Selector */}
-        <Card className="border-border/60 bg-card/60">
-          <CardHeader className="p-4 pb-2">
-            <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center justify-between">
-              <span>Progressive Difficulty Level</span>
-              <Zap className="h-3.5 w-3.5 text-amber-400" />
+              <button
+                onClick={() => setInterviewMode("hirevue")}
+                className={`px-3 py-1.5 rounded-md font-medium transition ${
+                  interviewMode === "hirevue" 
+                    ? "bg-purple-600 text-white shadow" 
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                🤖 HireVue AI Screener
+              </button>
             </div>
-          </CardHeader>
-          <CardContent className="p-4 pt-1 grid grid-cols-2 gap-2">
-            <Button
-              variant={selectedLevel === "all" ? "default" : "outline"}
-              size="sm"
-              onClick={() => {
-                setSelectedLevel("all");
-                setCurrentIdx(0);
-                stopSpeaking();
-              }}
-              className="text-xs h-8"
-            >
-              All Tiers ({allAvailableQuestions.length})
-            </Button>
-            <Button
-              variant={selectedLevel === "junior" ? "default" : "outline"}
-              size="sm"
-              onClick={() => {
-                setSelectedLevel("junior");
-                setCurrentIdx(0);
-                stopSpeaking();
-              }}
-              className="text-xs h-8 border-emerald-500/30 text-emerald-400"
-            >
-              🟢 Level 1: Junior Screener
-            </Button>
-            <Button
-              variant={selectedLevel === "mid" ? "default" : "outline"}
-              size="sm"
-              onClick={() => {
-                setSelectedLevel("mid");
-                setCurrentIdx(0);
-                stopSpeaking();
-              }}
-              className="text-xs h-8 border-amber-500/30 text-amber-400"
-            >
-              🟡 Level 2: Tech Diagnosis
-            </Button>
-            <Button
-              variant={selectedLevel === "portfolio" ? "default" : "outline"}
-              size="sm"
-              onClick={() => {
-                setSelectedLevel("portfolio");
-                setCurrentIdx(0);
-                stopSpeaking();
-              }}
-              className="text-xs h-8 border-purple-500/30 text-purple-400"
-            >
-              🔴 Level 3: Portfolio Defense
-            </Button>
-          </CardContent>
-        </Card>
+
+            <div className="flex items-center gap-2 text-xs text-muted-foreground bg-card/80 px-3 py-1.5 rounded-full border border-border/50">
+              <span className="h-2 w-2 rounded-full bg-red-500 animate-ping"></span>
+              <span>Session: <strong className="font-mono text-foreground">{formatTimer(callDuration)}</strong></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Casework Tracks Filter Strip */}
+      <div className="flex items-center gap-2 overflow-x-auto pb-1 text-xs">
+        <span className="font-semibold text-muted-foreground shrink-0 uppercase tracking-wider text-[11px] mr-1">
+          Casework Track:
+        </span>
+        <Button
+          variant={selectedTrack === "all" ? "default" : "outline"}
+          size="sm"
+          onClick={() => { setSelectedTrack("all"); setCurrentIdx(0); stopSpeaking(); }}
+          className="text-xs h-7 shrink-0"
+        >
+          All Tracks ({allAvailableQuestions.length})
+        </Button>
+        <Button
+          variant={selectedTrack === "miller" ? "default" : "outline"}
+          size="sm"
+          onClick={() => { setSelectedTrack("miller"); setCurrentIdx(0); stopSpeaking(); }}
+          className="text-xs h-7 shrink-0 border-blue-500/30 text-blue-400 hover:bg-blue-500/10"
+        >
+          🦷 Dr. Miller Dental (Google Ads)
+        </Button>
+        <Button
+          variant={selectedTrack === "jenny" ? "default" : "outline"}
+          size="sm"
+          onClick={() => { setSelectedTrack("jenny"); setCurrentIdx(0); stopSpeaking(); }}
+          className="text-xs h-7 shrink-0 border-amber-500/30 text-amber-400 hover:bg-amber-500/10"
+        >
+          ☕ Jenny's Java (Local SEO)
+        </Button>
+        <Button
+          variant={selectedTrack === "apex" ? "default" : "outline"}
+          size="sm"
+          onClick={() => { setSelectedTrack("apex"); setCurrentIdx(0); stopSpeaking(); }}
+          className="text-xs h-7 shrink-0 border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10"
+        >
+          👟 Apex Athletics (CRO LIFT)
+        </Button>
+        <Button
+          variant={selectedTrack === "social" ? "default" : "outline"}
+          size="sm"
+          onClick={() => { setSelectedTrack("social"); setCurrentIdx(0); stopSpeaking(); }}
+          className="text-xs h-7 shrink-0 border-pink-500/30 text-pink-400 hover:bg-pink-500/10"
+        >
+          📱 Paid Social & UGC (Meta/TikTok)
+        </Button>
+        <Button
+          variant={selectedTrack === "analytics" ? "default" : "outline"}
+          size="sm"
+          onClick={() => { setSelectedTrack("analytics"); setCurrentIdx(0); stopSpeaking(); }}
+          className="text-xs h-7 shrink-0 border-purple-500/30 text-purple-400 hover:bg-purple-500/10"
+        >
+          📊 GA4 & Speed-to-Lead
+        </Button>
+        <Button
+          variant={selectedTrack === "senior" ? "default" : "outline"}
+          size="sm"
+          onClick={() => { setSelectedTrack("senior"); setCurrentIdx(0); stopSpeaking(); }}
+          className="text-xs h-7 shrink-0 border-red-500/30 text-red-400 hover:bg-red-500/10"
+        >
+          💼 Senior Director Defense
+        </Button>
       </div>
 
       {/* Main Video Call Screen Card */}
-      <Card className="border-border/60 bg-gradient-to-b from-card to-background shadow-xl overflow-hidden">
-        {/* Video Call Window Header */}
+      <Card className="border-border/60 bg-gradient-to-b from-card to-background shadow-2xl overflow-hidden">
+        {/* Top Call Bar */}
         <div className="bg-card/90 px-4 py-2.5 border-b border-border/50 flex items-center justify-between flex-wrap gap-2 text-xs">
           <div className="flex items-center gap-2">
             <span className="h-2.5 w-2.5 rounded-full bg-emerald-500"></span>
             <span className="font-semibold text-foreground">
-              Google Meet Call with {selectedInterviewer.name} ({selectedInterviewer.agency})
+              {interviewMode === "video" 
+                ? `Executive Interview with ${selectedInterviewer.name} (${selectedInterviewer.agency})`
+                : "Automated Enterprise AI Candidate Screener (HireVue Assessment)"}
             </span>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <Button
               variant="ghost"
               size="sm"
@@ -502,11 +613,11 @@ export default function InterviewSimulatorPage() {
               className="h-7 px-2 text-xs text-muted-foreground hover:text-foreground"
             >
               {isMuted ? <VolumeX className="h-3.5 w-3.5 text-red-400 mr-1" /> : <Volume2 className="h-3.5 w-3.5 text-emerald-400 mr-1" />}
-              <span>{isMuted ? "Unmute TTS" : "Mute TTS"}</span>
+              <span>{isMuted ? "Unmute Audio" : "Mute Audio"}</span>
             </Button>
 
-            <Badge variant="outline" className="text-[11px]">
-              Question {currentIdx + 1} of {filteredQuestions.length}
+            <Badge variant="outline" className="text-[11px] font-mono">
+              Drill {currentIdx + 1} of {filteredQuestions.length}
             </Badge>
           </div>
         </div>
@@ -518,10 +629,10 @@ export default function InterviewSimulatorPage() {
             {/* Live Indicator */}
             <div className="absolute top-3 left-3 flex items-center gap-1.5 text-[10px] text-red-400 font-semibold bg-red-500/10 px-2 py-0.5 rounded-full border border-red-500/20">
               <span className="h-1.5 w-1.5 rounded-full bg-red-500 animate-pulse"></span>
-              <span>LIVE VIDEO FEED</span>
+              <span>LIVE INTERVIEW FEED</span>
             </div>
 
-            {/* Human Avatar Video Frame with Animated Waveform */}
+            {/* Video Frame */}
             <div className={`relative mt-3 w-32 h-32 md:w-36 md:h-36 rounded-2xl overflow-hidden border-2 shadow-2xl transition-all duration-300 ${
               isSpeaking ? "border-emerald-400 ring-4 ring-emerald-500/30 scale-105" : "border-slate-700"
             }`}>
@@ -531,13 +642,11 @@ export default function InterviewSimulatorPage() {
                 className="w-full h-full object-cover object-top"
               />
               
-              {/* HD Camera Badge */}
               <div className="absolute top-2 right-2 bg-black/70 backdrop-blur-sm text-[9px] text-emerald-400 font-mono px-1.5 py-0.5 rounded border border-emerald-500/40 flex items-center gap-1">
                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
                 <span>1080p HD</span>
               </div>
 
-              {/* Sound Wave Animation if Speaking */}
               {isSpeaking && (
                 <div className="absolute bottom-1.5 inset-x-2 flex items-center justify-center gap-1 bg-black/80 backdrop-blur-md px-2 py-1 rounded-full border border-emerald-500/50 shadow-lg">
                   <span className="w-1 h-3 bg-emerald-400 animate-bounce"></span>
@@ -555,17 +664,33 @@ export default function InterviewSimulatorPage() {
               <div className="text-[11px] text-muted-foreground">{selectedInterviewer.agency}</div>
             </div>
 
+            {/* Change Director Buttons */}
+            <div className="pt-1 flex gap-1.5 justify-center">
+              {interviewers.map((inv) => (
+                <button
+                  key={inv.id}
+                  onClick={() => { setSelectedInterviewer(inv); stopSpeaking(); }}
+                  className={`w-7 h-7 rounded-full overflow-hidden border transition ${
+                    selectedInterviewer.id === inv.id ? "border-primary ring-2 ring-primary" : "border-border/60 opacity-60 hover:opacity-100"
+                  }`}
+                  title={`${inv.name} - ${inv.specialty}`}
+                >
+                  <img src={inv.avatarUrl} alt={inv.name} className="w-full h-full object-cover" />
+                </button>
+              ))}
+            </div>
+
             <div className="pt-2 w-full flex flex-col gap-1.5">
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => isSpeaking ? stopSpeaking() : speakQuestion(currentQ.question)}
+                onClick={() => isSpeaking ? stopSpeaking() : speakText(currentQ.question)}
                 className="text-xs h-8 w-full flex items-center justify-center gap-1.5 bg-card/60"
               >
                 {isSpeaking ? (
                   <>
                     <Square className="h-3.5 w-3.5 text-red-400 fill-current" />
-                    <span>Stop Audio</span>
+                    <span>Stop Spoken Audio</span>
                   </>
                 ) : (
                   <>
@@ -577,8 +702,9 @@ export default function InterviewSimulatorPage() {
             </div>
           </div>
 
-          {/* Right: Question & Interactive Candidate Response Box */}
+          {/* Right: Question Box, Battle Card & Response Engine */}
           <div className="lg:col-span-2 space-y-4">
+            {/* The Question Box */}
             <div className="p-4 rounded-xl bg-secondary/30 border border-border/50 space-y-2">
               <div className="flex items-center justify-between flex-wrap gap-2">
                 <Badge className="bg-primary/10 text-primary border-primary/20 text-xs">
@@ -589,7 +715,7 @@ export default function InterviewSimulatorPage() {
                 </Badge>
               </div>
 
-              <div className="text-base font-semibold text-foreground leading-snug">
+              <div className="text-base md:text-lg font-semibold text-foreground leading-snug">
                 "{currentQ.question}"
               </div>
 
@@ -599,25 +725,80 @@ export default function InterviewSimulatorPage() {
               </div>
             </div>
 
-            {/* Target Agency Terms helper */}
-            <div className="p-3 rounded-lg bg-card/60 border border-border/40 space-y-1.5">
-              <div className="flex items-center gap-1.5 text-xs font-semibold text-foreground">
-                <Sparkles className="h-3.5 w-3.5 text-primary" />
-                <span>Recommended Agency Vocabulary to Use:</span>
+            {/* The Executive Agency Battle Card (Cheat Sheet) */}
+            <div className="rounded-xl border border-amber-500/30 bg-amber-500/5 p-3.5 space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1.5 text-xs font-bold text-amber-400">
+                  <Flame className="h-4 w-4" />
+                  <span>Executive Battle Card: How to Win This Question</span>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowBattleCard(prev => !prev)}
+                  className="h-6 px-2 text-[11px] text-amber-400 hover:text-amber-300 hover:bg-amber-500/10"
+                >
+                  {showBattleCard ? <ChevronUp className="h-3.5 w-3.5 mr-1" /> : <ChevronDown className="h-3.5 w-3.5 mr-1" />}
+                  <span>{showBattleCard ? "Hide Cheat Sheet" : "Show Cheat Sheet"}</span>
+                </Button>
               </div>
-              <div className="flex flex-wrap gap-1.5">
-                {currentQ.targetTerms.map((term, i) => (
-                  <Badge key={i} variant="secondary" className="text-[11px]">
-                    {term}
-                  </Badge>
-                ))}
-              </div>
+
+              {showBattleCard && (
+                <div className="space-y-3 pt-1 text-xs text-muted-foreground border-t border-amber-500/20">
+                  {/* STAR Method Blueprint */}
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-[11px]">
+                    <div className={`p-2 rounded border transition ${situationDetected ? "border-emerald-500/50 bg-emerald-500/10 text-emerald-300 font-bold" : "border-border/50 bg-background/50"}`}>
+                      <div className="text-primary font-bold">1. Situation (S)</div>
+                      <div className="text-[10px] font-normal mt-0.5">Starting client baseline or crisis</div>
+                      {situationDetected && <span className="text-[9px] text-emerald-400 font-bold block mt-1">✓ Detected in Answer</span>}
+                    </div>
+                    <div className={`p-2 rounded border transition ${taskDetected ? "border-emerald-500/50 bg-emerald-500/10 text-emerald-300 font-bold" : "border-border/50 bg-background/50"}`}>
+                      <div className="text-primary font-bold">2. Task (T)</div>
+                      <div className="text-[10px] font-normal mt-0.5">Target metric or CPA ceiling</div>
+                      {taskDetected && <span className="text-[9px] text-emerald-400 font-bold block mt-1">✓ Detected in Answer</span>}
+                    </div>
+                    <div className={`p-2 rounded border transition ${actionDetected ? "border-emerald-500/50 bg-emerald-500/10 text-emerald-300 font-bold" : "border-border/50 bg-background/50"}`}>
+                      <div className="text-primary font-bold">3. Action (A)</div>
+                      <div className="text-[10px] font-normal mt-0.5">Exact agency tools deployed</div>
+                      {actionDetected && <span className="text-[9px] text-emerald-400 font-bold block mt-1">✓ Detected in Answer</span>}
+                    </div>
+                    <div className={`p-2 rounded border transition ${resultDetected ? "border-emerald-500/50 bg-emerald-500/10 text-emerald-300 font-bold" : "border-border/50 bg-background/50"}`}>
+                      <div className="text-primary font-bold">4. Result (R)</div>
+                      <div className="text-[10px] font-normal mt-0.5">Quantified ROI & % discount</div>
+                      {resultDetected && <span className="text-[9px] text-emerald-400 font-bold block mt-1">✓ Detected in Answer</span>}
+                    </div>
+                  </div>
+
+                  {/* Key Metrics to Drop */}
+                  <div className="space-y-1">
+                    <span className="font-semibold text-foreground text-[11px]">Key Metrics to Drop in Your Answer:</span>
+                    <div className="flex flex-wrap gap-1.5">
+                      {currentQ.keyMetricsToDrop?.map((metric, i) => (
+                        <Badge key={i} variant="outline" className="text-[10px] font-mono border-amber-500/40 text-amber-300">
+                          {metric}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Rookie Trap to Avoid */}
+                  <div className="p-2 rounded-lg bg-red-500/10 border border-red-500/30 text-[11px] text-red-300 flex items-start gap-2">
+                    <ShieldAlert className="h-3.5 w-3.5 text-red-400 shrink-0 mt-0.5" />
+                    <div>
+                      <strong className="text-red-400">Rookie Trap:</strong> {currentQ.rookieTrap}
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Answer Text Area & Dictation */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <label className="text-xs font-semibold text-foreground">Your Response to {selectedInterviewer.name}:</label>
+                <label className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+                  <MessageSquare className="h-3.5 w-3.5 text-primary" />
+                  <span>Your Verbal or Written Response:</span>
+                </label>
                 <Button
                   variant="outline"
                   size="sm"
@@ -635,13 +816,13 @@ export default function InterviewSimulatorPage() {
                 rows={5}
                 value={userAnswer}
                 onChange={(e) => setUserAnswer(e.target.value)}
-                placeholder="Structure your answer clearly: 1) What root-cause data you audit first, 2) The exact adjustments you execute, 3) How you measure recovery in CPA/ROAS..."
+                placeholder="Structure your answer using the STAR method: 1) What baseline crisis you inherited, 2) The exact target metric, 3) The tactical tools/negatives you deployed, 4) The quantified ROI outcome..."
                 className="bg-background text-sm font-sans"
               />
             </div>
 
             {/* Action Buttons */}
-            <div className="flex items-center justify-between pt-2">
+            <div className="flex items-center justify-between pt-1">
               <Button
                 variant="outline"
                 size="sm"
@@ -655,10 +836,10 @@ export default function InterviewSimulatorPage() {
               <Button
                 onClick={handleSubmitAnswer}
                 disabled={evaluateMutation.isPending || !userAnswer.trim()}
-                className="bg-primary text-primary-foreground font-semibold text-xs h-9 px-5 flex items-center gap-2"
+                className="bg-primary text-primary-foreground font-semibold text-xs h-9 px-5 flex items-center gap-2 shadow-lg shadow-primary/20 hover:scale-[1.01] transition-transform"
               >
                 {evaluateMutation.isPending ? (
-                  <span>Director is Evaluating...</span>
+                  <span>Evaluating in &lt;50ms...</span>
                 ) : (
                   <>
                     <Send className="h-3.5 w-3.5" />
@@ -671,80 +852,121 @@ export default function InterviewSimulatorPage() {
         </div>
       </Card>
 
-      {/* AI Evaluation Debrief Card */}
+      {/* AI Evaluation Debrief Card with The Executive Translator */}
       {evaluationResult && (
-        <Card className="border-primary/30 bg-gradient-to-br from-primary/10 via-card to-background shadow-xl space-y-4">
-          <CardHeader className="border-b border-primary/20 pb-3">
+        <Card className="border-primary/40 bg-gradient-to-br from-primary/10 via-card to-background shadow-2xl space-y-6">
+          <CardHeader className="border-b border-primary/20 pb-4">
             <div className="flex items-center justify-between flex-wrap gap-2">
               <div className="flex items-center gap-2">
-                <Award className="h-5 w-5 text-primary" />
-                <CardTitle className="text-lg text-foreground">Director Evaluation: {selectedInterviewer.name}</CardTitle>
+                <Award className="h-6 w-6 text-primary" />
+                <div>
+                  <CardTitle className="text-lg text-foreground">Director Evaluation: {selectedInterviewer.name}</CardTitle>
+                  <CardDescription className="text-xs text-muted-foreground">
+                    Instant sub-50ms agency diagnostic and executive script translation.
+                  </CardDescription>
+                </div>
               </div>
-              <Badge className="bg-primary/20 text-primary border-primary/30 text-xs font-semibold">
-                {evaluationResult.rating}
-              </Badge>
+              <div className="flex items-center gap-2">
+                <Badge className="bg-primary/20 text-primary border-primary/30 text-xs font-semibold px-3 py-1">
+                  {evaluationResult.rating}
+                </Badge>
+                <Badge variant="outline" className="text-xs font-mono text-emerald-400">
+                  ⚡ {evaluationResult.speedMs || 15}ms
+                </Badge>
+              </div>
             </div>
           </CardHeader>
 
-          <CardContent className="space-y-6 pt-2">
+          <CardContent className="space-y-6 pt-1">
             {/* Score Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              <div className="p-3 rounded-lg bg-card/80 border border-border/50 text-center">
-                <div className="text-xs text-muted-foreground">Overall Readiness Score</div>
-                <div className="text-2xl font-bold text-primary mt-1">{evaluationResult.score}/100</div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <div className="p-3 rounded-xl bg-card/80 border border-border/50 text-center">
+                <div className="text-[11px] text-muted-foreground uppercase font-semibold">Readiness Score</div>
+                <div className="text-3xl font-extrabold text-primary mt-1">{evaluationResult.score}/100</div>
               </div>
 
-              <div className="p-3 rounded-lg bg-card/80 border border-border/50 text-center">
-                <div className="text-xs text-muted-foreground">Agency Vocabulary Score</div>
-                <div className="text-2xl font-bold text-emerald-400 mt-1">{evaluationResult.vocabularyScore}/100</div>
+              <div className="p-3 rounded-xl bg-card/80 border border-border/50 text-center">
+                <div className="text-[11px] text-muted-foreground uppercase font-semibold">STAR Methodology</div>
+                <div className="text-3xl font-extrabold text-emerald-400 mt-1">{evaluationResult.starScore}/100</div>
               </div>
 
-              <div className="p-3 rounded-lg bg-card/80 border border-border/50 text-center">
-                <div className="text-xs text-muted-foreground">Strategic Rationale Score</div>
-                <div className="text-2xl font-bold text-foreground mt-1">{evaluationResult.strategicScore}/100</div>
+              <div className="p-3 rounded-xl bg-card/80 border border-border/50 text-center">
+                <div className="text-[11px] text-muted-foreground uppercase font-semibold">Agency Vocabulary</div>
+                <div className="text-3xl font-extrabold text-blue-400 mt-1">{evaluationResult.vocabularyScore}/100</div>
               </div>
-            </div>
 
-            {/* Terms Used vs Missed */}
-            <div className="space-y-2">
-              <div className="text-xs font-semibold text-foreground">Agency Vocabulary Detected:</div>
-              <div className="flex flex-wrap gap-1.5">
-                {evaluationResult.usedTerminology && evaluationResult.usedTerminology.length > 0 ? (
-                  evaluationResult.usedTerminology.map((term: string, i: number) => (
-                    <Badge key={i} className="bg-emerald-500/15 text-emerald-400 border-emerald-500/30 text-xs">
-                      <CheckCircle2 className="h-3 w-3 mr-1 inline" />
-                      {term}
-                    </Badge>
-                  ))
-                ) : (
-                  <span className="text-xs text-muted-foreground">No specific agency terms detected.</span>
-                )}
+              <div className="p-3 rounded-xl bg-card/80 border border-border/50 text-center">
+                <div className="text-[11px] text-muted-foreground uppercase font-semibold">Quantified Proof</div>
+                <div className="text-3xl font-extrabold text-amber-400 mt-1">{evaluationResult.metricScore}/100</div>
               </div>
             </div>
 
-            {/* AI Tactical Feedback */}
-            <div className="space-y-2">
-              <div className="text-xs font-semibold text-foreground">Director's Tactical Feedback:</div>
-              <ul className="space-y-1.5 text-xs text-muted-foreground">
-                {evaluationResult.feedback?.map((item: string, i: number) => (
-                  <li key={i} className="flex items-start gap-2">
-                    <span className="text-primary font-bold">•</span>
-                    <span>{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Exemplary Model Answer */}
-            <div className="p-4 rounded-lg bg-card/90 border border-primary/20 space-y-1.5 text-xs">
-              <div className="flex items-center gap-1.5 font-semibold text-primary">
-                <BookOpen className="h-4 w-4" />
-                <span>How a Senior Agency Director Would Answer:</span>
+            {/* Director's Secret Internal Thought */}
+            <div className="p-4 rounded-xl bg-secondary/30 border border-border/50 space-y-1.5 text-xs">
+              <div className="flex items-center gap-1.5 font-bold text-foreground">
+                <Brain className="h-4 w-4 text-primary" />
+                <span>The Hiring Director's Unfiltered Thought:</span>
               </div>
-              <p className="text-muted-foreground leading-relaxed">
-                "{evaluationResult.sampleModelAnswer}"
+              <p className="text-muted-foreground italic">
+                "{evaluationResult.directorImpression}"
               </p>
             </div>
+
+            {/* THE EXECUTIVE TRANSLATOR: Word-for-Word Model Script */}
+            <div className="p-5 rounded-xl bg-gradient-to-r from-amber-500/10 via-card to-primary/10 border-2 border-amber-500/40 shadow-lg space-y-3">
+              <div className="flex items-center justify-between flex-wrap gap-2">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="h-5 w-5 text-amber-400" />
+                  <span className="font-bold text-sm text-foreground">
+                    The Executive Translator: How a $120k/yr Agency Director Says It
+                  </span>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => speakText(evaluationResult.executiveTranslation)}
+                  className="h-7 px-3 text-xs border-amber-500/40 text-amber-300 hover:bg-amber-500/15 flex items-center gap-1.5"
+                >
+                  <Play className="h-3 w-3 fill-current" />
+                  <span>Listen to Director Read Pitch</span>
+                </Button>
+              </div>
+
+              <div className="p-4 rounded-lg bg-background/80 border border-border/60 text-sm font-sans text-foreground leading-relaxed">
+                {evaluationResult.executiveTranslation}
+              </div>
+
+              <div className="text-[11px] text-amber-400/90 font-medium flex items-center gap-1.5">
+                <Check className="h-3.5 w-3.5" />
+                <span>Notice how this pitch connects the client crisis, specific agency tools, and exact second-price auction math. Read it aloud to build muscle memory!</span>
+              </div>
+            </div>
+
+            {/* Follow-Up Curveball Drill */}
+            {evaluationResult.curveballFollowUp && (
+              <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/30 space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-xs font-bold text-red-400">
+                    <Zap className="h-4 w-4" />
+                    <span>Director's Rapid-Fire Follow-Up Curveball:</span>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setUserAnswer("");
+                      speakText(evaluationResult.curveballFollowUp);
+                    }}
+                    className="h-6 px-2 text-[10px] text-red-400 hover:bg-red-500/20"
+                  >
+                    Drill This Curveball
+                  </Button>
+                </div>
+                <p className="text-xs text-foreground font-medium italic">
+                  "{evaluationResult.curveballFollowUp}"
+                </p>
+              </div>
+            )}
           </CardContent>
         </Card>
       )}
