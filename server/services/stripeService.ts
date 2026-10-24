@@ -94,6 +94,7 @@ export class StripeService {
       payment_method_types: ['card'],
       line_items: lineItems,
       mode: sessionMode,
+      allow_promotion_codes: true,
       success_url: successUrl,
       cancel_url: cancelUrl,
     };
