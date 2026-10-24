@@ -52,6 +52,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import { 
+  Lock,
   Home as HomeIcon, 
   Users, 
   Award, 

@@ -19,7 +19,10 @@ import {
   Columns,
   Sparkles,
   Headphones,
-  Flame
+  Flame,
+  Lock,
+  Play,
+  Coffee
 } from 'lucide-react';
 import ErrorBoundary from '../components/ErrorBoundary';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
@@ -27,6 +30,8 @@ import TutorialContentRenderer from '../components/TutorialContentRenderer';
 import { MicroFeedback } from '@/components/ui/micro-feedback';
 import { SocraticChatClassroom } from '@/components/SocraticChatClassroom';
 import { CrisisDispatchHub } from '@/components/CrisisDispatchHub';
+import { useAuth } from '@/context/AuthContext';
+import { CourseLockModal } from '@/components/CourseLockModal';
 
 // Tutorial interface
 interface Tutorial {
