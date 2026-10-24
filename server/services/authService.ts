@@ -29,11 +29,71 @@ const founderUser = {
   createdAt: new Date(),
 };
 
+const alexiaVipUser = {
+  id: 101,
+  username: 'alexia_palau',
+  email: 'alexia@vip.krechet.academy',
+  password: 'a1b2c3d4e5f60718293a4b5c6d7e8f90:412c0f9205ae495b205fee3e549ea491e506d16fa9682593dd9c5774aee90550ae21983652243cc92d4a5632501e1adb1935c4ff323489ebeb53473eca49501f',
+  firstName: 'Alexia',
+  lastName: 'Palau',
+  level: 'VIP Mentor / Career Coach',
+  role: 'vip_reviewer',
+  isDeveloper: false,
+  isFounder: false,
+  tier: 'premium',
+  xp: 5000,
+  specializations: ['Performance Marketing', 'Agency Hiring', 'Portfolio Strategy'],
+  achievements: ['VIP Reviewer', 'Verified Mentor'],
+  createdAt: new Date(),
+};
+
+const jadeVipUser = {
+  id: 102,
+  username: 'jade_beason',
+  email: 'jade@vip.krechet.academy',
+  password: 'a1b2c3d4e5f60718293a4b5c6d7e8f90:302766a8e68f3eabb5ac1f6bfa660b0a48ff7f57a9981144460f1e98486e8cde09b1e4ae29b330ed656340539acbd408301b530eb99ae01187fcebd97249ccb0',
+  firstName: 'Jade',
+  lastName: 'Beason',
+  level: 'VIP Agency Director',
+  role: 'vip_reviewer',
+  isDeveloper: false,
+  isFounder: false,
+  tier: 'premium',
+  xp: 5000,
+  specializations: ['Social Strategy', 'Creative Sprints', 'Agency Growth'],
+  achievements: ['VIP Reviewer', 'Agency Director'],
+  createdAt: new Date(),
+};
+
+const guestVipUser = {
+  id: 100,
+  username: 'vip_guest',
+  email: 'vip@krechet.academy',
+  password: 'a1b2c3d4e5f60718293a4b5c6d7e8f90:82e0de54a83e46808aa6ad2be24930412954bddf132e2a6b746b8efeac96d0b21c7197b601c21d825a7464cddf99dd723511319d46adba09136a1263a54f2155',
+  firstName: 'VIP',
+  lastName: 'Reviewer',
+  level: 'VIP Reviewer',
+  role: 'vip_reviewer',
+  isDeveloper: false,
+  isFounder: false,
+  tier: 'premium',
+  xp: 5000,
+  specializations: ['Growth Marketing', 'Interview Strategy'],
+  achievements: ['VIP Reviewer'],
+  createdAt: new Date(),
+};
+
 const inMemoryUsers: Map<string, any> = new Map([
   ['katycat13', founderUser],
   ['katycat1313@gmail.com', founderUser],
   ['katycat', founderUser],
-  ['katycat13@gmail.com', founderUser]
+  ['katycat13@gmail.com', founderUser],
+  ['alexia@vip.krechet.academy', alexiaVipUser],
+  ['alexia_palau', alexiaVipUser],
+  ['jade@vip.krechet.academy', jadeVipUser],
+  ['jade_beason', jadeVipUser],
+  ['vip@krechet.academy', guestVipUser],
+  ['vip_guest', guestVipUser]
 ]);
 
 let nextUserId = 2;
