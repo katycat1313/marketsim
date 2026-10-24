@@ -75,9 +75,10 @@ export const WEEK_1_ACTION_PLAN: ActionStep[] = [
 
 interface StudentWeeklyGuideProps {
   onOpenCoach?: (prompt?: string) => void;
+  onOpenTour?: () => void;
 }
 
-export function StudentWeeklyGuide({ onOpenCoach }: StudentWeeklyGuideProps) {
+export function StudentWeeklyGuide({ onOpenCoach, onOpenTour }: StudentWeeklyGuideProps) {
   const [, setLocation] = useLocation();
   const [currentStepId, setCurrentStepId] = useState<number>(1);
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
@@ -110,6 +111,22 @@ export function StudentWeeklyGuide({ onOpenCoach }: StudentWeeklyGuideProps) {
 
   const handleResetProgress = () => {
     saveProgress(1, []);
+  };
+
+  const handleExecuteStep = (step: ActionStep) => {
+    if (step.id === 1) {
+      window.dispatchEvent(new CustomEvent("start-chapter-briefing"));
+      sessionStorage.setItem("krechet_auto_start_briefing", "true");
+      setLocation("/tutorials?start=1");
+      setTimeout(() => {
+        const target = document.getElementById("active-tutorial-view") || document.getElementById("chapter-1-section") || document.getElementById("tutorials-container");
+        if (target) {
+          target.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 150);
+    } else {
+      setLocation(step.path);
+    }
   };
 
   const currentStep = WEEK_1_ACTION_PLAN.find(s => s.id === currentStepId) || WEEK_1_ACTION_PLAN[0];
@@ -146,13 +163,26 @@ export function StudentWeeklyGuide({ onOpenCoach }: StudentWeeklyGuideProps) {
           <div className="flex items-center gap-1.5 sm:gap-2">
             <Button
               size="sm"
-              onClick={() => setLocation(currentStep.path)}
+              onClick={() => handleExecuteStep(currentStep)}
               className="h-7 sm:h-8 text-xs font-bold bg-amber-400 hover:bg-amber-300 text-slate-950 flex items-center gap-1.5 shadow-md ring-2 ring-amber-400/40 hover:scale-[1.02] transition-transform animate-pulse"
             >
               <Play className="h-3 w-3 fill-current" />
               <span>{currentStep.actionText}</span>
               <ArrowRight className="h-3 w-3" />
             </Button>
+
+            {onOpenTour && (
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={onOpenTour}
+                className="h-7 sm:h-8 text-xs border-emerald-500/40 text-emerald-300 hover:bg-emerald-500/15 flex items-center gap-1 cursor-pointer"
+                title="Guided Tour: Course Material vs Practice vs Fun"
+              >
+                <span>🗺️</span>
+                <span className="hidden sm:inline">How It Works Tour</span>
+              </Button>
+            )}
 
             {onOpenCoach && (
               <Button
@@ -214,7 +244,7 @@ export function StudentWeeklyGuide({ onOpenCoach }: StudentWeeklyGuideProps) {
                 return (
                   <div
                     key={step.id}
-                    onClick={() => setLocation(step.path)}
+                    onClick={() => handleExecuteStep(step)}
                     className={`cursor-pointer rounded-xl p-3 border transition-all duration-200 relative flex flex-col justify-between ${
                       isCurrent
                         ? "bg-amber-500/10 border-amber-500 shadow-md ring-1 ring-amber-500/40"

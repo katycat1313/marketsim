@@ -31,12 +31,14 @@ interface AIAssistantProps {
     type: "tutorial" | "simulation" | "campaign" | "general";
     data?: any;
   };
+  onOpenTour?: () => void;
 }
 
 export default function AIAssistant({ 
   isExpanded = false, 
   onToggleExpand, 
-  initialContext = { type: "general" } 
+  initialContext = { type: "general" },
+  onOpenTour
 }: AIAssistantProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
@@ -193,6 +195,73 @@ Click the glowing **"🧭 👉 WHAT DO I DO RIGHT NOW?"** button below to see yo
   
   const getSimulatedResponse = (input: string, mode: string): string => {
     const q = input.toLowerCase();
+
+    if (
+      q.includes("course material") ||
+      q.includes("actual course") ||
+      q.includes("practice or fun") ||
+      q.includes("for fun") ||
+      q.includes("how everything works") ||
+      q.includes("subject") ||
+      q.includes("tour") ||
+      q.includes("what does what") ||
+      q.includes("when to expect")
+    ) {
+      return `### 🗺️ The Complete Academy Guide: What Does What & How Everything Connects
+
+Here is your exact breakdown of **Course Material** vs. **Practice Labs** vs. **Fun Sandboxes** across our **4 Subjects**:
+
+---
+
+#### 🎓 1. The 4 Interconnected Subjects
+1. 🎯 **Funnels & CRO (Conversion Optimization)**: Customer Journey (Top ➡️ Mid ➡️ Bottom funnel). Diagnosing why clicks don't convert.
+2. 🔎 **Search Intent & SEO**: Organic intent matching (Informational vs. Commercial).
+3. 💰 **Paid Search & Ad Auctions (PPC)**: How Google auctions work: Impressions ➡️ Clicks ➡️ Conversions & Quality Score.
+4. 📊 **Analytics & Unit Economics**: CAC, AOV, and ROAS modeling.
+
+---
+
+#### 🧭 2. What is Course Material vs. Practice vs. Fun?
+
+📚 **CORE COURSE MATERIAL (The 15 Lessons)**
+• **Where**: \`/tutorials\`
+• **What it is**: Your foundational curriculum (e.g., *Chapter 1.1: Customer Journey*). Read, listen to the AI Mentor, and answer Socratic comprehension questions.
+• **When to use**: **DO THIS FIRST!** Always learn the theory here before touching the simulators.
+[ACTION_NAV:/tutorials?start=1:👉 Launch Lesson 1.1: Customer Journey Now]
+
+🛠️ **HANDS-ON PRACTICE LABS (The Simulators)**
+• **Where**: \`/ad-simulation\` and A/B Testing Lab
+• **What it is**: You are given $10,000 of simulated budget to apply what you learned on Jenny's Artisan Java without risking real money. Build ad groups, choose match types, and add Negative Keywords.
+• **When to use**: **DO THIS SECOND!** Jump here immediately after completing the relevant lesson.
+[ACTION_NAV:/ad-simulation:👉 Launch Google Ads Practice Simulator]
+
+🚨 **EMERGENCY CRISIS DRILLS (Pressure Training)**
+• **Where**: *Crisis Dispatch Room* & Step 4 in Action Plan
+• **What it is**: Director Atlas calls with unexpected client fires (e.g., broad match budget leak).
+• **When to use**: Mid-week test of your instincts under pressure.
+
+🎨 **CREATIVE SANDBOXES (For Fun & Independent Practice)**
+• **Where**: \`/my-business\` and \`/persona-builder\`
+• **What it is**: Practice with YOUR own business ideas (your bakery, clothing brand, or dream client) with zero grading pressure.
+• **When to use**: Any time you want to experiment freely!
+[ACTION_NAV:/my-business:👉 Open My Business Sandbox]
+
+🏆 **PROOF-OF-WORK PORTFOLIO (Your Credential)**
+• **Where**: \`/portfolio\`
+• **What it is**: Audits your real telemetry (CTR, Quality Score, ROAS) into an exportable proof-of-work case study.
+• **When to use**: At the end of Week 1 to prove your skills on resumes, Upwork, and client pitches.
+
+---
+
+#### ➡️ 3. How Everything Connects (Week 1 Roadmap with Arrows)
+1️⃣ **Day 1**: 📚 Read/Listen to *Lesson 1.1 Customer Journey* (Course Material) ➡️
+2️⃣ **Day 2**: 🛠️ Draft Google Search Ads in *Ad Simulator* (Practice Lab) ➡️
+3️⃣ **Day 3**: 🛡️ Add *Negative Keywords* to stop budget bleed (Defensive Practice) ➡️
+4️⃣ **Day 4**: 🚨 Handle *Director Atlas Crisis Call* (Emergency Drill) ➡️
+5️⃣ **Day 5**: 🏆 Export Your *Verified Proof-of-Work Portfolio*!`;
+    }
+
+
 
     if (
       q.includes("what should i do") || 

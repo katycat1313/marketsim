@@ -32,6 +32,7 @@ import { SocraticChatClassroom } from '@/components/SocraticChatClassroom';
 import { CrisisDispatchHub } from '@/components/CrisisDispatchHub';
 import { useAuth } from '@/context/AuthContext';
 import { CourseLockModal } from '@/components/CourseLockModal';
+import { AcademyOrientationTour } from '@/components/AcademyOrientationTour';
 
 // Tutorial interface
 interface Tutorial {
@@ -85,6 +86,19 @@ export default function TutorialsPage() {
   const hasCourse2 = user?.level?.toLowerCase()?.includes('director') || false;
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isTourOpen, setIsTourOpen] = useState(false);
+
+  useEffect(() => {
+    const handleStartBriefing = () => {
+      if (tutorials.length > 0) {
+        setCurrentTutorial(tutorials[0]);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    };
+
+    window.addEventListener("start-chapter-briefing", handleStartBriefing);
+    return () => window.removeEventListener("start-chapter-briefing", handleStartBriefing);
+  }, [tutorials]);
 
   useEffect(() => {
     fetchTutorials();

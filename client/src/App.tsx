@@ -39,6 +39,7 @@ import Logo from "@/components/Logo";
 import { StudentWeeklyGuide } from "@/components/StudentWeeklyGuide";
 import { LegalDisclosuresModal } from "@/components/LegalDisclosuresModal";
 import { WelcomeOnboardingModal } from "@/components/WelcomeOnboardingModal";
+import { AcademyOrientationTour } from "@/components/AcademyOrientationTour";
 import { TrialWelcomeModal } from "@/components/TrialWelcomeModal";
 import { TrialCompletedSurveyModal } from "@/components/TrialCompletedSurveyModal";
 
@@ -373,7 +374,7 @@ function SideNav({ onClose }: SideNavProps) {
   );
 }
 
-function Router({ onOpenCoach }: { onOpenCoach?: () => void }) {
+function Router({ onOpenCoach, onOpenTour }: { onOpenCoach?: () => void; onOpenTour?: () => void }) {
   const { isAuthenticated, user, logout } = useAuth();
   const [, navigate] = useLocation();
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
@@ -500,6 +501,14 @@ function Router({ onOpenCoach }: { onOpenCoach?: () => void }) {
           </div>
           <div className="flex items-center space-x-3">
             <button 
+              onClick={() => onOpenTour ? onOpenTour() : setIsOrientationTourOpen(true)}
+              className="px-2.5 py-1 text-xs font-bold rounded-md bg-emerald-500/15 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-500/25 flex items-center gap-1.5 transition cursor-pointer shadow-sm animate-pulse"
+              title="How Everything Works Tour (Course vs Practice vs Fun)"
+            >
+              <span>🗺️</span>
+              <span className="hidden sm:inline">How Everything Works</span>
+            </button>
+            <button 
               onClick={() => setIsWelcomeOpen(true)}
               className="px-2.5 py-1 text-xs font-bold rounded-md bg-amber-500/10 text-amber-300 border border-amber-500/30 hover:bg-amber-500/20 flex items-center gap-1.5 transition cursor-pointer"
               title="What to do first & how it works"
@@ -571,7 +580,7 @@ function Router({ onOpenCoach }: { onOpenCoach?: () => void }) {
         <AgencyClientHeader />
 
         {/* Step-by-Step Student Action Guide */}
-        <StudentWeeklyGuide onOpenCoach={onOpenCoach} />
+        <StudentWeeklyGuide onOpenCoach={onOpenCoach} onOpenTour={onOpenTour} />
 
         {/* Content Area */}
         <main className="flex-1 p-4 md:p-6 overflow-auto">
@@ -686,6 +695,7 @@ function Router({ onOpenCoach }: { onOpenCoach?: () => void }) {
 
 function App() {
   const [isAIAssistantExpanded, setIsAIAssistantExpanded] = useState(false);
+  const [isOrientationTourOpen, setIsOrientationTourOpen] = useState(false);
   
   const toggleAIAssistant = () => {
     setIsAIAssistantExpanded(prev => !prev);
@@ -695,12 +705,18 @@ function App() {
     <AuthProvider>
       <QueryClientProvider client={queryClient}>
         <ClientAgencyProvider>
-          <Router onOpenCoach={() => setIsAIAssistantExpanded(true)} />
+          <Router onOpenCoach={() => setIsAIAssistantExpanded(true)} onOpenTour={() => setIsOrientationTourOpen(true)} />
         
           {/* AI Assistant */}
         <AIAssistant 
           isExpanded={isAIAssistantExpanded} 
           onToggleExpand={toggleAIAssistant}
+          onOpenTour={() => setIsOrientationTourOpen(true)}
+        />
+
+        <AcademyOrientationTour
+          isOpen={isOrientationTourOpen}
+          onClose={() => setIsOrientationTourOpen(false)}
         />
         
         {/* Floating AI Assistant Button */}
