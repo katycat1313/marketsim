@@ -10,7 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { useQuery } from "@tanstack/react-query";
-import { Sparkles, Send, BarChart2, GraduationCap, MousePointer, Search, BookOpen, Timer, Copy, ThumbsUp, ThumbsDown, X } from "lucide-react";
+import { Sparkles, Send, BarChart2, GraduationCap, MousePointer, Search, BookOpen, Timer, Copy, ThumbsUp, ThumbsDown, X, ArrowRight, Compass } from "lucide-react";
 
 interface Message {
   id: string;
@@ -72,20 +72,14 @@ export default function AIAssistant({
   }, [messages]);
   
   const getWelcomeMessage = (context: AIAssistantProps["initialContext"]) => {
-    if (!context) {
-      return "Hello! I'm your Krechet AI Coach. I continuously analyze your simulation runs to detect strategy gaps and craft personalized challenges. Ask me 'What are my weak areas?' to see your diagnostic breakdown!";
-    }
-    
-    switch(context.type) {
-      case "tutorial":
-        return "Hello! I'm your Krechet AI Coach. I can see you're working through a tutorial. How can I help you master these concepts?";
-      case "simulation":
-        return "Hello! I'm your Krechet AI Coach. I'm actively monitoring your campaign metrics (Quality Score, CPA, Match Types). Ask me for tactical guidance or weakness analysis!";
-      case "campaign":
-        return "Hello! I'm your Krechet AI Coach. I see you're configuring a campaign. Would you like help optimizing your match types, negative keywords, or budget?";
-      default:
-        return "Hello! I'm your Krechet AI Coach. I continuously analyze your simulation runs to detect strategy gaps and craft personalized challenges. Ask me 'What are my weak areas?' to see your diagnostic breakdown!";
-    }
+    return `👋 **Welcome to Krechet Academy!**
+
+I am your personal Krechet AI Marketing Coach.
+
+🧭 **Feeling confused or not sure where to start?**
+Don't worry! We've organized Week 1 into **5 clear steps** with directional arrows pointing you to your exact next task.
+
+Click the glowing **"🧭 👉 WHAT DO I DO RIGHT NOW?"** button below to see your Step-by-Step Action Plan! ➡️`;
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -199,6 +193,66 @@ export default function AIAssistant({
   
   const getSimulatedResponse = (input: string, mode: string): string => {
     const q = input.toLowerCase();
+
+    if (
+      q.includes("what should i do") || 
+      q.includes("what do i do") || 
+      q.includes("confused") || 
+      q.includes("lost") || 
+      q.includes("where to start") || 
+      q.includes("where do i start") || 
+      q.includes("what next") || 
+      q.includes("next step") || 
+      q.includes("arrow") || 
+      q.includes("action plan") || 
+      q.includes("roadmap") || 
+      q.includes("what order") || 
+      q.includes("how to start") ||
+      q.includes("tell me what to do") ||
+      q.includes("guide me")
+    ) {
+      return `### 🧭 Your Step-by-Step Week 1 Action Plan
+
+Feeling confused? Don't worry! Digital marketing is vast, but Week 1 is broken down into **5 clear action steps**. Follow the arrows in order (30–40 mins per session):
+
+---
+
+#### ➡️ **STEP 1: Socratic AI Briefing (Day 1 - ~15 mins)**
+• **What to do**: Review the Chapter 1 Briefing and master how Impressions ➡️ Clicks ➡️ Conversions connect.
+• **Why**: Instills the core mental model before spending any simulated budget.
+[ACTION_NAV:/tutorials:👉 Start Step 1: Chapter 1 Socratic Lesson]
+
+⬇️
+
+#### ➡️ **STEP 2: Week 1 Ad Campaign Sandbox (Day 2 - ~25 mins)**
+• **What to do**: Draft your first Google Search ad group, add phrase/exact keywords, and inspect the live SERP preview.
+• **Why**: Experience realistic campaign setup without risking real client capital.
+[ACTION_NAV:/ad-simulation:👉 Launch Step 2: Week 1 Ad Simulation]
+
+⬇️
+
+#### ➡️ **STEP 3: Negative Keyword Defense Shield (Day 3 - ~20 mins)**
+• **What to do**: Add negative keywords like \`free\`, \`cheap\`, and \`jobs\` to stop bleeding ad budget on unqualified clicks.
+• **Why**: Stopping waste is the #1 skill junior marketers are audited on in real agencies.
+[ACTION_NAV:/ad-simulation:👉 Open Step 3: Negative Keyword Defense]
+
+⬇️
+
+#### ➡️ **STEP 4: Director Atlas Mid-Week Crisis Call (Day 4 - ~20 mins)**
+• **What to do**: Your boss calls in a panic about runaway broad match spend. Listen to his tactical hint and fix the leak!
+• **Why**: Trains you to stay calm and execute under real agency pressure.
+[ACTION_NAV:/ad-simulation:👉 Take Step 4: Emergency Crisis Drill]
+
+⬇️
+
+#### ➡️ **STEP 5: Claim Your Verified Case Study (Day 5 - ~15 mins)**
+• **What to do**: Check your telemetry score (CTR, Quality Score, ROAS) and export your verified proof-of-work case study.
+• **Why**: You can attach this audited report to resumes, Upwork profiles, or client proposals.
+[ACTION_NAV:/portfolio:👉 Finish Step 5: Export Verified Portfolio]
+
+---
+💡 *Pacing Rule: Treat this like an actual agency job. Work in short 30–40 min sessions across the week. Your progress auto-saves!*`;
+    }
     
     if (q.includes("weak") || q.includes("work on") || q.includes("diagnos") || q.includes("skill") || q.includes("practice")) {
       return `### 📊 AI Skill Diagnostics & Telemetry
@@ -346,12 +400,31 @@ Ask me for specific recommendations on **Quality Score**, **Negative Keywords**,
             </TabsList>
           </Tabs>
         </CardHeader>
+
+        {/* Unmissable Top Action Banner for Confused Students */}
+        <div className="bg-gradient-to-r from-amber-500/20 via-amber-500/10 to-amber-500/20 border-b border-amber-500/40 px-3 py-2 flex items-center justify-between gap-2 shrink-0">
+          <div className="flex items-center gap-2 text-xs font-semibold text-amber-300">
+            <Compass className="h-4 w-4 shrink-0 text-amber-400" />
+            <span>Confused? Get your step-by-step plan:</span>
+          </div>
+          <button
+            type="button"
+            onClick={() => handleSendMessage("What should I do right now? Guide me with arrows step-by-step!")}
+            className="h-6 text-[11px] font-bold bg-amber-400 hover:bg-amber-300 text-slate-950 px-3 rounded-full shadow-md animate-pulse flex items-center gap-1 shrink-0 transition-transform hover:scale-105"
+          >
+            <span>👉 START HERE ➡️</span>
+          </button>
+        </div>
         
         <ScrollArea className="flex-grow p-4 bg-background text-foreground">
           <div className="space-y-4">
             {messages.map((message) => {
               const actionMatch = message.content.match(/\[ACTION_LAUNCH_SIMULATION:(.*?):(.*?)\]/);
-              const cleanContent = message.content.replace(/\[ACTION_LAUNCH_SIMULATION:.*?\]/g, "").trim();
+              const navMatches = Array.from(message.content.matchAll(/\[ACTION_NAV:(.*?):(.*?)\]/g));
+              const cleanContent = message.content
+                .replace(/\[ACTION_LAUNCH_SIMULATION:.*?\]/g, "")
+                .replace(/\[ACTION_NAV:.*?\]/g, "")
+                .trim();
 
               return (
                 <div 
@@ -428,6 +501,29 @@ Ask me for specific recommendations on **Quality Score**, **Negative Keywords**,
                         </Button>
                       </div>
                     )}
+
+                    {/* Interactive Step Navigation Action Buttons with Arrows */}
+                    {navMatches.length > 0 && (
+                      <div className="mt-3 space-y-2">
+                        {navMatches.map((m, idx) => (
+                          <Button
+                            key={idx}
+                            size="sm"
+                            className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-bold text-xs h-9 flex items-center justify-between px-3 shadow-md group transition-all"
+                            onClick={() => {
+                              if (onToggleExpand) onToggleExpand();
+                              window.location.href = m[1];
+                            }}
+                          >
+                            <span className="flex items-center gap-1.5 truncate text-left">
+                              <ArrowRight className="h-3.5 w-3.5 text-slate-950 shrink-0 group-hover:translate-x-1 transition-transform" />
+                              <span className="truncate">{m[2]}</span>
+                            </span>
+                            <span className="text-[10px] bg-slate-950/20 text-slate-950 font-bold px-2 py-0.5 rounded shrink-0">GO ➡️</span>
+                          </Button>
+                        ))}
+                      </div>
+                    )}
                     
                     {message.role === "assistant" && message.id !== "welcome" && (
                       <div className="flex items-center gap-1 mt-2 justify-end text-xs text-muted-foreground">
@@ -461,6 +557,13 @@ Ask me for specific recommendations on **Quality Score**, **Negative Keywords**,
         <CardFooter className="p-3 border-t border-border/70 flex-shrink-0 bg-secondary/30 flex flex-col gap-2">
           {/* Quick Suggestion Chips */}
           <div className="w-full flex items-center gap-1.5 overflow-x-auto pb-1 text-xs scrollbar-none">
+            <button
+              type="button"
+              onClick={() => handleSendMessage("What should I do right now? Guide me with arrows step-by-step!")}
+              className="whitespace-nowrap px-3 py-1.5 rounded-full bg-amber-400 hover:bg-amber-300 text-slate-950 font-black border-2 border-amber-300 text-xs flex items-center gap-1.5 transition-all shadow-lg ring-2 ring-amber-400/50 shrink-0 animate-pulse hover:scale-105"
+            >
+              🧭 👉 WHAT DO I DO RIGHT NOW?
+            </button>
             <button
               type="button"
               onClick={() => handleSendMessage("What are my weak areas and what should I practice?")}

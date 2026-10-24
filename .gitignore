@@ -18,4 +18,5 @@ vite.config.ts.*
 # Binaries & local certs
 cloudflared.exe
 *.exe
-.certs/
+.certs/
+.neon

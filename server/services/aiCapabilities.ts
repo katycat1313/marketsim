@@ -944,6 +944,64 @@ Negative keywords prevent your ads from triggering on irrelevant, wasteful searc
 *In competitive auctions (Intermediate & Expert simulations), missing negative keywords can waste 25% to 40% of your daily budget!*`;
     }
 
+    if (
+      q.includes("what should i do") || 
+      q.includes("what do i do") || 
+      q.includes("confused") || 
+      q.includes("lost") || 
+      q.includes("where to start") || 
+      q.includes("where do i start") || 
+      q.includes("what next") || 
+      q.includes("next step") || 
+      q.includes("arrow") || 
+      q.includes("action plan") || 
+      q.includes("roadmap") || 
+      q.includes("what order") || 
+      q.includes("how to start")
+    ) {
+      return `### 🧭 Your Step-by-Step Week 1 Action Plan
+
+Feeling confused? Don't worry! Digital marketing is vast, but Week 1 is broken down into **5 clear action steps**. Follow the arrows in order (30–40 mins per session):
+
+---
+
+#### ➡️ **STEP 1: Socratic AI Briefing (Day 1 - ~15 mins)**
+• **What to do**: Review the Chapter 1 Briefing and master how Impressions ➡️ Clicks ➡️ Conversions connect.
+• **Why**: Instills the core mental model before spending any simulated budget.
+[ACTION_NAV:/tutorials:👉 Start Step 1: Chapter 1 Socratic Lesson]
+
+⬇️
+
+#### ➡️ **STEP 2: Week 1 Ad Campaign Sandbox (Day 2 - ~25 mins)**
+• **What to do**: Draft your first Google Search ad group, add phrase/exact keywords, and inspect the live SERP preview.
+• **Why**: Experience realistic campaign setup without risking real client capital.
+[ACTION_NAV:/ad-simulation:👉 Launch Step 2: Week 1 Ad Simulation]
+
+⬇️
+
+#### ➡️ **STEP 3: Negative Keyword Defense Shield (Day 3 - ~20 mins)**
+• **What to do**: Add negative keywords like \`free\`, \`cheap\`, and \`jobs\` to stop bleeding ad budget on unqualified clicks.
+• **Why**: Stopping waste is the #1 skill junior marketers are audited on in real agencies.
+[ACTION_NAV:/ad-simulation:👉 Open Step 3: Negative Keyword Defense]
+
+⬇️
+
+#### ➡️ **STEP 4: Director Atlas Mid-Week Crisis Call (Day 4 - ~20 mins)**
+• **What to do**: Your boss calls in a panic about runaway broad match spend. Listen to his tactical hint and fix the leak!
+• **Why**: Trains you to stay calm and execute under real agency pressure.
+[ACTION_NAV:/ad-simulation:👉 Take Step 4: Emergency Crisis Drill]
+
+⬇️
+
+#### ➡️ **STEP 5: Claim Your Verified Case Study (Day 5 - ~15 mins)**
+• **What to do**: Check your telemetry score (CTR, Quality Score, ROAS) and export your verified proof-of-work case study.
+• **Why**: You can attach this audited report to resumes, Upwork profiles, or client proposals.
+[ACTION_NAV:/portfolio:👉 Finish Step 5: Export Verified Portfolio]
+
+---
+💡 *Pacing Rule: Treat this like an actual agency job. Work in short 30–40 min sessions across the week. Your progress auto-saves!*`;
+    }
+
     if (q.includes("hint") || q.includes("guide") || q.includes("help") || q.includes("audit")) {
       return `### 💡 Marketing Director Guidance
 

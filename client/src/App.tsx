@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Switch, Route, Link, useLocation } from "wouter";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/queryClient";
@@ -36,6 +36,7 @@ import Achievements from "@/components/Achievements";
 import Posts from "@/components/Posts";
 import AIAssistant from "@/components/AIAssistant";
 import Logo from "@/components/Logo";
+import { StudentWeeklyGuide } from "@/components/StudentWeeklyGuide";
 
 import {
   DropdownMenu,
@@ -367,7 +368,7 @@ function SideNav({ onClose }: SideNavProps) {
   );
 }
 
-function Router() {
+function Router({ onOpenCoach }: { onOpenCoach?: () => void }) {
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const [desktopSidebarVisible, setDesktopSidebarVisible] = useState(true);
   const { isAuthenticated, user, logout } = useAuth();
@@ -492,6 +493,9 @@ function Router() {
         {/* Connected Agency Client Header */}
         <AgencyClientHeader />
 
+        {/* Step-by-Step Student Action Guide */}
+        <StudentWeeklyGuide onOpenCoach={onOpenCoach} />
+
         {/* Content Area */}
         <main className="flex-1 p-4 md:p-6 overflow-auto">
           <Switch>
@@ -597,7 +601,7 @@ function App() {
     <AuthProvider>
       <QueryClientProvider client={queryClient}>
         <ClientAgencyProvider>
-          <Router />
+          <Router onOpenCoach={() => setIsAIAssistantExpanded(true)} />
         
           {/* AI Assistant */}
         <AIAssistant 
