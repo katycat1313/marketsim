@@ -33,6 +33,7 @@ import { CrisisDispatchHub } from '@/components/CrisisDispatchHub';
 import { useAuth } from '@/context/AuthContext';
 import { CourseLockModal } from '@/components/CourseLockModal';
 import { AcademyOrientationTour } from '@/components/AcademyOrientationTour';
+import { StudyGuideQuiz } from '@/components/StudyGuideQuiz';
 
 // Tutorial interface
 interface Tutorial {
@@ -856,21 +857,43 @@ export default function TutorialsPage() {
 
               {/* Dynamic Learning Modes */}
               {learningMode === 'study_guide' && (
-                <div className="prose prose-invert max-w-none p-4 sm:p-6 rounded-xl bg-slate-950/60 border border-white/10 text-slate-200 shadow-xl">
-                  <div className="flex items-center justify-between mb-4 border-b border-white/10 pb-3">
-                    <div className="flex items-center gap-2">
-                      <BookOpen className="h-4 w-4 text-primary" />
-                      <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Study Guide & Reference Notes</span>
+                <div className="space-y-6">
+                  <div className="prose prose-invert max-w-none p-4 sm:p-6 rounded-xl bg-slate-950/60 border border-white/10 text-slate-200 shadow-xl">
+                    <div className="flex items-center justify-between mb-4 border-b border-white/10 pb-3">
+                      <div className="flex items-center gap-2">
+                        <BookOpen className="h-4 w-4 text-primary" />
+                        <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Study Guide & Reference Notes</span>
+                      </div>
+                      <Badge variant="outline" className="text-[10px] border-emerald-500/30 text-emerald-400 bg-emerald-500/10">
+                        Self-Paced Reading
+                      </Badge>
                     </div>
-                    <Badge variant="outline" className="text-[10px] border-emerald-500/30 text-emerald-400 bg-emerald-500/10">
-                      Self-Paced Reading
-                    </Badge>
+                    <TutorialContentRenderer 
+                      content={currentTutorial.content} 
+                      chapterNumber={(currentTutorial as any).chapterNumber}
+                      tutorialIndex={(currentTutorial as any).lessonNumber}
+                      hideAudioBar={true}
+                    />
                   </div>
-                  <TutorialContentRenderer 
-                    content={currentTutorial.content} 
-                    chapterNumber={(currentTutorial as any).chapterNumber}
-                    tutorialIndex={(currentTutorial as any).lessonNumber}
-                    hideAudioBar={true}
+
+                  {/* 5-10 Question Lesson Knowledge Check with 1-2 Sentence Active Reflection */}
+                  <StudyGuideQuiz
+                    tutorial={currentTutorial}
+                    isCompleted={progress.includes(currentTutorial.id)}
+                    isDev={Boolean(isDevUser || qaMode)}
+                    onPass={async () => {
+                      try {
+                        await fetch('/api/tutorials/complete', {
+                          method: 'POST',
+                          body: JSON.stringify({ tutorialId: currentTutorial.id }),
+                          headers: { 'Content-Type': 'application/json' },
+                          credentials: 'include'
+                        });
+                        setProgress(prev => Array.from(new Set([...prev, currentTutorial.id])));
+                      } catch (err) {
+                        console.error('Failed to mark complete on study guide pass:', err);
+                      }
+                    }}
                   />
                 </div>
               )}
