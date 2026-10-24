@@ -521,18 +521,55 @@ export default function TutorialsPage() {
     window.scrollTo(0, 0);
   };
 
-  // Render a tutorial card
-  const renderTutorialCard = (tutorial: Tutorial) => {
+  // Render a tutorial card with sequential locking
+  const renderTutorialCard = (
+    tutorial: Tutorial,
+    index: number = 0,
+    chapterTutorials: Tutorial[] = [],
+    chapterNumber: number = 1,
+    allChapters: Chapter[] = [],
+    chapterIndex: number = 0
+  ) => {
     const isCompleted = progress.includes(tutorial.id);
     
+    // Sequential locking logic:
+    // 1. If completed, student can always re-open to review notes.
+    // 2. Week 1, Lesson 1 (index 0 of Chapter 1) is unlocked by default for all students.
+    // 3. For any subsequent lesson in the chapter, the prior lesson in this chapter must be completed.
+    // 4. For subsequent chapters (Week 2+), the prior chapter must have all its lessons completed.
+    let isLocked = false;
+    let lockReason = "";
+
+    if (!isCompleted) {
+      if (chapterIndex > 0 && allChapters.length > 0) {
+        const prevChapter = allChapters[chapterIndex - 1];
+        const isPrevChapterComplete = prevChapter && prevChapter.tutorials.length > 0 &&
+          prevChapter.tutorials.every(t => progress.includes(t.id));
+        if (!isPrevChapterComplete) {
+          isLocked = true;
+          lockReason = `Complete Week ${prevChapter.number} first`;
+        }
+      }
+
+      if (!isLocked && index > 0 && chapterTutorials.length > 0) {
+        const priorLesson = chapterTutorials[index - 1];
+        if (!progress.includes(priorLesson.id)) {
+          isLocked = true;
+          const priorNumMatch = priorLesson.title.match(/Chapter\s*(\d+[\-\.]\d+)/i);
+          lockReason = priorNumMatch ? `Complete Lesson ${priorNumMatch[1]} first` : `Complete previous lesson first`;
+        }
+      }
+    }
+    
     return (
-      <Card key={tutorial.id} className="flex flex-col h-full border border-[#ffd700]/20 bg-[#111]/80 shadow-md overflow-hidden relative hover:border-[#ffd700]/50 transition-all duration-300">
+      <Card key={tutorial.id} className={`flex flex-col h-full border ${isLocked ? 'border-border/30 bg-[#111]/40 opacity-75' : 'border-[#ffd700]/20 bg-[#111]/80 hover:border-[#ffd700]/50'} shadow-md overflow-hidden relative transition-all duration-300`}>
         <CardHeader className="p-4 pb-2">
           <div className="flex items-start justify-between">
             <div className="w-full">
-              <div className="flex justify-between mb-1">
+              <div className="flex justify-between items-center mb-1">
                 {tutorial.level && (
                   <span className={`inline-block text-xs font-medium px-2 py-1 rounded-full mb-2 ${
+                    isLocked ? 'bg-secondary/40 text-muted-foreground' :
                     tutorial.level.toLowerCase().includes('beginner') ? 'bg-green-100 text-green-800' :
                     tutorial.level.toLowerCase().includes('intermediate') ? 'bg-blue-100 text-blue-800' :
                     tutorial.level.toLowerCase().includes('advanced') ? 'bg-orange-100 text-orange-800' :
@@ -541,11 +578,15 @@ export default function TutorialsPage() {
                     {tutorial.level}
                   </span>
                 )}
-                {isCompleted && (
+                {isCompleted ? (
                   <CheckCircle2 className="h-5 w-5 text-green-500" />
-                )}
+                ) : isLocked ? (
+                  <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-secondary/80 text-muted-foreground border border-border/40 mb-2">
+                    <Lock className="h-3 w-3" /> Locked
+                  </span>
+                ) : null}
               </div>
-              <h3 className="text-lg font-semibold text-[#ffd700] line-clamp-2">{tutorial.title}</h3>
+              <h3 className={`text-lg font-semibold ${isLocked ? 'text-gray-400' : 'text-[#ffd700]'} line-clamp-2`}>{tutorial.title}</h3>
             </div>
           </div>
         </CardHeader>
@@ -580,16 +621,36 @@ export default function TutorialsPage() {
           </div>
         </CardContent>
         <CardFooter className="p-4 pt-2">
-          <Button
-            onClick={() => startTutorial(tutorial)}
-            className="w-full relative overflow-hidden group"
-            variant={isCompleted ? "outline" : "default"}
-          >
-            <span className="absolute inset-0 w-0 bg-[#ffd700]/10 transition-all duration-300 group-hover:w-full"></span>
-            <span className="relative">
-              {isCompleted ? 'Review Lesson' : 'Start Lesson'}
-            </span>
-          </Button>
+          {isLocked ? (
+            <Button
+              disabled
+              className="w-full bg-secondary/40 text-muted-foreground border border-border/40 cursor-not-allowed opacity-80 text-xs font-semibold"
+            >
+              <Lock className="h-3.5 w-3.5 mr-1.5" />
+              <span>{lockReason || 'Locked - Complete Prior Lesson'}</span>
+            </Button>
+          ) : (
+            <Button
+              onClick={() => startTutorial(tutorial)}
+              className="w-full relative overflow-hidden group"
+              variant={isCompleted ? "outline" : "default"}
+            >
+              <span className="absolute inset-0 w-0 bg-[#ffd700]/10 transition-all duration-300 group-hover:w-full"></span>
+              <span className="relative flex items-center justify-center gap-1.5">
+                {isCompleted ? (
+                  <>
+                    <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+                    <span>Review Lesson</span>
+                  </>
+                ) : (
+                  <>
+                    <Play className="h-4 w-4" />
+                    <span>Start Lesson</span>
+                  </>
+                )}
+              </span>
+            </Button>
+          )}
         </CardFooter>
       </Card>
     );
@@ -1078,7 +1139,7 @@ export default function TutorialsPage() {
             </div>
           ) : (
             <div className="space-y-12">
-              {getChapters().map((chapter) => (
+              {getChapters().map((chapter, chapterIdx, allChaptersList) => (
                 <div key={chapter.number} className="rounded-xl overflow-hidden bg-[#111]/60 shadow-lg border border-[#ffd700]/10 hover:border-[#ffd700]/20 transition-all duration-300">
                   <div className="relative h-48 md:h-60 overflow-hidden">
                     <img 
@@ -1107,7 +1168,7 @@ export default function TutorialsPage() {
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                       {chapter.tutorials.length > 0 ? 
-                        chapter.tutorials.map(tutorial => renderTutorialCard(tutorial)) : 
+                        chapter.tutorials.map((tutorial, idx) => renderTutorialCard(tutorial, idx, chapter.tutorials, chapter.number, allChaptersList, chapterIdx)) : 
                         <div className="col-span-3 p-8 text-center bg-[#222]/50 rounded-lg border border-dashed border-[#ffd700]/20">
                           <h4 className="text-[#ffd700] font-medium mb-2">Coming Soon</h4>
                           <p className="text-gray-400 text-sm">New tutorials for this chapter are being prepared and will be available soon!</p>
