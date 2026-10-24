@@ -140,18 +140,18 @@ export function WelcomeOnboardingModal({
             </div>
           </div>
 
-          {/* Step 3: Locked Advanced Courses */}
+          {/* Step 3: Course 1: 6-8 Week Agency Simulator */}
           <div className="p-2.5 sm:p-3 rounded-xl bg-secondary/30 border border-border/60 flex items-start gap-2.5 sm:gap-3">
             <div className="h-7 w-7 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center shrink-0 mt-0.5">
               <Lock className="h-3.5 w-3.5" />
             </div>
             <div className="space-y-0.5 text-xs">
               <div className="flex items-center gap-1.5 font-bold text-foreground">
-                <span>3. Course 1 ($59) & Course 2 ($199/mo)</span>
-                <span className="px-1.5 py-0.2 bg-muted text-muted-foreground text-[10px] rounded font-mono">OPTIONAL</span>
+                <span>3. Course 1: Full 6–8 Week Agency Simulator ($59/mo)</span>
+                <span className="px-1.5 py-0.2 bg-muted text-muted-foreground text-[10px] rounded font-mono">AFTER WEEK 1</span>
               </div>
               <p className="text-muted-foreground leading-relaxed text-[11px] sm:text-xs">
-                Live PPC auctions, GA4 analytics studios, and mid-week emergency crisis drills are locked until you unlock Course 1. Master Week 1 first!
+                After your 1-week free trial, continue your training across the full 6–8 week curriculum covering paid ad auctions, SEO studios, GA4 analytics, and real client capstones.
               </p>
             </div>
           </div>

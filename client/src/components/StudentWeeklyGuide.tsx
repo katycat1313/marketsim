@@ -28,47 +28,47 @@ export interface ActionStep {
 export const WEEK_1_ACTION_PLAN: ActionStep[] = [
   {
     id: 1,
-    title: "Step 1: Chapter 1 Socratic AI Briefing",
-    shortDesc: "Understand Impressions ➡️ Clicks ➡️ Conversions & Search Intent mental models.",
+    title: "Step 1: Day 1 — Customer Journey & Funnel Theory (Lessons 1.1–1.3)",
+    shortDesc: "Master the 3-stage funnel (Awareness ➡️ Consideration ➡️ Decision) with Jenny's Artisan Java.",
     duration: "15–20 mins",
     path: "/tutorials",
-    actionText: "Start Chapter 1 Briefing",
+    actionText: "Start Day 1 (Lesson 1.1) ➔",
     whyItMatters: "Builds your foundational marketing intuition before spending any simulated budget."
   },
   {
     id: 2,
-    title: "Step 2: Week 1 Ad Campaign Sandbox",
-    shortDesc: "Draft your first Google Search ad group and inspect the live Google SERP preview.",
+    title: "Step 2: Day 2 — Ad Auctions & Google Search Sandbox (Lessons 1.4–1.6)",
+    shortDesc: "Understand Impressions ➡️ Clicks ➡️ Conversions and draft your first Google Search ad group.",
     duration: "25–30 mins",
     path: "/ad-simulation",
-    actionText: "Launch Ad Sandbox",
+    actionText: "Launch Ad Sandbox ➔",
     whyItMatters: "Experience realistic campaign creation with headlines, descriptions, and bidding."
   },
   {
     id: 3,
-    title: "Step 3: Negative Keyword Defense Shield",
-    shortDesc: "Review search queries and add negative keywords (free, cheap, jobs) to stop budget bleed.",
+    title: "Step 3: Day 3 — Search Intent & Negative Keywords (Lessons 1.7–1.9)",
+    shortDesc: "Mine wasteful search queries and add negative keywords (free, cheap, jobs) to stop budget bleed.",
     duration: "15–20 mins",
     path: "/ad-simulation",
-    actionText: "Block Wasteful Keywords",
+    actionText: "Block Wasteful Keywords ➔",
     whyItMatters: "Prevents paying for junk clicks—the #1 skill agency directors look for in junior media buyers."
   },
   {
     id: 4,
-    title: "Step 4: Director Atlas Mid-Week Crisis Call",
-    shortDesc: "Answer the emergency boss call, listen to his tactical hint, and diagnose broad match leak.",
+    title: "Step 4: Day 4 — A/B Testing & Director Atlas Crisis Drill (Lessons 1.10–1.12)",
+    shortDesc: "Test high-converting headlines and answer your boss's emergency fire drill under pressure.",
     duration: "15–20 mins",
     path: "/ad-simulation",
-    actionText: "Handle Crisis Drill",
+    actionText: "Handle Crisis Drill ➔",
     whyItMatters: "Trains you to stay calm and solve real client emergencies under pressure."
   },
   {
     id: 5,
-    title: "Step 5: Export Verified Case Study",
-    shortDesc: "Review your telemetry score (CTR, Quality Score, ROAS) and download your proof-of-work portfolio.",
+    title: "Step 5: Day 5 — Unit Economics & Verified Portfolio (Lessons 1.13–1.15)",
+    shortDesc: "Audit your telemetry score (CTR, Quality Score, ROAS) and export your audited case study.",
     duration: "10–15 mins",
     path: "/portfolio",
-    actionText: "Export Verified Portfolio",
+    actionText: "Export Verified Portfolio ➔",
     whyItMatters: "Gives you an audited credential you can attach to resumes, Upwork, and client pitches."
   }
 ];
