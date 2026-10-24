@@ -38,6 +38,7 @@ import AIAssistant from "@/components/AIAssistant";
 import Logo from "@/components/Logo";
 import { StudentWeeklyGuide } from "@/components/StudentWeeklyGuide";
 import { LegalDisclosuresModal } from "@/components/LegalDisclosuresModal";
+import { WelcomeOnboardingModal } from "@/components/WelcomeOnboardingModal";
 
 import {
   DropdownMenu,
@@ -166,7 +167,7 @@ function SideNav({ onClose }: SideNavProps) {
           <div className="space-y-2">
             <div className="text-xs uppercase text-amber-400 font-bold tracking-wider pl-2 flex items-center justify-between">
               <span>WEEK 1 FOUNDATION</span>
-              <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 font-mono font-bold">ACTIVE</span>
+              <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono font-bold">100% FREE</span>
             </div>
             <div className="space-y-1 pl-2">
               <Link href="/tutorials" onClick={handleLinkClick}>
@@ -197,7 +198,7 @@ function SideNav({ onClose }: SideNavProps) {
             <div className="space-y-2">
               <div className="text-xs uppercase text-muted-foreground font-semibold tracking-wider pl-2 flex items-center justify-between">
                 <span>AGENCY SIMULATIONS</span>
-                <span className="text-[10px] text-primary font-mono">1 ➔ 2 ➔ 3</span>
+                <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-400 font-mono font-bold">COURSE 1 ($59)</span>
               </div>
               <div className="space-y-1 pl-2">
                 <Link href="/seo-simulations" onClick={handleLinkClick}>
@@ -205,7 +206,7 @@ function SideNav({ onClose }: SideNavProps) {
                     ${isActive('/seo-simulation') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
                     <Search className="h-5 w-5 text-primary" />
                     <div className="flex flex-col">
-                      <span className="font-medium text-xs">1. SEO & Website Studio</span>
+                      <span className="font-medium text-xs flex items-center justify-between"><span>1. SEO & Website Studio</span><span className="text-[9px] text-amber-400 font-mono font-bold flex items-center gap-0.5"><Lock className="h-2.5 w-2.5" />$59</span></span>
                       <span className="text-[10px] text-muted-foreground">Organic Intent & Meta</span>
                     </div>
                   </div>
@@ -216,7 +217,7 @@ function SideNav({ onClose }: SideNavProps) {
                     ${isActive('/ad-simulation') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
                     <MousePointer className="h-5 w-5 text-purple-400" />
                     <div className="flex flex-col">
-                      <span className="font-medium text-xs">2. Paid Ad Platform Sims</span>
+                      <span className="font-medium text-xs flex items-center justify-between"><span>2. Paid Ad Platform Sims</span><span className="text-[9px] text-amber-400 font-mono font-bold flex items-center gap-0.5"><Lock className="h-2.5 w-2.5" />$59</span></span>
                       <span className="text-[10px] text-muted-foreground">Google & Meta Bidding</span>
                     </div>
                   </div>
@@ -227,7 +228,7 @@ function SideNav({ onClose }: SideNavProps) {
                     ${isActive('/capstone-simulation') ? 'bg-amber-500/15 text-amber-400 font-medium border border-amber-500/30' : 'text-amber-400/90 hover:bg-amber-500/10'}`}>
                     <Trophy className="h-5 w-5 text-amber-400" />
                     <div className="flex flex-col">
-                      <span className="font-medium text-xs">3. 🏆 Agency Capstone</span>
+                      <span className="font-medium text-xs flex items-center justify-between"><span>3. 🏆 Agency Capstone</span><span className="text-[9px] text-amber-400 font-mono font-bold flex items-center gap-0.5"><Lock className="h-2.5 w-2.5" />$59</span></span>
                       <span className="text-[10px] text-amber-400/70">Full Client Retainer</span>
                     </div>
                   </div>
@@ -370,6 +371,16 @@ function SideNav({ onClose }: SideNavProps) {
 }
 
 function Router({ onOpenCoach }: { onOpenCoach?: () => void }) {
+  const [isWelcomeOpen, setIsWelcomeOpen] = useState(false);
+
+  useEffect(() => {
+    try {
+      const seen = localStorage.getItem("krechet_welcome_modal_dismissed");
+      if (!seen) {
+        setIsWelcomeOpen(true);
+      }
+    } catch (e) {}
+  }, []);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const [desktopSidebarVisible, setDesktopSidebarVisible] = useState(true);
   const { isAuthenticated, user, logout } = useAuth();
@@ -421,6 +432,13 @@ function Router({ onOpenCoach }: { onOpenCoach?: () => void }) {
             </Link>
           </div>
           <div className="flex items-center space-x-2">
+            <button 
+              onClick={() => setIsWelcomeOpen(true)}
+              className="px-2 py-1 text-xs font-bold rounded-md bg-amber-500/10 text-amber-300 border border-amber-500/30 hover:bg-amber-500/20 flex items-center gap-1 transition"
+              title="Start Guide"
+            >
+              <span>👋</span>
+            </button>
             {isAuthenticated ? (
               <button 
                 onClick={handleLogout}
@@ -460,6 +478,14 @@ function Router({ onOpenCoach }: { onOpenCoach?: () => void }) {
             </Link>
           </div>
           <div className="flex items-center space-x-3">
+            <button 
+              onClick={() => setIsWelcomeOpen(true)}
+              className="px-2.5 py-1 text-xs font-bold rounded-md bg-amber-500/10 text-amber-300 border border-amber-500/30 hover:bg-amber-500/20 flex items-center gap-1.5 transition cursor-pointer"
+              title="What to do first & how it works"
+            >
+              <span>👋</span>
+              <span className="hidden lg:inline">Start Guide</span>
+            </button>
             {isAuthenticated ? (
               <div className="flex items-center space-x-3">
                 {user && (
@@ -490,6 +516,35 @@ function Router({ onOpenCoach }: { onOpenCoach?: () => void }) {
             )}
           </div>
         </div>
+
+        {/* High-Visibility Welcome & Action Banner */}
+        {!isAuthenticated && (
+          <div className="krechet-welcome-banner bg-gradient-to-r from-amber-500/20 via-primary/10 to-emerald-500/15 border-b border-amber-500/30 px-3 sm:px-4 py-2 flex items-center justify-between flex-wrap gap-2 text-xs">
+            <div className="flex items-center gap-2 text-foreground font-medium">
+              <span className="flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+              <span className="font-bold text-amber-300">Welcome to Krechet Academy!</span>
+              <span className="text-muted-foreground hidden md:inline">Week 1 is 100% Free (Zero Credit Card Required). First Client: Jenny's Artisan Java.</span>
+            </div>
+            <div className="flex items-center gap-2 ml-auto">
+              <button 
+                onClick={() => setIsWelcomeOpen(true)}
+                className="text-amber-400 hover:text-amber-300 underline font-semibold text-xs cursor-pointer"
+              >
+                How it works
+              </button>
+              <Link href="/tutorials">
+                <button className="bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold px-2.5 py-1 rounded text-xs transition shadow-sm cursor-pointer">
+                  Start Week 1 Free ➔
+                </button>
+              </Link>
+              <Link href="/signup">
+                <button className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold px-2.5 py-1 rounded text-xs transition shadow-sm cursor-pointer">
+                  Sign Up Free
+                </button>
+              </Link>
+            </div>
+          </div>
+        )}
 
         {/* Connected Agency Client Header */}
         <AgencyClientHeader />
@@ -631,7 +686,12 @@ function App() {
         
         <Toaster />
         </ClientAgencyProvider>
-      </QueryClientProvider>
+        <WelcomeOnboardingModal 
+        isOpen={isWelcomeOpen} 
+        onClose={() => setIsWelcomeOpen(false)} 
+        isAuthenticated={isAuthenticated} 
+      />
+    </QueryClientProvider>
     </AuthProvider>
   );
 }

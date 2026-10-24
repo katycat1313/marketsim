@@ -32,12 +32,30 @@ import {
 } from "lucide-react";
 import { AITeacherModal } from "@/components/AITeacherModal";
 import { EarlyBirdModal } from "@/components/EarlyBirdModal";
+import { CourseLockModal } from "@/components/CourseLockModal";
+import { Coffee } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
 
 export default function Home() {
   const [, navigate] = useLocation();
   const [selectedTrack, setSelectedTrack] = useState<number>(1);
   const [isTeacherModalOpen, setIsTeacherModalOpen] = useState(false);
   const [isEarlyBirdOpen, setIsEarlyBirdOpen] = useState(false);
+  const { user, isAuthenticated } = useAuth();
+  const [lockModalConfig, setLockModalConfig] = useState<{
+    isOpen: boolean;
+    requiredTier: "course1" | "course2";
+    title: string;
+    desc: string;
+  }>({
+    isOpen: false,
+    requiredTier: "course1",
+    title: "",
+    desc: ""
+  });
+
+  const hasCourse1 = user?.level?.toLowerCase()?.includes('agency') || user?.level?.toLowerCase()?.includes('director') || false;
+  const hasCourse2 = user?.level?.toLowerCase()?.includes('director') || false;
 
   // Student telemetry stats
   const studentLevel = "Junior Associate (Level 1)";
@@ -90,15 +108,16 @@ export default function Home() {
 
   const campaignSimulators = [
     {
-      title: "My Business Sandbox & Persona Studio",
-      category: "Digital Twin & Strategy",
-      description: "Clone your real-world business (menu, catalog, website) into a private sandbox. Build precision buyer personas with Director Atlas and discover hidden high-ROI channels.",
-      icon: <Building2 className="h-6 w-6 text-amber-400" />,
-      link: "/custom-sandbox",
-      actionText: "Open My Business Sandbox",
-      gradient: "from-amber-500/10 to-yellow-500/5 hover:border-amber-500/50",
-      badge: "Custom Digital Twin",
-      badgeClass: "bg-amber-500/10 text-amber-400 border-amber-500/20"
+      title: "Week 1: Jenny's Artisan Java Local SEO & Offer Engine",
+      category: "Week 1 Foundation Simulation",
+      description: "Audit Jenny's coffee roastery, correct broken H1 tags, run visual A/B tests on headline copy, and stop budget bleed before spending ad dollars.",
+      icon: <Coffee className="h-6 w-6 text-emerald-400" />,
+      link: "/tutorials",
+      actionText: "Launch Week 1 Free Sim ➔",
+      gradient: "from-emerald-500/15 via-emerald-500/5 to-card hover:border-emerald-500/50",
+      badge: "100% Free Access",
+      badgeClass: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30",
+      tier: "free" as const
     },
     {
       title: "Paid Ads Auction Sandbox",
@@ -108,8 +127,9 @@ export default function Home() {
       link: "/ad-simulations",
       actionText: "Launch Ads Workbench",
       gradient: "from-blue-500/10 to-indigo-500/5 hover:border-blue-500/50",
-      badge: "Live Auction Math",
-      badgeClass: "bg-blue-500/10 text-blue-400 border-blue-500/20"
+      badge: "Course 1 ($59)",
+      badgeClass: "bg-amber-500/15 text-amber-300 border-amber-500/30",
+      tier: "course1" as const
     },
     {
       title: "SEO & SERP Two-Sandbox CMS",
@@ -119,8 +139,9 @@ export default function Home() {
       link: "/seo-simulations",
       actionText: "Open CMS Sandbox",
       gradient: "from-emerald-500/10 to-teal-500/5 hover:border-emerald-500/50",
-      badge: "Two-Sandbox Engine",
-      badgeClass: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
+      badge: "Course 1 ($59)",
+      badgeClass: "bg-amber-500/15 text-amber-300 border-amber-500/30",
+      tier: "course1" as const
     },
     {
       title: "GA4 Data & Reporting Studio",
@@ -130,8 +151,9 @@ export default function Home() {
       link: "/data-visualization",
       actionText: "Inspect GA4 Funnels",
       gradient: "from-purple-500/10 to-pink-500/5 hover:border-purple-500/50",
-      badge: "Event-Driven Telemetry",
-      badgeClass: "bg-purple-500/10 text-purple-400 border-purple-500/20"
+      badge: "Course 1 ($59)",
+      badgeClass: "bg-amber-500/15 text-amber-300 border-amber-500/30",
+      tier: "course1" as const
     },
     {
       title: "Agency Omnichannel Capstone",
@@ -141,8 +163,21 @@ export default function Home() {
       link: "/capstone-simulation",
       actionText: "Enter Agency Capstone",
       gradient: "from-amber-500/10 to-orange-500/5 hover:border-amber-500/50",
-      badge: "Omnichannel Crisis",
-      badgeClass: "bg-amber-500/10 text-amber-400 border-amber-500/20"
+      badge: "Course 1 ($59)",
+      badgeClass: "bg-amber-500/15 text-amber-300 border-amber-500/30",
+      tier: "course1" as const
+    },
+    {
+      title: "My Business Sandbox & Persona Studio",
+      category: "Digital Twin & Strategy",
+      description: "Clone your real-world business (menu, catalog, website) into a private sandbox. Build precision buyer personas with Director Atlas and discover hidden high-ROI channels.",
+      icon: <Building2 className="h-6 w-6 text-amber-400" />,
+      link: "/custom-sandbox",
+      actionText: "Open My Business Sandbox",
+      gradient: "from-amber-500/10 to-yellow-500/5 hover:border-amber-500/50",
+      badge: "Course 2 ($199/mo)",
+      badgeClass: "bg-purple-500/15 text-purple-300 border-purple-500/30",
+      tier: "course2" as const
     },
     {
       title: "AI Interview Studio",
@@ -152,8 +187,9 @@ export default function Home() {
       link: "/interview-prep",
       actionText: "Practice STAR Defense",
       gradient: "from-red-500/10 to-rose-500/5 hover:border-red-500/50",
-      badge: "AI Video Director",
-      badgeClass: "bg-red-500/10 text-red-400 border-red-500/20"
+      badge: "Course 1 ($59)",
+      badgeClass: "bg-amber-500/15 text-amber-300 border-amber-500/30",
+      tier: "course1" as const
     },
     {
       title: "Verified Career Portfolio",
@@ -163,8 +199,9 @@ export default function Home() {
       link: "/portfolio",
       actionText: "View My Portfolio",
       gradient: "from-cyan-500/10 to-blue-500/5 hover:border-cyan-500/50",
-      badge: "Cryptographic Proof",
-      badgeClass: "bg-cyan-500/10 text-cyan-400 border-cyan-500/20"
+      badge: "Course 1 ($59)",
+      badgeClass: "bg-amber-500/15 text-amber-300 border-amber-500/30",
+      tier: "course1" as const
     }
   ];
 
@@ -391,12 +428,44 @@ export default function Home() {
               </CardContent>
 
               <div className="p-5 pt-0 mt-auto">
-                <Link href={sim.link} className="w-full">
-                  <Button variant="secondary" className="w-full text-xs font-semibold justify-between group hover:bg-primary hover:text-primary-foreground transition-all">
-                    <span>{sim.actionText}</span>
+                {sim.tier === "free" ? (
+                  <Link href={sim.link} className="w-full">
+                    <Button className="w-full text-xs font-bold justify-between bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition-all shadow-md">
+                      <span>{sim.actionText}</span>
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
+                  </Link>
+                ) : (
+                  <Button 
+                    onClick={() => {
+                      if (sim.tier === "course1" && !hasCourse1) {
+                        setLockModalConfig({
+                          isOpen: true,
+                          requiredTier: "course1",
+                          title: sim.title,
+                          desc: sim.description
+                        });
+                      } else if (sim.tier === "course2" && !hasCourse2) {
+                        setLockModalConfig({
+                          isOpen: true,
+                          requiredTier: "course2",
+                          title: sim.title,
+                          desc: sim.description
+                        });
+                      } else {
+                        navigate(sim.link);
+                      }
+                    }}
+                    variant="secondary" 
+                    className="w-full text-xs font-semibold justify-between group hover:bg-primary hover:text-primary-foreground transition-all cursor-pointer border border-border/80"
+                  >
+                    <span className="flex items-center gap-1.5">
+                      <Lock className="h-3.5 w-3.5 text-amber-400 shrink-0" />
+                      <span>{sim.actionText}</span>
+                    </span>
                     <ChevronRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
                   </Button>
-                </Link>
+                )}
               </div>
             </Card>
           ))}

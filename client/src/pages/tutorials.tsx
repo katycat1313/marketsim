@@ -63,6 +63,21 @@ export default function TutorialsPage() {
   const [currentTutorial, setCurrentTutorial] = useState<Tutorial | null>(null);
   const [learningMode, setLearningMode] = useState<'study_guide' | 'listen' | 'conversational'>('conversational');
   const [isCrisisHubOpen, setIsCrisisHubOpen] = useState(false);
+  const { user } = useAuth();
+  const [lockModalConfig, setLockModalConfig] = useState<{
+    isOpen: boolean;
+    requiredTier: "course1" | "course2";
+    title: string;
+    desc: string;
+  }>({
+    isOpen: false,
+    requiredTier: "course1",
+    title: "",
+    desc: ""
+  });
+
+  const hasCourse1 = user?.level?.toLowerCase()?.includes('agency') || user?.level?.toLowerCase()?.includes('director') || false;
+  const hasCourse2 = user?.level?.toLowerCase()?.includes('director') || false;
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
