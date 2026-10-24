@@ -93,6 +93,24 @@ export default function TutorialsPage() {
   const [error, setError] = useState<string | null>(null);
   const [isTourOpen, setIsTourOpen] = useState(false);
 
+  const getWeekWorkbench = (num: number) => {
+    switch (num) {
+      case 1:
+        return { link: "/ab-test-workshop", name: "Jenny's A/B Testing Lab (Headline & Offer)" };
+      case 2:
+        return { link: "/seo-simulation/1", name: "Jenny's Artisan Java (CMS & On-Page SEO)" };
+      case 3:
+        return { link: "/ad-simulation/1", name: "Dr. Miller Dental (Paid Search Google Ads)" };
+      case 4:
+        return { link: "/ab-test-workshop", name: "Landing Page CRO & Statistical Significance Lab" };
+      case 5:
+        return { link: "/ad-simulations", name: "Paid Social & Meta Ads Workbench" };
+      case 6:
+      default:
+        return { link: "/capstone-simulation", name: "Apex Global Growth Retainer Capstone" };
+    }
+  };
+
   useEffect(() => {
     const handleStartBriefing = () => {
       if (tutorials.length > 0) {
@@ -998,8 +1016,7 @@ export default function TutorialsPage() {
                 const nextTutorial = currentChapterIndex >= 0 && currentChapterIndex < chapterTutorials.length - 1 ? chapterTutorials[currentChapterIndex + 1] : null;
                 const isLastLessonOfWeek = chapterTutorials.length > 0 && chapterTutorials[chapterTutorials.length - 1].id === currentTutorial.id;
                 const isWeekCompleted = chapterTutorials.length > 0 && chapterTutorials.every(t => progress.includes(t.id));
-                const weekSimLink = currentChapterNum === 2 ? "/ad-simulation/1" : currentChapterNum >= 4 ? "/capstone-simulation" : "/seo-simulation/1";
-                const weekSimName = currentChapterNum === 2 ? "Week 2: Dr. Miller Dental (Paid Search)" : currentChapterNum >= 4 ? "Week 6: Apex Global Growth Capstone" : "Week 1: Jenny's Artisan Java (CMS SEO)";
+                const { link: weekSimLink, name: weekSimName } = getWeekWorkbench(currentChapterNum);
 
                 return (
                   <div className="space-y-4 mt-8">
@@ -1206,8 +1223,7 @@ export default function TutorialsPage() {
 
                     {/* Chapter Weekly Simulation & Assessment Action Strip */}
                     {chapter.tutorials.length > 0 && (() => {
-                      const simLink = chapter.number === 2 ? "/ad-simulation/1" : chapter.number >= 4 ? "/capstone-simulation" : "/seo-simulation/1";
-                      const simName = chapter.number === 2 ? "Dr. Miller Dental (Paid Search)" : chapter.number >= 4 ? "Apex Global Growth Capstone" : "Jenny's Artisan Java (CMS SEO)";
+                      const { link: simLink, name: simName } = getWeekWorkbench(chapter.number);
                       const completedCount = chapter.tutorials.filter(t => progress.includes(t.id)).length;
                       const allCompleted = isDevUser || (completedCount === chapter.tutorials.length && chapter.tutorials.length > 0);
 

@@ -279,7 +279,6 @@ export function AcademyOrientationTour({
               </h4>
 
               {/* Step 1 */}
-              {/* Step 1 */}
               <div 
                 onClick={handleLaunchLesson1}
                 className="p-2.5 rounded-xl bg-amber-500/15 border border-amber-500/40 hover:bg-amber-500/25 transition-all flex items-center justify-between gap-3 cursor-pointer group shadow-sm hover:shadow-amber-500/20"
@@ -287,8 +286,8 @@ export function AcademyOrientationTour({
                 <div className="flex items-center gap-2.5 text-xs">
                   <span className="h-6 w-6 rounded-full bg-amber-500 text-slate-950 font-black flex items-center justify-center text-xs shrink-0 group-hover:scale-110 transition-transform">1</span>
                   <div>
-                    <span className="font-bold text-foreground group-hover:text-amber-300 transition-colors">Day 1: Learn Core Concept in Lesson 1.1</span>
-                    <p className="text-[11px] text-muted-foreground">Study Customer Journey, AOV & Search Intent (Course Material)</p>
+                    <span className="font-bold text-foreground group-hover:text-amber-300 transition-colors">Day 1: Customer Journey & Funnel Leak Audit</span>
+                    <p className="text-[11px] text-muted-foreground">Study 3-stage funnel, AOV, and diagnose Jenny's 84% bounce rate leak</p>
                   </div>
                 </div>
                 <Button
@@ -305,18 +304,18 @@ export function AcademyOrientationTour({
 
               {/* Step 2 */}
               <div 
-                onClick={() => { onClose(); setLocation('/ad-simulations'); }}
+                onClick={handleLaunchLesson1}
                 className="p-2.5 rounded-xl bg-card border border-border/80 hover:border-amber-500/40 hover:bg-secondary/40 transition-all flex items-center justify-between gap-3 cursor-pointer group shadow-sm"
               >
                 <div className="flex items-center gap-2.5 text-xs">
                   <span className="h-6 w-6 rounded-full bg-secondary text-foreground font-black flex items-center justify-center text-xs shrink-0">2</span>
                   <div>
-                    <span className="font-bold text-foreground">Day 2: Build Ad Campaign in Sandbox</span>
-                    <p className="text-[11px] text-muted-foreground">Apply what you learned to Jenny's Artisan Java (Practice Lab)</p>
+                    <span className="font-bold text-foreground">Day 2: Unit Economics & Break-Even CPA</span>
+                    <p className="text-[11px] text-muted-foreground">Model Jenny's $18.50 coffee, $7 COGS, and calculate max allowable ad spend</p>
                   </div>
                 </div>
-                <Badge variant="outline" className="text-[10px] text-muted-foreground">
-                  SIMULATOR
+                <Badge variant="outline" className="text-[10px] text-amber-400 border-amber-500/30">
+                  UNIT ECONOMICS
                 </Badge>
               </div>
 
@@ -324,18 +323,18 @@ export function AcademyOrientationTour({
 
               {/* Step 3 */}
               <div 
-                onClick={() => { onClose(); setLocation('/ad-simulations'); }}
-                className="p-2.5 rounded-xl bg-card border border-border/80 hover:border-amber-500/40 hover:bg-secondary/40 transition-all flex items-center justify-between gap-3 cursor-pointer group shadow-sm"
+                onClick={() => { onClose(); setLocation('/persona-builder-template'); }}
+                className="p-2.5 rounded-xl bg-card border border-border/80 hover:border-indigo-500/40 hover:bg-indigo-500/5 transition-all flex items-center justify-between gap-3 cursor-pointer group shadow-sm"
               >
                 <div className="flex items-center gap-2.5 text-xs">
                   <span className="h-6 w-6 rounded-full bg-secondary text-foreground font-black flex items-center justify-center text-xs shrink-0">3</span>
                   <div>
-                    <span className="font-bold text-foreground">Day 3: Add Negative Keywords</span>
-                    <p className="text-[11px] text-muted-foreground">Block wasteful search terms ('free', 'cheap') to defend budget</p>
+                    <span className="font-bold text-foreground">Day 3: Customer Persona & Client Discovery</span>
+                    <p className="text-[11px] text-muted-foreground">Build Morning Ritual & Executive buyer personas in the Persona Builder</p>
                   </div>
                 </div>
-                <Badge variant="outline" className="text-[10px] text-muted-foreground">
-                  DEFENSE
+                <Badge variant="outline" className="text-[10px] text-indigo-400 border-indigo-500/30">
+                  PERSONA LAB
                 </Badge>
               </div>
 
@@ -343,18 +342,18 @@ export function AcademyOrientationTour({
 
               {/* Step 4 */}
               <div 
-                onClick={handleLaunchLesson1}
-                className="p-2.5 rounded-xl bg-card border border-border/80 hover:border-red-500/40 hover:bg-red-500/5 transition-all flex items-center justify-between gap-3 cursor-pointer group shadow-sm"
+                onClick={() => { onClose(); setLocation('/ab-test-workshop'); }}
+                className="p-2.5 rounded-xl bg-card border border-border/80 hover:border-blue-500/40 hover:bg-blue-500/5 transition-all flex items-center justify-between gap-3 cursor-pointer group shadow-sm"
               >
                 <div className="flex items-center gap-2.5 text-xs">
                   <span className="h-6 w-6 rounded-full bg-secondary text-foreground font-black flex items-center justify-center text-xs shrink-0">4</span>
                   <div>
-                    <span className="font-bold text-foreground">Day 4: Handle Director Atlas Crisis Drill</span>
-                    <p className="text-[11px] text-muted-foreground">Solve an unexpected live client emergency under pressure</p>
+                    <span className="font-bold text-foreground">Day 4: Headline Clarity & Live A/B Testing Lab</span>
+                    <p className="text-[11px] text-muted-foreground">QA challenger copy vs 'Coffee Beans For Sale' in the A/B Testing Lab</p>
                   </div>
                 </div>
-                <Badge variant="outline" className="text-[10px] text-red-400 border-red-500/30">
-                  CRISIS DRILL
+                <Badge variant="outline" className="text-[10px] text-blue-400 border-blue-500/30">
+                  A/B SPLIT LAB
                 </Badge>
               </div>
 
@@ -368,8 +367,8 @@ export function AcademyOrientationTour({
                 <div className="flex items-center gap-2.5 text-xs">
                   <span className="h-6 w-6 rounded-full bg-emerald-500 text-slate-950 font-black flex items-center justify-center text-xs shrink-0">5</span>
                   <div>
-                    <span className="font-bold text-foreground">Day 5: Export Verified Proof of Work</span>
-                    <p className="text-[11px] text-muted-foreground">Audited case study report (CTR, ROAS) for your resume/Upwork</p>
+                    <span className="font-bold text-foreground">Day 5: Deploy Winner & Level 1 Certification</span>
+                    <p className="text-[11px] text-muted-foreground">Deploy the winning variant to Jenny's account & earn verified credential</p>
                   </div>
                 </div>
                 <Badge className="bg-emerald-500/20 text-emerald-300 border-emerald-500/40 text-[10px] font-mono shrink-0">
