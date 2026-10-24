@@ -1,12 +1,12 @@
 [ai_studio_code (1).txt](https://github.com/user-attachments/files/24833391/ai_studio_code.1.txt)
-# MarketSim: Adaptive Agentic AI Marketing Mastery Platform
+# Krechet Academy: Adaptive Agentic AI Marketing Mastery Platform
 
-**MarketSim** is a first-of-its-kind, full-stack SaaS platform designed to disrupt digital marketing education. It bridges the gap between theory and execution by providing hands-on, risk-free simulations powered by an **Agentic AI Mentor**.
+**Krechet Academy** is a first-of-its-kind, full-stack SaaS platform designed to disrupt digital marketing education. It bridges the gap between theory and execution by providing hands-on, risk-free simulations powered by an **Agentic AI Mentor**.
 
 ---
 
 ## 🚀 The Core Vision
-Most marketing courses are passive. MarketSim is active. I architected this platform to allow users to build real campaigns, conduct technical SEO audits, and analyze data in a simulated environment where failure costs nothing and learning is accelerated by AI.
+Most marketing courses are passive. Krechet Academy is active. I architected this platform to allow users to build real campaigns, conduct technical SEO audits, and analyze data in a simulated environment where failure costs nothing and learning is accelerated by AI.
 
 ## 🧠 Key Technical Features
 
@@ -42,7 +42,7 @@ Most marketing courses are passive. MarketSim is active. I architected this plat
 ---
 
 ## 💡 The "Builder" Story
-MarketSim was my first major AI build, architected solo before starting my formal AI Engineering degree. It demonstrates my ability to handle the entire **Product Development Lifecycle**—from system architecture and API orchestration to UI/UX and deployment.
+Krechet Academy was my first major AI build, architected solo before starting my formal AI Engineering degree. It demonstrates my ability to handle the entire **Product Development Lifecycle**—from system architecture and API orchestration to UI/UX and deployment.
 
 ---
 <img width="683" height="120" alt="Screenshot 2026-01-22 at 1 45 18 PM" src="https://github.com/user-attachments/assets/37b4a893-6511-46c8-92c5-e1528e7c2db2" />

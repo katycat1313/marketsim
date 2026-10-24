@@ -1,4 +1,4 @@
-# MarketSim Social Connection Strategy
+# Krechet Academy Social Connection Strategy
 
 ## Social Features Implementation Plan
 

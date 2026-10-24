@@ -1,4 +1,4 @@
-# MarketSim AI Capabilities
+# Krechet Academy AI Capabilities
 
 ## AI Assistant Features
 
