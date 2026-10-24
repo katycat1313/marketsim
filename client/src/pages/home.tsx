@@ -41,7 +41,11 @@ export default function Home() {
   const [selectedTrack, setSelectedTrack] = useState<number>(1);
   const [isTeacherModalOpen, setIsTeacherModalOpen] = useState(false);
   const [isEarlyBirdOpen, setIsEarlyBirdOpen] = useState(false);
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, isDeveloper } = useAuth();
+  const isDevUser = isDeveloper || 
+                    user?.username?.toLowerCase() === 'katycat13' || 
+                    user?.email?.toLowerCase().includes('katycat') || 
+                    (user as any)?.isDeveloper;
   const [lockModalConfig, setLockModalConfig] = useState<{
     isOpen: boolean;
     requiredTier: "course1" | "course2";
@@ -54,8 +58,8 @@ export default function Home() {
     desc: ""
   });
 
-  const hasCourse1 = user?.level?.toLowerCase()?.includes('agency') || user?.level?.toLowerCase()?.includes('director') || false;
-  const hasCourse2 = user?.level?.toLowerCase()?.includes('director') || false;
+  const hasCourse1 = isDevUser || user?.level?.toLowerCase()?.includes('agency') || user?.level?.toLowerCase()?.includes('director') || false;
+  const hasCourse2 = isDevUser || user?.level?.toLowerCase()?.includes('director') || false;
 
   // Student telemetry stats
   const studentLevel = "Junior Associate (Level 1)";

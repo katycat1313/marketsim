@@ -87,8 +87,8 @@ export default function TutorialsPage() {
     desc: ""
   });
 
-  const hasCourse1 = user?.level?.toLowerCase()?.includes('agency') || user?.level?.toLowerCase()?.includes('director') || false;
-  const hasCourse2 = user?.level?.toLowerCase()?.includes('director') || false;
+  const hasCourse1 = isDevUser || user?.level?.toLowerCase()?.includes('agency') || user?.level?.toLowerCase()?.includes('director') || false;
+  const hasCourse2 = isDevUser || user?.level?.toLowerCase()?.includes('director') || false;
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isTourOpen, setIsTourOpen] = useState(false);
@@ -542,10 +542,11 @@ export default function TutorialsPage() {
     // 2. Week 1, Lesson 1 (index 0 of Chapter 1) is unlocked by default for all students.
     // 3. For any subsequent lesson in the chapter, the prior lesson in this chapter must be completed.
     // 4. For subsequent chapters (Week 2+), the prior chapter must have all its lessons completed.
+    // 5. If isDevUser (founder/admin/dev), all lessons are unlocked immediately for testing.
     let isLocked = false;
     let lockReason = "";
 
-    if (!isCompleted) {
+    if (!isCompleted && !isDevUser) {
       if (chapterIndex > 0 && allChapters.length > 0) {
         const prevChapter = allChapters[chapterIndex - 1];
         const isPrevChapterComplete = prevChapter && prevChapter.tutorials.length > 0 &&
@@ -1094,7 +1095,7 @@ export default function TutorialsPage() {
                       </Button>
 
                       {/* Weekly Assessment Quiz Button - Only unlocked at end of week once week's lessons are completed */}
-                      {(isLastLessonOfWeek || isWeekCompleted) ? (
+                      {(isLastLessonOfWeek || isWeekCompleted || isDevUser) ? (
                         <Button
                           asChild
                           className="w-full md:w-auto bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black font-extrabold text-xs h-11 px-4 shadow-md flex items-center gap-1.5 animate-pulse"
@@ -1208,7 +1209,7 @@ export default function TutorialsPage() {
                       const simLink = chapter.number === 2 ? "/ad-simulation/1" : chapter.number >= 4 ? "/capstone-simulation" : "/seo-simulation/1";
                       const simName = chapter.number === 2 ? "Dr. Miller Dental (Paid Search)" : chapter.number >= 4 ? "Apex Global Growth Capstone" : "Jenny's Artisan Java (CMS SEO)";
                       const completedCount = chapter.tutorials.filter(t => progress.includes(t.id)).length;
-                      const allCompleted = completedCount === chapter.tutorials.length && chapter.tutorials.length > 0;
+                      const allCompleted = isDevUser || (completedCount === chapter.tutorials.length && chapter.tutorials.length > 0);
 
                       return (
                         <div className="mt-6 pt-4 border-t border-[#ffd700]/15 flex flex-wrap items-center justify-between gap-3 bg-black/40 p-3.5 sm:p-4 rounded-xl">
