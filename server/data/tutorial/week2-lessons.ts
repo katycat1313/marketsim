@@ -159,10 +159,10 @@ A misaligned page drains organic ranking equity and wastes user attention. When 
    * Never bury transactional queries behind a 3,000-word historical essay.
 
 ## 3. Client Case Matrix to Memorize
-* Query: *"how long do roasted coffee beans stay fresh"* -> Target: Blog Post (`/guides/coffee-freshness-timeline`).
-* Query: *"order fresh roasted coffee beans online"* -> Target: Storefront Catalog (`/shop/all-roasts`).
-* Query: *"toothache relief at home salt water"* -> Target: Patient Advice Article (`/blog/home-toothache-remedies`).
-* Query: *"emergency dentist open saturday morgantown wv"* -> Target: Emergency Booking Service Page (`/emergency-dentistry`).
+* Query: *"how long do roasted coffee beans stay fresh"* -> Target: Blog Post (\`/guides/coffee-freshness-timeline\`).
+* Query: *"order fresh roasted coffee beans online"* -> Target: Storefront Catalog (\`/shop/all-roasts\`).
+* Query: *"toothache relief at home salt water"* -> Target: Patient Advice Article (\`/blog/home-toothache-remedies\`).
+* Query: *"emergency dentist open saturday morgantown wv"* -> Target: Emergency Booking Service Page (\`/emergency-dentistry\`).
 
 Complete the practical checkpoint below to confirm your audit skills.`,
     tasks: [{

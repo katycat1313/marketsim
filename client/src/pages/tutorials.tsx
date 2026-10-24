@@ -357,24 +357,24 @@ export default function TutorialsPage() {
       },
       {
         number: 4,
-        title: "Week 4: Paid Social & Creative Advertising (Meta / Instagram Ads 101)",
-        description: "Active search vs passive interruption, the 3-second hook, visual creative formats, Meta ad copywriting, audience targeting, and identifying ad fatigue.",
+        title: "Week 4: Conversion Rate Optimization (CRO), High-Converting Landing Pages & A/B Testing",
+        description: "The LIFT Model, above-the-fold wireframe architecture, review sentiment mining, 95% statistical significance, mobile thumb zone, and Core Web Vitals.",
         image: "attached_assets/small business.jpeg",
         icon: <Sparkles className="h-6 w-6 text-purple-400" />,
         tutorials: []
       },
       {
         number: 5,
-        title: "Week 5: Email Marketing, Customer Retention & Funnel Psychology",
-        description: "Owned media vs rented land, email list building, automated 3-part welcome sequences, abandoned cart recovery, copywriting, and CAN-SPAM compliance.",
+        title: "Week 5: Paid Social Media Advertising (Meta & TikTok Ads), Creative Hooks & Retargeting",
+        description: "The Meta auction algorithm, the 3-second thumb-stop hook rate, CAPI vs Pixel, 4-part UGC video scripts, ad fatigue diagnostics, and blended MER.",
         image: "attached_assets/group-thinking.jpeg",
         icon: <Cpu className="h-6 w-6 text-amber-400" />,
         tutorials: []
       },
       {
         number: 6,
-        title: "Week 6: Analytics, Conversion Optimization, Agency Reporting & Capstone Certification",
-        description: "GA4 traffic attribution, UTM tracking, funnel bottleneck drop-off diagnostics, 1-page executive client reporting, and the Level 1 Boardroom Audit.",
+        title: "Week 6: Analytics Mastery, GA4 Event Tracking, Speed-to-Lead Automation & Executive Capstone",
+        description: "GA4 event-driven schema, custom funnel drop-off explorations, Make.com 60-second speed-to-lead pipelines, STAR crisis defense, and verified portfolio accreditation.",
         image: "attached_assets/wiered-headshot.jpeg",
         icon: <CheckCircle2 className="h-6 w-6 text-emerald-400" />,
         tutorials: []

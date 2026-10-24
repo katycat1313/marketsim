@@ -6,6 +6,10 @@ import { sql } from 'drizzle-orm';
 import { userProfiles } from '@shared/schema';
 import { week1Lessons } from '../data/tutorial/week1-lessons';
 import { week2Lessons } from '../data/tutorial/week2-lessons';
+import { week3Lessons } from '../data/tutorial/week3-lessons';
+import { week4Lessons } from '../data/tutorial/week4-lessons';
+import { week5Lessons } from '../data/tutorial/week5-lessons';
+import { week6Lessons } from '../data/tutorial/week6-lessons';
 
 export interface Tutorial {
   id: number;
@@ -78,266 +82,19 @@ export class TutorialService {
     // Chapter 2: Week 2 - Organic Discovery, On-Page SEO & Local Business Presence (15 Lessons: Learn -> See -> Do)
     this.tutorials.push(...week2Lessons);
     
-    // Chapter 3: Week 3 - Paid Search Advertising (Google Ads 101)
-    this.tutorials.push({
-      id: 3,
-      chapterNumber: 3,
-      title: "Google Ads Campaign Structure & Account Hierarchy",
-      level: "Beginner",
-      content: `# Google Ads Architecture: The 3-Tier Account Hierarchy
+    // Chapter 3: Week 3 - Paid Search Advertising (Google Ads 101) (15 Lessons: Learn -> See -> Do)
+    this.tutorials.push(...week3Lessons);
 
-Google Ads is not a slot machine—it is a mathematical auction engine. To win without wasting thousands of dollars, your account hierarchy must follow the Single-Theme principle.
+    // Chapter 4: Week 4 - Conversion Rate Optimization (CRO), High-Converting Landing Pages & A/B Testing (15 Lessons: Learn -> See -> Do)
+    this.tutorials.push(...week4Lessons);
 
-## 1. The 3-Tier Hierarchy
-1. **Campaign Level**: Defines your daily budget, bidding strategy (e.g., Maximize Conversions, Target CPA), location geo-targeting, and network placement.
-2. **Ad Group Level**: Groups tightly related keywords around a single specific search intent (e.g., 'Organic Whole Bean Coffee' vs. 'Coffee Roaster Subscription').
-3. **Ad & Asset Level**: Responsive Search Ads (RSAs) containing 15 headlines, 4 descriptions, and sitelink extensions that dynamically match search queries.
+    // Chapter 5: Week 5 - Paid Social Media Advertising (Meta & TikTok Ads), Creative Hooks & Retargeting (15 Lessons: Learn -> See -> Do)
+    this.tutorials.push(...week5Lessons);
 
-## 2. The Quality Score Formula
-Your Cost Per Click (CPC) is determined by the Google Ad Rank auction:
-$$CPC = \\frac{AdRank_{competitor\\,below}}{Your\\,Quality\\,Score} + \\$0.01$$
-
-* **Expected CTR**: How often Google expects users to click your ad.
-* **Ad Relevance**: How closely your ad headlines match the searched keyword.
-* **Landing Page Experience**: Fast load speed, transparent pricing, and matching H1 copy.
-
-## 3. The Budget Bleed Trap ⚠️
-Throwing 50 different unrelated keywords into one ad group. When someone searches 'espresso beans' and sees an ad for 'french press filters', they won't click—and your Quality Score will crash to 2/10!`,
-      estimatedTime: 60,
-      skillsLearned: ["Google Ads Basics", "Campaign Organization", "Quality Score Math"],
-      hasSimulation: true,
-      tasks: [{
-        id: 1,
-        description: "Create a mock Google Ads campaign structure",
-        type: "simulation",
-        requirements: ["Complete all sections of the simulator"],
-        verificationCriteria: ["Campaign includes at least 2 ad groups", "Each ad group has relevant keywords"]
-      }]
-    });
+    // Chapter 6: Week 6 - Analytics Mastery, GA4 Event Tracking, Speed-to-Lead Automation & Executive Capstone (15 Lessons: Learn -> See -> Do)
+    this.tutorials.push(...week6Lessons);
     
-    this.tutorials.push({
-      id: 4,
-      chapterNumber: 2,
-      title: "Google Ads Keyword Match Types & Negative Keyword Shields",
-      level: "Intermediate",
-      content: `# Keyword Match Types & Negative Keyword Budget Protection
-
-The single biggest reason small businesses lose money on Google Ads is improper match type selection.
-
-## 1. The 3 Match Types Explained
-* **Broad Match (coffee beans)**: Matches anything Google deems 'related'—including 'free coffee pictures' or 'coffee maker repair manual'. High risk of budget bleed!
-* **Phrase Match ("organic coffee beans")**: Matches searches that contain your core phrase in order, allowing words before or after (e.g., 'buy organic coffee beans online').
-* **Exact Match ([morgantown coffee roaster])**: Matches ONLY searches with the exact identical meaning and commercial intent. Lowest risk, highest conversion rate.
-
-## 2. Negative Keyword Shields 🛡️
-Negative keywords prevent your ads from showing on non-buying searches:
-* **Standard Negatives**: -free, -cheap, -jobs, -salary, -internship, -youtube, -diy, -craigslist.
-* Adding a robust list of 25+ negative keywords on Day 1 instantly saves $300 to $1,000/mo in wasted clicks!
-
-## 3. Search Term Report Audits
-Always audit your 'Search Terms' report weekly to find negative keyword leaks and promote high-converting queries into exact-match ad groups.`,
-      estimatedTime: 75,
-      skillsLearned: ["Keyword Research", "Search Intent Analysis", "Negative Keyword Shields"],
-      tasks: [{
-        id: 1,
-        description: "Build a comprehensive keyword list for a sample business",
-        type: "practical",
-        requirements: ["Use keyword research tools", "Analyze search intent"],
-        verificationCriteria: ["List contains min. 50 keywords", "Keywords are organized by theme", "Search volume data included"]
-      }]
-    });
-    
-    // Chapter 3: SEO Foundations
-    this.tutorials.push({
-      id: 5,
-      chapterNumber: 3,
-      title: "SEO Fundamentals: The Newspaper Rule & On-Page Hierarchy",
-      level: "Beginner",
-      content: `# On-Page SEO Architecture: The Newspaper Rule
-
-Search engine crawlers cannot 'look' at your website design. They read HTML tags to understand what you sell, where you are located, and who should see your page.
-
-## 1. The Newspaper Rule for On-Page Tags
-1. **Title Tag (Library Index Card)**: 50-60 characters. Must start with your primary keyword + location (e.g., 'Organic Coffee Beans Morgantown | Jenny\'s Artisan Java').
-2. **H1 Headline (Giant Front-Page Banner)**: Exactly ONE H1 tag per page. Must declare the main product offering in bold clarity.
-3. **H2 & H3 Subheadings (Section Headlines)**: Break up content into clear thematic silos (e.g., H2: 'Single-Origin Ethiopian Roasts', H2: 'Wholesale Cafe Supply').
-4. **Meta Description (2-Sentence Newspaper Teaser)**: 150-160 characters. Does not rank directly, but includes a compelling CTA to maximize click-through rate from Google.
-
-## 2. Technical Image Alt Tags & Anchor Text
-* **Image Alt Text**: Tell Google and visually impaired screen readers what is in the image (e.g., alt='Freshly roasted Ethiopian Yirgacheffe organic coffee beans in brown burlap bag').
-* **Internal Anchor Text**: Use descriptive links ('browse our dark roast coffee catalog') instead of vague 'click here' links.
-
-## 3. The Fatal Mistake ⚠️
-Leaving your H1 as 'Welcome to Our Website' or 'Home'. Search engines have zero idea what you offer, and your rankings will stay invisible!`,
-      estimatedTime: 90,
-      skillsLearned: ["On-Page SEO", "Heading Hierarchy", "Snippet CTR Optimization"],
-      tasks: [{
-        id: 1,
-        description: "Optimize a sample webpage for SEO",
-        type: "practical",
-        requirements: ["Apply on-page optimization techniques"],
-        verificationCriteria: ["Title tag optimized", "Meta description improved", "Header structure reorganized", "Content optimized for target keyword"]
-      }]
-    });
-    
-    // Chapter 4: Ethical AI Prompting & Co-Piloting (Week 4)
-    this.tutorials.push({
-      id: 6,
-      chapterNumber: 4,
-      title: "Ethical AI Prompt Engineering & Free Marketing Co-Piloting",
-      level: "Intermediate",
-      content: `# Ethical AI Prompt Engineering & Free Marketing Co-Piloting
-
-The most dangerous trap in modern marketing is letting AI generate generic, fluffy copy that sounds like every other robot on the internet. 
-
-In Krechet Academy, we treat AI as our **junior copywriter / research intern**—while **YOU act as the Growth Director** who enforces brand voice, fact-checks claims, and verifies character limits.
-
----
-
-## 1. The $0 Cost Strategy: Using Free External AI
-You do not need to pay $20/month for premium tools. Free versions of **Google Gemini**, **ChatGPT (Free)**, and **Claude** are more than capable when paired with structured prompt architecture.
-
-### The 4-Part Prompt Architecture Formula:
-Every high-converting marketing prompt must include these 4 pillars:
-1. **Role / Identity**: 'Act as a senior direct-response copywriter specializing in local retail.'
-2. **Context & Niche Data**: 'Our business is Jenny\\'s Artisan Java in Morgantown, WV. We roast organic, fair-trade single-origin beans.'
-3. **Strict Constraints & Format**: 'Write 5 Google Ads headlines. EXACT CONSTRAINT: Each headline must be under 30 characters. Do not use exclamation points.'
-4. **Target Emotion / Action**: 'Focus on the sensory smell of morning roast and local freshness.'
-
----
-
-## 2. Real-World Field Prompts (Copy & Paste into Gemini / ChatGPT)
-
-### Prompt A: Negative Keyword Extractor
-> *"Act as a Google Ads PPC Specialist. For a business offering [Your Service/Niche] in [Your City], generate a list of 25 negative keywords that attract non-buying clicks (e.g. free, jobs, salary, DIY, cheap, repair). Format as a clean comma-separated list."*
-
-### Prompt B: The 30-Second Ad Hook Matrix
-> *"Act as a Meta & TikTok Ads Strategist. Give me 5 distinct psychological ad hooks for [Product/Service] targeting [Ideal Customer Persona]. Use these 5 angles: 1) Contrarian / Myth-Busting, 2) The Secret / Insider Tip, 3) High-Urgency Pain Point, 4) Social Proof / Review, 5) Before-and-After Transformation. Output as a clean table with columns: Hook Angle, Script First 3 Seconds, Visual Action."*
-
----
-
-## 3. The 3 Ethical Sins of AI Marketing ⚠️
-1. **Publishing unedited AI copy**: Google's Helpful Content algorithm penalizes unedited generic AI text with zero unique original insight.
-2. **Fake reviews or fabricated statistics**: Never ask AI to make up statistics or fake customer testimonials.
-3. **Bypassing character limits**: An AI will happily write a 45-character headline for Google Ads—which Google truncates and rejects. Always verify lengths in our simulator!`,
-      estimatedTime: 90,
-      skillsLearned: ["AI Prompt Architecture", "Gemini & ChatGPT Co-Piloting", "Copy Verification & Ethics"],
-      tasks: [{
-        id: 1,
-        description: "Run the 4-part prompt framework in free Gemini or ChatGPT",
-        type: "practical",
-        requirements: ["Apply role, context, constraints, and target action"],
-        verificationCriteria: ["Generate 5 ad headlines under 30 characters", "Verify in Krechet ad simulator"]
-      }]
-    });
-    
-    // Chapter 5: Speed-to-Lead Automation with Make.com (Week 5)
-    this.tutorials.push({
-      id: 7,
-      chapterNumber: 5,
-      title: "Speed-to-Lead Automation with Make.com (The 60-Second Lead Response)",
-      level: "Intermediate",
-      content: `# Speed-to-Lead Automation: Responding to Inbound Leads in Under 60 Seconds
-
-If a prospective customer fills out a contact form or requests an emergency quote, how fast you respond determines whether you win or lose the client.
-
-### The Shocking Metric:
-> **Harvard Business Review & LeadConnect Study:** Responding to an inbound lead within **5 minutes** increases conversion rates by **391%**. After 30 minutes, lead qualification drops by **21x**.
-
-Most small businesses take 4 to 24 hours to reply—by which time the customer has already hired their competitor.
-
----
-
-## 1. Why We Use Make.com (And Not Zapier)
-* **Zapier's Free Tier Trap**: Zapier limits multi-step zaps and frequently paywalls common triggers behind a $20/month subscription.
-* **Make.com's $0 Advantage**: Make gives you **1,000 operations every month for $0**, permits multi-step routers, supports webhooks, and connects to Google Sheets and Gmail completely free.
-
----
-
-## 2. The Core Speed-to-Lead Architecture
-\`\`\`
-[ Website Lead Form / Google Form ] 
-               │
-               ▼ (Instant Webhook)
-    [ Make.com Automation Engine ]
-               │
-       ┌───────┴───────┐
-       ▼               ▼
-[ Instant SMS ]  [ CRM Notification ]
-"Thanks Jenny!   "🚨 New $850 Quote
-We saw your      Request from Morgantown:
-catering request. Calling now!"
-Calling you in 2 mins."
-\`\`\`
-
----
-
-## 3. The 1-Click Make.com Blueprint (.json)
-Instead of building from a blank canvas, you can import our pre-tested agency automation:
-1. Open your free Make.com account.
-2. Click **Create a New Scenario** ➔ Click the **More (...)** menu ➔ Select **Import Blueprint**.
-3. Upload the \`.json\` blueprint from the Krechet Academy resources.
-4. Fill in your email and notification phone number.
-5. Click **Run Once** and submit a test lead from our sandbox!
-
----
-
-## 4. What This Is Worth to Real Clients 💰
-Setting up this simple 3-step automation for a local dentist, roofer, or law firm is routinely billed by freelancers on Upwork at **$500 to $1,500**. You can deliver it in under 30 minutes.`,
-      estimatedTime: 90,
-      skillsLearned: ["Speed-to-Lead Architecture", "Make.com Webhooks", "Automated SMS/Email Dispatch"],
-      hasSimulation: true,
-      tasks: [{
-        id: 1,
-        description: "Configure an instant lead notification workflow",
-        type: "simulation",
-        requirements: ["Set up webhook trigger", "Configure instant alert"],
-        verificationCriteria: ["Lead alert triggers in under 60 seconds", "Notification contains lead phone and email"]
-      }]
-    });
-    
-    // Chapter 6: Verified Capstone Audit & Portfolio (Week 6)
-    this.tutorials.push({
-      id: 8,
-      chapterNumber: 6,
-      title: "The Verified Growth Audit & Agency Portfolio Capstone",
-      level: "Advanced",
-      content: `# The Verified Growth Audit & Capstone Portfolio
-
-Congratulations on reaching the final milestone of Course 1: The Growth Specialist.
-
-You have mastered the foundational mental models, on-page SEO hierarchy, Google Search match types, ethical AI prompting, and Speed-to-Lead automation.
-
----
-
-## 1. The Capstone Mission: Full Client Growth Audit
-In this final evaluation, you will audit an entire business ecosystem:
-1. **On-Page SEO & Content Architecture**: Find and repair heading tags, meta descriptions, and image alt attributes.
-2. **Paid Search PPC Strategy**: Structure an ad group with exact match queries and 20+ negative keyword budget shields.
-3. **Emergency Crisis Resolution**: Take the live client telephone call from the business owner and successfully de-escalate their anxiety while protecting your agency SLA.
-4. **Automation Dispatch**: Wire the lead response pipeline.
-
----
-
-## 2. Your Verified Proof-of-Work Portfolio
-Upon completing the Capstone Simulation and the Friday Assessment Exam, our engine automatically publishes your **Verified Agency Case Study** at \`/portfolio\`.
-
-You can share this verified URL directly with:
-* Prospective freelance clients on Upwork or email.
-* Hiring managers and recruiters on LinkedIn.
-* Your own website as an accredited digital marketing certification.`,
-      estimatedTime: 120,
-      skillsLearned: ["End-to-End Growth Audit", "Client SLA Crisis Management", "Portfolio Proof-of-Work"],
-      tasks: [{
-        id: 1,
-        description: "Complete the full capstone audit and publish portfolio case study",
-        type: "simulation",
-        requirements: ["Pass all 4 audit stages", "Resolve client crisis call"],
-        verificationCriteria: ["Achieve SLA score >= 85%", "Generate verified portfolio link"]
-      }]
-    });
-    
-    // Chapter 7: SEO Mastery
+    // Chapter 7: Advanced Electives & Specialist Workshops
     this.tutorials.push({
       id: 9,
       chapterNumber: 7,
