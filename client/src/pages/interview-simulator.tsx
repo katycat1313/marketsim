@@ -8,6 +8,7 @@ import { Progress } from "@/components/ui/progress";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { cleanTextForSpeech } from "@/lib/utils";
+import { useDeepgramVoice } from "@/hooks/useDeepgramVoice";
 import { 
   Mic, 
   MicOff,
@@ -310,44 +311,23 @@ export default function InterviewSimulatorPage() {
   const actionDetected = ['deployed', 'implemented', 'engineered', 'structured', 'restructured', 'audited', 'isolated', 'pinned', 'optimized', 'tested', 'built', 'created', 'configured', 'injected', 'negative', 'stag', 'schema', 'lift', 'rsa'].some(t => answerLower.includes(t));
   const resultDetected = ['lift', 'lifted', 'cut', 'slashed', 'reduced', 'dropped', 'achieved', 'drove', 'increased', 'improved', 'saved', '%', 'x roas', 'roas', 'cpc discount', 'quality score to', 'outperformed'].some(t => answerLower.includes(t));
 
-  // Native Browser Text-To-Speech (0ms Latency)
+  const interviewerVoiceModel = selectedInterviewer.gender === "female" ? "aura-asteria-en" : "aura-orion-en";
+  const deepgramVoice = useDeepgramVoice({
+    defaultVoice: interviewerVoiceModel,
+    onStart: () => setIsSpeaking(true),
+    onEnd: () => setIsSpeaking(false),
+    onError: () => setIsSpeaking(false)
+  });
+
+  // Lifelike Studio Text-To-Speech (Deepgram Aura TTS with Web Speech fallback)
   const speakText = (text: string) => {
     if (isMuted) return;
-    if (!('speechSynthesis' in window)) {
-      toast({
-        title: "Speech Synthesis Unavailable",
-        description: "Your browser does not support Web Speech API audio.",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    window.speechSynthesis.cancel();
-    const clean = cleanTextForSpeech(text);
-    const utterance = new SpeechSynthesisUtterance(clean);
-    utterance.rate = 0.95;
-    utterance.pitch = selectedInterviewer.gender === "female" ? 1.05 : 0.95;
-
-    const voices = window.speechSynthesis.getVoices();
-    if (voices.length > 0) {
-      const preferredVoice = voices.find(v => 
-        (selectedInterviewer.gender === "female" ? (v.name.includes("Samantha") || v.name.includes("Zira") || v.name.includes("Female")) : (v.name.includes("Daniel") || v.name.includes("David") || v.name.includes("Male")))
-      ) || voices[0];
-      utterance.voice = preferredVoice;
-    }
-
-    utterance.onstart = () => setIsSpeaking(true);
-    utterance.onend = () => setIsSpeaking(false);
-    utterance.onerror = () => setIsSpeaking(false);
-
-    window.speechSynthesis.speak(utterance);
+    deepgramVoice.speak(text, interviewerVoiceModel);
   };
 
   const stopSpeaking = () => {
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-      setIsSpeaking(false);
-    }
+    deepgramVoice.stop();
+    setIsSpeaking(false);
   };
 
   // Speech-To-Text Dictation (Zero-lag transcription)

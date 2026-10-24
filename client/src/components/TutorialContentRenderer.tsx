@@ -204,8 +204,8 @@ const TutorialContentRenderer: React.FC<TutorialContentRendererProps> = ({
       .replace(/\s+/g, ' ')
       .trim();
 
-    const narrativeText = cleanContent.length > 2500
-      ? cleanContent.slice(0, 2500) + "... Please review the full written guide below for detailed examples and figures."
+    const narrativeText = cleanContent.length > 4000
+      ? cleanContent.slice(0, 4000) + "... Please review the full written guide below for detailed examples and figures."
       : cleanContent;
 
     deepgramVoice.speak(narrativeText, instructor.voice);

@@ -14,18 +14,29 @@ export class DeepgramVoiceService {
   }
 
   /**
-   * Check if Deepgram is configured
+   * Split long text into natural sentence-boundary chunks to comply with Deepgram's per-request limit.
    */
-  public hasDeepgram(): boolean {
-    const key = process.env.DEEPGRAM_API_KEY || process.env.VITE_DEEPGRAM_API_KEY || "";
-    return Boolean(key && key !== "apiKEY");
+  private splitTextIntoChunks(text: string, maxChunkLen: number = 1200): string[] {
+    if (text.length <= maxChunkLen) return [text];
+    const sentences = text.match(/[^.!?\n]+[.!?\n]+|\S+$/g) || [text];
+    const chunks: string[] = [];
+    let cur = '';
+    for (const s of sentences) {
+      if ((cur + s).length > maxChunkLen) {
+        if (cur.trim()) chunks.push(cur.trim());
+        cur = s;
+      } else {
+        cur += s;
+      }
+    }
+    if (cur.trim()) chunks.push(cur.trim());
+    return chunks.length > 0 ? chunks : [text.slice(0, maxChunkLen)];
   }
-
-  private ttsCache: Map<string, Buffer> = new Map();
 
   /**
    * Convert Text to Lifelike Speech using Deepgram Aura (TTS)
    * Voice models: 'aura-asteria-en' (female/Sarah), 'aura-orion-en' (male/Atlas), 'aura-arcas-en', 'aura-luna-en'
+   * Automatically chunks long multi-paragraph texts to prevent HTTP 500 errors and concatenates MP3 audio.
    */
   public async generateSpeech(text: string, voice: string = "aura-orion-en"): Promise<Buffer | null> {
     const key = process.env.DEEPGRAM_API_KEY || process.env.VITE_DEEPGRAM_API_KEY || "";
@@ -39,35 +50,42 @@ export class DeepgramVoiceService {
       return this.ttsCache.get(cacheKey)!;
     }
 
-    try {
-      const url = `https://api.deepgram.com/v1/speak?model=${encodeURIComponent(voice)}&encoding=mp3`;
-      
-      const response = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Authorization": `Token ${key}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ text })
-      });
+    const chunks = this.splitTextIntoChunks(text, 1200);
 
-      if (!response.ok) {
-        const errText = await response.text();
-        console.error(`Deepgram TTS HTTP Error (${response.status}):`, errText);
-        return null;
+    try {
+      const buffers: Buffer[] = [];
+      for (const chunk of chunks) {
+        const url = `https://api.deepgram.com/v1/speak?model=${encodeURIComponent(voice)}&encoding=mp3`;
+        
+        const response = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Authorization": `Token ${key}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ text: chunk })
+        });
+
+        if (!response.ok) {
+          const errText = await response.text();
+          console.error(`Deepgram TTS HTTP Error (${response.status}):`, errText);
+          return null;
+        }
+
+        const arrayBuffer = await response.arrayBuffer();
+        buffers.push(Buffer.from(arrayBuffer));
       }
 
-      const arrayBuffer = await response.arrayBuffer();
-      const buffer = Buffer.from(arrayBuffer);
+      const combinedBuffer = Buffer.concat(buffers);
 
       // Cache up to 250 generated audio segments
       if (this.ttsCache.size > 250) {
         const oldestKey = this.ttsCache.keys().next().value;
         if (oldestKey) this.ttsCache.delete(oldestKey);
       }
-      this.ttsCache.set(cacheKey, buffer);
+      this.ttsCache.set(cacheKey, combinedBuffer);
 
-      return buffer;
+      return combinedBuffer;
     } catch (error) {
       console.error("Deepgram TTS Generation Error:", error);
       return null;
