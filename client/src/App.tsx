@@ -39,6 +39,8 @@ import Logo from "@/components/Logo";
 import { StudentWeeklyGuide } from "@/components/StudentWeeklyGuide";
 import { LegalDisclosuresModal } from "@/components/LegalDisclosuresModal";
 import { WelcomeOnboardingModal } from "@/components/WelcomeOnboardingModal";
+import { TrialWelcomeModal } from "@/components/TrialWelcomeModal";
+import { TrialCompletedSurveyModal } from "@/components/TrialCompletedSurveyModal";
 
 import {
   DropdownMenu,
@@ -372,6 +374,23 @@ function SideNav({ onClose }: SideNavProps) {
 
 function Router({ onOpenCoach }: { onOpenCoach?: () => void }) {
   const [isWelcomeOpen, setIsWelcomeOpen] = useState(false);
+  const [isTrialWelcomeOpen, setIsTrialWelcomeOpen] = useState(false);
+  const [isTrialSurveyOpen, setIsTrialSurveyOpen] = useState(false);
+
+  const trialStart = user?.trialStartDate || (typeof window !== 'undefined' ? localStorage.getItem("krechet_trial_start") : null);
+  const trialDaysElapsed = trialStart ? Math.floor((Date.now() - new Date(trialStart).getTime()) / (1000 * 60 * 60 * 24)) : 0;
+  const trialDaysRemaining = Math.max(0, 7 - trialDaysElapsed);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      const justRegistered = localStorage.getItem("krechet_just_registered");
+      const trialWelcomeSeen = localStorage.getItem("krechet_trial_welcome_seen");
+      if (justRegistered || !trialWelcomeSeen) {
+        setIsTrialWelcomeOpen(true);
+        localStorage.removeItem("krechet_just_registered");
+      }
+    }
+  }, [isAuthenticated]);
 
   useEffect(() => {
     try {
@@ -690,6 +709,17 @@ function App() {
         isOpen={isWelcomeOpen} 
         onClose={() => setIsWelcomeOpen(false)} 
         isAuthenticated={isAuthenticated} 
+      />
+      <TrialWelcomeModal 
+        isOpen={isTrialWelcomeOpen} 
+        onClose={() => setIsTrialWelcomeOpen(false)} 
+        userName={user?.firstName || "Student"} 
+        daysRemaining={trialDaysRemaining} 
+      />
+      <TrialCompletedSurveyModal 
+        isOpen={isTrialSurveyOpen} 
+        onClose={() => setIsTrialSurveyOpen(false)} 
+        userName={user?.firstName || "Student"} 
       />
     </QueryClientProvider>
     </AuthProvider>

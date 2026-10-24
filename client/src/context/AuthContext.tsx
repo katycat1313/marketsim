@@ -7,6 +7,8 @@ interface User {
   firstName: string;
   lastName: string;
   level: string;
+  tier?: string;
+  trialStartDate?: string;
   xp?: number;
   specializations?: string[];
   achievements?: string[];
