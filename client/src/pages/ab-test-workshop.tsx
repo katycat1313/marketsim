@@ -1,3 +1,4 @@
+import FeatureGuideDrawer from '@/components/FeatureGuideDrawer';
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
@@ -162,10 +163,56 @@ const NewABTestForm = () => {
               Test challenger headlines and offers against Jenny's current baseline website to maximize checkout conversion rate.
             </CardDescription>
           </div>
-          <Badge variant="outline" className="text-xs bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 gap-1 shrink-0">
+          <div className="flex items-center gap-2 flex-wrap shrink-0">
+            <FeatureGuideDrawer
+              toolName="A/B Testing & Conversion Optimization"
+              industryEquivalent="Optimizely / VWO / Google Optimize"
+              purpose="A/B testing allows marketers to test two versions of a webpage against real visitor traffic to find which headline, value proposition, or call-to-action generates more sales without spending extra money on ads."
+              steps={[
+                {
+                  step: 1,
+                  title: 'Audit the Control Baseline',
+                  description: "Review the current webpage metrics (e.g. Jenny's 2.1% baseline checkout conversion rate across 3,000 monthly visitors)."
+                },
+                {
+                  step: 2,
+                  title: 'Formulate a Challenger Hypothesis',
+                  description: 'Use the LIFT model (reducing cognitive friction, boosting value proposition clarity, and adding trust badges) to draft Variant B.'
+                },
+                {
+                  step: 3,
+                  title: 'Validate Statistical Significance (p < 0.05)',
+                  description: 'Ensure sample size and conversion numbers reach 95% statistical confidence so the result is not random noise.'
+                }
+              ]}
+              benchmarks={[
+                {
+                  label: 'E-Commerce Baseline CVR',
+                  value: '1.8% - 2.5%',
+                  context: 'Average Shopify conversion rate for specialty retail and food & beverage.'
+                },
+                {
+                  label: 'Statistical Significance',
+                  value: 'p < 0.05 (95%)',
+                  context: 'Minimum scientific threshold required before declaring a permanent test winner.'
+                },
+                {
+                  label: 'Healthy MDE (Expected Lift)',
+                  value: '+15% to +25%',
+                  context: 'Realistic conversion improvement expected from above-the-fold value prop testing.'
+                },
+                {
+                  label: 'Sample Size Needed',
+                  value: '1,000+ per variant',
+                  context: 'Traffic needed per variant to avoid false-positive testing errors.'
+                }
+              ]}
+            />
+            <Badge variant="outline" className="text-xs bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 gap-1 shrink-0">
             <Target className="h-3 w-3" />
             <span>Target: Store Purchases (AOV $42.50)</span>
           </Badge>
+          </div>
         </div>
 
         {/* Real-World Experiment Targeting Parameters */}

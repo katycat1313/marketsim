@@ -1,3 +1,4 @@
+import FeatureGuideDrawer from '@/components/FeatureGuideDrawer';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -307,7 +308,48 @@ export default function PersonaBuilderTemplate() {
     <div className="container mx-auto py-6 px-4 space-y-8">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-[#ffd700]">Customer Persona Builder</h1>
+          <div className="flex items-center gap-3 flex-wrap">
+            <h1 className="text-3xl font-bold text-[#ffd700]">Customer Persona Builder</h1>
+            <FeatureGuideDrawer
+              toolName="Customer Persona & Audience Architecture"
+              industryEquivalent="SparkToro / Meta Audience Insights / Audiense"
+              purpose="Agencies build psychographic customer personas before writing ads to isolate exact pain points, buying triggers, search queries, and objections."
+              steps={[
+                {
+                  step: 1,
+                  title: 'Define Demographic & Geographic Anchors',
+                  description: 'Establish the core target profile (age, profession, household income, and regional focus).'
+                },
+                {
+                  step: 2,
+                  title: 'Identify Pain Points & Buying Triggers',
+                  description: 'Map out the exact emotional frustration that makes them seek a solution right now.'
+                },
+                {
+                  step: 3,
+                  title: 'Export to Ad Campaign Targeting',
+                  description: 'Translate interests, preferred brands, and media channels directly into Google & Meta ad targeting.'
+                }
+              ]}
+              benchmarks={[
+                {
+                  label: 'Audience Saturation Point',
+                  value: 'Frequency > 3.5',
+                  context: 'When a targeted persona sees your ad more than 3.5 times, ad fatigue inflates CPA.'
+                },
+                {
+                  label: 'Search Intent Alignment',
+                  value: 'High Commercial Intent',
+                  context: 'Specific queries (e.g. fresh roasted coffee delivery) convert 4x higher than generic keywords.'
+                },
+                {
+                  label: 'Customer Lifetime Value (LTV)',
+                  value: '3x CAC Minimum',
+                  context: 'Agency benchmark: Customer lifetime gross profit must be at least 3x the acquisition cost.'
+                }
+              ]}
+            />
+          </div>
           <p className="text-[#f5f5f5]/70 mt-1">Create detailed customer personas to guide your marketing strategies</p>
         </div>
         {showPreview && (

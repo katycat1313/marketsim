@@ -54,7 +54,7 @@ interface InterviewQuestion {
   context: string;
   targetTerms: string[];
   keyMetricsToDrop: string[];
-  rookieTrap: string;
+  misconceptionToAvoid: string;
   executiveKeyPoints: string[];
 }
 
@@ -111,7 +111,7 @@ const structuredQuestions: InterviewQuestion[] = [
     context: "Defend your Week 3 paid search casework: Quality Score math, negative shields, and second-price auction cost reductions.",
     targetTerms: ["Quality Score 9/10", "35-Keyword Negative Shield", "STAG Architecture", "Second-Price Auction", "Expected CTR", "Emergency Dental", "ROAS 4.2x"],
     keyMetricsToDrop: ["Quality Score 9/10", "38% CPC discount via auction formula", "$24.50 Target CPA ceiling", "4.2x ROAS"],
-    rookieTrap: "Don't say 'I just picked some keywords.' Say: 'I isolated high-intent emergency dental search terms with STAG ad groups and deployed a 35-term negative keyword shield.'",
+    misconceptionToAvoid: "Don't say 'I just picked some keywords.' Say: 'I isolated high-intent emergency dental search terms with STAG ad groups and deployed a 35-term negative keyword shield.'",
     executiveKeyPoints: [
       "Explain the baseline crisis: budget bleeding on 'free dental' and high bounce rates.",
       "Detail your tactical action: 35 negative keywords, Single Theme Ad Groups, 15-headline RSA matrix.",
@@ -132,7 +132,7 @@ const structuredQuestions: InterviewQuestion[] = [
     context: "Defend your Weeks 1 & 2 organic casework: NAP consistency, JSON-LD LocalBusiness schema, and strict pixel-constrained title tags.",
     targetTerms: ["JSON-LD Schema", "LocalBusiness", "Google Business Profile", "NAP Consistency", "Map Pack 3-Pack", "H1 Tag", "60-Char Title Constraints"],
     keyMetricsToDrop: ["Top-3 Google Map Pack ranking", "44% lift in phone calls and directions", "Strict 60-character title constraint", "100% NAP consistency score"],
-    rookieTrap: "Don't say 'I wrote blog posts.' Say: 'I resolved NAP citation conflicts, structured an injected JSON-LD LocalBusiness schema payload, and optimized on-page H1 hierarchy.'",
+    misconceptionToAvoid: "Don't say 'I wrote blog posts.' Say: 'I resolved NAP citation conflicts, structured an injected JSON-LD LocalBusiness schema payload, and optimized on-page H1 hierarchy.'",
     executiveKeyPoints: [
       "Identify the audit findings: citation discrepancy and missing structured data.",
       "Explain the technical intervention: schema injection, Google Business Profile primary category update.",
@@ -153,7 +153,7 @@ const structuredQuestions: InterviewQuestion[] = [
     context: "Defend your Week 4 CRO casework: value proposition, 3-layer trust stack, mobile thumb zone, and statistical confidence.",
     targetTerms: ["LIFT Model", "Statistical Significance (p < 0.05)", "Hypothesis", "Value Proposition", "3-Layer Trust Stack", "Mobile Thumb Zone", "Sample Size"],
     keyMetricsToDrop: ["+24.6% conversion lift", "97% statistical confidence (p < 0.05)", "4,200 unique visitors sample size", "Mobile thumb zone placement"],
-    rookieTrap: "Don't say 'I changed the button color.' Say: 'I formulated a hypothesis using the LIFT model to reduce cognitive friction and engineered an above-the-fold 3-layer trust stack.'",
+    misconceptionToAvoid: "Don't say 'I changed the button color.' Say: 'I formulated a hypothesis using the LIFT model to reduce cognitive friction and engineered an above-the-fold 3-layer trust stack.'",
     executiveKeyPoints: [
       "State the hypothesis: cognitive friction above the fold was suppressing checkout intent.",
       "Describe the challenger design: single clear value proposition, 3-layer trust badges, mobile thumb-zone CTA.",
@@ -174,7 +174,7 @@ const structuredQuestions: InterviewQuestion[] = [
     context: "Defend your Week 5 social casework: 3-second hook rates, UGC scripting, Meta CAPI server-side tracking, and blended MER.",
     targetTerms: ["3-Second Hook Rate", "4-Part UGC Script", "Creative Fatigue (Freq > 3.5)", "Meta CAPI", "Blended MER", "Attribution Windows"],
     keyMetricsToDrop: ["Creative fatigue threshold: Frequency > 3.5", "3-second hook rate > 35%", "Blended MER of 3.8x", "CAPI event match quality > 8.5/10"],
-    rookieTrap: "Don't say 'I changed audiences.' Say: 'In modern paid social, creative is the targeting. I launched a creative refresh with three distinct 3-second visual hooks.'",
+    misconceptionToAvoid: "Don't say 'I changed audiences.' Say: 'In modern paid social, creative is the targeting. I launched a creative refresh with three distinct 3-second visual hooks.'",
     executiveKeyPoints: [
       "Diagnose ad frequency and creative fatigue as root causes of rising CPA.",
       "Explain the creative iteration framework: 4-part UGC script (Hook, Agitation, Solution, CTA).",
@@ -195,7 +195,7 @@ const structuredQuestions: InterviewQuestion[] = [
     context: "Defend your Week 6 analytics casework: custom event funnels, DataLayer pushes, and automated webhook pipelines.",
     targetTerms: ["GA4 Event Schema", "GTM DataLayer", "Speed-to-Lead (<60s)", "Webhook Automation", "Micro-Conversions", "Attribution Modeling"],
     keyMetricsToDrop: ["Lead response latency: under 60 seconds", "+34% demo completion lift", "Event-driven GA4 schema", "Zero-lead-loss webhook pipeline"],
-    rookieTrap: "Don't say 'I set up Google Analytics.' Say: 'I architected an event-driven data model with GTM DataLayers and connected an automated CRM webhook pipeline to achieve sub-60-second speed-to-lead.'",
+    misconceptionToAvoid: "Don't say 'I set up Google Analytics.' Say: 'I architected an event-driven data model with GTM DataLayers and connected an automated CRM webhook pipeline to achieve sub-60-second speed-to-lead.'",
     executiveKeyPoints: [
       "Detail GA4 event-driven measurement: tracking micro-conversions at every funnel stage.",
       "Explain the speed-to-lead pipeline: instant webhook triggering CRM sales notifications in under 60s.",
@@ -216,7 +216,7 @@ const structuredQuestions: InterviewQuestion[] = [
     context: "Testing your ability to co-pilot with AI as a multiplier while enforcing strict human editorial judgment, data validation, and brand safety.",
     targetTerms: ["AI Prompting", "Fact-Checking", "Editorial Verification", "Compliance", "Hallucinations", "Brand Safety", "Human-in-the-Loop"],
     keyMetricsToDrop: ["10x production velocity", "100% human-in-the-loop review", "Zero compliance violations", "Brand safety guardrails"],
-    rookieTrap: "Don't say 'I let AI write everything.' Say: 'AI serves as a high-velocity drafting engine, but all ad copy, metric claims, and compliance tokens undergo mandatory human editorial verification.'",
+    misconceptionToAvoid: "Don't say 'I let AI write everything.' Say: 'AI serves as a high-velocity drafting engine, but all ad copy, metric claims, and compliance tokens undergo mandatory human editorial verification.'",
     executiveKeyPoints: [
       "Acknowledge AI's speed advantage for ideation and token generation.",
       "Establish strict human-in-the-loop validation: verifying claims, pricing, and compliance.",
@@ -237,7 +237,7 @@ const structuredQuestions: InterviewQuestion[] = [
     context: "Testing executive strategic thinking, multi-touch attribution, and CAC-to-LTV payback windows.",
     targetTerms: ["Blended ROAS", "CAC", "Top-of-Funnel", "Bottom-of-Funnel", "Attribution Window", "Conversion Rate"],
     keyMetricsToDrop: ["60/40 or 70/30 Brand vs Capture split", "Blended MER of 3.5x+", "CAC-to-LTV ratio 3:1+", "60-day payback window"],
-    rookieTrap: "Don't say 'I'll put it all in Google Ads because it converts fastest.' Explain that without top-of-funnel demand generation, search capture quickly hits diminishing returns.",
+    misconceptionToAvoid: "Don't say 'I'll put it all in Google Ads because it converts fastest.' Explain that without top-of-funnel demand generation, search capture quickly hits diminishing returns.",
     executiveKeyPoints: [
       "Define the budget framework: balance demand generation (Meta/YouTube) with demand capture (Google Search).",
       "Defend the attribution methodology: why last-click attribution under-credits top-of-funnel ads.",
@@ -278,7 +278,7 @@ export default function InterviewSimulatorPage() {
     context: `Testing how confidently you can defend your verified ${cs.clientName} simulation results.`,
     targetTerms: ["Quality Score", "ROAS", "CPA", "Negative Keywords", "Match Types", "Landing Page", "Attribution"],
     keyMetricsToDrop: [`Quality Score ${cs.metrics?.qualityScore || 9}/10`, `${cs.metrics?.roas || 4.6}x ROAS`, "CPA Reduction"],
-    rookieTrap: "Avoid vague generalizations. Quote the exact numbers and tactical interventions from your case study.",
+    misconceptionToAvoid: "Avoid vague generalizations. Quote the exact numbers and tactical interventions from your case study.",
     executiveKeyPoints: [
       `Review starting challenge for ${cs.clientName}.`,
       "Explain the tactical adjustments you executed.",
@@ -730,7 +730,7 @@ export default function InterviewSimulatorPage() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-1.5 text-xs font-bold text-amber-400">
                   <Flame className="h-4 w-4" />
-                  <span>Executive Battle Card: How to Win This Question</span>
+                  <span>Recommended Response Strategy & Key Metrics</span>
                 </div>
                 <Button
                   variant="ghost"
@@ -739,7 +739,7 @@ export default function InterviewSimulatorPage() {
                   className="h-6 px-2 text-[11px] text-amber-400 hover:text-amber-300 hover:bg-amber-500/10"
                 >
                   {showBattleCard ? <ChevronUp className="h-3.5 w-3.5 mr-1" /> : <ChevronDown className="h-3.5 w-3.5 mr-1" />}
-                  <span>{showBattleCard ? "Hide Cheat Sheet" : "Show Cheat Sheet"}</span>
+                  <span>{showBattleCard ? "Hide Strategy Guide" : "Show Strategy Guide"}</span>
                 </Button>
               </div>
 
@@ -785,7 +785,7 @@ export default function InterviewSimulatorPage() {
                   <div className="p-2 rounded-lg bg-red-500/10 border border-red-500/30 text-[11px] text-red-300 flex items-start gap-2">
                     <ShieldAlert className="h-3.5 w-3.5 text-red-400 shrink-0 mt-0.5" />
                     <div>
-                      <strong className="text-red-400">Rookie Trap:</strong> {currentQ.rookieTrap}
+                      <strong className="text-red-400">Common Misconception to Avoid:</strong> {currentQ.misconceptionToAvoid}
                     </div>
                   </div>
                 </div>

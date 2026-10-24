@@ -1,3 +1,4 @@
+import FeatureGuideDrawer from '@/components/FeatureGuideDrawer';
 import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";

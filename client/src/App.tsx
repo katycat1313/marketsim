@@ -264,26 +264,21 @@ function SideNav({ onClose }: SideNavProps) {
               </div>
             </div>
 
-            {/* Community & Peer Network Section */}
+            {/* The Krechet Community Section */}
             <div className="space-y-2">
               <div className="text-xs uppercase text-muted-foreground font-semibold tracking-wider pl-2 flex items-center justify-between">
-                <span>COMMUNITY & NETWORK</span>
+                <span>COMMUNITY</span>
                 <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold mr-2">LIVE</span>
               </div>
               <div className="space-y-1 pl-2">
                 <Link href="/community" onClick={handleLinkClick}>
                   <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
                     ${isActive('/community') ? 'bg-indigo-500/15 text-indigo-400 font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
-                    <MessageSquare className="h-5 w-5 text-indigo-400" />
-                    <span>Growth Feed & Debriefs</span>
-                  </div>
-                </Link>
-
-                <Link href="/network" onClick={handleLinkClick}>
-                  <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
-                    ${isActive('/network') ? 'bg-teal-500/15 text-teal-400 font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
-                    <Users className="h-5 w-5 text-teal-400" />
-                    <span>Peer Network & Mentors</span>
+                    <MessageSquare className="h-5 w-5 text-indigo-400 shrink-0" />
+                    <div className="flex flex-col min-w-0">
+                      <span className="font-medium text-xs truncate">The Krechet Community</span>
+                      <span className="text-[10px] text-muted-foreground">Discussions & debriefs</span>
+                    </div>
                   </div>
                 </Link>
               </div>
@@ -308,7 +303,7 @@ function SideNav({ onClose }: SideNavProps) {
                     ${isActive('/custom-sandbox') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
                     <Building2 className="h-5 w-5 text-amber-400" />
                     <span>My Business Sandbox</span>
-                    <span className="ml-auto text-[9px] px-1.5 py-0.5 rounded bg-primary/20 text-primary font-mono font-bold">PREMIUM</span>
+                    <span className="ml-auto text-[9px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 font-mono font-bold">COURSE 1</span>
                   </div>
                 </Link>
 

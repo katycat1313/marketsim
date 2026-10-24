@@ -18,25 +18,25 @@ export default function CommunityPage() {
           <div className="space-y-1.5">
             <div className="flex items-center gap-2">
               <Badge className="bg-primary/20 text-primary border-primary/30 text-[11px] font-semibold">
-                Krechet Growth Network
+                Krechet Community
               </Badge>
               <Badge variant="outline" className="text-[10px] text-emerald-400 border-emerald-500/30 flex items-center gap-1">
                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                <span>Live Peer Hub</span>
+                <span>Student Hub</span>
               </Badge>
             </div>
             <h1 className="text-2xl md:text-3xl font-extrabold text-foreground tracking-tight">
-              Growth Lab Community & Peer Network
+              The Krechet Community
             </h1>
             <p className="text-xs md:text-sm text-muted-foreground max-w-2xl leading-relaxed">
-              Compare weekly client simulation strategies, tear down ad copy, get direct tactical feedback from Director Atlas and Sarah, and build your digital marketing network.
+              Share campaign debriefs, discuss course concepts, ask questions about client casework, and connect with fellow marketers.
             </p>
           </div>
 
           <div className="flex items-center gap-3 self-start md:self-auto">
             <div className="text-right hidden sm:block p-3 rounded-xl bg-slate-950/50 border border-white/5">
-              <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Community Ethos</div>
-              <div className="text-xs font-bold text-primary">Brutal Honesty • Proof-of-Work</div>
+              <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Community Focus</div>
+              <div className="text-xs font-bold text-primary">Peer Discussion • Practical Insights</div>
             </div>
           </div>
         </div>
@@ -50,14 +50,14 @@ export default function CommunityPage() {
                 className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-xs font-semibold px-4 py-2 rounded-lg"
               >
                 <MessageSquare className="h-3.5 w-3.5" />
-                <span>Tactical Growth Feed & Debriefs</span>
+                <span>Discussions & Debriefs</span>
               </TabsTrigger>
               <TabsTrigger 
                 value="network" 
                 className="flex items-center gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-xs font-semibold px-4 py-2 rounded-lg"
               >
                 <Users className="h-3.5 w-3.5" />
-                <span>Peer Network & Study Groups</span>
+                <span>Student Directory</span>
               </TabsTrigger>
             </TabsList>
           </Tabs>
