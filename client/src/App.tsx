@@ -37,6 +37,7 @@ import Posts from "@/components/Posts";
 import AIAssistant from "@/components/AIAssistant";
 import Logo from "@/components/Logo";
 import { StudentWeeklyGuide } from "@/components/StudentWeeklyGuide";
+import { LegalDisclosuresModal } from "@/components/LegalDisclosuresModal";
 
 import {
   DropdownMenu,
