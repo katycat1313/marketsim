@@ -3,6 +3,7 @@ const apiKey = process.env.DEEPGRAM_API_KEY || process.env.VITE_DEEPGRAM_API_KEY
 
 export class DeepgramVoiceService {
   private isAvailable: boolean;
+  private ttsCache: Map<string, Buffer> = new Map();
 
   constructor() {
     this.isAvailable = Boolean(apiKey && apiKey !== "apiKEY");
@@ -11,6 +12,14 @@ export class DeepgramVoiceService {
     } else {
       console.log("Deepgram API Key not configured or placeholder detected. Ready for key configuration.");
     }
+  }
+
+  /**
+   * Check if Deepgram is configured
+   */
+  public hasDeepgram(): boolean {
+    const key = process.env.DEEPGRAM_API_KEY || process.env.VITE_DEEPGRAM_API_KEY || "";
+    return Boolean(key && key !== "apiKEY");
   }
 
   /**
