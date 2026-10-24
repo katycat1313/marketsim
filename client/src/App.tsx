@@ -201,9 +201,8 @@ function SideNav({ onClose }: SideNavProps) {
 
             {/* Simulations Section */}
             <div className="space-y-2">
-              <div className="text-xs uppercase text-muted-foreground font-semibold tracking-wider pl-2 flex items-center justify-between">
-                <span>AGENCY SIMULATIONS</span>
-                <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-400 font-mono font-bold">COURSE 1 ($59)</span>
+              <div className="text-xs uppercase text-muted-foreground font-semibold tracking-wider pl-2">
+                AGENCY SIMULATIONS
               </div>
               <div className="space-y-1 pl-2">
                 <Link href="/seo-simulations" onClick={handleLinkClick}>
@@ -211,7 +210,7 @@ function SideNav({ onClose }: SideNavProps) {
                     ${isActive('/seo-simulation') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
                     <Search className="h-5 w-5 text-primary" />
                     <div className="flex flex-col">
-                      <span className="font-medium text-xs flex items-center justify-between"><span>1. SEO & Website Studio</span><span className="text-[9px] text-amber-400 font-mono font-bold flex items-center gap-0.5"><Lock className="h-2.5 w-2.5" />$59</span></span>
+                      <span className="font-medium text-xs">1. SEO & Website Studio</span>
                       <span className="text-[10px] text-muted-foreground">Organic Intent & Meta</span>
                     </div>
                   </div>
@@ -222,7 +221,7 @@ function SideNav({ onClose }: SideNavProps) {
                     ${isActive('/ad-simulation') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
                     <MousePointer className="h-5 w-5 text-purple-400" />
                     <div className="flex flex-col">
-                      <span className="font-medium text-xs flex items-center justify-between"><span>2. Paid Ad Platform Sims</span><span className="text-[9px] text-amber-400 font-mono font-bold flex items-center gap-0.5"><Lock className="h-2.5 w-2.5" />$59</span></span>
+                      <span className="font-medium text-xs">2. Paid Ad Platform Sims</span>
                       <span className="text-[10px] text-muted-foreground">Google & Meta Bidding</span>
                     </div>
                   </div>
@@ -233,7 +232,7 @@ function SideNav({ onClose }: SideNavProps) {
                     ${isActive('/capstone-simulation') ? 'bg-amber-500/15 text-amber-400 font-medium border border-amber-500/30' : 'text-amber-400/90 hover:bg-amber-500/10'}`}>
                     <Trophy className="h-5 w-5 text-amber-400" />
                     <div className="flex flex-col">
-                      <span className="font-medium text-xs flex items-center justify-between"><span>3. 🏆 Agency Capstone</span><span className="text-[9px] text-amber-400 font-mono font-bold flex items-center gap-0.5"><Lock className="h-2.5 w-2.5" />$59</span></span>
+                      <span className="font-medium text-xs">3. 🏆 Agency Capstone</span>
                       <span className="text-[10px] text-amber-400/70">Full Client Retainer</span>
                     </div>
                   </div>
@@ -304,7 +303,6 @@ function SideNav({ onClose }: SideNavProps) {
                     ${isActive('/custom-sandbox') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
                     <Building2 className="h-5 w-5 text-amber-400" />
                     <span>My Business Sandbox</span>
-                    <span className="ml-auto text-[9px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 font-mono font-bold">COURSE 1</span>
                   </div>
                 </Link>
 

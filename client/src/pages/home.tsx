@@ -131,7 +131,7 @@ export default function Home() {
       link: "/ad-simulations",
       actionText: "Launch Ads Workbench",
       gradient: "from-blue-500/10 to-indigo-500/5 hover:border-blue-500/50",
-      badge: "Course 1 ($59)",
+      badge: "Pro Simulator",
       badgeClass: "bg-amber-500/15 text-amber-300 border-amber-500/30",
       tier: "course1" as const
     },
@@ -143,7 +143,7 @@ export default function Home() {
       link: "/seo-simulations",
       actionText: "Open CMS Sandbox",
       gradient: "from-emerald-500/10 to-teal-500/5 hover:border-emerald-500/50",
-      badge: "Course 1 ($59)",
+      badge: "Pro Simulator",
       badgeClass: "bg-amber-500/15 text-amber-300 border-amber-500/30",
       tier: "course1" as const
     },
@@ -155,7 +155,7 @@ export default function Home() {
       link: "/data-visualization",
       actionText: "Inspect GA4 Funnels",
       gradient: "from-purple-500/10 to-pink-500/5 hover:border-purple-500/50",
-      badge: "Course 1 ($59)",
+      badge: "Pro Simulator",
       badgeClass: "bg-amber-500/15 text-amber-300 border-amber-500/30",
       tier: "course1" as const
     },
@@ -167,7 +167,7 @@ export default function Home() {
       link: "/capstone-simulation",
       actionText: "Enter Agency Capstone",
       gradient: "from-amber-500/10 to-orange-500/5 hover:border-amber-500/50",
-      badge: "Course 1 ($59)",
+      badge: "Pro Simulator",
       badgeClass: "bg-amber-500/15 text-amber-300 border-amber-500/30",
       tier: "course1" as const
     },
@@ -191,7 +191,7 @@ export default function Home() {
       link: "/interview-prep",
       actionText: "Practice STAR Defense",
       gradient: "from-red-500/10 to-rose-500/5 hover:border-red-500/50",
-      badge: "Course 1 ($59)",
+      badge: "Pro Simulator",
       badgeClass: "bg-amber-500/15 text-amber-300 border-amber-500/30",
       tier: "course1" as const
     },
@@ -203,7 +203,7 @@ export default function Home() {
       link: "/portfolio",
       actionText: "View My Portfolio",
       gradient: "from-cyan-500/10 to-blue-500/5 hover:border-cyan-500/50",
-      badge: "Course 1 ($59)",
+      badge: "Pro Simulator",
       badgeClass: "bg-amber-500/15 text-amber-300 border-amber-500/30",
       tier: "course1" as const
     }

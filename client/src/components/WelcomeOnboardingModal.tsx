@@ -160,7 +160,7 @@ export function WelcomeOnboardingModal({
             </div>
             <div className="space-y-0.5 text-xs">
               <div className="flex items-center gap-1.5 font-bold text-foreground">
-                <span>3. Course 1: Full 6–8 Week Agency Simulator ($59/mo)</span>
+                <span>3. Course 1: Full 6–8 Week Agency Simulator</span>
                 <span className="px-1.5 py-0.2 bg-muted text-muted-foreground text-[10px] rounded font-mono">AFTER WEEK 1</span>
               </div>
               <p className="text-muted-foreground leading-relaxed text-[11px] sm:text-xs">

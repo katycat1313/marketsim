@@ -119,7 +119,7 @@ export function TrialWelcomeModal({
               <span>What happens after your 1 week?</span>
             </span>
             <p className="text-muted-foreground text-[11px] leading-relaxed">
-              When your 7 days conclude, you'll complete a quick 3-question readiness survey and have the option to unlock Course 1: The Full 6–8 Week Agency Simulator ($59/month). No surprise charges, ever.
+              When your 7 days conclude, you'll complete a quick 3-question readiness survey and have the option to unlock Course 1: The Full 6–8 Week Agency Simulator. No surprise charges, ever.
             </p>
           </div>
         </div>
