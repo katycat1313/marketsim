@@ -373,11 +373,16 @@ function SideNav({ onClose }: SideNavProps) {
 }
 
 function Router({ onOpenCoach }: { onOpenCoach?: () => void }) {
+  const { isAuthenticated, user, logout } = useAuth();
+  const [, navigate] = useLocation();
+  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
+  const [desktopSidebarVisible, setDesktopSidebarVisible] = useState(true);
+
   const [isWelcomeOpen, setIsWelcomeOpen] = useState(false);
   const [isTrialWelcomeOpen, setIsTrialWelcomeOpen] = useState(false);
   const [isTrialSurveyOpen, setIsTrialSurveyOpen] = useState(false);
 
-  const trialStart = user?.trialStartDate || (typeof window !== 'undefined' ? localStorage.getItem("krechet_trial_start") : null);
+  const trialStart = user?.trialStartDate || (typeof window !== "undefined" ? localStorage.getItem("krechet_trial_start") : null);
   const trialDaysElapsed = trialStart ? Math.floor((Date.now() - new Date(trialStart).getTime()) / (1000 * 60 * 60 * 24)) : 0;
   const trialDaysRemaining = Math.max(0, 7 - trialDaysElapsed);
 
@@ -400,14 +405,10 @@ function Router({ onOpenCoach }: { onOpenCoach?: () => void }) {
       }
     } catch (e) {}
   }, []);
-  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
-  const [desktopSidebarVisible, setDesktopSidebarVisible] = useState(true);
-  const { isAuthenticated, user, logout } = useAuth();
-  const [, navigate] = useLocation();
 
   const handleLogout = () => {
     logout();
-    navigate('/');
+    navigate("/");
   };
 
   return (
@@ -661,6 +662,23 @@ function Router({ onOpenCoach }: { onOpenCoach?: () => void }) {
           </div>
         </footer>
       </div>
+
+      <WelcomeOnboardingModal
+        isOpen={isWelcomeOpen}
+        onClose={() => setIsWelcomeOpen(false)}
+        isAuthenticated={isAuthenticated}
+      />
+      <TrialWelcomeModal
+        isOpen={isTrialWelcomeOpen}
+        onClose={() => setIsTrialWelcomeOpen(false)}
+        userName={user?.firstName || "Student"}
+        daysRemaining={trialDaysRemaining}
+      />
+      <TrialCompletedSurveyModal
+        isOpen={isTrialSurveyOpen}
+        onClose={() => setIsTrialSurveyOpen(false)}
+        userName={user?.firstName || "Student"}
+      />
     </div>
   );
 }
@@ -705,22 +723,6 @@ function App() {
         
         <Toaster />
         </ClientAgencyProvider>
-        <WelcomeOnboardingModal 
-        isOpen={isWelcomeOpen} 
-        onClose={() => setIsWelcomeOpen(false)} 
-        isAuthenticated={isAuthenticated} 
-      />
-      <TrialWelcomeModal 
-        isOpen={isTrialWelcomeOpen} 
-        onClose={() => setIsTrialWelcomeOpen(false)} 
-        userName={user?.firstName || "Student"} 
-        daysRemaining={trialDaysRemaining} 
-      />
-      <TrialCompletedSurveyModal 
-        isOpen={isTrialSurveyOpen} 
-        onClose={() => setIsTrialSurveyOpen(false)} 
-        userName={user?.firstName || "Student"} 
-      />
     </QueryClientProvider>
     </AuthProvider>
   );
