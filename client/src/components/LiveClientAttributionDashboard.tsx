@@ -235,9 +235,14 @@ export function LiveClientAttributionDashboard() {
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="text-lg font-bold">Multi-Channel Attribution Breakdown</CardTitle>
+              <div className="flex items-center gap-2">
+                <CardTitle className="text-lg font-bold">Multi-Channel Attribution Breakdown</CardTitle>
+                <Badge variant="outline" className="text-[10px] bg-amber-500/10 text-amber-300 border-amber-500/30 font-mono">
+                  Simulated Client Baseline
+                </Badge>
+              </div>
               <CardDescription className="text-xs">
-                Real-time sessions, conversions, spend, and ROAS across all traffic sources for {dossier.clientName}
+                Simulated sessions, conversions, ad spend, and ROAS across all traffic sources for {dossier.clientName} (Baseline pre-agency client budget — zero real ad spend)
               </CardDescription>
             </div>
           </div>
@@ -295,6 +300,17 @@ export function LiveClientAttributionDashboard() {
               </TableRow>
             </TableBody>
           </Table>
+
+          {/* Context Explainer */}
+          <div className="mt-3.5 p-3 rounded-lg bg-secondary/40 border border-border/60 text-xs text-muted-foreground space-y-1">
+            <div className="font-semibold text-foreground flex items-center gap-1.5">
+              <span className="text-amber-400">ℹ️</span>
+              <span>Why is ad spend showing when you haven't run any campaigns yet?</span>
+            </div>
+            <p className="text-[11px] leading-relaxed">
+              This breakdown displays <strong>{dossier.clientName}'s simulated pre-agency baseline data</strong> ($50/day across Google Ads & Meta at an initial $2.85 CPC). You have not spent any personal or real money, and no external ad accounts are connected. As you optimize her account in Weeks 2–4, her Quality Score will rise and her CPC and CAC will drop dynamically in this table.
+            </p>
+          </div>
         </CardContent>
       </Card>
 
