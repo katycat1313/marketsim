@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { InstructorToolGuide } from "@/components/InstructorToolGuide";
 import { useRoute, useLocation } from "wouter";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -3157,6 +3158,9 @@ export default function AdSimulationPage() {
 
   return (
     <div className="container mx-auto py-8">
+      {/* Instructor Tool Guide with Checklist & Quick Return to Lesson */}
+      <InstructorToolGuide toolKey="ad-simulation" />
+
       <div className="mb-6">
         <h1 className="text-3xl font-bold mb-2">{simulation?.title}</h1>
         <p className="text-gray-600 mb-4">{simulation?.scenarioDescription}</p>

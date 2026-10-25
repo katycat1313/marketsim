@@ -1,4 +1,5 @@
 import FeatureGuideDrawer from '@/components/FeatureGuideDrawer';
+import { InstructorToolGuide } from '@/components/InstructorToolGuide';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -306,6 +307,9 @@ export default function PersonaBuilderTemplate() {
 
   return (
     <div className="container mx-auto py-6 px-4 space-y-8">
+      {/* Instructor Tool Guide with Checklist & Quick Return to Lesson */}
+      <InstructorToolGuide toolKey="persona-builder" />
+
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
         <div>
           <div className="flex items-center gap-3 flex-wrap">

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { InstructorToolGuide } from '@/components/InstructorToolGuide';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useRoute, useLocation } from 'wouter';
 import { apiRequest, queryClient } from '@/lib/queryClient';
@@ -649,6 +650,9 @@ export default function SeoSimulationPage() {
   
   return (
     <div className="container mx-auto p-4">
+      {/* Instructor Tool Guide with Checklist & Quick Return to Lesson */}
+      <InstructorToolGuide toolKey="seo-simulation" />
+
       <div className="flex flex-col space-y-6">
         <div className="flex justify-between items-start">
           <div>

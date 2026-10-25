@@ -123,6 +123,17 @@ export default function TutorialsPage() {
     return () => window.removeEventListener("start-chapter-briefing", handleStartBriefing);
   }, [tutorials]);
 
+  // Save active tutorial to localStorage so workbenches have context & quick return
+  useEffect(() => {
+    if (currentTutorial) {
+      try {
+        localStorage.setItem("krechet_last_active_tutorial_id", currentTutorial.id.toString());
+        localStorage.setItem("krechet_last_active_tutorial_title", currentTutorial.title);
+        localStorage.setItem("krechet_last_active_chapter", currentTutorial.chapterNumber ? currentTutorial.chapterNumber.toString() : "1");
+      } catch (e) {}
+    }
+  }, [currentTutorial]);
+
   useEffect(() => {
     fetchTutorials();
     fetchProgress();
@@ -169,12 +180,13 @@ export default function TutorialsPage() {
         
         setTutorials(sortedTutorials);
         
-        // Auto-select tutorial if specified in URL query params (?tutorialId=X or ?id=X)
+        // Auto-select tutorial if specified in URL query params (?tutorialId=X or ?id=X or ?lesson=X)
         try {
           const urlParams = new URLSearchParams(window.location.search);
-          const targetId = urlParams.get('tutorialId') || urlParams.get('id');
-          if (targetId) {
-            const match = sortedTutorials.find(t => t.id === parseInt(targetId));
+          const targetId = urlParams.get('tutorialId') || urlParams.get('id') || urlParams.get('lesson');
+          const targetTutorialId = targetId || (urlParams.get('restore') === 'true' ? localStorage.getItem('krechet_last_active_tutorial_id') : null);
+          if (targetTutorialId) {
+            const match = sortedTutorials.find(t => t.id === parseInt(targetTutorialId));
             if (match) {
               setCurrentTutorial(match);
               window.scrollTo({ top: 0, behavior: 'smooth' });

@@ -1,4 +1,5 @@
 import FeatureGuideDrawer from '@/components/FeatureGuideDrawer';
+import { InstructorToolGuide } from '@/components/InstructorToolGuide';
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
@@ -844,6 +845,9 @@ const ABTestWorkshop = () => {
   
   return (
     <div className="container mx-auto py-6 max-w-6xl">
+      {/* Instructor Tool Guide with Checklist & Quick Return to Lesson */}
+      <InstructorToolGuide toolKey="ab-test-workshop" />
+
       <div className="mb-8">
         <h1 className="text-3xl font-bold tracking-tight">A/B Test Workshop</h1>
         <p className="text-muted-foreground mt-2">
