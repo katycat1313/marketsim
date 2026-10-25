@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -6,24 +6,17 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  DialogFooter
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   MessageSquare,
   Send,
   Coffee,
   Sparkles,
-  CheckCircle2,
-  AlertCircle,
-  HelpCircle,
-  TrendingUp,
-  User,
-  Bot,
-  Loader2
+  Loader2,
+  Edit3
 } from "lucide-react";
 import { useClientAgency } from "@/context/ClientAgencyContext";
 
@@ -41,6 +34,8 @@ export function ClientInquiryPortal() {
   const [inputText, setInputText] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [rapportScore, setRapportScore] = useState(90);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -57,6 +52,19 @@ export function ClientInquiryPortal() {
     "What is your gross margin and break-even CPA so we can calculate a safe ad budget?",
     "We need a low-friction welcome offer like 15% off to give first-time buyers a reason to try a bag."
   ]);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    if (open) {
+      setTimeout(() => {
+        scrollToBottom();
+        textareaRef.current?.focus();
+      }, 150);
+    }
+  }, [open, messages]);
 
   const handleSend = async (textToSend?: string) => {
     const question = (textToSend || inputText).trim();
@@ -116,6 +124,9 @@ export function ClientInquiryPortal() {
       setMessages(prev => [...prev, fallbackReply]);
     } finally {
       setIsTyping(false);
+      setTimeout(() => {
+        textareaRef.current?.focus();
+      }, 100);
     }
   };
 
@@ -132,9 +143,9 @@ export function ClientInquiryPortal() {
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="max-w-2xl max-h-[85vh] flex flex-col p-0 overflow-hidden">
-        {/* Header with Client Info */}
-        <DialogHeader className="p-4 border-b border-border bg-card">
+      <DialogContent className="max-w-2xl w-[95vw] sm:w-full h-[90vh] sm:h-[82vh] max-h-[700px] flex flex-col p-0 overflow-hidden bg-card border-border shadow-2xl">
+        {/* Header with Client Info (Pinned Top) */}
+        <DialogHeader className="p-3.5 sm:p-4 border-b border-border bg-card shrink-0">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="relative">
@@ -165,8 +176,8 @@ export function ClientInquiryPortal() {
           </div>
         </DialogHeader>
 
-        {/* Message Thread Area */}
-        <div className="flex-1 p-4 overflow-y-auto space-y-3 min-h-[300px] max-h-[380px] bg-background/50 text-xs">
+        {/* Message Thread Area (Scrollable Middle) */}
+        <div className="flex-1 min-h-0 p-3.5 sm:p-4 overflow-y-auto space-y-3 bg-background/50 text-xs">
           {messages.map((m) => (
             <div
               key={m.id}
@@ -199,39 +210,57 @@ export function ClientInquiryPortal() {
 
           {isTyping && (
             <div className="flex items-center gap-2 text-xs text-muted-foreground pt-1">
-              <Loader2 className="h-3.5 w-3.5 animate-spin" />
-              <span>Jenny is typing her response...</span>
+              <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
+              <span>Jenny is reviewing your response...</span>
             </div>
           )}
+          <div ref={messagesEndRef} />
         </div>
 
         {/* Quick Suggestion Presets */}
-        <div className="p-3 bg-secondary/30 border-t border-border space-y-1.5">
+        <div className="p-2.5 sm:p-3 bg-secondary/30 border-t border-border space-y-1.5 shrink-0">
           <div className="flex items-center justify-between text-[11px] font-semibold text-muted-foreground">
             <div className="flex items-center gap-1.5">
               <Sparkles className="h-3 w-3 text-amber-500" />
-              <span>Suggested Strategic Replies to Jenny:</span>
+              <span>Suggested Strategic Replies:</span>
             </div>
-            <span className="text-[10px] text-muted-foreground/80 font-normal">Click to reply or type below</span>
+            <span className="text-[10px] text-muted-foreground/80 font-normal">Click reply to send directly, or edit below</span>
           </div>
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-1 max-h-[105px] overflow-y-auto pr-1">
             {suggestedReplies.map((replyText, idx) => (
-              <button
-                key={idx}
-                type="button"
-                disabled={isTyping}
-                className="text-left text-[11px] px-2.5 py-1.5 rounded-lg bg-card hover:bg-secondary/80 border border-border/80 text-foreground transition-all hover:border-primary/40 disabled:opacity-50 cursor-pointer"
-                onClick={() => handleSend(replyText)}
-              >
-                👉 {replyText}
-              </button>
+              <div key={idx} className="flex items-center gap-1.5 w-full">
+                <button
+                  type="button"
+                  disabled={isTyping}
+                  className="flex-1 text-left text-[11px] px-2.5 py-1.5 rounded-lg bg-card hover:bg-secondary/80 border border-border/80 text-foreground transition-all hover:border-primary/40 disabled:opacity-50 cursor-pointer truncate"
+                  onClick={() => handleSend(replyText)}
+                  title={replyText}
+                >
+                  👉 {replyText}
+                </button>
+                <button
+                  type="button"
+                  disabled={isTyping}
+                  className="shrink-0 text-[10px] px-2 py-1.5 rounded-lg bg-secondary hover:bg-secondary/90 border border-border/60 text-muted-foreground hover:text-foreground transition-all cursor-pointer font-medium flex items-center gap-1"
+                  onClick={() => {
+                    setInputText(replyText);
+                    textareaRef.current?.focus();
+                  }}
+                  title="Copy into message box to edit"
+                >
+                  <Edit3 className="h-3 w-3" />
+                  <span>Edit</span>
+                </button>
+              </div>
             ))}
           </div>
         </div>
 
-        {/* Input Area */}
-        <div className="p-3 border-t border-border bg-card flex items-center gap-2">
+        {/* Input Area (Pinned Bottom) */}
+        <div className="p-3 border-t border-border bg-card flex items-center gap-2 shrink-0">
           <Textarea
+            ref={textareaRef}
+            id="client-inquiry-input"
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
             onKeyDown={(e) => {
@@ -240,17 +269,18 @@ export function ClientInquiryPortal() {
                 handleSend();
               }
             }}
-            placeholder="Type your professional question for Jenny (e.g., margins, return rates, target CPA)..."
+            placeholder="Type your strategic reply or question for Jenny..."
             rows={1}
-            className="text-xs resize-none min-h-[38px] py-2"
+            className="text-xs resize-none min-h-[40px] max-h-[80px] py-2 bg-background border-input focus-visible:ring-1 focus-visible:ring-primary flex-1"
+            autoFocus
           />
           <Button
             size="sm"
             onClick={() => handleSend()}
             disabled={!inputText.trim() || isTyping}
-            className="h-[38px] px-3 shrink-0 gap-1 text-xs"
+            className="h-[40px] px-3.5 shrink-0 gap-1.5 text-xs bg-primary hover:bg-primary/90 text-primary-foreground font-semibold shadow-sm cursor-pointer"
           >
-            <Send className="h-3.5 w-3.5" />
+            {isTyping ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Send className="h-3.5 w-3.5" />}
             <span>Send</span>
           </Button>
         </div>
