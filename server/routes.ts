@@ -43,6 +43,7 @@ import { registerWaitlistRoutes } from "./routes/waitlistRoutes";
 import { registerDeepgramRoutes } from "./routes/deepgramRoutes";
 import { registerGeminiLiveRoutes } from "./routes/geminiLiveRoutes";
 import { VIP_CREATORS, getVipCreatorByToken } from "./services/vipCreators";
+import { vipTrackingService } from "./services/vipTrackingService";
 
 export async function registerRoutes(app: Express) {
   const httpServer = createServer(app);
@@ -110,6 +111,13 @@ export async function registerRoutes(app: Express) {
         return res.status(404).json({ message: "VIP Pass not found or expired." });
       }
 
+      // Record live click telemetry
+      const forwarded = req.headers["x-forwarded-for"];
+      const ip = (typeof forwarded === "string" ? forwarded.split(",")[0] : req.socket.remoteAddress) || "unknown";
+      const userAgent = (req.headers["user-agent"] as string) || "unknown";
+      vipTrackingService.recordClick(creator.token, ip, userAgent);
+      console.log(`[VIP ACCESS] 1-Click Login: ${creator.name} (${creator.token}) from IP ${ip}`);
+
       const vipUser = {
         id: 1000 + VIP_CREATORS.indexOf(creator),
         username: `${creator.token}_vip`,
@@ -152,6 +160,7 @@ export async function registerRoutes(app: Express) {
       const lastName = creator ? creator.lastName : "Member";
       
       const updatedUser = await authService.registerUser(email, newPassword, firstName, lastName, "expert");
+      vipTrackingService.recordPasswordSet(email);
       res.json({ message: "Password updated successfully", user: updatedUser });
     } catch (error) {
       console.error("VIP password update error:", error);
@@ -162,6 +171,11 @@ export async function registerRoutes(app: Express) {
   // List all VIP Creators (for developer and admin reference)
   app.get("/api/auth/vip-creators-list", (req: Request, res: Response) => {
     res.json(VIP_CREATORS);
+  });
+
+  // VIP Outreach & Click Tracking Analytics Endpoint
+  app.get("/api/auth/vip-analytics", (_req: Request, res: Response) => {
+    res.json(vipTrackingService.getSummary());
   });
 
   app.get("/api/auth/user", async (req: Request, res: Response) => {

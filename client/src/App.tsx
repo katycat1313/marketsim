@@ -27,6 +27,7 @@ import SubscriptionSuccessPage from "@/pages/subscription/success";
 import SubscriptionCancelPage from "@/pages/subscription/cancel";
 import LoginPage from "@/pages/login";
 import VipAccessPage from "@/pages/vip-access";
+import VipTrackerPage from "@/pages/vip-tracker";
 import SignupPage from "@/pages/signup";
 import PortfolioViewPage from "@/pages/portfolio-view";
 import InterviewSimulatorPage from "@/pages/interview-simulator";
@@ -330,6 +331,14 @@ function SideNav({ onClose }: SideNavProps) {
                   </div>
                 </Link>
 
+                <Link href="/vip-tracker" onClick={handleLinkClick}>
+                  <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
+                    ${isActive('/vip-tracker') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
+                    <Users className="h-5 w-5 text-amber-400" />
+                    <span>VIP Outreach Tracker</span>
+                  </div>
+                </Link>
+
                 <Link href="/tutorials-new" onClick={handleLinkClick}>
                   <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
                     ${isActive('/tutorials-new') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
@@ -370,7 +379,22 @@ function SideNav({ onClose }: SideNavProps) {
 
 function Router({ onOpenCoach, onOpenTour }: { onOpenCoach?: () => void; onOpenTour?: () => void }) {
   const { isAuthenticated, user, logout } = useAuth();
-  const [, navigate] = useLocation();
+  const [currentPath, navigate] = useLocation();
+
+  // Send pageview to Google Analytics (gtag) on every SPA navigation
+  useEffect(() => {
+    if (typeof window !== "undefined" && (window as any).gtag) {
+      try {
+        (window as any).gtag("event", "page_view", {
+          page_path: currentPath,
+          page_location: window.location.href,
+          page_title: document.title,
+        });
+      } catch (e) {
+        // Ignore analytics delivery errors
+      }
+    }
+  }, [currentPath]);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const [desktopSidebarVisible, setDesktopSidebarVisible] = useState(true);
 
@@ -582,6 +606,8 @@ function Router({ onOpenCoach, onOpenTour }: { onOpenCoach?: () => void; onOpenT
             <Route path="/" component={Home} />
             <Route path="/vip" component={VipAccessPage} />
             <Route path="/vip-access" component={VipAccessPage} />
+            <Route path="/vip-tracker" component={VipTrackerPage} />
+            <Route path="/admin/vip-tracking" component={VipTrackerPage} />
             <Route path="/login" component={LoginPage} />
             <Route path="/signup" component={SignupPage} />
             <Route path="/persona-builder">
