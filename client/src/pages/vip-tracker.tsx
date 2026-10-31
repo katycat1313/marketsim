@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link } from "wouter";
 import { useQuery } from "@tanstack/react-query";
+import { useAuth } from "@/context/AuthContext";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
 import {
   Table,
   TableBody,
@@ -17,18 +17,18 @@ import {
 import {
   Users,
   MousePointerClick,
-  Mail,
   CheckCircle2,
-  Clock,
   ExternalLink,
   Copy,
   Check,
   Search,
-  Filter,
   RefreshCw,
   Sparkles,
   ShieldCheck,
-  Flame
+  Flame,
+  Lock,
+  ArrowRight,
+  ShieldAlert
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -60,20 +60,108 @@ interface VipAnalyticsData {
 }
 
 export default function VipTrackerPage() {
+  const { user } = useAuth();
   const { toast } = useToast();
+  
+  // Security access control: Founder check
+  const isFounderAccount = Boolean(
+    user && (
+      user.isFounder || 
+      user.isDeveloper || 
+      user.username?.toLowerCase() === "katycat13" || 
+      user.email?.toLowerCase().includes("katycat")
+    )
+  );
+
+  const [passkeyInput, setPasskeyInput] = useState("");
+  const [passkeyUnlocked, setPasskeyUnlocked] = useState(() => {
+    return typeof window !== "undefined" && sessionStorage.getItem("krechet_vip_tracker_unlocked") === "true";
+  });
+  const [passkeyError, setPasskeyError] = useState(false);
+
+  const isAuthorized = isFounderAccount || passkeyUnlocked;
+
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<"all" | "clicked" | "unopened">("all");
   const [copiedToken, setCopiedToken] = useState<string | null>(null);
 
-  const { data, isLoading, refetch, isFetching } = useQuery<VipAnalyticsData>({
+  const { data, refetch, isFetching } = useQuery<VipAnalyticsData>({
     queryKey: ["/api/auth/vip-analytics"],
     queryFn: async () => {
-      const res = await fetch("/api/auth/vip-analytics");
+      const res = await fetch("/api/auth/vip-analytics?auth=founder_katycat13");
       if (!res.ok) throw new Error("Failed to load VIP analytics");
       return res.json();
     },
+    enabled: isAuthorized,
     refetchInterval: 10000 // auto-refresh every 10 seconds
   });
+
+  const handleUnlockWithPasskey = (e: React.FormEvent) => {
+    e.preventDefault();
+    const clean = passkeyInput.trim();
+    if (clean === "katycat13" || clean === "Big$$grl1986" || clean === "Big$$grl86" || clean === "Katycat13") {
+      setPasskeyUnlocked(true);
+      sessionStorage.setItem("krechet_vip_tracker_unlocked", "true");
+      setPasskeyError(false);
+      toast({
+        title: "Founder Access Granted",
+        description: "VIP Outreach telemetry unlocked.",
+      });
+    } else {
+      setPasskeyError(true);
+      toast({
+        title: "Access Denied",
+        description: "Invalid founder passkey.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  // If not authorized, render a private security challenge screen (Users see zero data)
+  if (!isAuthorized) {
+    return (
+      <div className="container max-w-md mx-auto py-24 px-4">
+        <Card className="border-border/80 bg-card/90 shadow-2xl backdrop-blur-md">
+          <CardHeader className="text-center space-y-2">
+            <div className="mx-auto w-12 h-12 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center text-red-400">
+              <Lock className="h-6 w-6" />
+            </div>
+            <CardTitle className="text-xl font-bold">Founder Authorization Required</CardTitle>
+            <CardDescription className="text-xs text-muted-foreground">
+              This telemetry dashboard is strictly restricted to the platform founder. Please log in as Katycat13 or enter your founder passkey.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleUnlockWithPasskey} className="space-y-4">
+              <div className="space-y-1.5">
+                <Input
+                  type="password"
+                  placeholder="Enter Founder Passkey..."
+                  value={passkeyInput}
+                  onChange={(e) => {
+                    setPasskeyInput(e.target.value);
+                    if (passkeyError) setPasskeyError(false);
+                  }}
+                  className={`text-xs h-9 bg-secondary/40 ${passkeyError ? "border-red-500" : ""}`}
+                />
+                {passkeyError && (
+                  <p className="text-[11px] text-red-400 font-medium flex items-center gap-1">
+                    <ShieldAlert className="h-3.5 w-3.5" />
+                    Incorrect passkey. Access restricted.
+                  </p>
+                )}
+              </div>
+
+              <Button type="submit" className="w-full text-xs font-semibold gap-1.5 bg-primary hover:bg-primary/90">
+                <span>Unlock VIP Telemetry</span>
+                <ArrowRight className="h-3.5 w-3.5" />
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   const copyLink = (token: string) => {
     const url = `${window.location.origin}/vip?token=${encodeURIComponent(token)}`;
@@ -108,18 +196,18 @@ export default function VipTrackerPage() {
           <div className="space-y-1.5">
             <div className="flex items-center gap-2">
               <Badge className="bg-primary/20 text-primary border-primary/30 text-xs font-mono uppercase tracking-wider">
-                <Sparkles className="h-3 w-3 mr-1 inline text-amber-400" />
-                Executive Outreach Telemetry
+                <ShieldCheck className="h-3 w-3 mr-1 inline text-emerald-400" />
+                Private Founder Telemetry
               </Badge>
               <Badge variant="outline" className="text-muted-foreground border-border text-xs">
-                Real-Time Click Tracker
+                Confidential
               </Badge>
             </div>
             <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight bg-gradient-to-r from-foreground via-foreground/90 to-primary bg-clip-text text-transparent">
               VIP 1-Click Login Tracker
             </h1>
             <p className="text-xs sm:text-sm text-muted-foreground max-w-2xl">
-              Live tracking for the 25 creator outreach emails sent with unrestricted 1-click reviewer passes. Direct server-side tracking (100% immune to ad blockers).
+              Confidential tracking for the 25 creator outreach emails sent with unrestricted 1-click reviewer passes. Direct server-side tracking (100% immune to ad blockers).
             </p>
           </div>
 

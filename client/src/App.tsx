@@ -120,7 +120,16 @@ interface SideNavProps {
 }
 
 function SideNav({ onClose }: SideNavProps) {
+  const { user } = useAuth();
   const [location] = useLocation();
+  const isFounder = Boolean(
+    user && (
+      user.isFounder || 
+      user.isDeveloper || 
+      user.username?.toLowerCase() === "katycat13" || 
+      user.email?.toLowerCase().includes("katycat")
+    )
+  );
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
 
   const isActive = (path: string) => {
@@ -331,13 +340,15 @@ function SideNav({ onClose }: SideNavProps) {
                   </div>
                 </Link>
 
-                <Link href="/vip-tracker" onClick={handleLinkClick}>
-                  <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
-                    ${isActive('/vip-tracker') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
-                    <Users className="h-5 w-5 text-amber-400" />
-                    <span>VIP Outreach Tracker</span>
-                  </div>
-                </Link>
+                {isFounder && (
+                  <Link href="/vip-tracker" onClick={handleLinkClick}>
+                    <div className={`flex items-center gap-3 p-2 rounded-md transition-colors
+                      ${isActive('/vip-tracker') ? 'bg-primary/10 text-primary font-medium' : 'text-muted-foreground hover:bg-secondary'}`}>
+                      <Users className="h-5 w-5 text-amber-400" />
+                      <span>VIP Outreach Tracker</span>
+                    </div>
+                  </Link>
+                )}
 
                 <Link href="/tutorials-new" onClick={handleLinkClick}>
                   <div className={`flex items-center gap-3 p-2 rounded-md transition-colors

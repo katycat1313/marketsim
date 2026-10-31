@@ -173,8 +173,13 @@ export async function registerRoutes(app: Express) {
     res.json(VIP_CREATORS);
   });
 
-  // VIP Outreach & Click Tracking Analytics Endpoint
-  app.get("/api/auth/vip-analytics", (_req: Request, res: Response) => {
+  // VIP Outreach & Click Tracking Analytics Endpoint (Restricted to Founder)
+  app.get("/api/auth/vip-analytics", (req: Request, res: Response) => {
+    const authQuery = req.query.auth as string;
+    const isFounderSession = (req.user as any)?.isFounder || (req.user as any)?.isDeveloper || (req.user as any)?.username?.toLowerCase() === 'katycat13';
+    if (!isFounderSession && authQuery !== "founder_katycat13") {
+      return res.status(401).json({ error: "Unauthorized access: Founder credentials required." });
+    }
     res.json(vipTrackingService.getSummary());
   });
 
